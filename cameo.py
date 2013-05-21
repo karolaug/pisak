@@ -11,22 +11,24 @@ class Cameo(object):
 	def __init__(self):
 		self._windowManager = WindowManager('Cameo',self.onKeypress)
 		self._captureManager = CaptureManager(cv2.VideoCapture(0), self._windowManager, True)
-		self.pickleArray = np.zeros([100,480,640,3])
+		#self.pickleArray = np.zeros([100,480,640,3])
 		
 	def run(self):
 		"""Run the main loop."""
 		self._windowManager.createWindow()
 		
-		i = 0
+		#i = 0
 		
 		while self._windowManager.isWindowCreated:
 			self._captureManager.enterFrame()
 			frame = self._captureManager.frame
 			
-			if i < 100:
-				print 'Dopisuje klatke'
-				self.pickleArray[i] = frame
-			i += 1
+			#if i < 100:
+				#print 'Dopisuje klatke'
+				#self.pickleArray[i] = frame
+				#i += 1
+			#else:
+				#pass
 			
 			#cv2.cvtColor(frame , cv2.COLOR_BGR2RGB)
 			# TODO: Filter the frame
@@ -50,14 +52,14 @@ class Cameo(object):
 				self._captureManager.stopWritingVideo()
 		elif keycode == 27: # escape
 			self._windowManager.destroyWindow()
-			print 'zapisuje sloik'
-			nameOfFile = 'pickle'
-			f = open( nameOfFile , 'wb' )
-			#pickle.dump(self.pickleArray , f)
-			#self.pickleArray.tofile(f)
-			np.save(nameOfFile , self.pickleArray)
-			f.close()
-			print 'sloik zapisany'
+			#print 'zapisuje sloik'
+			#nameOfFile = 'pickle'
+			#f = open( nameOfFile , 'wb' )
+			##pickle.dump(self.pickleArray , f)
+			##self.pickleArray.tofile(f)
+			#np.save(nameOfFile , self.pickleArray)
+			#f.close()
+			#print 'sloik zapisany'
 			
 
 
