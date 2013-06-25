@@ -6,12 +6,15 @@ import numpy as np
 from managers import WindowManager, CaptureManager
 import pickle
 
-
+DUMMY = True
 class Cameo(object):
 	def __init__(self):
 		self._windowManager = WindowManager('Cameo',self.onKeypress)
-		self._captureManager = CaptureManager(cv2.VideoCapture(0), self._windowManager, True)
-		#self.pickleArray = np.zeros([100,480,640,3])
+		if DUMMY:
+			self._captureManager = CaptureManager(None, self._windowManager, True)
+		else:
+			self._captureManager = CaptureManager(cv2.VideoCapture(0), self._windowManager, True)		
+			self.pickleArray = np.zeros([100,480,640,3])
 		
 	def run(self):
 		"""Run the main loop."""

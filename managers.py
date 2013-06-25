@@ -11,10 +11,11 @@ class CaptureManager(object):
 		self.previewWindowManager = previewWindowManager
 		self.shouldMirrorPreview = shouldMirrorPreview
 		self._capture = capture
-		
-		self._capture.set(3,640)
-		self._capture.set(4,480)
-		
+		if self._capture:
+			self._capture.set(3,640)
+			self._capture.set(4,480)
+		else:
+			self.dummy = self.dummy_frames()
 		self._channel = 0
 		self._enteredFrame = False
 		self._frame = None
@@ -38,8 +39,11 @@ class CaptureManager(object):
 		
 	@property
 	def frame(self):
-		if self._enteredFrame and self._frame is None:
-			_, self._frame = self._capture.retrieve(channel = self.channel)
+		if self._capture is None:
+			self._frame = next(self.dummy)
+		else:
+			if self._enteredFrame and self._frame is None:
+				_, self._frame = self._capture.retrieve(channel = self.channel)
 			
 		return self._frame
 		
@@ -50,6 +54,12 @@ class CaptureManager(object):
 	@property
 	def isWritingVideo(self):
 		return self._videoFilename is not None
+	
+	def dummy_frames(self):
+		frames = numpy.load('pickle.npy')
+		while True:
+			for frame in range(numpy.shape(frames)[0]):
+				yield numpy.array(frames[frame])
 
 	#------------------------------------------------------------------------------------------------#
 	#                                      enter-frame                                               #
