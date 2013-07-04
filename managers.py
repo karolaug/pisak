@@ -7,13 +7,15 @@ import time
 
 
 class CaptureManager(object):
-	def __init__(self, capture, previewWindowManager = None,shouldMirrorPreview = False):
+	def __init__(self, capture, w, h, previewWindowManager = None,shouldMirrorPreview = False):
 		self.previewWindowManager = previewWindowManager
 		self.shouldMirrorPreview = shouldMirrorPreview
 		self._capture = capture
+		self.w = w
+		self.h = h
 		if self._capture:
-			self._capture.set(3,640)
-			self._capture.set(4,480)
+			self._capture.set(3,self.w)
+			self._capture.set(4,self.h)
 		else:
 			self.dummy = self.dummy_frames()
 		self._channel = 0
@@ -59,7 +61,9 @@ class CaptureManager(object):
 		frames = numpy.load('pickle.npy')
 		while True:
 			for frame in range(numpy.shape(frames)[0]):
-				yield numpy.array(frames[frame])
+				a = numpy.array(frames[frame])
+				a = a/255
+				yield a
 
 	#------------------------------------------------------------------------------------------------#
 	#                                      enter-frame                                               #
