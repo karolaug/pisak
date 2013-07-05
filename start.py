@@ -56,11 +56,11 @@ class TestWidget(QtGui.QWidget):
         
         layout = QtGui.QVBoxLayout()
         
-        layout.addWidget(self.resolution_label)
-        layout.addWidget(self.comboBox_res)
-        
         layout.addWidget(self.camera_label)
         layout.addWidget(self.comboBox_cam)
+        
+        layout.addWidget(self.resolution_label)
+        layout.addWidget(self.comboBox_res)
         
         layout.addWidget(self.view_label)
         layout.addWidget(self.view)
@@ -133,8 +133,6 @@ class TestWidget(QtGui.QWidget):
         g_c = Image.fromarray(g)
         r_c = Image.fromarray(r)
         tmp = Image.merge('RGB', (r_c, g_c, b_c))
-
-        tmp.show()
 
         result  = QtGui.QImage(tmp.tostring() , self.w , self.h , QtGui.QImage.Format_RGB888)
         pixmap = QtGui.QPixmap.fromImage(result)
