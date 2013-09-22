@@ -18,9 +18,8 @@ class TestWidget(QtGui.QWidget):
         self.scene = QtGui.QGraphicsScene()
         self.view  = QtGui.QGraphicsView(self.scene)
 
-        self.im = np.load('pickle.npy')
-        self.im2 = self.im.astype('uint8')
-
+        self.im = np.load('pickle.npy').astype('uint8')
+        
         self.comboBox_cam = QtGui.QComboBox()
         self.comboBox_cam.setObjectName("comboBox_cam")
         cameras = self.lookForCameras()
@@ -123,18 +122,9 @@ class TestWidget(QtGui.QWidget):
         cap = cv2.VideoCapture(selectedCameraIndex-1)			# -1, bo numeracja jest od zera, a użytkownik widzi od 1
         cap.set(3,self.w)
         cap.set(4,self.h)
-        ret,im = cap.read()
-        
-        b = im[:,:,0]
-        g = im[:,:,1]
-        r = im[:,:,2]
+        ret, im = cap.read()
 
-        b_c = Image.fromarray(b)
-        g_c = Image.fromarray(g)
-        r_c = Image.fromarray(r)
-        tmp = Image.merge('RGB', (r_c, g_c, b_c))
-
-        result  = QtGui.QImage(tmp.tostring() , self.w , self.h , QtGui.QImage.Format_RGB888)
+        result  = QtGui.QImage(im, self.w , self.h , QtGui.QImage.Format_RGB888)
         pixmap = QtGui.QPixmap.fromImage(result)
         self.pixItem = QtGui.QGraphicsPixmapItem(pixmap)
         self.scene.addItem(self.pixItem)
@@ -146,22 +136,13 @@ class TestWidget(QtGui.QWidget):
 # UMIESZCZENIE OBRAZU Z PLIKU                         #
 #######################################################
     def imageDummy(self, index):
-        im2 = self.im2[index] 
-
-        b = im2[:,:,0]
-        g = im2[:,:,1]
-        r = im2[:,:,2]
+        im = self.im[index] 
 
         self.comboBox_res.setCurrentIndex(2)
 
         self.resolutionChange()
 
-        b_c = Image.fromarray(b)
-        g_c = Image.fromarray(g)
-        r_c = Image.fromarray(r)
-        tmp = Image.merge('RGB', (r_c, g_c, b_c))
-
-        result  = QtGui.QImage(tmp.tostring() , self.w , self.h , QtGui.QImage.Format_RGB888)
+        result  = QtGui.QImage(im, self.w , self.h , QtGui.QImage.Format_RGB888)
     
         pixmap = QtGui.QPixmap.fromImage(result)
         self.pixItem = QtGui.QGraphicsPixmapItem(pixmap)

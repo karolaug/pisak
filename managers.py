@@ -60,8 +60,8 @@ class CaptureManager(object):
 	def dummy_frames(self):
 		frames = numpy.load('pickle.npy')
 		while True:
-			for frame in range(numpy.shape(frames)[0]):
-				a = numpy.array(frames[frame])
+			for frame in range(frames.shape[0]):
+				a = frames[frame]
 				a = a/255
 				yield a
 
