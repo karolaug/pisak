@@ -22,24 +22,12 @@
 import cv2
 from sys import argv
 import numpy as np
+from analysis.detect import pupil, glint
 
 cap = cv2.VideoCapture(int(argv[1]))
 
 def nothing(x):
     pass
-
-def glint(image):
-    where = cv2.goodFeaturesToTrack(image, 2, 0.0001, 30)
-    if where != None:
-        where = np.array([where[i][0] for i in xrange(where.shape[0])])
-    return where
-
-def pupil(image):
-    circles = cv2.HoughCircles(image, cv2.cv.CV_HOUGH_GRADIENT, 1, 100, 
-                               param1=50, param2=10, minRadius=10, maxRadius=100)
-    if circles != None:
-        circles = np.uint16(np.around(circles))
-        return circles[0] #lista x-ów,y-ów i promieni
 
 cv2.namedWindow('b&w1')
 cv2.namedWindow('b&w2')
