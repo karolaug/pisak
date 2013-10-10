@@ -29,12 +29,12 @@ cap = cv2.VideoCapture(int(argv[1]))
 def nothing(x):
     pass
 
-cv2.namedWindow('b&w1')
+cv2.namedWindow('pupil_detection')
 cv2.namedWindow('b&w2')
 
-cv2.createTrackbar('maxValue', 'b&w1', 0, 255, nothing)
-cv2.createTrackbar('thresh_type', 'b&w1', 0, 3, nothing)
-cv2.createTrackbar('thresh', 'b&w1', 0, 255, nothing)
+cv2.createTrackbar('maxValue', 'pupil_detection', 0, 255, nothing)
+cv2.createTrackbar('thresh_type', 'pupil_detection', 0, 3, nothing)
+cv2.createTrackbar('thresh', 'pupil_detection', 0, 255, nothing)
 
 cv2.createTrackbar('maxValue', 'b&w2', 0, 255, nothing)
 cv2.createTrackbar('blockSize', 'b&w2', 1, 107, nothing)
@@ -48,9 +48,9 @@ while(1):
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-    max1 = cv2.getTrackbarPos('maxValue', 'b&w1')
-    thresh_index = cv2.getTrackbarPos('thresh_type', 'b&w1')
-    thresh = cv2.getTrackbarPos('thresh', 'b&w1')
+    max1 = cv2.getTrackbarPos('maxValue', 'pupil_detection')
+    thresh_index = cv2.getTrackbarPos('thresh_type', 'pupil_detection')
+    thresh = cv2.getTrackbarPos('thresh', 'pupil_detection')
 
     max2 = cv2.getTrackbarPos('maxValue', 'b&w2')
     block2 = 2*cv2.getTrackbarPos('blockSize', 'b&w2')+1
@@ -61,25 +61,29 @@ while(1):
     black2 = cv2.adaptiveThreshold(gray, max2, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
                                    cv2.THRESH_BINARY, block2, c2)
 
+    where_glint = glint(gray)
+    if where_glint != None:
+        gray = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+        for cor in where_glint:
+            cv2.circle(gray, tuple(cor), 10, (255, 0, 0), 3)
 
-    for i in (gray, black1, black2):
-        where_pupil = pupil(i)
-        where_glint = glint(i)
+    
+    where_pupil = pupil(black1)
+    if where_pupil != None:
+        black1 = cv2.cvtColor(black1, cv2.COLOR_GRAY2BGR)
+        for cor in where_pupil:
+            cv2.circle(black1, tuple(cor[:2]), cor[2], (0, 0, 255), 3)
 
-        if where_glint != None:
-            for cor in where_glint:
-                cv2.circle(i, tuple(cor), 10, (255, 0, 0), 3)
-        if where_pupil != None:
-            for cor in where_pupil:
-                cv2.circle(i, tuple(cor[:2]), cor[2], (0, 0, 255), 3)
+    where_pupil = pupil(black2)
+    if where_pupil != None:
+        black2 = cv2.cvtColor(black2, cv2.COLOR_GRAY2BGR)
+        for cor in where_pupil:
+            cv2.circle(black2, tuple(cor[:2]), cor[2], (0, 0, 255), 3)
             
-
-
     cv2.imshow('true', frame)
-    cv2.imshow('gray', gray)
-    cv2.imshow('b&w1', black1)
+    cv2.imshow('glint_detection', gray)
+    cv2.imshow('pupil_detection', black1)
     cv2.imshow('b&w2', black2)
-
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
