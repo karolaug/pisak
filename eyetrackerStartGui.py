@@ -43,11 +43,10 @@ class Ui_StartingWindow(object):
         StartingWindow.resize(640, 480)
         StartingWindow.setMinimumSize(QtCore.QSize(640, 480))
         StartingWindow.setMaximumSize(QtCore.QSize(640, 480))
-        
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("icon1.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("camera.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         StartingWindow.setWindowIcon(icon)
+        
         self.centralwidget = QtGui.QWidget(StartingWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         
