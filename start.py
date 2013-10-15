@@ -99,6 +99,7 @@ class MyForm(QtGui.QMainWindow):
                 pass
             else:
                 ret, im = self.cap.read()
+                im = self.imageFlipMirror(im)
                 gray = cv2.cvtColor(im , cv2.COLOR_BGR2GRAY)
                 
                 self.pupilDetectionUpdate(im , gray)
@@ -120,8 +121,13 @@ class MyForm(QtGui.QMainWindow):
             pass
         else:
             self.cap = cv2.VideoCapture(self.selectedCameraIndex-1)		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
-            self.cap.set(3,320)
-            self.cap.set(4,240)
+            if self.advanced == 1:
+                resolutionIndex = self.ui.cmb_setResolution.currentIndex()
+                self.cap.set(3,self.resolutions_w[resolutionIndex])
+                self.cap.set(4,self.resolutions_h[resolutionIndex])
+            else:
+                self.cap.set(3,320)
+                self.cap.set(4,240)
 
         self.timer.start(100 , self)
 
@@ -154,6 +160,18 @@ class MyForm(QtGui.QMainWindow):
         else:
             ret, im = self.cap.read()
         
+        im = self.imageFlipMirror(im)
+        
+        result  = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
+        pixmap  = QtGui.QPixmap.fromImage(result)
+        pixItem = QtGui.QGraphicsPixmapItem(pixmap)
+        self.ui.graphicsScene.addItem(pixItem)
+        self.ui.graphicsView.fitInView(pixItem)
+        self.ui.graphicsScene.update()
+        self.ui.graphicsView.show()
+
+###################### ACTUALLY FLIP AND/OR MIRROR AN IMAGE
+    def imageFlipMirror(self , im):
         if self.mirrored == 1 and self.fliped == 0:
             im[:,:,0] = cv2.flip(im[:,:,0], 1)
             im[:,:,1] = cv2.flip(im[:,:,1], 1)
@@ -166,15 +184,8 @@ class MyForm(QtGui.QMainWindow):
             im[:,:,0] = cv2.flip(im[:,:,0], -1)
             im[:,:,1] = cv2.flip(im[:,:,1], -1)
             im[:,:,2] = cv2.flip(im[:,:,2], -1)   
+        return im
         
-        result  = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
-        pixmap  = QtGui.QPixmap.fromImage(result)
-        pixItem = QtGui.QGraphicsPixmapItem(pixmap)
-        self.ui.graphicsScene.addItem(pixItem)
-        self.ui.graphicsView.fitInView(pixItem)
-        self.ui.graphicsScene.update()
-        self.ui.graphicsView.show()
-
 ### FUNKCJA WŁĄCZAJĄCA/WYŁACZAJĄCA ZAAWANSOWANE USTAWIENIA
     def startAdvancedSettings(self):
         if self.advanced == 0:
@@ -191,9 +202,9 @@ class MyForm(QtGui.QMainWindow):
             self.ui.btn_start.setEnabled(False)
             self.advanced = 1
             
-            cv2.namedWindow('pupil_detection')
+            cv2.namedWindow('pupil_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
             cv2.moveWindow('pupil_detection',800,100)
-            cv2.namedWindow('glint_detection')
+            cv2.namedWindow('glint_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
             cv2.moveWindow('glint_detection',800,500)
         else:
             self.ui.hsb_glint1.setEnabled(False)
@@ -273,11 +284,11 @@ class MyForm(QtGui.QMainWindow):
         
 #################################### URUCHOMIENIE PROGRAMU
     def startEyetracker(self):
-        self.im = None      # wywalenie dummy z pamięci
-        self.cap.release()  # zniszczenie strumienia z kamery
+        #self.im = None      # wywalenie dummy z pamięci
+        #self.cap.release()  # zniszczenie strumienia z kamery
         
         # tu trzeba uruchomić program docelowy
-        
+        pass
 ##########################################################
 
 if __name__ == "__main__":
