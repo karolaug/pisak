@@ -20,15 +20,11 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-import sys
-import Image
 import cv2
 import numpy as np
 
-from fnmatch import fnmatch      # pattern matching
-from os import listdir
+from camera_lookup import lookForCameras
 from analysis.detect import pupil, glint
-from cameo import Cameo
 from PyQt4 import QtCore, QtGui
 from eyetrackerStartGui import Ui_StartingWindow
 
@@ -39,8 +35,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui.setupUi(self)
         
         ############################# INICJALIZACJA PARAMETRÓW        
-        cameras = self.lookForCameras()
-        for i in cameras:
+        self.cameras = lookForCameras()
+        for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
         
         self.resolutions_w = [160,320,640,1280]
@@ -53,7 +49,6 @@ class MyForm(QtGui.QMainWindow):
         self.w = 320
         self.h = 240
         self.selectedCameraName  = 'dummy'
-        self.selectedCameraIndex = 0
         self.index = 0                                      # indeksuje klatki dla dummy
         self.mirrored = 0
         self.fliped = 0
@@ -86,7 +81,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.hsb_glint3.valueChanged[int].connect(self.hsbGlint_3Change)
 
 ########################################### CYKANIE ZEGARA
-    def timerEvent(self, e):
+    def timerEvent(self):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
             if self.index == 99:
@@ -224,19 +219,6 @@ class MyForm(QtGui.QMainWindow):
             self.advanced = 0
             
             cv2.destroyAllWindows()
-
-############# FUNKCJA PRZEGRZEBUJĄCA ZBIÓR MOŻLIWYCH KAMER
-    def lookForCameras(self):
-        listOfCameras = ['dummy']
-        device = 0
-
-        for plik in listdir('/dev/'):
-            if fnmatch(plik, 'video*'):
-                device += 1
-                cameraLabel = 'Camera_' + str(device)
-                listOfCameras.append(cameraLabel)
-            
-        return listOfCameras
         
 ######### OBSŁUGA SUWAKÓW ZMIENIAJĄCYCH PARAMETRY DETEKCJI
     def hsbPupil_1Change(self , value):
@@ -295,6 +277,7 @@ class MyForm(QtGui.QMainWindow):
 ##########################################################
 
 if __name__ == "__main__":
+    import sys
     app = QtGui.QApplication(sys.argv)
     myapp = MyForm()
     myapp.show()
