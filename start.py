@@ -121,13 +121,8 @@ class MyForm(QtGui.QMainWindow):
             pass
         else:
             self.cap = cv2.VideoCapture(self.selectedCameraIndex-1)		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
-            if self.advanced == 1:
-                resolutionIndex = self.ui.cmb_setResolution.currentIndex()
-                self.cap.set(3,self.resolutions_w[resolutionIndex])
-                self.cap.set(4,self.resolutions_h[resolutionIndex])
-            else:
-                self.cap.set(3,320)
-                self.cap.set(4,240)
+            self.cap.set(3,320)
+            self.cap.set(4,240)
 
         self.timer.start(100 , self)
 
@@ -200,7 +195,15 @@ class MyForm(QtGui.QMainWindow):
             self.ui.cmb_setResolution.setEnabled(False)
             self.ui.cmb_setCamera.setEnabled(False)
             self.ui.btn_start.setEnabled(False)
+            
             self.advanced = 1
+            
+            resolutionIndex = self.ui.cmb_setResolution.currentIndex()
+            x = self.cap.set(3,self.resolutions_w[resolutionIndex])
+            y = self.cap.set(4,self.resolutions_h[resolutionIndex])
+            #if (x == False or y == False):                                     # To zawsze jest False, nie wiem czemu
+            #    print 'Resolution change is not supported by the camera'
+            #    print 'Going with default resolution'
             
             cv2.namedWindow('pupil_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
             cv2.moveWindow('pupil_detection',800,100)
