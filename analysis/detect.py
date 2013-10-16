@@ -15,24 +15,33 @@
 #    You should have received a copy of the GNU General Public License
 #    along with eyetracker-ng. If not, see <http://www.gnu.org/licenses/>.
 
-# author: Sasza Kijek
+# authors: Sasza Kijek, Karol Augustin, Tomasz Spustek
 # e-mail: saszasasha@gmail.com
 # University of Warsaw 2013
 
 import cv2
 import numpy as np
 
-def glint(image):
+def eye(image):
+    #should return a mask
+    pass
+
+def blink():
+    #should return bin
+    pass
+
+def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None, 
+          blockSize=3):
     '''
     TO DO!
     '''
-    where = cv2.goodFeaturesToTrack(image, 2, 0.0001, 20)
+    where = cv2.goodFeaturesToTrack(image, maxCorners=maxCorners, 
+                                    qualityLevel=quality, minDistance=minDist, 
+                                    mask=mask, blockSize=blockSize)
     #TODO: add constrain of max distance
     if where != None:
         where = np.array([where[i][0] for i in xrange(where.shape[0])])
-        return where
-    else:
-        return None
+    return where
 
 def pupil(image):
     '''
@@ -41,20 +50,20 @@ def pupil(image):
     circles = cv2.HoughCircles(image, cv2.cv.CV_HOUGH_GRADIENT, 1, 100, 
                                param1=50, param2=10, minRadius=20, maxRadius=70)
     if circles != None:
-        circles = np.uint16(np.around(circles))
-        return circles[0] #list of x-es,y-es and radiuses 
-    else:
-        return None
+        circles = np.uint16(np.around(circles))[0] 
+    return circles
 
 if __name__ == '__main__':
-    im_gray = cv2.imread('../examples/eyeIR.png', 0) #make it work always
-    
+    from analysis.processing import threshold, gray2bgr, bgr2gray
+
+    im_gray = cv2.imread('examples/eyeIR.png', 0)#invoke from main folder
+
     where_glint = glint(im_gray)
     
-    ret, im_gray = cv2.threshold(im_gray, 73, 255, cv2.THRESH_TRUNC)
+    im_gray = threshold(im_gray, thresh_v=73)
     where_pupil = pupil(im_gray)
 
-    im = cv2.cvtColor(im_gray, cv2.COLOR_GRAY2BGR)
+    im = gray2bgr(im_gray)
     
     for cor in where_glint:
         cv2.circle(im, tuple(cor), 10, (0, 0, 255), 3)
