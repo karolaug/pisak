@@ -81,7 +81,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.hsb_glint3.valueChanged[int].connect(self.hsbGlint_3Change)
 
 ########################################### CYKANIE ZEGARA
-    def timerEvent(self):
+    def timerEvent(self, event):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
             if self.index == 99:

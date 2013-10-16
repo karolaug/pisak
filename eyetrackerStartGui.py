@@ -224,4 +224,5 @@ class Ui_StartingWindow(object):
         self.btn_save.setText(_translate("StartingWindow", "SAVE", None))
 
 if __name__ == '__main__':
+    pass
     #Tomku jakbyś mógł tu napisać jak używać tego pliku autonomicznie
