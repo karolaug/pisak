@@ -22,6 +22,7 @@
 
 import cv2
 import numpy as np
+from itertools import izip
 
 from camera_lookup import lookForCameras
 from analysis.detect import pupil, glint
@@ -41,15 +42,14 @@ class MyForm(QtGui.QMainWindow):
         
         self.resolutions_w = [160,320,640,1280]
         self.resolutions_h = [120,240,480,720]
-        for i in xrange(len(self.resolutions_w)):
-            tmp = str(self.resolutions_w[i]) + " x " + str(self.resolutions_h[i])
-            self.ui.cmb_setResolution.addItem(tmp)
+        for w, h in izip(self.resolutions_w, self.resolutions_h):
+            self.ui.cmb_setResolution.addItem(''.join([str(w), 'x', str(h)]))
             
         self.ui.cmb_setResolution.setCurrentIndex(1)
         self.w = 320
         self.h = 240
         self.selectedCameraName  = 'dummy'
-        self.index = 0                                      # indeksuje klatki dla dummy
+
         self.mirrored = 0
         self.fliped = 0
         self.advanced = 0                                   # flaga odnośnie zaawansowanych ustawień
@@ -60,8 +60,6 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint1.setText( str(self.ui.hsb_glint1.value() ) )
         self.ui.lbl_glint2.setText( str(self.ui.hsb_glint2.value() ) )
         self.ui.lbl_glint3.setText( str(self.ui.hsb_glint3.value() ) )
-        
-        self.im = np.load('pickle.npy').astype('uint8')     # ładowanie dummy do pamięci
         
         self.timer = QtCore.QBasicTimer()
         self.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
