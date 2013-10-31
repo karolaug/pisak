@@ -61,7 +61,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint2.setText( str(self.ui.hsb_glint2.value() ) )
         self.ui.lbl_glint3.setText( str(self.ui.hsb_glint3.value() ) )
         
-        self.timer = QtCore.QBasicTimer()
+        self.timer = QtCore.QBasicTimer() #czy tego się nie da do tego startGui wywalić?
         self.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
 
         ################################### DOWIĄZANIA ZDARZEŃ
@@ -82,10 +82,6 @@ class MyForm(QtGui.QMainWindow):
     def timerEvent(self, event):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
-            if self.index == 99:
-                self.index = 0;
-            else:
-                self.index += 1;
             self.imageCamera()
         else:                       # update dwóch okien w ustawieniach zaawansowanych
             if self.selectedCameraName == 'dummy':
@@ -101,7 +97,6 @@ class MyForm(QtGui.QMainWindow):
 ################################ METODA ZMIENIAJĄCA KAMERĘ
     def cameraChange(self):
         self.timer.stop()
-        self.index = 0
         if self.selectedCameraName == 'dummy':
             pass
         else:
@@ -194,9 +189,6 @@ class MyForm(QtGui.QMainWindow):
             resolutionIndex = self.ui.cmb_setResolution.currentIndex()
             x = self.cap.set(3,self.resolutions_w[resolutionIndex])
             y = self.cap.set(4,self.resolutions_h[resolutionIndex])
-            #if (x == False or y == False):                                     # To zawsze jest False, nie wiem czemu
-            #    print 'Resolution change is not supported by the camera'
-            #    print 'Going with default resolution'
             
             cv2.namedWindow('pupil_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
             cv2.moveWindow('pupil_detection',800,100)
@@ -233,13 +225,13 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint3.setText( str(value) )
         
 ############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH        
-    def pupilDetectionUpdate(self , frame , gray):
+    def pupilDetectionUpdate(self, frame, gray):
         
         pupilThreshold1 = self.ui.hsb_pupil1.value()
         pupilThreshold2 = self.ui.hsb_pupil2.value()
         pupilThreshold3 = self.ui.hsb_pupil3.value()
         
-        thresholds = [cv2.THRESH_OTSU , cv2.THRESH_BINARY , cv2.THRESH_TOZERO , cv2.THRESH_TRUNC]
+        thresholds = [cv2.THRESH_OTSU , cv2.THRESH_BINARY , cv2.THRESH_TOZERO , ncv2.THRESH_TRUNC]
         
         ret, black1 = cv2.threshold(gray , pupilThreshold3 , pupilThreshold1 , thresholds[pupilThreshold2])
         
@@ -251,7 +243,7 @@ class MyForm(QtGui.QMainWindow):
                     
         cv2.imshow('pupil_detection', black1)
             
-    def blackAndWhiteUpdate(self , frame , gray):
+    def blackAndWhiteUpdate(self, frame, gray):
         
         glintThreshold1 = self.ui.hsb_glint1.value()
         glintThreshold2 = self.ui.hsb_glint2.value()
