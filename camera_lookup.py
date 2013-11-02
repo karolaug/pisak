@@ -27,3 +27,6 @@ def lookForCameras():
                      for i, cam in enumerate(iglob('/dev/video*'))}
     listOfCameras['dummy'] = None
     return listOfCameras
+
+if __name__ == '__main__':
+    print 'Lista odnalezionych kamer wraz z "dummy":\n', lookForCameras()
