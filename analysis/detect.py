@@ -54,7 +54,7 @@ def pupil(image):
     return circles
 
 if __name__ == '__main__':
-    from analysis.processing import threshold, gray2bgr, bgr2gray
+    from analysis.processing import threshold, gray2bgr, bgr2gray, mark
 
     im_gray = cv2.imread('examples/eyeIR.png', 0)#invoke from main folder
 
@@ -65,11 +65,9 @@ if __name__ == '__main__':
 
     im = gray2bgr(im_gray)
     
-    for cor in where_glint:
-        cv2.circle(im, tuple(cor), 10, (0, 0, 255), 3)
-
-    for cor in where_pupil:
-        cv2.circle(im, tuple(cor[:2]), cor[2], (255, 0 , 0), 3)
+    mark(im, where_glint)
+    
+    mark(im, where_pupil, color='blue')
     
     while(1):
         cv2.imshow('Pupil(blue) and glint(red) detection, exit with "q" or "esc"', im)
