@@ -26,6 +26,7 @@ from itertools import izip
 
 from camera_lookup import lookForCameras
 from analysis.detect import pupil, glint
+from analysis.processing import threshold
 from PyQt4 import QtCore, QtGui
 from eyetrackerStartGui import Ui_StartingWindow
 
@@ -54,12 +55,12 @@ class MyForm(QtGui.QMainWindow):
         self.fliped = 0
         self.advanced = 0                                   # flaga odnośnie zaawansowanych ustawień
         
-        self.ui.lbl_pupil1.setText( str(self.ui.hsb_pupil1.value() ) )
-        self.ui.lbl_pupil2.setText( str(self.ui.hsb_pupil2.value() ) )
-        self.ui.lbl_pupil3.setText( str(self.ui.hsb_pupil3.value() ) )
-        self.ui.lbl_glint1.setText( str(self.ui.hsb_glint1.value() ) )
-        self.ui.lbl_glint2.setText( str(self.ui.hsb_glint2.value() ) )
-        self.ui.lbl_glint3.setText( str(self.ui.hsb_glint3.value() ) )
+        self.ui.lbl_pupil1.setText(str(self.ui.hsb_pupil1.value()))
+        self.ui.lbl_pupil2.setText(str(self.ui.hsb_pupil2.value()))
+        self.ui.lbl_pupil3.setText(str(self.ui.hsb_pupil3.value()))
+        self.ui.lbl_glint1.setText(str(self.ui.hsb_glint1.value()))
+        self.ui.lbl_glint2.setText(str(self.ui.hsb_glint2.value()))
+        self.ui.lbl_glint3.setText(str(self.ui.hsb_glint3.value()))
         
         self.timer = QtCore.QBasicTimer() #czy tego się nie da do tego startGui wywalić?
         self.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
@@ -89,10 +90,10 @@ class MyForm(QtGui.QMainWindow):
             else:
                 ret, im = self.cap.read()
                 im = self.imageFlipMirror(im)
-                gray = cv2.cvtColor(im , cv2.COLOR_BGR2GRAY)
+                gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
                 
-                self.pupilDetectionUpdate(im , gray)
-                self.blackAndWhiteUpdate(im , gray)
+                self.pupilDetectionUpdate(im, gray)
+                self.blackAndWhiteUpdate(im, gray)
 
 ################################ METODA ZMIENIAJĄCA KAMERĘ
     def cameraChange(self):
@@ -211,29 +212,31 @@ class MyForm(QtGui.QMainWindow):
             cv2.destroyAllWindows()
         
 ######### OBSŁUGA SUWAKÓW ZMIENIAJĄCYCH PARAMETRY DETEKCJI
-    def hsbPupil_1Change(self , value):
-        self.ui.lbl_pupil1.setText( str(value) )
-    def hsbPupil_2Change(self , value):
-        self.ui.lbl_pupil2.setText( str(value) )
-    def hsbPupil_3Change(self , value):
-        self.ui.lbl_pupil3.setText( str(value) )
-    def hsbGlint_1Change(self , value):
-        self.ui.lbl_glint1.setText( str(value) )
-    def hsbGlint_2Change(self , value):
-        self.ui.lbl_glint2.setText( str(value) )
-    def hsbGlint_3Change(self , value):
-        self.ui.lbl_glint3.setText( str(value) )
+    def hsbPupil_1Change(self, value):
+        self.ui.lbl_pupil1.setText(str(value))
+    def hsbPupil_2Change(self, value):
+        self.ui.lbl_pupil2.setText(str(value))
+    def hsbPupil_3Change(self, value):
+        self.ui.lbl_pupil3.setText(str(value))
+    def hsbGlint_1Change(self, value):
+        self.ui.lbl_glint1.setText(str(value))
+    def hsbGlint_2Change(self, value):
+        self.ui.lbl_glint2.setText(str(value))
+    def hsbGlint_3Change(self, value):
+        self.ui.lbl_glint3.setText(str(value))
         
 ############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH        
-    def pupilDetectionUpdate(self, frame, gray):
+    def pupilDetectionUpdate(self, frame, image):
         
         pupilThreshold1 = self.ui.hsb_pupil1.value()
         pupilThreshold2 = self.ui.hsb_pupil2.value()
         pupilThreshold3 = self.ui.hsb_pupil3.value()
         
-        thresholds = [cv2.THRESH_OTSU , cv2.THRESH_BINARY , cv2.THRESH_TOZERO , ncv2.THRESH_TRUNC]
+        thresholds = ['otsu', 'bin', 'zero', 'trunc']
         
-        ret, black1 = cv2.threshold(gray , pupilThreshold3 , pupilThreshold1 , thresholds[pupilThreshold2])
+        black1 = threshold(image, thresh_v=pupilThreshold3, 
+                           max_v=pupilThreshold1, 
+                           thresh_type=thresholds[pupilThreshold2])
         
         where_pupil = pupil(black1)
         if where_pupil != None:
