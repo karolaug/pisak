@@ -30,6 +30,8 @@ thresholds = {'otsu' : cv2.THRESH_OTSU, 'bin' : cv2.THRESH_BINARY,
 adaptiveMethods = {'gaussian' : cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
                    'mean' : cv2.ADAPTIVE_THRESH_MEAN_C}
 
+colors = {'blue' : (255, 0, 0), 'green' : (0, 255, 0), 'red' : (0, 0, 255)}
+
 def bgr2gray(imageBGR):
     '''Convert color image(BGR) to gray image.'''
     return cv2.cvtColor(imageBGR, cv2.COLOR_BGR2GRAY)
@@ -94,27 +96,52 @@ def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian',
                                  thresholds[thresh_type], blockSize, 
                                  subtConstant)
 
+def mark(image, where, radius=10, color='red', thickness=3):
+    '''
+    Mark object with a circle.
+
+    Parameters:
+    -----------
+    image - 3d array depicting the original image that is to be marked, needs to be in three scale color
+    where - array of sets of coordinates(y, x or y, x, radius) of the object
+    radius - set same radius for all objects, if a set of coordinates has a third value this will be overruled
+    color - color of circles marking the object, possible: 'blue', 'green' or 'red'
+    thickness - thickness of the circle
+    '''
+    if where != None:
+        for coordinates in where:
+            x = coordinates[1]
+            y = coordinates[0]
+            if len(coordinates) == 3:
+                radius = coordinates[2]
+            cv2.circle(image, (y, x), radius, colors[color], thickness)
+
 if __name__ == '__main__':
     im = cv2.imread('examples/eyeIR.png', -1)
 
+    marked = cv2.imread('examples/eyeIR.png', -1)
+
     im_gray = bgr2gray(im)
 
-    im_back = gray2bgr(im_gray)
+    im_back = gray2bgr(im_gray) 
 
-    #for depicting that there are 3 channels
-    im_back[0:10, :] = (255, 0, 0)
-    im_back[-10:-1, :] = (0, 255, 0)
-    im_back[:, 0:10] = (0, 0, 255)
-    im_back[:, -10:-1] = (0, 0, 255)
+    #for depicting that there are 3 color channels
+    im_back[0:10, :] = colors['blue']
+    im_back[-10:-1, :] = colors['green']
+    im_back[:, 0:10] = colors['red']
+    im_back[:, -10:-1] = colors['red']
 
     im_thresh = threshold(im_gray)
 
     im_thresh_adapt = adaptiveThreshold(im_gray)
 
+    mark(marked, [[marked.shape[1]/2, marked.shape[0]/2]], radius=30)
+
     pics = {'original image' : im, 'one-channel gray image' : im_gray, 
             'converted back to 3 channel' : im_back, 
             'thresholded' : im_thresh, 
-            'thresholded adaptively' :im_thresh_adapt}
+            'thresholded adaptively' :im_thresh_adapt, 
+            'Marked center of image' : marked}
 
     while(1):
         [cv2.imshow(descp, pic) for descp, pic in pics.iteritems()]
