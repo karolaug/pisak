@@ -140,7 +140,7 @@ if __name__ == '__main__':
     pics = {'original image' : im, 'one-channel gray image' : im_gray, 
             'converted back to 3 channel' : im_back, 
             'thresholded' : im_thresh, 
-            'thresholded adaptively' :im_thresh_adapt, 
+            'thresholded adaptively' : im_thresh_adapt, 
             'Marked center of image' : marked}
 
     while(1):
@@ -150,4 +150,4 @@ if __name__ == '__main__':
         if k == 27 or k == ord('q'):
             break
 
-        cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
