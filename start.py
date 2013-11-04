@@ -20,15 +20,13 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-import sys
-import Image
 import cv2
 import numpy as np
+from itertools import izip
 
-from fnmatch import fnmatch      # pattern matching
-from os import listdir
+from camera_lookup import lookForCameras
 from analysis.detect import pupil, glint
-from cameo import Cameo
+from analysis.processing import threshold
 from PyQt4 import QtCore, QtGui
 from eyetrackerStartGui import Ui_StartingWindow
 
@@ -39,36 +37,32 @@ class MyForm(QtGui.QMainWindow):
         self.ui.setupUi(self)
         
         ############################# INICJALIZACJA PARAMETRÓW        
-        cameras = self.lookForCameras()
-        for i in cameras:
+        self.cameras = lookForCameras()
+        for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
         
         self.resolutions_w = [160,320,640,1280]
         self.resolutions_h = [120,240,480,720]
-        for i in xrange(len(self.resolutions_w)):
-            tmp = str(self.resolutions_w[i]) + " x " + str(self.resolutions_h[i])
-            self.ui.cmb_setResolution.addItem(tmp)
+        for w, h in izip(self.resolutions_w, self.resolutions_h):
+            self.ui.cmb_setResolution.addItem(''.join([str(w), 'x', str(h)]))
             
         self.ui.cmb_setResolution.setCurrentIndex(1)
         self.w = 320
         self.h = 240
         self.selectedCameraName  = 'dummy'
-        self.selectedCameraIndex = 0
-        self.index = 0                                      # indeksuje klatki dla dummy
+
         self.mirrored = 0
         self.fliped = 0
         self.advanced = 0                                   # flaga odnośnie zaawansowanych ustawień
         
-        self.ui.lbl_pupil1.setText( str(self.ui.hsb_pupil1.value() ) )
-        self.ui.lbl_pupil2.setText( str(self.ui.hsb_pupil2.value() ) )
-        self.ui.lbl_pupil3.setText( str(self.ui.hsb_pupil3.value() ) )
-        self.ui.lbl_glint1.setText( str(self.ui.hsb_glint1.value() ) )
-        self.ui.lbl_glint2.setText( str(self.ui.hsb_glint2.value() ) )
-        self.ui.lbl_glint3.setText( str(self.ui.hsb_glint3.value() ) )
+        self.ui.lbl_pupil1.setText(str(self.ui.hsb_pupil1.value()))
+        self.ui.lbl_pupil2.setText(str(self.ui.hsb_pupil2.value()))
+        self.ui.lbl_pupil3.setText(str(self.ui.hsb_pupil3.value()))
+        self.ui.lbl_glint1.setText(str(self.ui.hsb_glint1.value()))
+        self.ui.lbl_glint2.setText(str(self.ui.hsb_glint2.value()))
+        self.ui.lbl_glint3.setText(str(self.ui.hsb_glint3.value()))
         
-        self.im = np.load('pickle.npy').astype('uint8')     # ładowanie dummy do pamięci
-        
-        self.timer = QtCore.QBasicTimer()
+        self.timer = QtCore.QBasicTimer() #czy tego się nie da do tego startGui wywalić?
         self.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
 
         ################################### DOWIĄZANIA ZDARZEŃ
@@ -86,13 +80,9 @@ class MyForm(QtGui.QMainWindow):
         self.ui.hsb_glint3.valueChanged[int].connect(self.hsbGlint_3Change)
 
 ########################################### CYKANIE ZEGARA
-    def timerEvent(self, e):
+    def timerEvent(self, event):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
-            if self.index == 99:
-                self.index = 0;
-            else:
-                self.index += 1;
             self.imageCamera()
         else:                       # update dwóch okien w ustawieniach zaawansowanych
             if self.selectedCameraName == 'dummy':
@@ -100,15 +90,14 @@ class MyForm(QtGui.QMainWindow):
             else:
                 ret, im = self.cap.read()
                 im = self.imageFlipMirror(im)
-                gray = cv2.cvtColor(im , cv2.COLOR_BGR2GRAY)
+                gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
                 
-                self.pupilDetectionUpdate(im , gray)
-                self.blackAndWhiteUpdate(im , gray)
+                self.pupilDetectionUpdate(im, gray)
+                self.blackAndWhiteUpdate(im, gray)
 
 ################################ METODA ZMIENIAJĄCA KAMERĘ
     def cameraChange(self):
         self.timer.stop()
-        self.index = 0
         if self.selectedCameraName == 'dummy':
             pass
         else:
@@ -201,9 +190,6 @@ class MyForm(QtGui.QMainWindow):
             resolutionIndex = self.ui.cmb_setResolution.currentIndex()
             x = self.cap.set(3,self.resolutions_w[resolutionIndex])
             y = self.cap.set(4,self.resolutions_h[resolutionIndex])
-            #if (x == False or y == False):                                     # To zawsze jest False, nie wiem czemu
-            #    print 'Resolution change is not supported by the camera'
-            #    print 'Going with default resolution'
             
             cv2.namedWindow('pupil_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
             cv2.moveWindow('pupil_detection',800,100)
@@ -224,44 +210,33 @@ class MyForm(QtGui.QMainWindow):
             self.advanced = 0
             
             cv2.destroyAllWindows()
-
-############# FUNKCJA PRZEGRZEBUJĄCA ZBIÓR MOŻLIWYCH KAMER
-    def lookForCameras(self):
-        listOfCameras = ['dummy']
-        device = 0
-
-        for plik in listdir('/dev/'):
-            if fnmatch(plik, 'video*'):
-                device += 1
-                cameraLabel = 'Camera_' + str(device)
-                listOfCameras.append(cameraLabel)
-            
-        return listOfCameras
         
 ######### OBSŁUGA SUWAKÓW ZMIENIAJĄCYCH PARAMETRY DETEKCJI
-    def hsbPupil_1Change(self , value):
-        self.ui.lbl_pupil1.setText( str(value) )
-    def hsbPupil_2Change(self , value):
-        self.ui.lbl_pupil2.setText( str(value) )
-    def hsbPupil_3Change(self , value):
-        self.ui.lbl_pupil3.setText( str(value) )
-    def hsbGlint_1Change(self , value):
-        self.ui.lbl_glint1.setText( str(value) )
-    def hsbGlint_2Change(self , value):
-        self.ui.lbl_glint2.setText( str(value) )
-    def hsbGlint_3Change(self , value):
-        self.ui.lbl_glint3.setText( str(value) )
+    def hsbPupil_1Change(self, value):
+        self.ui.lbl_pupil1.setText(str(value))
+    def hsbPupil_2Change(self, value):
+        self.ui.lbl_pupil2.setText(str(value))
+    def hsbPupil_3Change(self, value):
+        self.ui.lbl_pupil3.setText(str(value))
+    def hsbGlint_1Change(self, value):
+        self.ui.lbl_glint1.setText(str(value))
+    def hsbGlint_2Change(self, value):
+        self.ui.lbl_glint2.setText(str(value))
+    def hsbGlint_3Change(self, value):
+        self.ui.lbl_glint3.setText(str(value))
         
 ############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH        
-    def pupilDetectionUpdate(self , frame , gray):
+    def pupilDetectionUpdate(self, frame, image):
         
         pupilThreshold1 = self.ui.hsb_pupil1.value()
         pupilThreshold2 = self.ui.hsb_pupil2.value()
         pupilThreshold3 = self.ui.hsb_pupil3.value()
         
-        thresholds = [cv2.THRESH_OTSU , cv2.THRESH_BINARY , cv2.THRESH_TOZERO , cv2.THRESH_TRUNC]
+        thresholds = ['otsu', 'bin', 'zero', 'trunc']
         
-        ret, black1 = cv2.threshold(gray , pupilThreshold3 , pupilThreshold1 , thresholds[pupilThreshold2])
+        black1 = threshold(image, thresh_v=pupilThreshold3, 
+                           max_v=pupilThreshold1, 
+                           thresh_type=thresholds[pupilThreshold2])
         
         where_pupil = pupil(black1)
         if where_pupil != None:
@@ -271,7 +246,7 @@ class MyForm(QtGui.QMainWindow):
                     
         cv2.imshow('pupil_detection', black1)
             
-    def blackAndWhiteUpdate(self , frame , gray):
+    def blackAndWhiteUpdate(self, frame, gray):
         
         glintThreshold1 = self.ui.hsb_glint1.value()
         glintThreshold2 = self.ui.hsb_glint2.value()
@@ -295,6 +270,7 @@ class MyForm(QtGui.QMainWindow):
 ##########################################################
 
 if __name__ == "__main__":
+    import sys
     app = QtGui.QApplication(sys.argv)
     myapp = MyForm()
     myapp.show()

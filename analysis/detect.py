@@ -43,33 +43,33 @@ def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
         where = np.array([where[i][0] for i in xrange(where.shape[0])])
     return where
 
-def pupil(image):
+def pupil(image, dp=1, minDist=100, param1=50, param2=10, minRadius=20, 
+          maxRadius=70):
     '''
     TO DO!
     '''
-    circles = cv2.HoughCircles(image, cv2.cv.CV_HOUGH_GRADIENT, 1, 100, 
-                               param1=50, param2=10, minRadius=20, maxRadius=70)
+    circles = cv2.HoughCircles(image, cv2.cv.CV_HOUGH_GRADIENT, dp, minDist, 
+                               param1=param1, param2=param2, 
+                               minRadius=minRadius, maxRadius=maxRadius)
     if circles != None:
         circles = np.uint16(np.around(circles))[0] 
     return circles
 
 if __name__ == '__main__':
-    from analysis.processing import threshold, gray2bgr, bgr2gray
+    from analysis.processing import threshold, gray2bgr, bgr2gray, mark
 
     im_gray = cv2.imread('examples/eyeIR.png', 0)#invoke from main folder
 
     where_glint = glint(im_gray)
     
-    im_gray = threshold(im_gray, thresh_v=73)
-    where_pupil = pupil(im_gray)
+    im_bw = threshold(im_gray, thresh_v=73)
+    where_pupil = pupil(im_bw)
 
     im = gray2bgr(im_gray)
     
-    for cor in where_glint:
-        cv2.circle(im, tuple(cor), 10, (0, 0, 255), 3)
-
-    for cor in where_pupil:
-        cv2.circle(im, tuple(cor[:2]), cor[2], (255, 0 , 0), 3)
+    mark(im, where_glint)
+    
+    mark(im, where_pupil, color='blue')
     
     while(1):
         cv2.imshow('Pupil(blue) and glint(red) detection, exit with "q" or "esc"', im)
