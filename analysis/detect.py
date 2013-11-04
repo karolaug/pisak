@@ -43,12 +43,14 @@ def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
         where = np.array([where[i][0] for i in xrange(where.shape[0])])
     return where
 
-def pupil(image):
+def pupil(image, dp=1, minDist=100, param1=50, param2=10, minRadius=20, 
+          maxRadius=70):
     '''
     TO DO!
     '''
-    circles = cv2.HoughCircles(image, cv2.cv.CV_HOUGH_GRADIENT, 1, 100, 
-                               param1=50, param2=10, minRadius=20, maxRadius=70)
+    circles = cv2.HoughCircles(image, cv2.cv.CV_HOUGH_GRADIENT, dp, minDist, 
+                               param1=param1, param2=param2, 
+                               minRadius=minRadius, maxRadius=maxRadius)
     if circles != None:
         circles = np.uint16(np.around(circles))[0] 
     return circles
