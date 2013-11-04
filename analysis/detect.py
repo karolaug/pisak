@@ -60,8 +60,8 @@ if __name__ == '__main__':
 
     where_glint = glint(im_gray)
     
-    im_gray = threshold(im_gray, thresh_v=73)
-    where_pupil = pupil(im_gray)
+    im_bw = threshold(im_gray, thresh_v=73)
+    where_pupil = pupil(im_bw)
 
     im = gray2bgr(im_gray)
     
