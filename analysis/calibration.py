@@ -20,17 +20,9 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-def find_purkinje(purkinje1, purkinje2):
-    '''
-    Find virtual purkinje image in a two IR LED setting.
+from analysis.processing import mark
 
-    Parameters:
-    -----------
-    purkinje1 - tuple of x, y being the coordinates of first purkinje image
-    purkinje2 - as above but of the second purkinje image
-    '''
-    purkinje = tuple(sum(coord)/2 for coord in zip(purkinje1, purkinje2))
-    return purkinje
+def 
 
 if __name__ == '__main__':
     '''to do!'''

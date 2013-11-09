@@ -116,6 +116,23 @@ def mark(image, where, radius=10, color='red', thickness=3):
                 radius = coordinates[2]
             cv2.circle(image, (y, x), radius, colors[color], thickness)
 
+def find_purkinje(purkinje1, purkinje2):
+    '''
+    Find virtual purkinje image in a two IR LED setting.
+    Simple finding of the middle between two points.
+
+    Parameters:
+    -----------
+    purkinje1 - tuple of x, y being the coordinates of first purkinje image
+    purkinje2 - as above but of the second purkinje image
+
+    Retruns:
+    --------
+    A tuple(x, y) which are the coordinates of the middle between purkinj1 and purkinje2. 
+    '''
+    purkinje = tuple(sum(coord)/2 for coord in zip(purkinje1, purkinje2))
+    return purkinje
+
 if __name__ == '__main__':
     im = cv2.imread('examples/eyeIR.png', -1)
 
