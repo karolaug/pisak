@@ -22,7 +22,7 @@
 
 import cv2
 import numpy as np
-from analysis.processing import mark
+from analysis.processing import colors
 
 def get_resolution():#for use only if PySide is not in use, it's there already
     '''
@@ -45,27 +45,46 @@ def get_resolution():#for use only if PySide is not in use, it's there already
     height = int(screen.split()[9][:-1])
     return (width, height)
 
-def create_image(name, screen_size=None):
+screen_size = get_resolution()
+
+base_image = np.zeros((screen_size[1], screen_size[0], 3), np.uint8)
+
+def draw_circle(where_mark, radius, color='red', image=base_image):
     '''
-    Creates a fullscreen image for calibration purposes.
+    Clears the image and draws a new circle.
 
     Parameters:
     -----------
-    name - name of the window, will be displayed at the top of the window
-    screen_size - tuple(width, height)
+    where_mark - where is to be placed new mark
+    radius - radius of the mark
+    color - color of the mark, allowed are keys from analysis.processing colors dictionary, as of now it is red, green or blue
 
     Returns:
     --------
-    don't know yet;)
+    image as np.array of shape (height, width, 3) with the drawn circle
     '''
-    window = cv2.namedWindow(str(name))
-    if screen_size is None:
-        screen_size = get_resolution()
-    image = np.zeros((screen_size[1], screen_size[0], 3), np.uint8)
-    
+    mod_image = image.copy()
+    cv2.circle(mod_image, where_mark, radius, colors[color], thickness=10)
+    return mod_image
 
+def calibration(with_purkinje=False):
+    '''
+    Displays a set of points to look at for calibration.
 
-def pointers(image, number, size_diff):
+    Parameters:
+    -----------
+    with_purkinje - If with_purkinje=True, additional dictionary is returned
+    with vector distances of virtual purkinje image and the estimated middle
+    of retina.
+
+    Returns:
+    --------
+    Dictionary of tuples being the cooridnates of the estimated middle of
+    retina while looking at different points on the screen.
+
+    Additional dictionary of vector distances if with_purkinje=True.
+    '''
+
     
 
 
