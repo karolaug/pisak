@@ -103,18 +103,18 @@ def mark(image, where, radius=10, color='red', thickness=3):
     Parameters:
     -----------
     image - 3d array depicting the original image that is to be marked, needs to be in three scale color
-    where - array of sets of coordinates(y, x or y, x, radius) of the object
+    where - array of sets of coordinates(x, y or x, y, radius) of the object
     radius - set same radius for all objects, if a set of coordinates has a third value this will be overruled
     color - color of circles marking the object, possible: 'blue', 'green' or 'red'
     thickness - thickness of the circle
     '''
     if where != None:
         for coordinates in where:
-            x = coordinates[1]
-            y = coordinates[0]
+            y = coordinates[1]
+            x = coordinates[0]
             if len(coordinates) == 3:
                 radius = coordinates[2]
-            cv2.circle(image, (y, x), radius, colors[color], thickness)
+            cv2.circle(image, (x, y), radius, colors[color], thickness)
 
 def find_purkinje(purkinje1, purkinje2):
     '''
