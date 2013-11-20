@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 #    This file is part of eyetracker-ng.
@@ -17,12 +16,31 @@
 #    along with eyetracker-ng. If not, see <http://www.gnu.org/licenses/>.
 
 # authors: Sasza Kijek, Karol Augustin, Tomasz Spustek
-# e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
+# e-mail: saszasasha@gmail.com
 # University of Warsaw 2013
 
+import cv2
+import numpy as np
 from glob import iglob
 
+def grabFrame(cap=None):
+    '''
+    To do
+    '''
+    if cap == None:
+        im = self.im[self.index]
+        im = cv2.resize(im,(320,240))
+    else:
+        try:
+            ret, im = self.cap.read()
+        except:                             # KONIECZNIE TRZEBA TU WSTAWIĆ TYP WYJĄTKU!!!
+            print 'Wrong capture stream.'
+    return im
+    
 def lookForCameras():
+    '''
+    To do
+    '''
     listOfCameras = {''.join(['Camera_', str(i+1)]) : i 
                      for i, cam in enumerate(iglob('/dev/video*'))}
     listOfCameras['dummy'] = None

@@ -25,9 +25,11 @@ import numpy as np
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from camera.camera_lookup import lookForCameras
-from analysis.detect import pupil, glint
+from analysis.detect import pupil , glint
 from analysis.processing import threshold , imageFlipMirror , mark
+
+from camera.display import displayPupil , displayGlint , displayImage
+from camera.capture import grabFrame , lookForCameras
 
 from gui.graphical import Ui_StartingWindow
 
@@ -55,7 +57,7 @@ class MyForm(QtGui.QMainWindow):
 
         self.mirrored = 0
         self.fliped = 0
-        self.advanced = 0                                   # flaga odnośnie zaawansowanych ustawień
+        self.advanced = 0
         
         self.ui.lbl_pupil1.setText(str(self.ui.hsb_pupil1.value()))
         self.ui.lbl_pupil2.setText(str(self.ui.hsb_pupil2.value()))
@@ -64,8 +66,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint2.setText(str(self.ui.hsb_glint2.value()))
         self.ui.lbl_glint3.setText(str(self.ui.hsb_glint3.value()))
         
-        self.timer = QtCore.QBasicTimer() # czy tego się nie da do tego startGui wywalić?
-        self.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
+        self.ui.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
 
         ################################### DOWIĄZANIA ZDARZEŃ
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
@@ -81,23 +82,29 @@ class MyForm(QtGui.QMainWindow):
         self.ui.hsb_glint2.valueChanged[int].connect(self.hsbGlint_2Change)
         self.ui.hsb_glint3.valueChanged[int].connect(self.hsbGlint_3Change)
 
-########################################### CYKANIE ZEGARA
+########################################### CYKANIE ZEGARA #
     def timerEvent(self, event):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
-            self.imageCamera()
+            if self.selectedCameraName == 'dummy':
+                im = grabFrame()
+            else:
+                im = grabFrame(cap)
+            im = imageFlipMirror(im , self.mirrored , self.fliped)
+            displayImage(im , 'gui')
+            
         else:                       # update dwóch okien w ustawieniach zaawansowanych
             if self.selectedCameraName == 'dummy':
                 pass
             else:
-                ret, im = self.cap.read()
+                im = grabFrame(cap , )
                 im = imageFlipMirror(im , self.mirrored , self.fliped)
                 gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
                 
-                self.pupilDetectionUpdate(im, gray)
-                self.blackAndWhiteUpdate(im, gray)
+                self.pupilDetectionUpdate(gray)
+                self.blackAndWhiteUpdate(gray)
 
-################################ METODA ZMIENIAJĄCA KAMERĘ
+################################ METODA ZMIENIAJĄCA KAMERĘ #
     def cameraChange(self):
         self.timer.stop()
         if self.selectedCameraName == 'dummy':
@@ -130,7 +137,6 @@ class MyForm(QtGui.QMainWindow):
             self.fliped = 1
         else:
             self.fliped = 0
-                                                                        # ODBIJANIE WYMAGA REFAKTORYZACJI - WIEM
 
 ######################### METODA ZMIENIAJĄCA ROZDZIELCZOŚĆ #
     def resolutionChange(self):
@@ -139,12 +145,9 @@ class MyForm(QtGui.QMainWindow):
 		self.w = self.resolutions_w[index]
         
 ############################# UMIESZCZENIE OBRAZU Z KAMERY #
-    def imageCamera(self):
-        if self.selectedCameraName == 'dummy':
-            im = self.im[self.index]
-            im = cv2.resize(im,(320,240))
-        else:
-            ret, im = self.cap.read()
+    def imageCamera(self , im):
+        
+        im = grabFrame(self.selectedCameraName , self.cap , )
         
         im = imageFlipMirror(im , self.mirrored , self.fliped)
         
@@ -195,7 +198,7 @@ class MyForm(QtGui.QMainWindow):
             self.ui.btn_start.setEnabled(True)
             self.advanced = 0
             
-            cv2.destroyAllWindows() # dopisac konkretne okna
+            cv2.destroyAllWindows()
         
 ######### OBSŁUGA SUWAKÓW ZMIENIAJĄCYCH PARAMETRY DETEKCJI #
     def hsbPupil_1Change(self, value):
@@ -211,39 +214,14 @@ class MyForm(QtGui.QMainWindow):
     def hsbGlint_3Change(self, value):
         self.ui.lbl_glint3.setText(str(value))
         
-############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH       
-    def pupilDetectionUpdate(self, frame, image):
-        
+############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH #    
+    def pupilDetectionUpdate(self, image):
         pupilThresholds = [self.ui.hsb_pupil1.value() , self.ui.hsb_pupil2.value() , self.ui.hsb_pupil3.value()]
-        
-        black1 = findPupil(pupilThresholds)
-                    
-                    
-                    
-                    
-        cv2.imshow('pupil_detection', black1)
+        displayPupil(image , pupilThresholds)
             
-    def blackAndWhiteUpdate(self, frame, gray):
-        
-        glintThreshold1 = self.ui.hsb_glint1.value()
-        glintThreshold2 = self.ui.hsb_glint2.value()
-        glintThreshold3 = self.ui.hsb_glint3.value()
-        
-        where_glint = glint(gray)
-        if where_glint != None:
-            gray = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-            for cor in where_glint:
-                cv2.circle(gray, tuple(cor), 10, (255, 0, 0), 3)
-                
-        cv2.imshow('glint_detection', gray)
-        
-        #glintThreshold1 = self.ui.hsb_glint1.value()
-        #glintThreshold2 = self.ui.hsb_glint2.value()
-        #glintThreshold3 = self.ui.hsb_glint3.value()
-
-        #where_glint = glint(gray)
-        #mark(gray, where_glint)
-
+    def blackAndWhiteUpdate(self, image):
+        glintThresholds = [self.ui.hsb_glint1.value() , self.ui.hsb_glint2.value() , self.ui.hsb_glint3.value()]
+        displayGlint(image , glintThresholds)
 
 #################################### URUCHOMIENIE PROGRAMU
     def startEyetracker(self):

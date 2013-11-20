@@ -201,6 +201,8 @@ class Ui_StartingWindow(object):
         self.btn_save.setIconSize(QtCore.QSize(24, 24))
         self.btn_save.setObjectName(_fromUtf8("btn_save"))
         
+        self.timer = QtCore.QBasicTimer()
+        
         StartingWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(StartingWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
