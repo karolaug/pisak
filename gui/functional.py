@@ -27,8 +27,10 @@ from PyQt4 import QtCore, QtGui
 
 from camera.camera_lookup import lookForCameras
 from analysis.detect import pupil, glint
-from analysis.processing import threshold
-from gui.eyetrackerStartGui import Ui_StartingWindow
+from analysis.processing import threshold , imageFlipMirror , mark
+
+from gui.graphical import Ui_StartingWindow
+
 
 class MyForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -62,7 +64,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint2.setText(str(self.ui.hsb_glint2.value()))
         self.ui.lbl_glint3.setText(str(self.ui.hsb_glint3.value()))
         
-        self.timer = QtCore.QBasicTimer() #czy tego się nie da do tego startGui wywalić?
+        self.timer = QtCore.QBasicTimer() # czy tego się nie da do tego startGui wywalić?
         self.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
 
         ################################### DOWIĄZANIA ZDARZEŃ
@@ -89,7 +91,7 @@ class MyForm(QtGui.QMainWindow):
                 pass
             else:
                 ret, im = self.cap.read()
-                im = self.imageFlipMirror(im)
+                im = imageFlipMirror(im , self.mirrored , self.fliped)
                 gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
                 
                 self.pupilDetectionUpdate(im, gray)
@@ -115,14 +117,14 @@ class MyForm(QtGui.QMainWindow):
 
         self.timer.start(100 , self)
 
-######################### METODA ODBIJAJĄCA OBRAZ GÓRA-DÓŁ
+######################### METODA ODBIJAJĄCA OBRAZ GÓRA-DÓŁ #
     def imageMirror(self):
         if self.mirrored == 0:
             self.mirrored = 1
         else:
             self.mirrored = 0
 
-####################### METODA ODBIJAJĄCA OBRAZ LEWO-PRAWO
+####################### METODA ODBIJAJĄCA OBRAZ LEWO-PRAWO #
     def imageFlip(self):
         if self.fliped == 0:
             self.fliped = 1
@@ -130,13 +132,13 @@ class MyForm(QtGui.QMainWindow):
             self.fliped = 0
                                                                         # ODBIJANIE WYMAGA REFAKTORYZACJI - WIEM
 
-######################### METODA ZMIENIAJĄCA ROZDZIELCZOŚĆ
+######################### METODA ZMIENIAJĄCA ROZDZIELCZOŚĆ #
     def resolutionChange(self):
 		index  = self.ui.cmb_setResolution.currentIndex()
 		self.h = self.resolutions_h[index]
 		self.w = self.resolutions_w[index]
         
-############################# UMIESZCZENIE OBRAZU Z KAMERY
+############################# UMIESZCZENIE OBRAZU Z KAMERY #
     def imageCamera(self):
         if self.selectedCameraName == 'dummy':
             im = self.im[self.index]
@@ -144,7 +146,7 @@ class MyForm(QtGui.QMainWindow):
         else:
             ret, im = self.cap.read()
         
-        im = self.imageFlipMirror(im)
+        im = imageFlipMirror(im , self.mirrored , self.fliped)
         
         result  = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
         pixmap  = QtGui.QPixmap.fromImage(result)
@@ -153,24 +155,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui.graphicsView.fitInView(pixItem)
         self.ui.graphicsScene.update()
         self.ui.graphicsView.show()
-
-###################### ACTUALLY FLIP AND/OR MIRROR AN IMAGE
-    def imageFlipMirror(self , im):
-        if self.mirrored == 1 and self.fliped == 0:
-            im[:,:,0] = cv2.flip(im[:,:,0], 1)
-            im[:,:,1] = cv2.flip(im[:,:,1], 1)
-            im[:,:,2] = cv2.flip(im[:,:,2], 1)
-        elif self.mirrored == 0 and self.fliped == 1:
-            im[:,:,0] = cv2.flip(im[:,:,0], 0)
-            im[:,:,1] = cv2.flip(im[:,:,1], 0)
-            im[:,:,2] = cv2.flip(im[:,:,2], 0)           
-        elif self.mirrored == 1 and self.fliped == 1:
-            im[:,:,0] = cv2.flip(im[:,:,0], -1)
-            im[:,:,1] = cv2.flip(im[:,:,1], -1)
-            im[:,:,2] = cv2.flip(im[:,:,2], -1)   
-        return im
     
-### FUNKCJA WŁĄCZAJĄCA/WYŁACZAJĄCA ZAAWANSOWANE USTAWIENIA
+### FUNKCJA WŁĄCZAJĄCA/WYŁACZAJĄCA ZAAWANSOWANE USTAWIENIA #
     def startAdvancedSettings(self):
         if self.advanced == 0:
             self.ui.hsb_glint1.setEnabled(True)
@@ -209,9 +195,9 @@ class MyForm(QtGui.QMainWindow):
             self.ui.btn_start.setEnabled(True)
             self.advanced = 0
             
-            cv2.destroyAllWindows() #dopisac konkretne okna
+            cv2.destroyAllWindows() # dopisac konkretne okna
         
-######### OBSŁUGA SUWAKÓW ZMIENIAJĄCYCH PARAMETRY DETEKCJI
+######### OBSŁUGA SUWAKÓW ZMIENIAJĄCYCH PARAMETRY DETEKCJI #
     def hsbPupil_1Change(self, value):
         self.ui.lbl_pupil1.setText(str(value))
     def hsbPupil_2Change(self, value):
@@ -225,24 +211,15 @@ class MyForm(QtGui.QMainWindow):
     def hsbGlint_3Change(self, value):
         self.ui.lbl_glint3.setText(str(value))
         
-############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH        
+############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH       
     def pupilDetectionUpdate(self, frame, image):
         
-        pupilThreshold1 = self.ui.hsb_pupil1.value()
-        pupilThreshold2 = self.ui.hsb_pupil2.value()
-        pupilThreshold3 = self.ui.hsb_pupil3.value()
+        pupilThresholds = [self.ui.hsb_pupil1.value() , self.ui.hsb_pupil2.value() , self.ui.hsb_pupil3.value()]
         
-        thresholds = ['otsu', 'bin', 'zero', 'trunc']
-        
-        black1 = threshold(image, thresh_v=pupilThreshold3, 
-                           max_v=pupilThreshold1, 
-                           thresh_type=thresholds[pupilThreshold2])
-        
-        where_pupil = pupil(black1)
-        if where_pupil != None:
-            black1 = cv2.cvtColor(black1, cv2.COLOR_GRAY2BGR)
-            for cor in where_pupil:
-                cv2.circle(black1, tuple(cor[:2]), cor[2], (0, 0, 255), 3) #funkcja mark w analysis.processing
+        black1 = findPupil(pupilThresholds)
+                    
+                    
+                    
                     
         cv2.imshow('pupil_detection', black1)
             

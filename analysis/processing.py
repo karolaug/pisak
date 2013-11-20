@@ -64,6 +64,30 @@ def threshold(image, thresh_v=25, max_v=255, thresh_type='trunc'):
                                            thresholds[thresh_type])
     return thresholded_image
 
+def imageFlipMirror(im,mirrored,fliped):
+    '''
+    Flip and/or mirror the given image.
+    
+    Parameters:
+    -----------
+    im - 2D array depicting an image as an numpy array
+    mirrored - self explanatory boolean parameter (left - right)
+    fliped - self explanatory boolean parameter (top - bottom)
+    '''
+    
+    if mirrored == 1 and fliped == 0:
+        im[:,:,0] = cv2.flip(im[:,:,0], 1)
+        im[:,:,1] = cv2.flip(im[:,:,1], 1)
+        im[:,:,2] = cv2.flip(im[:,:,2], 1)
+    elif mirrored == 0 and fliped == 1:
+        im[:,:,0] = cv2.flip(im[:,:,0], 0)
+        im[:,:,1] = cv2.flip(im[:,:,1], 0)
+        im[:,:,2] = cv2.flip(im[:,:,2], 0)           
+    elif mirrored == 1 and fliped == 1:
+        im[:,:,0] = cv2.flip(im[:,:,0], -1)
+        im[:,:,1] = cv2.flip(im[:,:,1], -1)
+        im[:,:,2] = cv2.flip(im[:,:,2], -1)   
+    return im
 
 def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian', 
                       thresh_type='bin', blockSize=33, 
@@ -117,9 +141,13 @@ def mark(image, where, radius=10, color='red', thickness=3):
             cv2.circle(image, (y, x), radius, colors[color], thickness)
 
 if __name__ == '__main__':
-    im = cv2.imread('examples/eyeIR.png', -1)
+    im = cv2.imread('pictures/eyeIR.png', -1)
 
-    marked = cv2.imread('examples/eyeIR.png', -1)
+    marked = im.copy()
+    
+    im_fliped = imageFlipMirror(im,0,1)
+    
+    #marked = cv2.imread('examples/eyeIR.png', -1)
 
     im_gray = bgr2gray(im)
 
@@ -141,7 +169,8 @@ if __name__ == '__main__':
             'converted back to 3 channel' : im_back, 
             'thresholded' : im_thresh, 
             'thresholded adaptively' : im_thresh_adapt, 
-            'Marked center of image' : marked}
+            'Marked center of image' : marked,
+            'Fliped image' : im_fliped}
 
     while(1):
         [cv2.imshow(descp, pic) for descp, pic in pics.iteritems()]
