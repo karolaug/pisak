@@ -20,17 +20,73 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-def find_purkinje(purkinje1, purkinje2):
+import cv2
+import numpy as np
+from analysis.processing import colors
+
+def get_resolution():#for use only if PySide is not in use, it's there already
     '''
-    Find virtual purkinje image in a two IR LED setting.
+    Only to be used in Linux and when PySide is not in use, as there 
+    the size of the screen can be queried from 
+    "app = QtGui.QApplication(sys.argv)" 
+    with 
+    "app.dektop().screenGeometry()".
+
+    Function uses Linux command "xrandr" to query the system about current
+    resoulution.
+
+    Returns:
+    --------
+    tuple(width, height) - where width and height are "int"
+    '''
+    from os import popen
+    screen = popen('xrandr -q').readlines()[0] #to do: mistake-proof parsing
+    width = int(screen.split()[7])
+    height = int(screen.split()[9][:-1])
+    return (width, height)
+
+screen_size = get_resolution()
+
+base_image = np.zeros((screen_size[1], screen_size[0], 3), np.uint8)
+
+def draw_circle(where_mark, radius, color='red', image=base_image):
+    '''
+    Clears the image and draws a new circle.
 
     Parameters:
     -----------
-    purkinje1 - tuple of x, y being the coordinates of first purkinje image
-    purkinje2 - as above but of the second purkinje image
+    where_mark - where is to be placed new mark
+    radius - radius of the mark
+    color - color of the mark, allowed are keys from analysis.processing colors dictionary, as of now it is red, green or blue
+
+    Returns:
+    --------
+    image as np.array of shape (height, width, 3) with the drawn circle
     '''
-    purkinje = tuple(sum(coord)/2 for coord in zip(purkinje1, purkinje2))
-    return purkinje
+    mod_image = image.copy()
+    cv2.circle(mod_image, where_mark, radius, colors[color], thickness=10)
+    return mod_image
+
+def calibration(with_purkinje=False):
+    '''
+    Displays a set of points to look at for calibration.
+
+    Parameters:
+    -----------
+    with_purkinje - If with_purkinje=True, additional dictionary is returned
+    with vector distances of virtual purkinje image and the estimated middle
+    of retina.
+
+    Returns:
+    --------
+    Dictionary of tuples being the cooridnates of the estimated middle of
+    retina while looking at different points on the screen.
+
+    Additional dictionary of vector distances if with_purkinje=True.
+    '''
+
+    
+
 
 if __name__ == '__main__':
     '''to do!'''
