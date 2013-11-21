@@ -25,4 +25,5 @@ from PyQt4 import QtCore, QtGui
 import sys
 
 if __name__ == "__main__":
-    eyetracker.gui.functional._startEyetracker(sys.argv)
+    exit_code = eyetracker.gui.functional._startEyetracker(sys.argv)
+    sys.exit(exit_code)
