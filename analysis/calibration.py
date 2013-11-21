@@ -22,7 +22,7 @@
 
 import cv2
 import numpy as np
-from analysis.processing import colors
+from processing import colors
 
 def get_resolution():#for use only if PySide is not in use, it's there already
     '''

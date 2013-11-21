@@ -22,10 +22,10 @@
 import cv2
 import numpy as np
 
-from analysis.detect import pupil, glint
-from analysis.processing import threshold , mark
+from ..analysis.detect import pupil, glint
+from ..analysis.processing import threshold , mark
 
-from gui.functional import imageCamera
+from ..gui.functional import imageCamera
 
 colors = {'blue' : (255, 0, 0), 'green' : (0, 255, 0), 'red' : (0, 0, 255)}
 

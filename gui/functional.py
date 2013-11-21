@@ -25,13 +25,13 @@ import numpy as np
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from analysis.detect import pupil , glint
-from analysis.processing import threshold , imageFlipMirror , mark
+from ..analysis.detect import pupil , glint
+from ..analysis.processing import threshold , imageFlipMirror , mark
 
-from camera.display import displayPupil , displayGlint , displayImage
-from camera.capture import grabFrame , lookForCameras
+from ..camera.display import displayPupil , displayGlint , displayImage
+from ..camera.capture import grabFrame , lookForCameras
 
-from gui.graphical import Ui_StartingWindow
+from .graphical import Ui_StartingWindow
 
 
 class MyForm(QtGui.QMainWindow):
