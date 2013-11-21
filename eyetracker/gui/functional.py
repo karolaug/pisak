@@ -33,6 +33,7 @@ from ..camera.capture import grabFrame , lookForCameras
 
 from .graphical import Ui_StartingWindow
 
+#################################### URUCHOMIENIE PROGRAMU
 
 class MyForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -231,18 +232,7 @@ class MyForm(QtGui.QMainWindow):
         glint = displayGlint(image , glintThresholds)
         return glint
 
-#################################### URUCHOMIENIE PROGRAMU
-    def startEyetracker(self):
-        #self.im = None      # wywalenie dummy z pamięci
-        #self.cap.release()  # zniszczenie strumienia z kamery
-        
-        # tu trzeba uruchomić program docelowy
-        pass
 ##########################################################
 
 if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    myapp = MyForm()
-    myapp.show()
-    sys.exit(app.exec_())
+    pass
