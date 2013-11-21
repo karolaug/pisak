@@ -120,7 +120,7 @@ class MyForm(QtGui.QMainWindow):
                 displayImage(glint , 'glint_detection')
 
 ############################## METODA ZMIENIAJĄCA ALGORYTM #
-    def self.algorithmChange(self):
+    def algorithmChange(self):
         pass
 ################################ METODA ZMIENIAJĄCA KAMERĘ #
     def cameraChange(self):
