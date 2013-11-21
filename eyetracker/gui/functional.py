@@ -242,12 +242,3 @@ class MyForm(QtGui.QMainWindow):
         return glint
 
 ##########################################################
-
-def _startEyetracker(params):
-    app = QtGui.QApplication(params)
-    myapp = MyForm()
-    myapp.show()
-    return app.exec_()
-
-if __name__ == "__main__":
-    startEyetracker()

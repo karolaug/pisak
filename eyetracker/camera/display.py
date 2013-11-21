@@ -32,16 +32,16 @@ thresholds = {'otsu' : cv2.THRESH_OTSU, 'bin' : cv2.THRESH_BINARY,
               'zero' : cv2.THRESH_TOZERO, 'zero_inv' : cv2.THRESH_TOZERO_INV,
               'trunc' : cv2.THRESH_TRUNC}
 
-def displayGlint(gray , thres):
+def displayGlint(gray, thres):
     '''
     To do
     '''
     where_glint = glint(gray)
     if where_glint != None:
-        gray = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+        color = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
         for cor in where_glint:
-            cv2.circle(gray, tuple(cor), 10, 'blue', 3)
-    return gray
+            cv2.circle(color, tuple(cor), 10, (255, 0, 0), 3)
+    return color
 
 def displayPupil(image , thres):
     '''
@@ -52,10 +52,10 @@ def displayPupil(image , thres):
     if where_pupil != None:
         black1 = cv2.cvtColor(black1, cv2.COLOR_GRAY2BGR)
         for cor in where_pupil:
-            cv2.circle(black1, tuple(cor[:2]), cor[2], 'red', 3)
+            cv2.circle(black1, tuple(cor[:2]), cor[2], (0, 0, 255), 3)
     return black1
 
-def displayImage(self, image , where='new'):
+def displayImage(image , where='new'):
     '''
     To do
     '''
