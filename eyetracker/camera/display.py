@@ -27,7 +27,12 @@ from ..analysis.processing import threshold , mark
 
 colors = {'blue' : (255, 0, 0), 'green' : (0, 255, 0), 'red' : (0, 0, 255)}
 
-def displayGlint(gray):
+thresholds = {'otsu' : cv2.THRESH_OTSU, 'bin' : cv2.THRESH_BINARY, 
+              'bin_inv' : cv2.THRESH_BINARY_INV, 
+              'zero' : cv2.THRESH_TOZERO, 'zero_inv' : cv2.THRESH_TOZERO_INV,
+              'trunc' : cv2.THRESH_TRUNC}
+
+def displayGlint(gray , thres):
     '''
     To do
     '''
@@ -42,7 +47,7 @@ def displayPupil(image , thres):
     '''
     To do
     '''
-    black1 = threshold(image, thresh_v=thres[2], max_v=thres[0], thresh_type=thresholds[thres[1]])
+    black1 = threshold(image, thresh_v=thres[2], max_v=thres[0], thresh_type='trunc')#thresholds[thres[1]])
     where_pupil = pupil(black1)
     if where_pupil != None:
         black1 = cv2.cvtColor(black1, cv2.COLOR_GRAY2BGR)

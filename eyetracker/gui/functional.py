@@ -101,7 +101,7 @@ class MyForm(QtGui.QMainWindow):
                 if self.index == 99:
                     self.index = 0;
             else:
-                im = grabFrame(cap)
+                im = grabFrame(self.cap)
             im = imageFlipMirror(im , self.mirrored , self.fliped)
             self.displayGuiImage(im)
             
@@ -109,7 +109,7 @@ class MyForm(QtGui.QMainWindow):
             if self.selectedCameraName == 'dummy':
                 pass
             else:
-                im = grabFrame(cap)
+                im = grabFrame(self.cap)
                 im = imageFlipMirror(im , self.mirrored , self.fliped)
                 gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
                 
@@ -124,7 +124,7 @@ class MyForm(QtGui.QMainWindow):
         pass
 ################################ METODA ZMIENIAJĄCA KAMERĘ #
     def cameraChange(self):
-        self.timer.stop()
+        self.ui.timer.stop()
         if self.selectedCameraName == 'dummy':
             pass
         else:
@@ -140,7 +140,7 @@ class MyForm(QtGui.QMainWindow):
             self.cap.set(3,320)
             self.cap.set(4,240)
 
-        self.timer.start(100 , self)
+        self.ui.timer.start(100 , self)
 
 ######################### METODA ODBIJAJĄCA OBRAZ GÓRA-DÓŁ #
     def imageMirror(self):

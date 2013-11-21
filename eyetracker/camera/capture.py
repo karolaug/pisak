@@ -32,7 +32,7 @@ def grabFrame(cap=None , index=0 , im=None ):
         im = cv2.resize(im,(320,240))
     else:
         try:
-            ret, im = self.cap.read()
+            ret, im = cap.read()
         except IOError:                             # KONIECZNIE TRZEBA SPRAWDZIĆ TEN TYP WYJĄTKU!!!
             print 'Wrong capture stream.'
             
