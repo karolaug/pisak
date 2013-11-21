@@ -25,8 +25,4 @@ from PyQt4 import QtCore, QtGui
 import sys
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    myapp = eyetracker.gui.functional.MyForm()
-    myapp.show()
-    sys.exit(app.exec_())
-
+    eyetracker.gui.functional._startEyetracker(sys.argv)

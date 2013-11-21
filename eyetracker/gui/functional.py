@@ -74,7 +74,7 @@ class MyForm(QtGui.QMainWindow):
         ################################### DOWIĄZANIA ZDARZEŃ
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
-        self.ui.btn_start.clicked.connect(self.startEyetracker)
+        #self.ui.btn_start.clicked.connect(self.startEyetracker)
         self.ui.btn_settings.clicked.connect(self.startAdvancedSettings)
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
         self.ui.chb_mirror.stateChanged.connect(self.imageMirror)
@@ -234,5 +234,11 @@ class MyForm(QtGui.QMainWindow):
 
 ##########################################################
 
+def _startEyetracker(params):
+    app = QtGui.QApplication(params)
+    myapp = MyForm()
+    myapp.show()
+    sys.exit(app.exec_())
+
 if __name__ == "__main__":
-    pass
+    startEyetracker()
