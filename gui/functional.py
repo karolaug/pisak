@@ -54,6 +54,8 @@ class MyForm(QtGui.QMainWindow):
         self.w = 320
         self.h = 240
         self.selectedCameraName  = 'dummy'
+        self.index = 0
+        self.im = np.load('pickle.npy').astype('uint8')
 
         self.mirrored = 0
         self.fliped = 0
@@ -87,7 +89,10 @@ class MyForm(QtGui.QMainWindow):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
             if self.selectedCameraName == 'dummy':
-                im = grabFrame()
+                im = grabFrame(None , self.index , self.im)
+                self.index += 1
+                if self.index == 99:
+                    self.index = 0;
             else:
                 im = grabFrame(cap)
             im = imageFlipMirror(im , self.mirrored , self.fliped)
@@ -97,7 +102,7 @@ class MyForm(QtGui.QMainWindow):
             if self.selectedCameraName == 'dummy':
                 pass
             else:
-                im = grabFrame(cap , )
+                im = grabFrame(cap)
                 im = imageFlipMirror(im , self.mirrored , self.fliped)
                 gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
                 
@@ -119,7 +124,7 @@ class MyForm(QtGui.QMainWindow):
         self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
         
         if self.selectedCameraName == 'dummy':
-            pass
+            self.index = 0
         else:
             self.cap = cv2.VideoCapture(self.selectedCameraIndex-1)		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
             self.cap.set(3,320)
@@ -148,7 +153,7 @@ class MyForm(QtGui.QMainWindow):
 		self.w = self.resolutions_w[index]
         
 ############################# UMIESZCZENIE OBRAZU Z KAMERY #
-    def displayGuiImage(self, image):
+    def displayGuiImage(self, im):
         '''
         To do
         '''

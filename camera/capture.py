@@ -23,18 +23,19 @@ import cv2
 import numpy as np
 from glob import iglob
 
-def grabFrame(cap=None):
+def grabFrame(cap=None , index=0 , im=None ):
     '''
     To do
     '''
     if cap == None:
-        im = self.im[self.index]
+        im = im[index]
         im = cv2.resize(im,(320,240))
     else:
         try:
             ret, im = self.cap.read()
-        except:                             # KONIECZNIE TRZEBA TU WSTAWIĆ TYP WYJĄTKU!!!
+        except IOError:                             # KONIECZNIE TRZEBA SPRAWDZIĆ TEN TYP WYJĄTKU!!!
             print 'Wrong capture stream.'
+            
     return im
     
 def lookForCameras():
