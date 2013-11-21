@@ -28,7 +28,7 @@ from PyQt4 import QtCore, QtGui
 from ..analysis.detect import pupil , glint
 from ..analysis.processing import threshold , imageFlipMirror , mark
 
-from ..camera.display import displayPupil , displayGlint , displayImage
+from ..camera.display import displayPupil , displayGlint
 from ..camera.capture import grabFrame , lookForCameras
 
 from .graphical import Ui_StartingWindow
@@ -91,7 +91,7 @@ class MyForm(QtGui.QMainWindow):
             else:
                 im = grabFrame(cap)
             im = imageFlipMirror(im , self.mirrored , self.fliped)
-            displayImage(im , 'gui')
+            self.displayImage(im , 'gui')
             
         else:                       # update dwóch okien w ustawieniach zaawansowanych
             if self.selectedCameraName == 'dummy':
@@ -101,8 +101,11 @@ class MyForm(QtGui.QMainWindow):
                 im = imageFlipMirror(im , self.mirrored , self.fliped)
                 gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
                 
-                self.pupilDetectionUpdate(gray)
-                self.blackAndWhiteUpdate(gray)
+                pupil = self.pupilDetectionUpdate(gray)
+                glint = self.blackAndWhiteUpdate(gray)
+                
+                self.displayImage(pupil , 'pupil_detection')
+                self.displayImage(glint , 'glint_detection')
 
 ################################ METODA ZMIENIAJĄCA KAMERĘ #
     def cameraChange(self):
@@ -145,6 +148,19 @@ class MyForm(QtGui.QMainWindow):
 		self.w = self.resolutions_w[index]
         
 ############################# UMIESZCZENIE OBRAZU Z KAMERY #
+    def displayImage(self, image , where='new'):
+        '''
+        To do
+        '''
+        if where == 'new':
+            cv2.namedWindow('new' , flags=cv2.CV_WINDOW_AUTOSIZE)
+            cv2.imshow( where , image)
+        elif where == 'gui':
+            imageCamera()
+        else:
+            cv2.imshow( where , image)
+
+
     def imageCamera(self , im):
         
         im = grabFrame(self.selectedCameraName , self.cap , )
@@ -217,11 +233,13 @@ class MyForm(QtGui.QMainWindow):
 ############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH #    
     def pupilDetectionUpdate(self, image):
         pupilThresholds = [self.ui.hsb_pupil1.value() , self.ui.hsb_pupil2.value() , self.ui.hsb_pupil3.value()]
-        displayPupil(image , pupilThresholds)
+        pupil = displayPupil(image , pupilThresholds)
+        return pupil
             
     def blackAndWhiteUpdate(self, image):
         glintThresholds = [self.ui.hsb_glint1.value() , self.ui.hsb_glint2.value() , self.ui.hsb_glint3.value()]
-        displayGlint(image , glintThresholds)
+        glint = displayGlint(image , glintThresholds)
+        return glint
 
 #################################### URUCHOMIENIE PROGRAMU
     def startEyetracker(self):

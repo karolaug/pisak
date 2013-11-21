@@ -1,2 +1,2 @@
 from . import (functional,
-               grapical)
+               graphical)
