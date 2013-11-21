@@ -59,9 +59,10 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setResolution.setCurrentIndex(1)
         self.w = 320
         self.h = 240
-        self.selectedCameraName  = 'dummy'
-        self.index = 0
-        self.im = np.load('pickle.npy').astype('uint8')
+        self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
+        self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
+        #self.index = 0
+        #self.im = np.load('pickle.npy').astype('uint8')
 
         self.mirrored = 0
         self.fliped = 0
@@ -95,29 +96,20 @@ class MyForm(QtGui.QMainWindow):
     def timerEvent(self, event):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
-            if self.selectedCameraName == 'dummy':
-                im = grabFrame(None , self.index , self.im)
-                self.index += 1
-                if self.index == 99:
-                    self.index = 0;
-            else:
-                im = grabFrame(self.cap)
+            im = grabFrame(self.cap)
             im = imageFlipMirror(im , self.mirrored , self.fliped)
             self.displayGuiImage(im)
             
         else:                       # update dwóch okien w ustawieniach zaawansowanych
-            if self.selectedCameraName == 'dummy':
-                pass
-            else:
-                im = grabFrame(self.cap)
-                im = imageFlipMirror(im , self.mirrored , self.fliped)
-                gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-                
-                pupil = self.pupilDetectionUpdate(gray)
-                glint = self.blackAndWhiteUpdate(gray)
-                
-                displayImage(pupil , 'pupil_detection')
-                displayImage(glint , 'glint_detection')
+            im = grabFrame(self.cap)
+            im = imageFlipMirror(im , self.mirrored , self.fliped)
+            gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+            
+            pupil = self.pupilDetectionUpdate(gray)
+            glint = self.blackAndWhiteUpdate(gray)
+            
+            displayImage(pupil , 'pupil_detection')
+            displayImage(glint , 'glint_detection')
 
 ############################## METODA ZMIENIAJĄCA ALGORYTM #
     def algorithmChange(self):
