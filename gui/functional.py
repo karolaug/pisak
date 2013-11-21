@@ -28,7 +28,7 @@ from PyQt4 import QtCore, QtGui
 from ..analysis.detect import pupil , glint
 from ..analysis.processing import threshold , imageFlipMirror , mark
 
-from ..camera.display import displayPupil , displayGlint
+from ..camera.display import displayPupil , displayGlint , displayImage
 from ..camera.capture import grabFrame , lookForCameras
 
 from .graphical import Ui_StartingWindow
@@ -91,7 +91,7 @@ class MyForm(QtGui.QMainWindow):
             else:
                 im = grabFrame(cap)
             im = imageFlipMirror(im , self.mirrored , self.fliped)
-            self.displayImage(im , 'gui')
+            self.displayGuiImage(im)
             
         else:                       # update dwóch okien w ustawieniach zaawansowanych
             if self.selectedCameraName == 'dummy':
@@ -104,8 +104,8 @@ class MyForm(QtGui.QMainWindow):
                 pupil = self.pupilDetectionUpdate(gray)
                 glint = self.blackAndWhiteUpdate(gray)
                 
-                self.displayImage(pupil , 'pupil_detection')
-                self.displayImage(glint , 'glint_detection')
+                displayImage(pupil , 'pupil_detection')
+                displayImage(glint , 'glint_detection')
 
 ################################ METODA ZMIENIAJĄCA KAMERĘ #
     def cameraChange(self):
@@ -148,25 +148,10 @@ class MyForm(QtGui.QMainWindow):
 		self.w = self.resolutions_w[index]
         
 ############################# UMIESZCZENIE OBRAZU Z KAMERY #
-    def displayImage(self, image , where='new'):
+    def displayGuiImage(self, image):
         '''
         To do
         '''
-        if where == 'new':
-            cv2.namedWindow('new' , flags=cv2.CV_WINDOW_AUTOSIZE)
-            cv2.imshow( where , image)
-        elif where == 'gui':
-            imageCamera()
-        else:
-            cv2.imshow( where , image)
-
-
-    def imageCamera(self , im):
-        
-        im = grabFrame(self.selectedCameraName , self.cap , )
-        
-        im = imageFlipMirror(im , self.mirrored , self.fliped)
-        
         result  = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
         pixmap  = QtGui.QPixmap.fromImage(result)
         pixItem = QtGui.QGraphicsPixmapItem(pixmap)

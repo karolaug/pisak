@@ -50,5 +50,13 @@ def displayPupil(image , thres):
             cv2.circle(black1, tuple(cor[:2]), cor[2], 'red', 3)
     return black1
 
+def displayImage(self, image , where='new'):
+    '''
+    To do
+    '''
+    if where == 'new':
+        cv2.namedWindow('new' , flags=cv2.CV_WINDOW_AUTOSIZE)
+    cv2.imshow( where , image)
+            
 if __name__ == '__main__':
     pass
