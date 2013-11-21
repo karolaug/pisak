@@ -47,6 +47,10 @@ class MyForm(QtGui.QMainWindow):
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
         
+        self.algorithms = ['NESW']
+        for algorithm in self.algorithms:
+            self.ui.cmb_setAlgorithm.addItem(algorithm)
+        
         self.resolutions_w = [160,320,640,1280]
         self.resolutions_h = [120,240,480,720]
         for w, h in izip(self.resolutions_w, self.resolutions_h):
@@ -75,6 +79,7 @@ class MyForm(QtGui.QMainWindow):
         ################################### DOWIĄZANIA ZDARZEŃ
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
+        self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)
         #self.ui.btn_start.clicked.connect(self.startEyetracker)
         self.ui.btn_settings.clicked.connect(self.startAdvancedSettings)
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
@@ -114,6 +119,9 @@ class MyForm(QtGui.QMainWindow):
                 displayImage(pupil , 'pupil_detection')
                 displayImage(glint , 'glint_detection')
 
+############################## METODA ZMIENIAJĄCA ALGORYTM #
+    def self.algorithmChange(self):
+        pass
 ################################ METODA ZMIENIAJĄCA KAMERĘ #
     def cameraChange(self):
         self.timer.stop()
