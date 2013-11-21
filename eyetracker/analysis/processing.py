@@ -150,7 +150,7 @@ def find_purkinje(purkinje1, purkinje2):
     purkinje1 - tuple of x, y being the coordinates of first purkinje image
     purkinje2 - as above but of the second purkinje image
 
-    Retruns:
+    Returns:
     --------
     A tuple(x, y) which are the coordinates of the middle between purkinj1 and purkinje2. 
     '''
