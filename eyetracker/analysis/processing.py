@@ -64,7 +64,7 @@ def threshold(image, thresh_v=25, max_v=255, thresh_type='trunc'):
                                            thresholds[thresh_type])
     return thresholded_image
 
-def imageFlipMirror(im,mirrored,fliped):
+def imageFlipMirror(im, mirrored,flipped):
     '''
     Flip and/or mirror the given image.
     
@@ -75,18 +75,12 @@ def imageFlipMirror(im,mirrored,fliped):
     fliped - self explanatory boolean parameter (top - bottom)
     '''
     
-    if mirrored == 1 and fliped == 0:
-        im[:,:,0] = cv2.flip(im[:,:,0], 1)
-        im[:,:,1] = cv2.flip(im[:,:,1], 1)
-        im[:,:,2] = cv2.flip(im[:,:,2], 1)
-    elif mirrored == 0 and fliped == 1:
-        im[:,:,0] = cv2.flip(im[:,:,0], 0)
-        im[:,:,1] = cv2.flip(im[:,:,1], 0)
-        im[:,:,2] = cv2.flip(im[:,:,2], 0)           
-    elif mirrored == 1 and fliped == 1:
-        im[:,:,0] = cv2.flip(im[:,:,0], -1)
-        im[:,:,1] = cv2.flip(im[:,:,1], -1)
-        im[:,:,2] = cv2.flip(im[:,:,2], -1)   
+    if mirrored == 1 and flipped == 0:
+        im = np.array([cv2.flip(im[:, :, i], 1) for i in im.shape[-1]])
+    elif mirrored == 0 and flipped == 1:
+        im = np.array([cv2.flip(im[:, :, i], 0) for i in im.shape[-1]])
+    elif mirrored == 1 and flipped == 1:
+        im = np.array([cv2.flip(im[:, :, i], -1) for i in im.shape[-1]])
     return im
 
 def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian', 
