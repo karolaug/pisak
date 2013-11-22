@@ -129,12 +129,17 @@ def mark(image, where, radius=10, color='red', thickness=3):
     thickness - thickness of the circle
     '''
     if where != None:
-        for coordinates in where:
-            y = coordinates[1]
-            x = coordinates[0]
-            if len(coordinates) == 3:
-                radius = coordinates[2]
+        if len(where.shape) == 1:
+            y = where[1]
+            x = where[0]
             cv2.circle(image, (x, y), radius, colors[color], thickness)
+        else:
+            for coordinates in where:
+                y = coordinates[1]
+                x = coordinates[0]
+                if len(coordinates) == 3:
+                    radius = coordinates[2]
+                cv2.circle(image, (x, y), radius, colors[color], thickness)
 
 def find_purkinje(purkinje1, purkinje2):
     '''
