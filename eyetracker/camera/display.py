@@ -60,6 +60,8 @@ def drawPupil(image, thres):
     color image - returns a numpy array in a bgr scale with the pupil 
     marked in red
     '''
+    if len(image.shape) == 3:
+        image = bgr2gray(image)
     thresholded = threshold(image, thresh_v=thres)
     where_pupil = pupil(thresholded)
     color = gray2bgr(thresholded)
