@@ -22,7 +22,7 @@
 
 import cv2
 import numpy as np
-from analysis.processing import colors
+from .processing import mark
 
 def get_resolution():#for use only if PySide is not in use, it's there already
     '''
@@ -64,7 +64,7 @@ def draw_circle(where_mark, radius, color='red', image=base_image):
     image as np.array of shape (height, width, 3) with the drawn circle
     '''
     mod_image = image.copy()
-    cv2.circle(mod_image, where_mark, radius, colors[color], thickness=10)
+    mark(mod_image, where_mark, radius, colors[color], thickness=10)
     return mod_image
 
 def calibration(with_purkinje=False):

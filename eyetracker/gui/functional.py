@@ -22,15 +22,20 @@
 
 import cv2
 import numpy as np
+import sys
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from camera.camera_lookup import lookForCameras
-from analysis.detect import pupil, glint
-from analysis.processing import threshold , imageFlipMirror , mark
+from ..analysis.detect import pupil, glint
+from ..analysis.processing import threshold, imageFlipMirror, mark
 
-from gui.graphical import Ui_StartingWindow
+from ..camera.display import drawPupil, drawGlint, displayImage
+from ..camera.capture import lookForCameras
+from ..camera.camera import Camera
 
+from .graphical import Ui_StartingWindow
+
+#################################### URUCHOMIENIE PROGRAMU
 
 class MyForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -43,6 +48,10 @@ class MyForm(QtGui.QMainWindow):
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
         
+        self.algorithms = ['NESW']
+        for algorithm in self.algorithms:
+            self.ui.cmb_setAlgorithm.addItem(algorithm)
+        
         self.resolutions_w = [160,320,640,1280]
         self.resolutions_h = [120,240,480,720]
         for w, h in izip(self.resolutions_w, self.resolutions_h):
@@ -51,11 +60,17 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setResolution.setCurrentIndex(1)
         self.w = 320
         self.h = 240
-        self.selectedCameraName  = 'dummy'
+        self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
+        self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
+        #self.index = 0
+        #self.im = np.load('pickle.npy').astype('uint8')
+
+        self.camera = Camera(self.cameras['Camera_1'], 
+                             {3 : self.w, 4 : self.h})
 
         self.mirrored = 0
         self.fliped = 0
-        self.advanced = 0                                   # flaga odnośnie zaawansowanych ustawień
+        self.advanced = 0
         
         self.ui.lbl_pupil1.setText(str(self.ui.hsb_pupil1.value()))
         self.ui.lbl_pupil2.setText(str(self.ui.hsb_pupil2.value()))
@@ -64,13 +79,13 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint2.setText(str(self.ui.hsb_glint2.value()))
         self.ui.lbl_glint3.setText(str(self.ui.hsb_glint3.value()))
         
-        self.timer = QtCore.QBasicTimer() # czy tego się nie da do tego startGui wywalić?
-        self.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
+        self.ui.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
 
         ################################### DOWIĄZANIA ZDARZEŃ
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
-        self.ui.btn_start.clicked.connect(self.startEyetracker)
+        self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)
+        #self.ui.btn_start.clicked.connect(self.startEyetracker)
         self.ui.btn_settings.clicked.connect(self.startAdvancedSettings)
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
         self.ui.chb_mirror.stateChanged.connect(self.imageMirror)
@@ -81,41 +96,45 @@ class MyForm(QtGui.QMainWindow):
         self.ui.hsb_glint2.valueChanged[int].connect(self.hsbGlint_2Change)
         self.ui.hsb_glint3.valueChanged[int].connect(self.hsbGlint_3Change)
 
-########################################### CYKANIE ZEGARA
+########################################### CYKANIE ZEGARA #
     def timerEvent(self, event):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
-            self.imageCamera()
+            im = self.camera.frame()
+            im = imageFlipMirror(im, self.mirrored, self.fliped)
+            self.displayGuiImage(im)
+            
         else:                       # update dwóch okien w ustawieniach zaawansowanych
-            if self.selectedCameraName == 'dummy':
-                pass
-            else:
-                ret, im = self.cap.read()
-                im = imageFlipMirror(im , self.mirrored , self.fliped)
-                gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-                
-                self.pupilDetectionUpdate(im, gray)
-                self.blackAndWhiteUpdate(im, gray)
+            im = self.camera.frame()
+            im = imageFlipMirror(im, self.mirrored, self.fliped)
+            
+            pupil = self.pupilDetectionUpdate(gray)
+            glint = self.blackAndWhiteUpdate(gray)
+            
+            displayImage(pupil, 'pupil_detection')
+            displayImage(glint, 'glint_detection')
 
-################################ METODA ZMIENIAJĄCA KAMERĘ
+############################## METODA ZMIENIAJĄCA ALGORYTM #
+    def algorithmChange(self):
+        pass
+################################ METODA ZMIENIAJĄCA KAMERĘ #
     def cameraChange(self):
-        self.timer.stop()
+        self.ui.timer.stop()
         if self.selectedCameraName == 'dummy':
             pass
         else:
-            self.cap.release()
+            self.camera.close()
 
         self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
         self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
         
         if self.selectedCameraName == 'dummy':
-            pass
+            self.index = 0
         else:
-            self.cap = cv2.VideoCapture(self.selectedCameraIndex-1)		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
-            self.cap.set(3,320)
-            self.cap.set(4,240)
+            self.camera = Camera(self.selectedCameraIndex-1, 
+                                 {3 : 320, 4 : 240})		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
 
-        self.timer.start(100 , self)
+        self.ui.timer.start(100 , self)
 
 ######################### METODA ODBIJAJĄCA OBRAZ GÓRA-DÓŁ #
     def imageMirror(self):
@@ -130,7 +149,6 @@ class MyForm(QtGui.QMainWindow):
             self.fliped = 1
         else:
             self.fliped = 0
-                                                                        # ODBIJANIE WYMAGA REFAKTORYZACJI - WIEM
 
 ######################### METODA ZMIENIAJĄCA ROZDZIELCZOŚĆ #
     def resolutionChange(self):
@@ -139,16 +157,11 @@ class MyForm(QtGui.QMainWindow):
 		self.w = self.resolutions_w[index]
         
 ############################# UMIESZCZENIE OBRAZU Z KAMERY #
-    def imageCamera(self):
-        if self.selectedCameraName == 'dummy':
-            im = self.im[self.index]
-            im = cv2.resize(im,(320,240))
-        else:
-            ret, im = self.cap.read()
-        
-        im = imageFlipMirror(im , self.mirrored , self.fliped)
-        
-        result  = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
+    def displayGuiImage(self, im):
+        '''
+        To do
+        '''
+        result = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
         pixmap  = QtGui.QPixmap.fromImage(result)
         pixItem = QtGui.QGraphicsPixmapItem(pixmap)
         self.ui.graphicsScene.addItem(pixItem)
@@ -174,8 +187,9 @@ class MyForm(QtGui.QMainWindow):
             self.advanced = 1
             
             resolutionIndex = self.ui.cmb_setResolution.currentIndex()
-            x = self.cap.set(3,self.resolutions_w[resolutionIndex])
-            y = self.cap.set(4,self.resolutions_h[resolutionIndex])
+            settings = {3 : self.resolutions_w[resolutionIndex], 
+                        4 : self.resolutions_h[resolutionIndex]}
+            self.camera.set(settings)
             
             cv2.namedWindow('pupil_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
             cv2.moveWindow('pupil_detection',800,100)
@@ -195,7 +209,7 @@ class MyForm(QtGui.QMainWindow):
             self.ui.btn_start.setEnabled(True)
             self.advanced = 0
             
-            cv2.destroyAllWindows() # dopisac konkretne okna
+            cv2.destroyAllWindows()
         
 ######### OBSŁUGA SUWAKÓW ZMIENIAJĄCYCH PARAMETRY DETEKCJI #
     def hsbPupil_1Change(self, value):
@@ -211,52 +225,15 @@ class MyForm(QtGui.QMainWindow):
     def hsbGlint_3Change(self, value):
         self.ui.lbl_glint3.setText(str(value))
         
-############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH       
-    def pupilDetectionUpdate(self, frame, image):
-        
-        pupilThresholds = [self.ui.hsb_pupil1.value() , self.ui.hsb_pupil2.value() , self.ui.hsb_pupil3.value()]
-        
-        black1 = findPupil(pupilThresholds)
-                    
-                    
-                    
-                    
-        cv2.imshow('pupil_detection', black1)
+############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH #    
+    def pupilDetectionUpdate(self, image):
+        pupilThresholds = [self.ui.hsb_pupil1.value(), self.ui.hsb_pupil2.value(), self.ui.hsb_pupil3.value()]
+        pupil = drawPupil(image, pupilThresholds)
+        return pupil
             
-    def blackAndWhiteUpdate(self, frame, gray):
-        
-        glintThreshold1 = self.ui.hsb_glint1.value()
-        glintThreshold2 = self.ui.hsb_glint2.value()
-        glintThreshold3 = self.ui.hsb_glint3.value()
-        
-        where_glint = glint(gray)
-        if where_glint != None:
-            gray = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-            for cor in where_glint:
-                cv2.circle(gray, tuple(cor), 10, (255, 0, 0), 3)
-                
-        cv2.imshow('glint_detection', gray)
-        
-        #glintThreshold1 = self.ui.hsb_glint1.value()
-        #glintThreshold2 = self.ui.hsb_glint2.value()
-        #glintThreshold3 = self.ui.hsb_glint3.value()
+    def blackAndWhiteUpdate(self, image):
+        glintThresholds = [self.ui.hsb_glint1.value(), self.ui.hsb_glint2.value(), self.ui.hsb_glint3.value()]
+        glint = drawGlint(image, glintThresholds)
+        return glint
 
-        #where_glint = glint(gray)
-        #mark(gray, where_glint)
-
-
-#################################### URUCHOMIENIE PROGRAMU
-    def startEyetracker(self):
-        #self.im = None      # wywalenie dummy z pamięci
-        #self.cap.release()  # zniszczenie strumienia z kamery
-        
-        # tu trzeba uruchomić program docelowy
-        pass
 ##########################################################
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    myapp = MyForm()
-    myapp.show()
-    sys.exit(app.exec_())

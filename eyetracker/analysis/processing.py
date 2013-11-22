@@ -64,7 +64,7 @@ def threshold(image, thresh_v=25, max_v=255, thresh_type='trunc'):
                                            thresholds[thresh_type])
     return thresholded_image
 
-def imageFlipMirror(im,mirrored,fliped):
+def imageFlipMirror(im, mirrored,flipped):
     '''
     Flip and/or mirror the given image.
     
@@ -75,18 +75,12 @@ def imageFlipMirror(im,mirrored,fliped):
     fliped - self explanatory boolean parameter (top - bottom)
     '''
     
-    if mirrored == 1 and fliped == 0:
-        im[:,:,0] = cv2.flip(im[:,:,0], 1)
-        im[:,:,1] = cv2.flip(im[:,:,1], 1)
-        im[:,:,2] = cv2.flip(im[:,:,2], 1)
-    elif mirrored == 0 and fliped == 1:
-        im[:,:,0] = cv2.flip(im[:,:,0], 0)
-        im[:,:,1] = cv2.flip(im[:,:,1], 0)
-        im[:,:,2] = cv2.flip(im[:,:,2], 0)           
-    elif mirrored == 1 and fliped == 1:
-        im[:,:,0] = cv2.flip(im[:,:,0], -1)
-        im[:,:,1] = cv2.flip(im[:,:,1], -1)
-        im[:,:,2] = cv2.flip(im[:,:,2], -1)   
+    if mirrored == 1 and flipped == 0:
+        im = np.array([cv2.flip(im[:, :, i], 1) for i in im.shape[-1]])
+    elif mirrored == 0 and flipped == 1:
+        im = np.array([cv2.flip(im[:, :, i], 0) for i in im.shape[-1]])
+    elif mirrored == 1 and flipped == 1:
+        im = np.array([cv2.flip(im[:, :, i], -1) for i in im.shape[-1]])
     return im
 
 def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian', 
@@ -116,9 +110,11 @@ def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian',
     if thresh_type is not 'bin' and thresh_type is not 'bin_inv':
         raise AttributeError('thresh_type may be "bin" or "bin_inv" here.')
 
-    return cv2.adaptiveThreshold(image, max_v, adaptiveMethods[adaptiveMethod], 
-                                 thresholds[thresh_type], blockSize, 
-                                 subtConstant)
+    thresholded = cv2.adaptiveThreshold(image, max_v, 
+                                  adaptiveMethods[adaptiveMethod], 
+                                  thresholds[thresh_type], blockSize, 
+                                  subtConstant) 
+    return thresholded
 
 def mark(image, where, radius=10, color='red', thickness=3):
     '''
@@ -133,12 +129,17 @@ def mark(image, where, radius=10, color='red', thickness=3):
     thickness - thickness of the circle
     '''
     if where != None:
-        for coordinates in where:
-            y = coordinates[1]
-            x = coordinates[0]
-            if len(coordinates) == 3:
-                radius = coordinates[2]
+        if len(where.shape) == 1:
+            y = where[1]
+            x = where[0]
             cv2.circle(image, (x, y), radius, colors[color], thickness)
+        else:
+            for coordinates in where:
+                y = coordinates[1]
+                x = coordinates[0]
+                if len(coordinates) == 3:
+                    radius = coordinates[2]
+                cv2.circle(image, (x, y), radius, colors[color], thickness)
 
 def find_purkinje(purkinje1, purkinje2):
     '''
@@ -150,7 +151,7 @@ def find_purkinje(purkinje1, purkinje2):
     purkinje1 - tuple of x, y being the coordinates of first purkinje image
     purkinje2 - as above but of the second purkinje image
 
-    Retruns:
+    Returns:
     --------
     A tuple(x, y) which are the coordinates of the middle between purkinj1 and purkinje2. 
     '''

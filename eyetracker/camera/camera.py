@@ -20,27 +20,74 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-import cv2
+from cv2 import VideoCapture
 
 class Camera(object):
-    def __init__(self, camera, **kwargs):
+    '''
+    Class governing the communication with the camera.
+
+    Parameters:
+    -----------
+    camera - the index of the camera, best taken from func lookForCameras,
+    from eyetracker.camera.capture
+    **kwargs - dic{propID : value}, to check corresponding propIDs check
+    opencv documentation: http://docs.opencv.org/modules/highgui/doc/ under
+    the term VideoCapture::get - they will be set in the moment of object
+    creation.
+
+    Defines:
+    --------
+    self.camera - index of the camera
+    self.cap - capturing object
+
+    self.frame - returns a frame from camera
+
+    self.close - closes cap
+    self.reOpen - reopens cap
+    '''
+    def __init__(self, camera, kwargs):
         self.camera = int(camera)
-        self.cap = cv2.VideoCapture(self.camera)
+        self.cap = VideoCapture(self.camera)
         if kwargs:
             for propID, value in kwargs.iteritems():
                 self.camera.set(propID, value)
         first_frame = self.frame() #initialize at the start so that no loss of time occurs later on, not needed later on so no 'self'
     
     def frame(self):
+        '''
+        Read frame from camera.
+
+        Returns:
+        --------
+        frame - numpy array being a frame from camera
+        '''
         if self.cap.isOpened:
             return self.cap.read()[1]
         else:
             print 'Cap is not opened.'
+            return None
+
+    def set(self, **kwargs):
+        '''
+        Set camera parameters.
+
+        Parameters:
+        -----------
+        **kwargs - {propID : value}
+        '''
+        for propID, value in kwargs.iteritems():
+            self.cap.set(propID, value)
 
     def close(self):
+        '''
+        Closes cap, you can reopen it with self.reOpen.
+        '''
         self.cap.release()
 
     def reOpen(self, cameraIndex):
+        '''
+        Reopens cap.
+        '''
         self.cap.open(self.camera)
         first_frame = self.frame() #same purpose as in __init__
 
