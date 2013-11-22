@@ -19,49 +19,67 @@
 # e-mail: saszasasha@gmail.com
 # University of Warsaw 2013
 
-import cv2
-import numpy as np
+from cv2 import namedWindow, CV_WINDOW_AUTOSIZE, imshow
 
 from ..analysis.detect import pupil, glint
-from ..analysis.processing import threshold , mark
+from ..analysis.processing import threshold, mark, gray2bgr, bgr2gray
 
-colors = {'blue' : (255, 0, 0), 'green' : (0, 255, 0), 'red' : (0, 0, 255)}
-
-thresholds = {'otsu' : cv2.THRESH_OTSU, 'bin' : cv2.THRESH_BINARY, 
-              'bin_inv' : cv2.THRESH_BINARY_INV, 
-              'zero' : cv2.THRESH_TOZERO, 'zero_inv' : cv2.THRESH_TOZERO_INV,
-              'trunc' : cv2.THRESH_TRUNC}
-
-def displayGlint(gray, thres):
+def drawGlint(image):
     '''
-    To do
+    Function takes an image, converts it to grayscale if it is not,
+    detects glint and draws it on a new image.
+
+    Parameters:
+    -----------
+    image - image where the glint is to be detected
+    
+    Returns:
+    --------
+    color image - returns a numpy array in a bgr scale with the glint 
+    marked in blue
     '''
+    if len(image.shape) == 3:
+        image = bgr2gray(image)
     where_glint = glint(gray)
-    if where_glint != None:
-        color = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
-        for cor in where_glint:
-            cv2.circle(color, tuple(cor), 10, (255, 0, 0), 3)
+    color = gray2bgr(gray)
+    mark(color, where_glint)
     return color
 
-def displayPupil(image , thres):
+def drawPupil(image, thres):
     '''
-    To do
-    '''
-    black1 = threshold(image, thresh_v=thres[2], max_v=thres[0], thresh_type='trunc')#thresholds[thres[1]])
-    where_pupil = pupil(black1)
-    if where_pupil != None:
-        black1 = cv2.cvtColor(black1, cv2.COLOR_GRAY2BGR)
-        for cor in where_pupil:
-            cv2.circle(black1, tuple(cor[:2]), cor[2], (0, 0, 255), 3)
-    return black1
+    Function takes an image, applies 'trunc' threshold(cv2.THRESH_TRUNC),
+    detects pupil and draws it on a new image.
 
-def displayImage(image , where='new'):
+    Parameters:
+    -----------
+    image - image where the pupil is to be detected
+    thres - value of the threshold
+    
+    Returns:
+    --------
+    color image - returns a numpy array in a bgr scale with the pupil 
+    marked in red
     '''
-    To do
+    thresholded = threshold(image, thresh_v=thres)
+    where_pupil = pupil(thresholded)
+    color = gray2bgr(thresholded)
+    mark(color, where_pupil, color='red')
+    return color
+
+def displayImage(image, where='new'):
+    '''
+    Functions displays the image in a new window or in the pointed window.
+    Does not return anything.
+
+    Parameters:
+    -----------
+    image - numpy array being an image to be displayed
+    where - name of the window as string in which the image is to be
+    displayed, not providing the name will create a new one
     '''
     if where == 'new':
-        cv2.namedWindow('new' , flags=cv2.CV_WINDOW_AUTOSIZE)
-    cv2.imshow( where , image)
+        namedWindow('new', flags=CV_WINDOW_AUTOSIZE)
+    imshow(where, image)
             
 if __name__ == '__main__':
     pass
