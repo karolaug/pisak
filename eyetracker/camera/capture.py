@@ -19,30 +19,19 @@
 # e-mail: saszasasha@gmail.com
 # University of Warsaw 2013
 
-import cv2
-import numpy as np
 from glob import iglob
-
-def grabFrame(cap=None , index=0 , im=None ):
-    '''
-    To do
-    '''
-    if cap == None:
-        im = im[index]
-        im = cv2.resize(im,(320,240))
-    else:
-        try:
-            ret, im = cap.read()
-        except IOError:                             # KONIECZNIE TRZEBA SPRAWDZIĆ TEN TYP WYJĄTKU!!!
-            print 'Wrong capture stream.'
-            
-    return im
     
 def lookForCameras():
     '''
-    To do
+    Function looks for cameras plugged into computer.
+
+    Returns:
+    --------
+    dic - {'Camera_i' : index}, where i is the 1,2,3 etc. and index
+    is an int corresponding to the camera that should be passed on
+    to cv2.VideoCapture or to class Camera from eyetracker.camera.camera
     '''
-    listOfCameras = {''.join(['Camera_', str(i+1)]) : i 
+    listOfCameras = {''.join(['Camera_', str(i+1)]) : int(i) 
                      for i, cam in enumerate(iglob('/dev/video*'))}
     listOfCameras['dummy'] = None
     return listOfCameras
