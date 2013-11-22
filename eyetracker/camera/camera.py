@@ -30,7 +30,7 @@ class Camera(object):
     -----------
     camera - the index of the camera, best taken from func lookForCameras,
     from eyetracker.camera.capture
-    **kwargs - dic{propID : value}, to check corresponding propIDs check
+    dic - dic{propID : value}, to check corresponding propIDs check
     opencv documentation: http://docs.opencv.org/modules/highgui/doc/ under
     the term VideoCapture::get - they will be set in the moment of object
     creation.
@@ -45,12 +45,12 @@ class Camera(object):
     self.close - closes cap
     self.reOpen - reopens cap
     '''
-    def __init__(self, camera, kwargs):
+    def __init__(self, camera, dic=None):
         self.camera = int(camera)
         self.cap = VideoCapture(self.camera)
-        if kwargs:
-            for propID, value in kwargs.iteritems():
-                self.camera.set(propID, value)
+        if dic:
+            for propID, value in dic.iteritems():
+                self.cap.set(propID, value)
         first_frame = self.frame() #initialize at the start so that no loss of time occurs later on, not needed later on so no 'self'
     
     def frame(self):
