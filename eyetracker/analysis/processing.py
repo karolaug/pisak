@@ -76,11 +76,11 @@ def imageFlipMirror(im, mirrored,flipped):
     '''
     
     if mirrored == 1 and flipped == 0:
-        im = np.array([cv2.flip(im[:, :, i], 1) for i in im.shape[-1]])
+        im = cv2.flip(im, 1)
     elif mirrored == 0 and flipped == 1:
-        im = np.array([cv2.flip(im[:, :, i], 0) for i in im.shape[-1]])
+        im = cv2.flip(im, 0)
     elif mirrored == 1 and flipped == 1:
-        im = np.array([cv2.flip(im[:, :, i], -1) for i in im.shape[-1]])
+        im = cv2.flip(im, -1)
     return im
 
 def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian', 
