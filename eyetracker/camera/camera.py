@@ -20,7 +20,7 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-import cv2.VideoCapture
+from cv2 import VideoCapture
 
 class Camera(object):
     '''
