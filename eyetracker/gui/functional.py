@@ -29,7 +29,7 @@ from PyQt4 import QtCore, QtGui
 from ..analysis.detect import pupil , glint
 from ..analysis.processing import threshold , imageFlipMirror , mark
 
-from ..camera.display import displayPupil , displayGlint , displayImage
+from ..camera.display import drawPupil , drawGlint , displayImage
 from ..camera.capture import grabFrame , lookForCameras
 
 from .graphical import Ui_StartingWindow
@@ -225,12 +225,12 @@ class MyForm(QtGui.QMainWindow):
 ############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH #    
     def pupilDetectionUpdate(self, image):
         pupilThresholds = [self.ui.hsb_pupil1.value() , self.ui.hsb_pupil2.value() , self.ui.hsb_pupil3.value()]
-        pupil = displayPupil(image , pupilThresholds)
+        pupil = drawPupil(image , pupilThresholds)
         return pupil
             
     def blackAndWhiteUpdate(self, image):
         glintThresholds = [self.ui.hsb_glint1.value() , self.ui.hsb_glint2.value() , self.ui.hsb_glint3.value()]
-        glint = displayGlint(image , glintThresholds)
+        glint = drawGlint(image , glintThresholds)
         return glint
 
 ##########################################################
