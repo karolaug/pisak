@@ -40,7 +40,7 @@ def gray2bgr(imageGRAY):
     '''Convert gray image to color image(BGR).'''
     return cv2.cvtColor(imageGRAY, cv2.COLOR_GRAY2BGR)
 
-def threshold(image, thresh_v=25, max_v=255, thresh_type='trunc'):
+def threshold(image, thresh_v=30, max_v=255, thresh_type='trunc'):
     '''
     Threshold the image.
 
@@ -85,7 +85,7 @@ def imageFlipMirror(im, mirrored,flipped):
 
 def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian', 
                       thresh_type='bin', blockSize=33, 
-                      subtConstant=50):
+                      subtConstant=10):
     '''
     Threshold the image using adaptive methods.
 	
@@ -159,13 +159,13 @@ def find_purkinje(purkinje1, purkinje2):
     return purkinje
 
 if __name__ == '__main__':
-    im = cv2.imread('pictures/eyeIR.png', -1)
+    from numpy import array
+    
+    im = cv2.imread('../../pictures/eyeIR.png', -1)
 
     marked = im.copy()
     
     im_fliped = imageFlipMirror(im,0,1)
-    
-    #marked = cv2.imread('examples/eyeIR.png', -1)
 
     im_gray = bgr2gray(im)
 
@@ -181,7 +181,7 @@ if __name__ == '__main__':
 
     im_thresh_adapt = adaptiveThreshold(im_gray)
 
-    mark(marked, [[marked.shape[1]/2, marked.shape[0]/2]], radius=30)
+    mark(marked, array([[marked.shape[1]/2, marked.shape[0]/2]]), radius=30)
 
     pics = {'original image' : im, 'one-channel gray image' : im_gray, 
             'converted back to 3 channel' : im_back, 
