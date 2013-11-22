@@ -45,7 +45,7 @@ class Camera(object):
     self.close - closes cap
     self.reOpen - reopens cap
     '''
-    def __init__(self, camera, **kwargs):
+    def __init__(self, camera, kwargs):
         self.camera = int(camera)
         self.cap = VideoCapture(self.camera)
         if kwargs:
