@@ -110,9 +110,11 @@ def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian',
     if thresh_type is not 'bin' and thresh_type is not 'bin_inv':
         raise AttributeError('thresh_type may be "bin" or "bin_inv" here.')
 
-    return cv2.adaptiveThreshold(image, max_v, adaptiveMethods[adaptiveMethod], 
-                                 thresholds[thresh_type], blockSize, 
-                                 subtConstant)
+    thresholded = cv2.adaptiveThreshold(image, max_v, 
+                                  adaptiveMethods[adaptiveMethod], 
+                                  thresholds[thresh_type], blockSize, 
+                                  subtConstant) 
+    return thresholded
 
 def mark(image, where, radius=10, color='red', thickness=3):
     '''
