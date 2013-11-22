@@ -65,6 +65,9 @@ class MyForm(QtGui.QMainWindow):
         #self.index = 0
         #self.im = np.load('pickle.npy').astype('uint8')
 
+        self.camera = Camera(self.cameras['Camera_1'], 
+                             {3 : self.w, 4 : self.h})
+
         self.mirrored = 0
         self.fliped = 0
         self.advanced = 0
