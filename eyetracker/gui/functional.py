@@ -184,8 +184,9 @@ class MyForm(QtGui.QMainWindow):
             self.advanced = 1
             
             resolutionIndex = self.ui.cmb_setResolution.currentIndex()
-            x = self.cap.set(3,self.resolutions_w[resolutionIndex])
-            y = self.cap.set(4,self.resolutions_h[resolutionIndex])
+            settings = {3 : self.resolutions_w[resolutionIndex], 
+                        4 : self.resolutions_h[resolutionIndex]}
+            self.camera.set(settings)
             
             cv2.namedWindow('pupil_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
             cv2.moveWindow('pupil_detection',800,100)
