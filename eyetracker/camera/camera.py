@@ -67,6 +67,17 @@ class Camera(object):
             print 'Cap is not opened.'
             return None
 
+    def set(self, **kwargs):
+        '''
+        Set camera parameters.
+
+        Parameters:
+        -----------
+        **kwargs - {propID : value}
+        '''
+        for propID, value in kwargs.iteritems():
+            self.cap.set(propID, value)
+
     def close(self):
         '''
         Closes cap, you can reopen it with self.reOpen.
