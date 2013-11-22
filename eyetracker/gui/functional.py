@@ -26,11 +26,12 @@ import sys
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from ..analysis.detect import pupil , glint
-from ..analysis.processing import threshold , imageFlipMirror , mark
+from ..analysis.detect import pupil, glint
+from ..analysis.processing import threshold, imageFlipMirror, mark
 
-from ..camera.display import drawPupil , drawGlint , displayImage
-from ..camera.capture import grabFrame , lookForCameras
+from ..camera.display import drawPupil, drawGlint, displayImage
+from ..camera.capture import lookForCameras
+from ..camera.camera import Camera
 
 from .graphical import Ui_StartingWindow
 
@@ -96,20 +97,19 @@ class MyForm(QtGui.QMainWindow):
     def timerEvent(self, event):
         
         if self.advanced == 0:      # update małego okienka w podstawowym gui
-            im = grabFrame(self.cap)
-            im = imageFlipMirror(im , self.mirrored , self.fliped)
+            im = self.camera.frame()
+            im = imageFlipMirror(im, self.mirrored, self.fliped)
             self.displayGuiImage(im)
             
         else:                       # update dwóch okien w ustawieniach zaawansowanych
-            im = grabFrame(self.cap)
-            im = imageFlipMirror(im , self.mirrored , self.fliped)
-            gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+            im = self.camera.frame()
+            im = imageFlipMirror(im, self.mirrored, self.fliped)
             
             pupil = self.pupilDetectionUpdate(gray)
             glint = self.blackAndWhiteUpdate(gray)
             
-            displayImage(pupil , 'pupil_detection')
-            displayImage(glint , 'glint_detection')
+            displayImage(pupil, 'pupil_detection')
+            displayImage(glint, 'glint_detection')
 
 ############################## METODA ZMIENIAJĄCA ALGORYTM #
     def algorithmChange(self):
@@ -120,7 +120,7 @@ class MyForm(QtGui.QMainWindow):
         if self.selectedCameraName == 'dummy':
             pass
         else:
-            self.cap.release()
+            self.camera.close()
 
         self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
         self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
@@ -128,9 +128,8 @@ class MyForm(QtGui.QMainWindow):
         if self.selectedCameraName == 'dummy':
             self.index = 0
         else:
-            self.cap = cv2.VideoCapture(self.selectedCameraIndex-1)		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
-            self.cap.set(3,320)
-            self.cap.set(4,240)
+            self.camera = Camera(self.selectedCameraIndex-1, 
+                                 {3 : 320, 4 : 240})		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
 
         self.ui.timer.start(100 , self)
 
@@ -159,7 +158,7 @@ class MyForm(QtGui.QMainWindow):
         '''
         To do
         '''
-        result  = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
+        result = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
         pixmap  = QtGui.QPixmap.fromImage(result)
         pixItem = QtGui.QGraphicsPixmapItem(pixmap)
         self.ui.graphicsScene.addItem(pixItem)
@@ -224,13 +223,13 @@ class MyForm(QtGui.QMainWindow):
         
 ############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH #    
     def pupilDetectionUpdate(self, image):
-        pupilThresholds = [self.ui.hsb_pupil1.value() , self.ui.hsb_pupil2.value() , self.ui.hsb_pupil3.value()]
-        pupil = drawPupil(image , pupilThresholds)
+        pupilThresholds = [self.ui.hsb_pupil1.value(), self.ui.hsb_pupil2.value(), self.ui.hsb_pupil3.value()]
+        pupil = drawPupil(image, pupilThresholds)
         return pupil
             
     def blackAndWhiteUpdate(self, image):
-        glintThresholds = [self.ui.hsb_glint1.value() , self.ui.hsb_glint2.value() , self.ui.hsb_glint3.value()]
-        glint = drawGlint(image , glintThresholds)
+        glintThresholds = [self.ui.hsb_glint1.value(), self.ui.hsb_glint2.value(), self.ui.hsb_glint3.value()]
+        glint = drawGlint(image, glintThresholds)
         return glint
 
 ##########################################################
