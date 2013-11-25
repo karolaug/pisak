@@ -33,7 +33,7 @@ def lookForCameras():
     '''
     listOfCameras = {''.join(['Camera_', str(i+1)]) : int(i) 
                      for i, cam in enumerate(iglob('/dev/video*'))}
-    listOfCameras['dummy'] = None
+    #listOfCameras['dummy'] = None
     return listOfCameras
 
 if __name__ == '__main__':

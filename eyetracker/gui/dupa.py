@@ -1,24 +1,11 @@
-## #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#    This file is part of eyetracker-ng.
+# Form implementation generated from reading ui file 'eyetracker-ng.ui'
 #
-#    eyetracker-ng is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+# Created: Mon Nov 25 13:48:43 2013
+#      by: PyQt4 UI code generator 4.10.3
 #
-#    eyetracker-ng is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with eyetracker-ng. If not, see <http://www.gnu.org/licenses/>.
-
-# authors: Sasza Kijek, Karol Augustin, Tomasz Spustek
-# e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
-# University of Warsaw 2013
+# WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
 
@@ -44,13 +31,15 @@ class Ui_StartingWindow(object):
         StartingWindow.setMinimumSize(QtCore.QSize(640, 640))
         StartingWindow.setMaximumSize(QtCore.QSize(640, 640))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/camera.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("../../Obrazy/icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         StartingWindow.setWindowIcon(icon)
         
         self.centralwidget = QtGui.QWidget(StartingWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         
-        
+        self.graphicsView = QtGui.QGraphicsView(self.centralwidget)
+        self.graphicsView.setGeometry(QtCore.QRect(20, 40, 320, 240))
+        self.graphicsView.setObjectName(_fromUtf8("graphicsView"))
         
         self.lbl_title = QtGui.QLabel(self.centralwidget)
         self.lbl_title.setEnabled(True)
@@ -66,7 +55,7 @@ class Ui_StartingWindow(object):
         self.btn_start = QtGui.QPushButton(self.centralwidget)
         self.btn_start.setGeometry(QtCore.QRect(150, 560, 120, 35))
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/start.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8("../../Obrazy/Ikonki/Faenza_1.3/actions/dialog-ok.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btn_start.setIcon(icon1)
         self.btn_start.setObjectName(_fromUtf8("btn_start"))
         
@@ -98,33 +87,32 @@ class Ui_StartingWindow(object):
         self.lbl_pupilDetection.setGeometry(QtCore.QRect(360, 250, 111, 20))
         self.lbl_pupilDetection.setObjectName(_fromUtf8("lbl_pupilDetection"))
         
-        self.hsb_pupil = QtGui.QScrollBar(self.centralwidget)
-        self.hsb_pupil.setEnabled(True)
-        self.hsb_pupil.setGeometry(QtCore.QRect(360, 280, 160, 16))
-        self.hsb_pupil.setMaximum(255)
-        self.hsb_pupil.setOrientation(QtCore.Qt.Horizontal)
-        self.hsb_pupil.setObjectName(_fromUtf8("hsb_pupil1"))
+        self.hsb_pupil1 = QtGui.QScrollBar(self.centralwidget)
+        self.hsb_pupil1.setEnabled(False)
+        self.hsb_pupil1.setGeometry(QtCore.QRect(360, 280, 160, 16))
+        self.hsb_pupil1.setMaximum(255)
+        self.hsb_pupil1.setOrientation(QtCore.Qt.Horizontal)
+        self.hsb_pupil1.setObjectName(_fromUtf8("hsb_pupil1"))
         
-        self.lbl_pupil = QtGui.QLabel(self.centralwidget)
-        self.lbl_pupil.setGeometry(QtCore.QRect(530, 280, 30, 16))
-        self.lbl_pupil.setText(_fromUtf8(""))
-        self.lbl_pupil.setObjectName(_fromUtf8("lbl_pupil1"))
+        self.lbl_pupil1 = QtGui.QLabel(self.centralwidget)
+        self.lbl_pupil1.setGeometry(QtCore.QRect(530, 280, 20, 16))
+        self.lbl_pupil1.setText(_fromUtf8(""))
+        self.lbl_pupil1.setObjectName(_fromUtf8("lbl_pupil1"))
         
         self.lbl_glintDetection = QtGui.QLabel(self.centralwidget)
         self.lbl_glintDetection.setGeometry(QtCore.QRect(360, 310, 111, 20))
         self.lbl_glintDetection.setObjectName(_fromUtf8("lbl_glintDetection"))
         
-        self.hsb_glint = QtGui.QScrollBar(self.centralwidget)
-        self.hsb_glint.setEnabled(True)
-        self.hsb_glint.setGeometry(QtCore.QRect(360, 340, 160, 16))
-        self.hsb_glint.setMaximum(255)
-        self.hsb_glint.setOrientation(QtCore.Qt.Horizontal)
-        self.hsb_glint.setObjectName(_fromUtf8("hsb_glint2"))
+        self.lbl_glint1 = QtGui.QLabel(self.centralwidget)
+        self.lbl_glint1.setGeometry(QtCore.QRect(530, 340, 20, 16))
+        self.lbl_glint1.setText(_fromUtf8(""))
+        self.lbl_glint1.setObjectName(_fromUtf8("lbl_glint1"))
         
-        self.lbl_glint = QtGui.QLabel(self.centralwidget)
-        self.lbl_glint.setGeometry(QtCore.QRect(530, 340, 30, 16))
-        self.lbl_glint.setText(_fromUtf8(""))
-        self.lbl_glint.setObjectName(_fromUtf8("lbl_glint2"))
+        self.hsb_glint1 = QtGui.QScrollBar(self.centralwidget)
+        self.hsb_glint1.setGeometry(QtCore.QRect(360, 340, 160, 16))
+        self.hsb_glint1.setMaximum(255)
+        self.hsb_glint1.setOrientation(QtCore.Qt.Horizontal)
+        self.hsb_glint1.setObjectName(_fromUtf8("hsb_glint1"))
         
         self.cmb_setAlgorithm = QtGui.QComboBox(self.centralwidget)
         self.cmb_setAlgorithm.setGeometry(QtCore.QRect(20, 560, 120, 35))
@@ -132,21 +120,23 @@ class Ui_StartingWindow(object):
         
         self.btn_load = QtGui.QPushButton(self.centralwidget)
         self.btn_load.setGeometry(QtCore.QRect(500, 510, 120, 35))
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/load.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.btn_load.setIcon(icon3)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(_fromUtf8("../../Obrazy/Ikonki/Faenza_1.3/actions/document-open.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_load.setIcon(icon2)
         self.btn_load.setIconSize(QtCore.QSize(24, 24))
         self.btn_load.setObjectName(_fromUtf8("btn_load"))
         
         self.btn_save = QtGui.QPushButton(self.centralwidget)
         self.btn_save.setGeometry(QtCore.QRect(500, 560, 120, 35))
-        icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/save.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.btn_save.setIcon(icon4)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(_fromUtf8("../../Obrazy/Ikonki/Faenza_1.3/actions/document-import.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_save.setIcon(icon3)
         self.btn_save.setIconSize(QtCore.QSize(24, 24))
         self.btn_save.setObjectName(_fromUtf8("btn_save"))
         
-        self.timer = QtCore.QBasicTimer()
+        self.graphicsView_2 = QtGui.QGraphicsView(self.centralwidget)
+        self.graphicsView_2.setGeometry(QtCore.QRect(20, 290, 320, 240))
+        self.graphicsView_2.setObjectName(_fromUtf8("graphicsView_2"))
         
         StartingWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(StartingWindow)
@@ -158,7 +148,7 @@ class Ui_StartingWindow(object):
 
     def retranslateUi(self, StartingWindow):
         StartingWindow.setWindowTitle(_translate("StartingWindow", "Eyetracter -- start", None))
-        self.lbl_title.setText(_translate("StartingWindow", "Eyetracker v_0.2", None))
+        self.lbl_title.setText(_translate("StartingWindow", "Eyetracker v0.2", None))
         self.btn_start.setText(_translate("StartingWindow", "START", None))
         self.lbl_setCamera.setText(_translate("StartingWindow", "Choose camera:", None))
         self.lbl_setResolution.setText(_translate("StartingWindow", "Choose resolution:", None))
@@ -169,6 +159,3 @@ class Ui_StartingWindow(object):
         self.btn_load.setText(_translate("StartingWindow", "LOAD", None))
         self.btn_save.setText(_translate("StartingWindow", "SAVE", None))
 
-if __name__ == '__main__':
-    print 'Using this class without it\'s functional part may be possible, but'
-    print 'it would be completely useless.'

@@ -35,7 +35,7 @@ from ..camera.camera import Camera
 
 from .graphical import Ui_StartingWindow
 
-#################################### URUCHOMIENIE PROGRAMU
+########################################################################
 
 class MyForm(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -43,7 +43,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui = Ui_StartingWindow()
         self.ui.setupUi(self)
         
-        ############################# INICJALIZACJA PARAMETRÓW        
+        ############################# PARAMETERS INITIALIZATION
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
@@ -62,178 +62,100 @@ class MyForm(QtGui.QMainWindow):
         self.h = 240
         self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
         self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
-        #self.index = 0
-        #self.im = np.load('pickle.npy').astype('uint8')
 
-        self.camera = Camera(self.cameras['Camera_1'], 
-                             {3 : self.w, 4 : self.h})
+        self.camera = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
 
         self.mirrored = 0
         self.fliped = 0
-        self.advanced = 0
         
-        self.ui.lbl_pupil1.setText(str(self.ui.hsb_pupil1.value()))
-        self.ui.lbl_pupil2.setText(str(self.ui.hsb_pupil2.value()))
-        self.ui.lbl_pupil3.setText(str(self.ui.hsb_pupil3.value()))
-        self.ui.lbl_glint1.setText(str(self.ui.hsb_glint1.value()))
-        self.ui.lbl_glint2.setText(str(self.ui.hsb_glint2.value()))
-        self.ui.lbl_glint3.setText(str(self.ui.hsb_glint3.value()))
+        self.sampling = 30.0
         
-        self.ui.timer.start(100 , self) # będzie odpalał co 100 ms, self odbiera zdarzenia
+        self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
+        self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
+        
+        self.ui.timer.start(1000/self.sampling , self)
 
-        ################################### DOWIĄZANIA ZDARZEŃ
+        ################################### EVENTS BINDINGS
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
         self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)
         #self.ui.btn_start.clicked.connect(self.startEyetracker)
-        self.ui.btn_settings.clicked.connect(self.startAdvancedSettings)
+        #self.ui.btn_settings.clicked.connect(self.startAdvancedSettings)
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
         self.ui.chb_mirror.stateChanged.connect(self.imageMirror)
-        self.ui.hsb_pupil1.valueChanged[int].connect(self.hsbPupil_1Change)
-        self.ui.hsb_pupil2.valueChanged[int].connect(self.hsbPupil_2Change)
-        self.ui.hsb_pupil3.valueChanged[int].connect(self.hsbPupil_3Change)
-        self.ui.hsb_glint1.valueChanged[int].connect(self.hsbGlint_1Change)
-        self.ui.hsb_glint2.valueChanged[int].connect(self.hsbGlint_2Change)
-        self.ui.hsb_glint3.valueChanged[int].connect(self.hsbGlint_3Change)
+        self.ui.hsb_pupil.valueChanged[int].connect(self.hsbPupil_Change)
+        self.ui.hsb_glint.valueChanged[int].connect(self.hsbGlint_Change)
 
-########################################### CYKANIE ZEGARA #
+########################################### CLOCK TICKS
     def timerEvent(self, event):
+        im = self.camera.frame()
+        im = imageFlipMirror(im, self.mirrored, self.fliped)
+            
+        pupil = self.pupilDetectionUpdate(im)
+        glint = self.blackAndWhiteUpdate(im)
+            
+        self.x = displayImage(pupil, 'pupil_detection')
+        self.y = displayImage(glint, 'glint_detection')
         
-        if self.advanced == 0:      # update małego okienka w podstawowym gui
-            im = self.camera.frame()
-            im = imageFlipMirror(im, self.mirrored, self.fliped)
-            self.displayGuiImage(im)
-            
-        else:                       # update dwóch okien w ustawieniach zaawansowanych
-            im = self.camera.frame()
-            im = imageFlipMirror(im, self.mirrored, self.fliped)
-            
-            pupil = self.pupilDetectionUpdate(gray)
-            glint = self.blackAndWhiteUpdate(gray)
-            
-            displayImage(pupil, 'pupil_detection')
-            displayImage(glint, 'glint_detection')
+        self.update()
+        #painter = QtGui.QPainter(self)
+        #painter.drawImage(QtCore.QPoint(0, 0), x)
 
-############################## METODA ZMIENIAJĄCA ALGORYTM #
+############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
         pass
-################################ METODA ZMIENIAJĄCA KAMERĘ #
+################################ CAMERA CHANGING METHOD
     def cameraChange(self):
         self.ui.timer.stop()
-        if self.selectedCameraName == 'dummy':
-            pass
-        else:
-            self.camera.close()
-
+        self.camera.close()
         self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
-        self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
-        
-        if self.selectedCameraName == 'dummy':
-            self.index = 0
-        else:
-            self.camera = Camera(self.selectedCameraIndex-1, 
-                                 {3 : 320, 4 : 240})		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
-
+        self.camera = Camera(self.selectedCameraIndex-1, {3 : 320, 4 : 240})		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
         self.ui.timer.start(100 , self)
 
-######################### METODA ODBIJAJĄCA OBRAZ GÓRA-DÓŁ #
+######################### MIRROR METHON
     def imageMirror(self):
         if self.mirrored == 0:
             self.mirrored = 1
         else:
             self.mirrored = 0
 
-####################### METODA ODBIJAJĄCA OBRAZ LEWO-PRAWO #
+####################### FLIP METHOD
     def imageFlip(self):
         if self.fliped == 0:
             self.fliped = 1
         else:
             self.fliped = 0
 
-######################### METODA ZMIENIAJĄCA ROZDZIELCZOŚĆ #
+######################### RESOLUTION CHANGING METHOD
     def resolutionChange(self):
 		index  = self.ui.cmb_setResolution.currentIndex()
 		self.h = self.resolutions_h[index]
 		self.w = self.resolutions_w[index]
         
-############################# UMIESZCZENIE OBRAZU Z KAMERY #
-    def displayGuiImage(self, im):
-        '''
-        To do
-        '''
-        result = QtGui.QImage(im , 320 , 240 , QtGui.QImage.Format_RGB888).rgbSwapped()
-        pixmap  = QtGui.QPixmap.fromImage(result)
-        pixItem = QtGui.QGraphicsPixmapItem(pixmap)
-        self.ui.graphicsScene.addItem(pixItem)
-        self.ui.graphicsView.fitInView(pixItem)
-        self.ui.graphicsScene.update()
-        self.ui.graphicsView.show()
-    
-### FUNKCJA WŁĄCZAJĄCA/WYŁACZAJĄCA ZAAWANSOWANE USTAWIENIA #
-    def startAdvancedSettings(self):
-        if self.advanced == 0:
-            self.ui.hsb_glint1.setEnabled(True)
-            self.ui.hsb_glint2.setEnabled(True)
-            self.ui.hsb_glint3.setEnabled(True)
-            self.ui.hsb_pupil1.setEnabled(True)
-            self.ui.hsb_pupil2.setEnabled(True)
-            self.ui.hsb_pupil3.setEnabled(True)
-            self.ui.chb_mirror.setEnabled(False)
-            self.ui.chb_flip.setEnabled(False)
-            self.ui.cmb_setResolution.setEnabled(False)
-            self.ui.cmb_setCamera.setEnabled(False)
-            self.ui.btn_start.setEnabled(False)
-            
-            self.advanced = 1
-            
-            resolutionIndex = self.ui.cmb_setResolution.currentIndex()
-            settings = {3 : self.resolutions_w[resolutionIndex], 
-                        4 : self.resolutions_h[resolutionIndex]}
-            self.camera.set(settings)
-            
-            cv2.namedWindow('pupil_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
-            cv2.moveWindow('pupil_detection',800,100)
-            cv2.namedWindow('glint_detection' , flags=cv2.CV_WINDOW_AUTOSIZE)
-            cv2.moveWindow('glint_detection',800,500)
-        else:
-            self.ui.hsb_glint1.setEnabled(False)
-            self.ui.hsb_glint2.setEnabled(False)
-            self.ui.hsb_glint3.setEnabled(False)
-            self.ui.hsb_pupil1.setEnabled(False)
-            self.ui.hsb_pupil2.setEnabled(False)
-            self.ui.hsb_pupil3.setEnabled(False)
-            self.ui.chb_mirror.setEnabled(True)
-            self.ui.chb_flip.setEnabled(True)
-            self.ui.cmb_setResolution.setEnabled(True)
-            self.ui.cmb_setCamera.setEnabled(True)
-            self.ui.btn_start.setEnabled(True)
-            self.advanced = 0
-            
-            cv2.destroyAllWindows()
-        
-######### OBSŁUGA SUWAKÓW ZMIENIAJĄCYCH PARAMETRY DETEKCJI #
-    def hsbPupil_1Change(self, value):
-        self.ui.lbl_pupil1.setText(str(value))
-    def hsbPupil_2Change(self, value):
-        self.ui.lbl_pupil2.setText(str(value))
-    def hsbPupil_3Change(self, value):
-        self.ui.lbl_pupil3.setText(str(value))
-    def hsbGlint_1Change(self, value):
-        self.ui.lbl_glint1.setText(str(value))
-    def hsbGlint_2Change(self, value):
-        self.ui.lbl_glint2.setText(str(value))
-    def hsbGlint_3Change(self, value):
-        self.ui.lbl_glint3.setText(str(value))
-        
+######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
+    def hsbPupil_Change(self, value):
+        self.ui.lbl_pupil.setText(str(value))
+
+    def hsbGlint_Change(self, value):
+        self.ui.lbl_glint.setText(str(value))
+
 ############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH #    
     def pupilDetectionUpdate(self, image):
-        pupilThresholds = [self.ui.hsb_pupil1.value(), self.ui.hsb_pupil2.value(), self.ui.hsb_pupil3.value()]
-        pupil = drawPupil(image, pupilThresholds)
+        pupilThreshold = self.ui.hsb_pupil.value()
+        pupil = drawPupil(image, pupilThreshold)
         return pupil
             
     def blackAndWhiteUpdate(self, image):
-        glintThresholds = [self.ui.hsb_glint1.value(), self.ui.hsb_glint2.value(), self.ui.hsb_glint3.value()]
-        glint = drawGlint(image, glintThresholds)
+        glintThreshold = self.ui.hsb_glint.value()
+        glint = drawGlint(image)#, glintThreshold)
         return glint
 
 ##########################################################
+    def paintEvent(self, e):
+        painter = QtGui.QPainter(self)
+        
+        result_glint  = QtGui.QImage(self.x , 320 , 240 , QtGui.QImage.Format_RGB888)
+        result_pupil  = QtGui.QImage(self.y , 320 , 240 , QtGui.QImage.Format_RGB888)#.rgbSwapped()
+        
+        painter.drawImage(QtCore.QPoint(5, 5), result_pupil)
+        painter.drawImage(QtCore.QPoint(5, 250), result_glint)

@@ -40,8 +40,8 @@ def drawGlint(image):
     '''
     if len(image.shape) == 3:
         image = bgr2gray(image)
-    where_glint = glint(gray)
-    color = gray2bgr(gray)
+    where_glint = glint(image)
+    color = gray2bgr(image)
     mark(color, where_glint)
     return color
 
@@ -82,6 +82,8 @@ def displayImage(image, where='new'):
     if where == 'new':
         namedWindow('new', flags=CV_WINDOW_AUTOSIZE)
     imshow(where, image)
+    
+    return image
             
 if __name__ == '__main__':
     pass
