@@ -65,7 +65,7 @@ def drawPupil(image, thres):
     thresholded = threshold(image, thresh_v=thres)
     where_pupil = pupil(thresholded)
     bgr = gray2bgr(thresholded)
-    mark(bgr, where_pupil, color='red')
+    mark(bgr, where_pupil, color='blue')
     return bgr
 
 def displayImage(image, where='new'):
