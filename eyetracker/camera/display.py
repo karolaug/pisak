@@ -22,7 +22,7 @@
 from cv2 import namedWindow, CV_WINDOW_AUTOSIZE, imshow
 
 from ..analysis.detect import pupil, glint
-from ..analysis.processing import threshold, mark, gray2bgr, bgr2gray
+from ...analysis.processing import threshold, mark, gray2bgr, bgr2gray
 
 def drawGlint(image):
     '''
@@ -41,9 +41,9 @@ def drawGlint(image):
     if len(image.shape) == 3:
         image = bgr2gray(image)
     where_glint = glint(image)
-    color = gray2bgr(image)
-    mark(color, where_glint)
-    return color
+    bgr = gray2bgr(image)
+    mark(bgr, where_glint)
+    return bgr
 
 def drawPupil(image, thres):
     '''
@@ -64,9 +64,9 @@ def drawPupil(image, thres):
         image = bgr2gray(image)
     thresholded = threshold(image, thresh_v=thres)
     where_pupil = pupil(thresholded)
-    color = gray2bgr(thresholded)
-    mark(color, where_pupil, color='red')
-    return color
+    bgr = gray2bgr(thresholded)
+    mark(bgr, where_pupil, color='red')
+    return bgr
 
 def displayImage(image, where='new'):
     '''
@@ -82,8 +82,15 @@ def displayImage(image, where='new'):
     if where == 'new':
         namedWindow('new', flags=CV_WINDOW_AUTOSIZE)
     imshow(where, image)
-    
-    return image
             
 if __name__ == '__main__':
-    pass
+    from cv2 import imread, waitKey
+
+    im = imread('../../pictures/eyeIR.png', 0)
+
+    pupil = drawPupil(im, 35)
+    glint = drawGlint(im)
+
+    displayImage(pupil, where='Pupil detection.')
+    displayImage(glint, where='Glint detection.')
+    waitKey(0)
