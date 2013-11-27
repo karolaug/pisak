@@ -57,10 +57,10 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setResolution.setCurrentIndex(1)
         self.w = 320
         self.h = 240
-        self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
-        self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
+        self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
 
-        self.camera = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
+        self.camera = Camera(self.cameras[self.selectedCamera], 
+                             {3 : self.w, 4 : self.h})
 
         self.mirrored = 0
         self.flipped = 0
@@ -70,7 +70,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
         
-        self.ui.timer.start(1000/self.sampling , self)
+        self.ui.timer.start(1000/self.sampling, self)
 
         ################################### EVENTS BINDINGS
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
@@ -88,8 +88,8 @@ class MyForm(QtGui.QMainWindow):
         im = self.camera.frame()
         im = imageFlipMirror(im, self.mirrored, self.flipped)
             
-        self.pupil = self.pupilDetectionUpdate(im)
-        self.glint = self.blackAndWhiteUpdate(im)
+        self.pupilDetectionUpdate(im)
+        self.glintDetectionUpdate(im)
             
         self.update()
         #painter = QtGui.QPainter(self)
@@ -105,7 +105,7 @@ class MyForm(QtGui.QMainWindow):
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
         self.camera = Camera(self.cameras[self.selectedCamera], 
                              {3 : 320, 4 : 240})
-        self.ui.timer.start(100 , self)
+        self.ui.timer.start(100, self)
 
 ######################### MIRROR METHON
     def imageMirror(self):
@@ -137,13 +137,11 @@ class MyForm(QtGui.QMainWindow):
 ############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH #    
     def pupilDetectionUpdate(self, image):
         pupilThreshold = self.ui.hsb_pupil.value()
-        pupil = drawPupil(image, pupilThreshold)
-        return pupil
+        self.pupil = drawPupil(image, pupilThreshold)
             
-    def blackAndWhiteUpdate(self, image):
+    def glintDetectionUpdate(self, image):
         glintThreshold = self.ui.hsb_glint.value()
-        glint = drawGlint(image)#, glintThreshold)
-        return glint
+        self.glint = drawGlint(image)#, glintThreshold
 
 ##########################################################
     def paintEvent(self, e):
