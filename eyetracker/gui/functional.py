@@ -25,7 +25,6 @@ import sys
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from ..analysis.detect import pupil, glint
 from ..analysis.processing import threshold, imageFlipMirror, mark
 
 from ..camera.display import drawPupil, drawGlint, displayImage
