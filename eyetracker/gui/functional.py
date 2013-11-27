@@ -21,7 +21,6 @@
 # University of Warsaw 2013
 
 import cv2
-import sys
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
