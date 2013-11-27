@@ -53,13 +53,10 @@ class MyForm(QtGui.QMainWindow):
     self.w - selected width of an image to start an eyetracker,
     self.h - selected height of an image to start an eyetracker,
     self.selectedCamera - selected camera name as chosen by the user (default is a name of the first avalaible device),
-    self.mirrored - boolean variable wether to mirror an image,
-    self.flipped - boolean variable wether to flip an image,
-    self.sampling - sampling rate of a camera (default 30 Hz),
     self.timer_on - flag showing wether timer is ticking or not,
     
-    self.config - to be written,
-    self.configFileName - to be written,
+    self.config - dictionary with all configuration variables,
+    self.configFileName - path to the configuration file,
     
     self.alpha - control parameter of the running average, it describes
     how fast previous images would be forgotten, 1 - no average,
