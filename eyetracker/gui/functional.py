@@ -296,13 +296,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint.setText(str(value))
 
 ############## UPDATE OBRAZU
-<<<<<<< HEAD
-    def pupilUpdate(self, image):
-=======
     def pupilDetectionUpdate(self, image):
         '''
-        
-        
         Parameters:
         -----------
         No parameters needed.
@@ -316,7 +311,6 @@ class MyForm(QtGui.QMainWindow):
         Function does not return anything.          
         '''
         
->>>>>>> a1fe025ef317a21ddce12d5b01415f88fb70ac60
         pupilThreshold = self.ui.hsb_pupil.value()
         self.pupil = drawPupil(image, pupilThreshold)
             
