@@ -33,11 +33,29 @@ adaptiveMethods = {'gaussian' : cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
 colors = {'blue' : (255, 0, 0), 'green' : (0, 255, 0), 'red' : (0, 0, 255)}
 
 def bgr2gray(imageBGR):
-    '''Convert color image(BGR) to gray image.'''
+    '''Convert color image(BGR) to gray image.
+    Parameters:
+    -----------
+    image - 2d 24-bit array depicting an image in three-channel color:
+    Blue,Green,Red
+    
+    Returns:
+    -----------
+    image - 2d 8-bit array depicting a given image converted to gray scale.
+    '''
     return cv2.cvtColor(imageBGR, cv2.COLOR_BGR2GRAY)
 
 def gray2bgr(imageGRAY):
-    '''Convert gray image to color image(BGR).'''
+    '''Convert gray image to color image(BGR).
+    Parameters:
+    -----------
+    image - 2d 8-bit array depicting an image in one-channel color (greyscale)
+    
+    Returns:
+    -----------
+    image - 2d 24-bit array depicting a given image converted to three-channel
+    color scale: Blue,Green,Red.
+    '''
     return cv2.cvtColor(imageGRAY, cv2.COLOR_GRAY2BGR)
 
 def threshold(image, thresh_v=30, max_v=255, thresh_type='trunc'):
@@ -56,6 +74,10 @@ def threshold(image, thresh_v=30, max_v=255, thresh_type='trunc'):
      'bin' : cv2.THRESH_BINARY, 'bin_inv' : cv2.THRESH_BINARY_INV, 
      'zero' : cv2.THRESH_TOZERO, 'zero_inv' : cv2.THRESH_TOZERO_INV,
      'trunc' : cv2.THRESH_TRUNC}
+     
+    Returns:
+    -----------
+    thresholded_image - given image after aplication of a given threshold.
     '''
     thresh_v = int(thresh_v)
     max_v = int(max_v)
@@ -73,6 +95,10 @@ def imageFlipMirror(im, mirrored,flipped):
     im - 2D array depicting an image as an numpy array
     mirrored - self explanatory boolean parameter (left - right)
     fliped - self explanatory boolean parameter (top - bottom)
+        
+    Returns:
+    -----------
+    im - image array processed accordingly.
     '''
     
     if mirrored == 1 and flipped == 0:
@@ -101,6 +127,10 @@ def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian',
     For corresponding adaptive methods see docs.opencv.org:
     {'gaussian' : cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
      'mean' : cv2.ADAPTIVE_THRESH_MEAN_C}
+    
+    Returns:
+    -----------
+    thresholded - image array processed accordingly.
     '''
     
     max_v = int(max_v)
@@ -127,6 +157,10 @@ def mark(image, where, radius=10, color='red', thickness=3):
     radius - set same radius for all objects, if a set of coordinates has a third value this will be overruled
     color - color of circles marking the object, possible: 'blue', 'green' or 'red'
     thickness - thickness of the circle
+    
+    Returns:
+    -----------
+    function does not return anything.
     '''
     if where != None:
         if len(where.shape) == 1:
@@ -153,7 +187,7 @@ def find_purkinje(purkinje1, purkinje2):
 
     Returns:
     --------
-    A tuple(x, y) which are the coordinates of the middle between purkinj1 and purkinje2. 
+    A tuple(x, y) which are the coordinates of the middle between purkinje1 and purkinje2. 
     '''
     purkinje = tuple(sum(coord)/2 for coord in zip(purkinje1, purkinje2))
     return purkinje

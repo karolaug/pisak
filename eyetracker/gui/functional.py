@@ -63,7 +63,10 @@ class MyForm(QtGui.QMainWindow):
         self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
         self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
 
-        self.camera = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
+        try:
+            self.camera = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
+        except KeyError:
+            print 'No camera device detected.'
 
         self.mirrored = 0
         self.fliped = 0
@@ -92,14 +95,12 @@ class MyForm(QtGui.QMainWindow):
         im = imageFlipMirror(im, self.mirrored, self.fliped)
             
         pupil = self.pupilDetectionUpdate(im)
-        glint = self.blackAndWhiteUpdate(im)
+        glint = self.glintUpdate(im)
             
         self.x = displayImage(pupil, 'pupil_detection')
         self.y = displayImage(glint, 'glint_detection')
         
         self.update()
-        #painter = QtGui.QPainter(self)
-        #painter.drawImage(QtCore.QPoint(0, 0), x)
 
 ############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
@@ -139,13 +140,13 @@ class MyForm(QtGui.QMainWindow):
     def hsbGlint_Change(self, value):
         self.ui.lbl_glint.setText(str(value))
 
-############## UPDATE OBRAZU W USTAWIENIACH ZAAWANSOWANYCH #    
+############## UPDATE OBRAZU
     def pupilDetectionUpdate(self, image):
         pupilThreshold = self.ui.hsb_pupil.value()
         pupil = drawPupil(image, pupilThreshold)
         return pupil
             
-    def blackAndWhiteUpdate(self, image):
+    def glintUpdate(self, image):
         glintThreshold = self.ui.hsb_glint.value()
         glint = drawGlint(image)#, glintThreshold)
         return glint
