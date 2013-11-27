@@ -33,6 +33,8 @@ from ..camera.camera import Camera
 
 from .graphical import Ui_StartingWindow
 
+import os
+
 ########################################################################
 
 class MyForm(QtGui.QMainWindow):
@@ -92,39 +94,26 @@ class MyForm(QtGui.QMainWindow):
         self.resolutions_h = [120,240,480,720]
         for w, h in izip(self.resolutions_w, self.resolutions_h):
             self.ui.cmb_setResolution.addItem(''.join([str(w), 'x', str(h)]))
-            
-        self.ui.cmb_setResolution.setCurrentIndex(1)
+        
+        
+        self.loadSettings() # this will create self.config containing all necessary settings
+        
+        self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )
         self.w = 320
-        self.h = 240
-        self.mirrored = 0
-        self.flipped = 0
-        self.sampling = 30.0
-        self.alpha = 0.1
+        self.h = 240        
+        
+        self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
+        self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
+        
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
-        self.configFileName = '.config/eyetracker-ng/configFile.txt'
 
-        try:
+        try: # THIS IS BAD - I WILL WORK ON IT - T.
             self.camera  = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
             #self.average = float32(self.camera.frame())
         except KeyError:
             print 'No camera device detected.'
         
-        self.config = []
-        try:
-            with open(self.configFileName , 'r') as configFile:
-                for line in configFile:
-                    tmp = line.split()
-                    self.config.append(tmp[1])
-        except IOError:
-            pass
-        
-        
-        
-        
-        self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
-        self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
-        
-        self.ui.timer.start(1000/self.sampling, self)
+        self.ui.timer.start(1000/self.config['Sampling'], self)
         self.timer_on = False # it starts above, but timer_on says if it already ticked at least once.
         
 
@@ -133,7 +122,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
         self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)
         #self.ui.btn_start.clicked.connect(self.startEyetracker)
-        #self.ui.btn_settings.clicked.connect(self.startAdvancedSettings)
+        self.ui.btn_save.clicked.connect(self.saveSettings)
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
         self.ui.chb_mirror.stateChanged.connect(self.imageMirror)
         self.ui.hsb_pupil.valueChanged[int].connect(self.hsbPupil_Change)
@@ -156,9 +145,9 @@ class MyForm(QtGui.QMainWindow):
         '''
         im = self.camera.frame()
         
-        im = runningAverage(im , im , self.alpha)
+        im = runningAverage(im , im , self.config['Alpha'])
         
-        im = imageFlipMirror(im, self.mirrored, self.flipped)
+        im = imageFlipMirror(im, self.config['Mirrored'], self.config['Fliped'])
 
         self.pupilUpdate(im)
         self.glintUpdate(im)
@@ -167,6 +156,76 @@ class MyForm(QtGui.QMainWindow):
             self.timer_on = True
         
         self.update()
+
+############################## SAVE CONFIG
+    def saveSettings(self):
+        '''
+        Saves parameters of a programm to a specified file on disc.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Returns:
+        --------
+        Function does not return anything.    
+        '''
+        
+        with open(self.configFileName , 'w') as f:
+            
+            for key in self.config.keys():
+                stringToWrite = key + ' ' + str(self.config[key]) + '\n'
+                f.write(stringToWrite)
+            
+            #f.write('Fliped {}\n'.format(self.flipped) )
+            #f.write('Mirrored {}\n'.format(self.mirrored) )
+            #f.write('Alpha {}\n'.format(self.alpha) )
+            #f.write('ResolutionIndex {}\n'.format(self.config['ResolutionIndex'] )
+            #f.write('PupilBar {}\n'.format(self.config['PupilBar'] )
+            #f.write('GlintBar {}\n'.format(self.config['GlintBar']) )
+            #f.write('Sampling {}\n'.format(self.config['Sampling']) )
+
+############################## LOAD CONFIG
+    def loadSettings(self):
+        '''
+        Loads parameters of a programm from a specified file on disc. If
+        file is not present, default parameters would be loaded.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Returns:
+        --------
+        This function does not return anything.
+        '''
+        
+        self.config = {}
+        
+        self.configFileName = os.path.expanduser("~") + '/.config/eyetracker-ng/configFile.txt'
+        
+        directory = self.configFileName[0 : self.configFileName.find('configFile')]
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        
+        try:
+            with open(self.configFileName , 'r') as configFile:
+                for line in configFile:
+                    tmp = line.split()
+                    try:
+                        self.config[str(tmp[0])] = int(tmp[1])
+                    except ValueError:
+                        self.config[str(tmp[0])] = float(tmp[1])
+                    
+        except IOError:
+            # No config file yet -- using defaults
+            self.config['Mirrored'] = 0
+            self.config['Fliped'] = 0
+            self.config['Alpha'] = 0.1
+            self.config['ResolutionIndex'] = 1
+            self.config['PupilBar'] = 0
+            self.config['GlintBar'] = 0
+            self.config['Sampling'] = 30.0
 
 ############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
@@ -181,7 +240,7 @@ class MyForm(QtGui.QMainWindow):
         
         Returns:
         --------
-        Function does not return anything.    
+        Function does not return anything.
         '''
         
         pass
@@ -220,10 +279,10 @@ class MyForm(QtGui.QMainWindow):
         Function does not return anything.          
         '''
         
-        if self.mirrored == 0:
-            self.mirrored = 1
+        if self.config['Mirrored'] == 0:
+            self.config['Mirrored'] = 1
         else:
-            self.mirrored = 0
+            self.config['Mirrored'] = 0
 
 ####################### FLIP METHOD
     def imageFlip(self):
@@ -239,10 +298,10 @@ class MyForm(QtGui.QMainWindow):
         Function does not return anything.          
         '''        
         
-        if self.flipped == 0:
-            self.flipped = 1
+        if self.config['Fliped'] == 0:
+            self.config['Fliped'] = 1
         else:
-            self.flipped = 0
+            self.config['Fliped'] = 0
 
 ######################### RESOLUTION CHANGING METHOD
     def resolutionChange(self):
@@ -259,9 +318,12 @@ class MyForm(QtGui.QMainWindow):
         Function does not return anything.          
         '''
         
-        index  = self.ui.cmb_setResolution.currentIndex()
-        self.h = self.resolutions_h[index]
-        self.w = self.resolutions_w[index]
+        ind = self.ui.cmb_setResolution.currentIndex()
+        
+        self.config['ResolutionIndex']  = ind
+        
+        self.h = self.resolutions_h[ind]
+        self.w = self.resolutions_w[ind]
         
 ######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
     def hsbPupil_Change(self, value):
@@ -278,6 +340,7 @@ class MyForm(QtGui.QMainWindow):
         '''
         
         self.ui.lbl_pupil.setText(str(value))
+        self.config['PupilBar'] = value
 
     def hsbGlint_Change(self, value):
         '''
@@ -293,6 +356,7 @@ class MyForm(QtGui.QMainWindow):
         '''
         
         self.ui.lbl_glint.setText(str(value))
+        self.config['GlintBar'] = value
 
 ############## UPDATE OBRAZU
     def pupilUpdate(self, image):
