@@ -146,8 +146,14 @@ class MyForm(QtGui.QMainWindow):
     def paintEvent(self, e):
         painter = QtGui.QPainter(self)
         
-        result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)
-        result_pupil = QtGui.QImage(self.pupil, 320, 240, QtGui.QImage.Format_RGB888)#.rgbSwapped()
+        try:
+            result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)
+            result_pupil = QtGui.QImage(self.pupil, 320, 240, QtGui.QImage.Format_RGB888)#.rgbSwapped()
         
-        painter.drawImage(QtCore.QPoint(5, 5), result_pupil)
-        painter.drawImage(QtCore.QPoint(5, 250), result_glint)
+            painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
+            painter.drawImage(QtCore.QPoint(5, 300), result_glint)
+            
+        except AttributeError:
+            # no self.glint and no other error means camera is not yet initialized,
+            # so waiting is necessary
+            pass
