@@ -102,12 +102,21 @@ class MyForm(QtGui.QMainWindow):
         self.w = 320
         self.h = 240        
         
+        self.ui.hsb_pupil.setValue(self.config['PupilBar'])
+        self.ui.hsb_glint.setValue(self.config['GlintBar'])
+        
         self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
         
+        if self.config['Mirrored'] == 1:
+            self.ui.chb_mirror.toggle()
+            #pass
+        if self.config['Fliped'] == 1:
+            self.ui.chb_flip.toggle()       
+        
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
 
-        try: # THIS IS BAD - I WILL WORK ON IT - T.
+        try: # THIS IS BAD - I WILL WORK ON IT LATER - Tomek.
             self.camera  = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
             #self.average = float32(self.camera.frame())
         except KeyError:
