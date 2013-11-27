@@ -34,6 +34,36 @@ from .graphical import Ui_StartingWindow
 ########################################################################
 
 class MyForm(QtGui.QMainWindow):
+    '''
+    Class governing the functional part of the default graphical user interface.
+
+    Parameters:
+    -----------
+    No parameters needed.
+
+    Defines:
+    --------
+    self.cameras - list containing all camera devices connected to the computer.
+    self.algorithms - list of all implemented algorithms for eyetracker programm.
+    self.resolutions - list of all possible image resolutions for eyetracer to operate on.
+    self.w - selected width of an image to start an eyetracker
+    self.h - selected height of an image to start an eyetracker
+    self.selectedCamera - selected camera name as chosen by the user (default is a name of the first avalaible device)
+    self.mirrored - boolean variable wether to mirror an image
+    self.flipped - boolean variable wether to flip an image
+    self.sampling - sampling rate of a camera (default 30 Hz)
+    
+    self.ui - class encapsulating graphical part of an interface, as described
+    in eyetracker/gui/graphical.py file
+    
+    self.camera - class encapsulating a camera device as described in
+    eyetracker/camera/camera.py
+    
+    Returns:
+    --------
+    
+    '''
+    
     def __init__(self, parent=None):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_StartingWindow()
@@ -86,6 +116,23 @@ class MyForm(QtGui.QMainWindow):
 
 ########################################### CLOCK TICKS
     def timerEvent(self, event):
+        '''
+        Function controlling the flow of a programm. It fires periodically
+        (sampling rate), grabs frames from a camera, starts image processing
+        and displays changes in the gui.
+        
+        Parameters:
+        -----------
+        event - standard event handler as described in QT4 documentation.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.
+        '''
         im = self.camera.frame()
         im = imageFlipMirror(im, self.mirrored, self.flipped)
 
@@ -96,9 +143,43 @@ class MyForm(QtGui.QMainWindow):
 
 ############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
+        '''
+        Function changing algorithm for eyetracker. Since there is only one
+        possible algorithm for now, this function does nothing and is never
+        used.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.    
+        '''
+        
         pass
 ################################ CAMERA CHANGING METHOD
     def cameraChange(self):
+        '''
+        Function changing camera between avalaible devices.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.            
+        '''
+        
         self.ui.timer.stop()
         self.camera.close()
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
@@ -108,6 +189,22 @@ class MyForm(QtGui.QMainWindow):
 
 ######################### MIRROR METHON
     def imageMirror(self):
+        '''
+        Function sets a variable telling the gui to mirror incomming frames from a camera.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.          
+        '''
+        
         if self.mirrored == 0:
             self.mirrored = 1
         else:
@@ -115,6 +212,22 @@ class MyForm(QtGui.QMainWindow):
 
 ####################### FLIP METHOD
     def imageFlip(self):
+        '''
+        Function sets a variable telling the gui to flip incomming frames from a camera.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.          
+        '''        
+        
         if self.flipped == 0:
             self.flipped = 1
         else:
@@ -122,28 +235,125 @@ class MyForm(QtGui.QMainWindow):
 
 ######################### RESOLUTION CHANGING METHOD
     def resolutionChange(self):
+        '''
+        Function sets a chosen resolution of a camera. It does not change
+        an image displayed in the gui, but sets variable for eyetracker programm.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.          
+        '''
+        
         index  = self.ui.cmb_setResolution.currentIndex()
         self.h = self.resolutions_h[index]
         self.w = self.resolutions_w[index]
         
 ######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
     def hsbPupil_Change(self, value):
+        '''
+        Function sets a text in a gui according to the possition of a slider.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.          
+        '''
+        
         self.ui.lbl_pupil.setText(str(value))
 
     def hsbGlint_Change(self, value):
+        '''
+        Function sets a text in a gui according to the possition of a slider.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.          
+        '''
+        
         self.ui.lbl_glint.setText(str(value))
 
 ############## UPDATE OBRAZU
     def pupilDetectionUpdate(self, image):
+        '''
+        
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.          
+        '''
+        
         pupilThreshold = self.ui.hsb_pupil.value()
         self.pupil = drawPupil(image, pupilThreshold)
             
     def glintUpdate(self, image):
+        '''
+        
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.          
+        '''
+        
         glintThreshold = self.ui.hsb_glint.value()
         self.glint = drawGlint(image)#, glintThreshold
 
 ##########################################################
     def paintEvent(self, e):
+        '''
+        
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Defines:
+        --------
+        Function does not define any new variables.
+        
+        Returns:
+        --------
+        Function does not return anything.          
+        '''
+        
         painter = QtGui.QPainter(self)
         
         try:

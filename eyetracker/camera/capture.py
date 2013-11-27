@@ -24,6 +24,10 @@ from glob import iglob
 def lookForCameras():
     '''
     Function looks for cameras plugged into computer.
+    
+    Parameters:
+    -----------
+    No parameters needed.
 
     Returns:
     --------
