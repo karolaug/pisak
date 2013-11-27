@@ -25,7 +25,7 @@ import cv2
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from ..analysis.processing import imageFlipMirror, imageStack, runningAverage
+from ..analysis.processing import imageFlipMirror, runningAverage
 
 from ..camera.display import drawPupil, drawGlint
 from ..camera.capture import lookForCameras
