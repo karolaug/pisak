@@ -23,7 +23,7 @@
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from ..analysis.processing import threshold, imageFlipMirror
+from ..analysis.processing import imageFlipMirror
 
 from ..camera.display import drawPupil, drawGlint
 from ..camera.capture import lookForCameras
