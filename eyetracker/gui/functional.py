@@ -54,6 +54,7 @@ class MyForm(QtGui.QMainWindow):
     self.mirrored - boolean variable wether to mirror an image,
     self.flipped - boolean variable wether to flip an image,
     self.sampling - sampling rate of a camera (default 30 Hz),
+    self.timer_on - flag showing wether timer is ticking or not,
     
     self.alpha - control parameter of the running average, it describes
     how fast previous images would be forgotten, 1 - no average,
@@ -111,6 +112,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
         
         self.ui.timer.start(1000/self.sampling, self)
+        self.timer_on = False # it starts above, but timer_on says it already ticked al least once.
+        
 
         ################################### EVENTS BINDINGS
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
@@ -146,6 +149,9 @@ class MyForm(QtGui.QMainWindow):
 
         self.pupilUpdate(im)
         self.glintUpdate(im)
+        
+        if self.timer_on == False:
+            self.timer_on = True
         
         self.update()
 
@@ -321,14 +327,9 @@ class MyForm(QtGui.QMainWindow):
         
         painter = QtGui.QPainter(self)
         
-        try:
-            result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)
+        if self.timer_on:
             result_pupil = QtGui.QImage(self.pupil, 320, 240, QtGui.QImage.Format_RGB888)#.rgbSwapped()
+            result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)
         
             painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
             painter.drawImage(QtCore.QPoint(5, 300), result_glint)
-            
-        except AttributeError:
-            # no self.glint and no other error means camera is not yet initialized,
-            # so waiting is necessary
-            pass
