@@ -56,6 +56,9 @@ class MyForm(QtGui.QMainWindow):
     self.sampling - sampling rate of a camera (default 30 Hz),
     self.timer_on - flag showing wether timer is ticking or not,
     
+    self.config - to be written,
+    self.configFileName - to be written,
+    
     self.alpha - control parameter of the running average, it describes
     how fast previous images would be forgotten, 1 - no average,
     0 - never forget anything.
@@ -93,26 +96,36 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setResolution.setCurrentIndex(1)
         self.w = 320
         self.h = 240
+        self.mirrored = 0
+        self.flipped = 0
+        self.sampling = 30.0
+        self.alpha = 0.1
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
+        self.configFileName = '.config/eyetracker-ng/configFile.txt'
 
         try:
             self.camera  = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
             #self.average = float32(self.camera.frame())
         except KeyError:
             print 'No camera device detected.'
-
-        self.mirrored = 0
-        self.flipped = 0
         
-        self.sampling = 30.0
+        self.config = []
+        try:
+            with open(self.configFileName , 'r') as configFile:
+                for line in configFile:
+                    tmp = line.split()
+                    self.config.append(tmp[1])
+        except IOError:
+            pass
         
-        self.alpha = 0.1
+        
+        
         
         self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
         
         self.ui.timer.start(1000/self.sampling, self)
-        self.timer_on = False # it starts above, but timer_on says it already ticked al least once.
+        self.timer_on = False # it starts above, but timer_on says if it already ticked at least once.
         
 
         ################################### EVENTS BINDINGS
