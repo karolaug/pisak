@@ -20,7 +20,6 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-import cv2
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
@@ -123,9 +122,9 @@ class MyForm(QtGui.QMainWindow):
 
 ######################### RESOLUTION CHANGING METHOD
     def resolutionChange(self):
-		index  = self.ui.cmb_setResolution.currentIndex()
-		self.h = self.resolutions_h[index]
-		self.w = self.resolutions_w[index]
+        index  = self.ui.cmb_setResolution.currentIndex()
+        self.h = self.resolutions_h[index]
+        self.w = self.resolutions_w[index]
         
 ######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
     def hsbPupil_Change(self, value):
