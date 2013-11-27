@@ -22,7 +22,7 @@
 from cv2 import namedWindow, CV_WINDOW_AUTOSIZE, imshow
 
 from ..analysis.detect import pupil, glint
-from ...analysis.processing import threshold, mark, gray2bgr, bgr2gray
+from ..analysis.processing import threshold, mark, gray2bgr, bgr2gray
 
 def drawGlint(image):
     '''
