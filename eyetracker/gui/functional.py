@@ -20,10 +20,13 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
+from numpy import float32
+import cv2
+
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from ..analysis.processing import imageFlipMirror
+from ..analysis.processing import imageFlipMirror, imageStack, runningAverage
 
 from ..camera.display import drawPupil, drawGlint
 from ..camera.capture import lookForCameras
@@ -43,25 +46,29 @@ class MyForm(QtGui.QMainWindow):
 
     Defines:
     --------
-    self.cameras - list containing all camera devices connected to the computer.
-    self.algorithms - list of all implemented algorithms for eyetracker programm.
-    self.resolutions - list of all possible image resolutions for eyetracer to operate on.
-    self.w - selected width of an image to start an eyetracker
-    self.h - selected height of an image to start an eyetracker
-    self.selectedCamera - selected camera name as chosen by the user (default is a name of the first avalaible device)
-    self.mirrored - boolean variable wether to mirror an image
-    self.flipped - boolean variable wether to flip an image
-    self.sampling - sampling rate of a camera (default 30 Hz)
+    self.cameras - list containing all camera devices connected to the computer,
+    self.algorithms - list of all implemented algorithms for eyetracker programm,
+    self.resolutions - list of all possible image resolutions for eyetracer to operate on,
+    self.w - selected width of an image to start an eyetracker,
+    self.h - selected height of an image to start an eyetracker,
+    self.selectedCamera - selected camera name as chosen by the user (default is a name of the first avalaible device),
+    self.mirrored - boolean variable wether to mirror an image,
+    self.flipped - boolean variable wether to flip an image,
+    self.sampling - sampling rate of a camera (default 30 Hz),
+    
+    self.alpha - control parameter of the running average, it describes
+    how fast previous images would be forgotten, 1 - no average,
+    0 - never forget anything.
     
     self.ui - class encapsulating graphical part of an interface, as described
-    in eyetracker/gui/graphical.py file
+    in eyetracker/gui/graphical.py file,
     
     self.camera - class encapsulating a camera device as described in
-    eyetracker/camera/camera.py
+    eyetracker/camera/camera.py.
     
     Returns:
     --------
-    
+    Class does not return anything.
     '''
     
     def __init__(self, parent=None):
@@ -89,7 +96,8 @@ class MyForm(QtGui.QMainWindow):
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
 
         try:
-            self.camera = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
+            self.camera  = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
+            #self.average = float32(self.camera.frame())
         except KeyError:
             print 'No camera device detected.'
 
@@ -97,6 +105,8 @@ class MyForm(QtGui.QMainWindow):
         self.flipped = 0
         
         self.sampling = 30.0
+        
+        self.alpha = 0.1
         
         self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
@@ -117,7 +127,7 @@ class MyForm(QtGui.QMainWindow):
 ########################################### CLOCK TICKS
     def timerEvent(self, event):
         '''
-        Function controlling the flow of a programm. It fires periodically
+        Function controlling the main flow of the programm. It fires periodically
         (sampling rate), grabs frames from a camera, starts image processing
         and displays changes in the gui.
         
@@ -129,13 +139,16 @@ class MyForm(QtGui.QMainWindow):
         --------
         Function does not return anything.
         '''
-        im = self.camera.frame()
-        im = imageFlipMirror(im, self.mirrored, self.flipped)
+        im = self.camera.frame() # weź klatkę
+        
+        im = runningAverage(im , float32(im) , self.alpha) # oblicz średnią
+        
+        im = imageFlipMirror(im, self.mirrored, self.flipped) # poodwracaj
 
-        self.pupilUpdate(im)
-        self.glintUpdate(im)
-            
-        self.update()
+        self.pupilUpdate(im) # znajdź źrenicę
+        self.glintUpdate(im) # znajdź odbicia
+        
+        self.update() # narysuj co wyszło
 
 ############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
@@ -250,9 +263,6 @@ class MyForm(QtGui.QMainWindow):
 
     def hsbGlint_Change(self, value):
         '''
-        
-        
-        
         Function sets a text in a gui according to the possition of a slider.
         
         Parameters:
@@ -269,9 +279,7 @@ class MyForm(QtGui.QMainWindow):
 ############## UPDATE OBRAZU
     def pupilUpdate(self, image):
         '''
-        
-        
-        
+
         Parameters:
         -----------
         No parameters needed.
@@ -287,7 +295,6 @@ class MyForm(QtGui.QMainWindow):
     def glintUpdate(self, image):
         '''
         
-        
         Parameters:
         -----------
         No parameters needed.
@@ -301,13 +308,12 @@ class MyForm(QtGui.QMainWindow):
         self.glint = drawGlint(image)#, glintThreshold
 
 ##########################################################
-    def paintEvent(self, e):
+    def paintEvent(self, event):
         '''
-        
         
         Parameters:
         -----------
-        No parameters needed.
+        event - standard event handler as described in QT4 documentation.
         
         Returns:
         --------

@@ -192,6 +192,28 @@ def find_purkinje(purkinje1, purkinje2):
     purkinje = tuple(sum(coord)/2 for coord in zip(purkinje1, purkinje2))
     return purkinje
 
+def runningAverage(image , average , alpha):
+    '''
+    Calculates running average of given pictures stream using cv2.accumulateWeighted.
+    
+    Parameters:
+    -----------
+    image - new image to be averaged along with past image stream,
+    average - past averaged image,
+    alpha - control parameter of the running average, it describes
+    how fast previous images would be forgotten, 1 - no average,
+    0 - never forget anything.
+    
+    Returns:
+    --------
+    image - averaged image as numpy array.
+    '''
+    
+    cv2.accumulateWeighted( image , average , alpha)
+    image = cv2.convertScaleAbs(average)
+    
+    return image
+
 if __name__ == '__main__':
     from numpy import array
     
