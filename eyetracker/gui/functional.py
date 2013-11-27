@@ -296,7 +296,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint.setText(str(value))
 
 ############## UPDATE OBRAZU
-    def pupilDetectionUpdate(self, image):
+    def pupilUpdate(self, image):
         '''
         Parameters:
         -----------
