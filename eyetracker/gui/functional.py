@@ -125,10 +125,6 @@ class MyForm(QtGui.QMainWindow):
         -----------
         event - standard event handler as described in QT4 documentation.
         
-        Defines:
-        --------
-        Function does not define any new variables.
-        
         Returns:
         --------
         Function does not return anything.
@@ -152,10 +148,6 @@ class MyForm(QtGui.QMainWindow):
         -----------
         No parameters needed.
         
-        Defines:
-        --------
-        Function does not define any new variables.
-        
         Returns:
         --------
         Function does not return anything.    
@@ -170,10 +162,6 @@ class MyForm(QtGui.QMainWindow):
         Parameters:
         -----------
         No parameters needed.
-        
-        Defines:
-        --------
-        Function does not define any new variables.
         
         Returns:
         --------
@@ -196,10 +184,6 @@ class MyForm(QtGui.QMainWindow):
         -----------
         No parameters needed.
         
-        Defines:
-        --------
-        Function does not define any new variables.
-        
         Returns:
         --------
         Function does not return anything.          
@@ -218,10 +202,6 @@ class MyForm(QtGui.QMainWindow):
         Parameters:
         -----------
         No parameters needed.
-        
-        Defines:
-        --------
-        Function does not define any new variables.
         
         Returns:
         --------
@@ -243,10 +223,6 @@ class MyForm(QtGui.QMainWindow):
         -----------
         No parameters needed.
         
-        Defines:
-        --------
-        Function does not define any new variables.
-        
         Returns:
         --------
         Function does not return anything.          
@@ -265,10 +241,6 @@ class MyForm(QtGui.QMainWindow):
         -----------
         No parameters needed.
         
-        Defines:
-        --------
-        Function does not define any new variables.
-        
         Returns:
         --------
         Function does not return anything.          
@@ -278,15 +250,14 @@ class MyForm(QtGui.QMainWindow):
 
     def hsbGlint_Change(self, value):
         '''
+        
+        
+        
         Function sets a text in a gui according to the possition of a slider.
         
         Parameters:
         -----------
         No parameters needed.
-        
-        Defines:
-        --------
-        Function does not define any new variables.
         
         Returns:
         --------
@@ -298,13 +269,12 @@ class MyForm(QtGui.QMainWindow):
 ############## UPDATE OBRAZU
     def pupilUpdate(self, image):
         '''
+        
+        
+        
         Parameters:
         -----------
         No parameters needed.
-        
-        Defines:
-        --------
-        Function does not define any new variables.
         
         Returns:
         --------
@@ -322,10 +292,6 @@ class MyForm(QtGui.QMainWindow):
         -----------
         No parameters needed.
         
-        Defines:
-        --------
-        Function does not define any new variables.
-        
         Returns:
         --------
         Function does not return anything.          
@@ -342,10 +308,6 @@ class MyForm(QtGui.QMainWindow):
         Parameters:
         -----------
         No parameters needed.
-        
-        Defines:
-        --------
-        Function does not define any new variables.
         
         Returns:
         --------
