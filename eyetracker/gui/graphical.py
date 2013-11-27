@@ -37,7 +37,34 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_StartingWindow(object):
+    '''
+    Class governing the graphical part of the default graphical user interface.
+    It describes only parameters of used widgets, all operational functions
+    are placed in separate class in eyetracker/gui/functional. 
+
+    Parameters:
+    -----------
+    No parameters needed.
+
+    Defines:
+    --------
+    Plenty of widgets. -- describe later.
+    
+    '''
+    
     def setupUi(self, StartingWindow):
+        '''
+        This function works as an initialization of all needed widgets.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Returns:
+        Function does not return anything.
+        
+        '''
+        
         StartingWindow.setObjectName(_fromUtf8("StartingWindow"))
         StartingWindow.setEnabled(True)
         StartingWindow.resize(640, 640)
@@ -49,8 +76,6 @@ class Ui_StartingWindow(object):
         
         self.centralwidget = QtGui.QWidget(StartingWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        
-        
         
         self.lbl_title = QtGui.QLabel(self.centralwidget)
         self.lbl_title.setEnabled(True)
@@ -157,6 +182,18 @@ class Ui_StartingWindow(object):
         QtCore.QMetaObject.connectSlotsByName(StartingWindow)
 
     def retranslateUi(self, StartingWindow):
+        '''
+        This function attaches names to all widgets set up in setupUi function.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Returns:
+        Function does not return anything.        
+        
+        '''
+        
         StartingWindow.setWindowTitle(_translate("StartingWindow", "Eyetracter -- start", None))
         self.lbl_title.setText(_translate("StartingWindow", "Eyetracker v_0.2", None))
         self.btn_start.setText(_translate("StartingWindow", "START", None))
