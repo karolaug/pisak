@@ -21,6 +21,7 @@
 # University of Warsaw 2013
 
 import cv2
+from numpy import float32
 
 thresholds = {'otsu' : cv2.THRESH_OTSU, 'bin' : cv2.THRESH_BINARY, 
               'bin_inv' : cv2.THRESH_BINARY_INV, 
@@ -208,7 +209,7 @@ def runningAverage(image , average , alpha):
     --------
     image - averaged image as numpy array.
     '''
-    
+    average = float32(average)
     cv2.accumulateWeighted( image , average , alpha)
     image = cv2.convertScaleAbs(average)
     

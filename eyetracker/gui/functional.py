@@ -20,7 +20,6 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-from numpy import float32
 import cv2
 
 from itertools import izip
@@ -139,16 +138,16 @@ class MyForm(QtGui.QMainWindow):
         --------
         Function does not return anything.
         '''
-        im = self.camera.frame() # weź klatkę
+        im = self.camera.frame()
         
-        im = runningAverage(im , float32(im) , self.alpha) # oblicz średnią
+        im = runningAverage(im , im , self.alpha)
         
-        im = imageFlipMirror(im, self.mirrored, self.flipped) # poodwracaj
+        im = imageFlipMirror(im, self.mirrored, self.flipped)
 
-        self.pupilUpdate(im) # znajdź źrenicę
-        self.glintUpdate(im) # znajdź odbicia
+        self.pupilUpdate(im)
+        self.glintUpdate(im)
         
-        self.update() # narysuj co wyszło
+        self.update()
 
 ############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
