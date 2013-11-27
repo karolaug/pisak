@@ -20,16 +20,12 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-import cv2
-import numpy as np
-import sys
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
-from ..analysis.detect import pupil, glint
-from ..analysis.processing import threshold, imageFlipMirror, mark
+from ..analysis.processing import imageFlipMirror
 
-from ..camera.display import drawPupil, drawGlint, displayImage
+from ..camera.display import drawPupil, drawGlint
 from ..camera.capture import lookForCameras
 from ..camera.camera import Camera
 
@@ -60,8 +56,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setResolution.setCurrentIndex(1)
         self.w = 320
         self.h = 240
-        self.selectedCameraName  = self.ui.cmb_setCamera.currentText()
-        self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
+        self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
 
         try:
             self.camera = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
@@ -69,14 +64,14 @@ class MyForm(QtGui.QMainWindow):
             print 'No camera device detected.'
 
         self.mirrored = 0
-        self.fliped = 0
+        self.flipped = 0
         
         self.sampling = 30.0
         
         self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
         
-        self.ui.timer.start(1000/self.sampling , self)
+        self.ui.timer.start(1000/self.sampling, self)
 
         ################################### EVENTS BINDINGS
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
@@ -92,14 +87,11 @@ class MyForm(QtGui.QMainWindow):
 ########################################### CLOCK TICKS
     def timerEvent(self, event):
         im = self.camera.frame()
-        im = imageFlipMirror(im, self.mirrored, self.fliped)
-            
+        im = imageFlipMirror(im, self.mirrored, self.flipped)
+
         pupil = self.pupilDetectionUpdate(im)
         glint = self.glintUpdate(im)
             
-        self.x = displayImage(pupil, 'pupil_detection')
-        self.y = displayImage(glint, 'glint_detection')
-        
         self.update()
 
 ############################## ALGORITHM CHANGING METHOD
@@ -109,9 +101,10 @@ class MyForm(QtGui.QMainWindow):
     def cameraChange(self):
         self.ui.timer.stop()
         self.camera.close()
-        self.selectedCameraIndex = self.ui.cmb_setCamera.currentIndex()
-        self.camera = Camera(self.selectedCameraIndex-1, {3 : 320, 4 : 240})		# -1, bo numeracja jest od zera, a użytkownik widzi od 1
-        self.ui.timer.start(100 , self)
+        self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
+        self.camera = Camera(self.cameras[self.selectedCamera], 
+                             {3 : 320, 4 : 240})
+        self.ui.timer.start(100, self)
 
 ######################### MIRROR METHON
     def imageMirror(self):
@@ -122,16 +115,16 @@ class MyForm(QtGui.QMainWindow):
 
 ####################### FLIP METHOD
     def imageFlip(self):
-        if self.fliped == 0:
-            self.fliped = 1
+        if self.flipped == 0:
+            self.flipped = 1
         else:
-            self.fliped = 0
+            self.flipped = 0
 
 ######################### RESOLUTION CHANGING METHOD
     def resolutionChange(self):
-		index  = self.ui.cmb_setResolution.currentIndex()
-		self.h = self.resolutions_h[index]
-		self.w = self.resolutions_w[index]
+        index  = self.ui.cmb_setResolution.currentIndex()
+        self.h = self.resolutions_h[index]
+        self.w = self.resolutions_w[index]
         
 ######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
     def hsbPupil_Change(self, value):
@@ -143,20 +136,18 @@ class MyForm(QtGui.QMainWindow):
 ############## UPDATE OBRAZU
     def pupilDetectionUpdate(self, image):
         pupilThreshold = self.ui.hsb_pupil.value()
-        pupil = drawPupil(image, pupilThreshold)
-        return pupil
+        self.pupil = drawPupil(image, pupilThreshold)
             
     def glintUpdate(self, image):
         glintThreshold = self.ui.hsb_glint.value()
-        glint = drawGlint(image)#, glintThreshold)
-        return glint
+        self.glint = drawGlint(image)#, glintThreshold
 
 ##########################################################
     def paintEvent(self, e):
         painter = QtGui.QPainter(self)
         
-        result_glint  = QtGui.QImage(self.x , 320 , 240 , QtGui.QImage.Format_RGB888)
-        result_pupil  = QtGui.QImage(self.y , 320 , 240 , QtGui.QImage.Format_RGB888)#.rgbSwapped()
+        result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)
+        result_pupil = QtGui.QImage(self.pupil, 320, 240, QtGui.QImage.Format_RGB888)#.rgbSwapped()
         
         painter.drawImage(QtCore.QPoint(5, 5), result_pupil)
         painter.drawImage(QtCore.QPoint(5, 250), result_glint)
