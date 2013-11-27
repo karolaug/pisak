@@ -89,8 +89,8 @@ class MyForm(QtGui.QMainWindow):
         im = self.camera.frame()
         im = imageFlipMirror(im, self.mirrored, self.flipped)
 
-        pupil = self.pupilDetectionUpdate(im)
-        glint = self.glintUpdate(im)
+        self.pupilUpdate(im)
+        self.glintUpdate(im)
             
         self.update()
 
@@ -134,7 +134,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint.setText(str(value))
 
 ############## UPDATE OBRAZU
-    def pupilDetectionUpdate(self, image):
+    def pupilUpdate(self, image):
         pupilThreshold = self.ui.hsb_pupil.value()
         self.pupil = drawPupil(image, pupilThreshold)
             
