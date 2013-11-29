@@ -155,13 +155,21 @@ class Ui_StartingWindow(object):
         self.cmb_setAlgorithm.setGeometry(QtCore.QRect(20, 560, 120, 35))
         self.cmb_setAlgorithm.setObjectName(_fromUtf8("cmb_setAlgorithm"))
         
-        self.btn_load = QtGui.QPushButton(self.centralwidget)
-        self.btn_load.setGeometry(QtCore.QRect(500, 510, 120, 35))
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/load.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.btn_load.setIcon(icon3)
-        self.btn_load.setIconSize(QtCore.QSize(24, 24))
-        self.btn_load.setObjectName(_fromUtf8("btn_load"))
+        #self.btn_load = QtGui.QPushButton(self.centralwidget)
+        #self.btn_load.setGeometry(QtCore.QRect(500, 510, 120, 35))
+        #icon3 = QtGui.QIcon()
+        #icon3.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/load.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        #self.btn_load.setIcon(icon3)
+        #self.btn_load.setIconSize(QtCore.QSize(24, 24))
+        #self.btn_load.setObjectName(_fromUtf8("btn_load"))
+
+        self.btn_clear = QtGui.QPushButton(self.centralwidget)
+        self.btn_clear.setGeometry(QtCore.QRect(455, 560, 35, 35))
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/clear.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.btn_clear.setIcon(icon5)
+        self.btn_clear.setIconSize(QtCore.QSize(24, 24))
+        self.btn_clear.setObjectName(_fromUtf8("btn_clear"))
         
         self.btn_save = QtGui.QPushButton(self.centralwidget)
         self.btn_save.setGeometry(QtCore.QRect(500, 560, 120, 35))
@@ -203,7 +211,7 @@ class Ui_StartingWindow(object):
         self.chb_mirror.setText(_translate("StartingWindow", "Mirror", None))
         self.lbl_pupilDetection.setText(_translate("StartingWindow", "Pupil detection:", None))
         self.lbl_glintDetection.setText(_translate("StartingWindow", "Glint detection:", None))
-        self.btn_load.setText(_translate("StartingWindow", "LOAD", None))
+        #self.btn_load.setText(_translate("StartingWindow", "LOAD", None))
         self.btn_save.setText(_translate("StartingWindow", "SAVE", None))
 
 if __name__ == '__main__':

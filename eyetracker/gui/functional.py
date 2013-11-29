@@ -93,24 +93,11 @@ class MyForm(QtGui.QMainWindow):
             self.ui.cmb_setResolution.addItem(''.join([str(w), 'x', str(h)]))
         
         
-        self.loadSettings() # this will create self.config containing all necessary settings
-        
-        self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
-        
-        self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )
+        self.loadSettings()      # this will create self.config containing all necessary settings
+        self.setWidgetsState()   # this will set up state of widgets according to loaded settings
+
         self.w = 320
-        self.h = 240        
-        
-        self.ui.hsb_pupil.setValue(self.config['PupilBar'])
-        self.ui.hsb_glint.setValue(self.config['GlintBar'])
-        
-        self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
-        self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
-        
-        if self.config['Mirrored'] == 1:
-            self.ui.chb_mirror.toggle()
-        if self.config['Fliped'] == 1:
-            self.ui.chb_flip.toggle()       
+        self.h = 240
         
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
 
@@ -129,6 +116,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
         self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)
         self.ui.btn_start.clicked.connect(self.runEyetracker)
+        self.ui.btn_clear.clicked.connect(self.clearSettings)
         self.ui.btn_save.clicked.connect(self.saveSettings)
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
         self.ui.chb_mirror.stateChanged.connect(self.imageMirror)
@@ -138,7 +126,7 @@ class MyForm(QtGui.QMainWindow):
 ########################################### CLOCK TICKS
     def timerEvent(self, event):
         '''
-        Function controlling the main flow of the programm. It fires periodically
+        Function controlling the main flow of this gui. It fires periodically
         (sampling rate), grabs frames from a camera, starts image processing
         and displays changes in the gui.
         
@@ -164,6 +152,76 @@ class MyForm(QtGui.QMainWindow):
         
         self.update()
 
+####################### SET DEFAULT CONFIG
+    def setDefaultSettings(self):
+        '''
+        Function sets all gui parameters to its default values.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Returns:
+        --------
+        Function does not return anything.
+        '''
+        
+        self.config['Mirrored']        = 0
+        self.config['Fliped']          = 0
+        self.config['Alpha']           = 0.4
+        self.config['ResolutionIndex'] = 1
+        self.config['PupilBar']        = 0
+        self.config['GlintBar']        = 0
+        self.config['Sampling']        = 30.0
+        self.config['AlgorithmIndex']  = 0
+
+##################### SET STATE OF WIDGETS 
+    def setWidgetsState(self):
+        '''
+        Function sets state of gui widgets according to self.config variable.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Returns:
+        --------
+        Function does not return anything.
+        '''
+        
+        self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
+        self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )       
+        
+        self.ui.hsb_pupil.setValue(self.config['PupilBar'])
+        self.ui.hsb_glint.setValue(self.config['GlintBar'])
+        
+        self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
+        self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
+        
+        if self.config['Mirrored'] == 1:
+            self.ui.chb_mirror.toggle()
+        if self.config['Fliped'] == 1:
+            self.ui.chb_flip.toggle()       
+
+############################# CLEAR CONFIG
+    def clearSettings(self):
+        '''
+        Function clears all parameters saved previously in a config file
+        and set gui to a default state.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Returns:
+        --------
+        Function does not return anything.
+        '''
+        
+        self.setDefaultSettings()
+        self.saveSettings()
+        self.setWidgetsState()
+
 ############################## SAVE CONFIG
     def saveSettings(self):
         '''
@@ -185,12 +243,6 @@ class MyForm(QtGui.QMainWindow):
                 f.write(stringToWrite)
             
             #f.write('Fliped {}\n'.format(self.flipped) )
-            #f.write('Mirrored {}\n'.format(self.mirrored) )
-            #f.write('Alpha {}\n'.format(self.alpha) )
-            #f.write('ResolutionIndex {}\n'.format(self.config['ResolutionIndex'] )
-            #f.write('PupilBar {}\n'.format(self.config['PupilBar'] )
-            #f.write('GlintBar {}\n'.format(self.config['GlintBar']) )
-            #f.write('Sampling {}\n'.format(self.config['Sampling']) )
 
 ############################## LOAD CONFIG
     def loadSettings(self):
@@ -226,14 +278,7 @@ class MyForm(QtGui.QMainWindow):
                     
         except IOError:
             # No config file yet -- using defaults
-            self.config['Mirrored']        = 0
-            self.config['Fliped']          = 0
-            self.config['Alpha']           = 0.1
-            self.config['ResolutionIndex'] = 1
-            self.config['PupilBar']        = 0
-            self.config['GlintBar']        = 0
-            self.config['Sampling']        = 30.0
-            self.config['AlgorithmIndex']  = 0
+            self.setDefaultSettings()
 
 ############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
