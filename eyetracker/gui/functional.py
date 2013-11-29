@@ -83,7 +83,7 @@ class MyForm(QtGui.QMainWindow):
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
         
-        self.algorithms = ['NESW']
+        self.algorithms = ['NESW' , 'Raw output']
         for algorithm in self.algorithms:
             self.ui.cmb_setAlgorithm.addItem(algorithm)
         
@@ -94,6 +94,8 @@ class MyForm(QtGui.QMainWindow):
         
         
         self.loadSettings() # this will create self.config containing all necessary settings
+        
+        self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
         
         self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )
         self.w = 320
@@ -107,13 +109,12 @@ class MyForm(QtGui.QMainWindow):
         
         if self.config['Mirrored'] == 1:
             self.ui.chb_mirror.toggle()
-            #pass
         if self.config['Fliped'] == 1:
             self.ui.chb_flip.toggle()       
         
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
 
-        try: # THIS IS BAD - I WILL WORK ON IT LATER - Tomek.
+        try:                                                                                # THIS IS BAD - I WILL WORK ON IT LATER - Tomek.
             self.camera  = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
             #self.average = float32(self.camera.frame())
         except KeyError:
@@ -127,7 +128,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
         self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)
-        #self.ui.btn_start.clicked.connect(self.startEyetracker)
+        self.ui.btn_start.clicked.connect(self.runEyetracker)
         self.ui.btn_save.clicked.connect(self.saveSettings)
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
         self.ui.chb_mirror.stateChanged.connect(self.imageMirror)
@@ -225,20 +226,19 @@ class MyForm(QtGui.QMainWindow):
                     
         except IOError:
             # No config file yet -- using defaults
-            self.config['Mirrored'] = 0
-            self.config['Fliped'] = 0
-            self.config['Alpha'] = 0.1
+            self.config['Mirrored']        = 0
+            self.config['Fliped']          = 0
+            self.config['Alpha']           = 0.1
             self.config['ResolutionIndex'] = 1
-            self.config['PupilBar'] = 0
-            self.config['GlintBar'] = 0
-            self.config['Sampling'] = 30.0
+            self.config['PupilBar']        = 0
+            self.config['GlintBar']        = 0
+            self.config['Sampling']        = 30.0
+            self.config['AlgorithmIndex']  = 0
 
 ############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
         '''
-        Function changing algorithm for eyetracker. Since there is only one
-        possible algorithm for now, this function does nothing and is never
-        used.
+        Function changing algorithm for eyetracker.
         
         Parameters:
         -----------
@@ -249,7 +249,10 @@ class MyForm(QtGui.QMainWindow):
         Function does not return anything.
         '''
         
-        pass
+        ind = self.ui.cmb_setAlgorithm.currentIndex()
+        
+        self.config['AlgorithmIndex']  = ind
+        
 ################################ CAMERA CHANGING METHOD
     def cameraChange(self):
         '''
@@ -338,7 +341,7 @@ class MyForm(QtGui.QMainWindow):
         
         Parameters:
         -----------
-        No parameters needed.
+        value - value to be displayed in an apriopriate label
         
         Returns:
         --------
@@ -354,7 +357,7 @@ class MyForm(QtGui.QMainWindow):
         
         Parameters:
         -----------
-        No parameters needed.
+        value - value to be displayed in an apriopriate label
         
         Returns:
         --------
@@ -370,7 +373,7 @@ class MyForm(QtGui.QMainWindow):
 
         Parameters:
         -----------
-        No parameters needed.
+        image - numpy array depicting an image on which pupil should be find and marked.
         
         Returns:
         --------
@@ -385,7 +388,7 @@ class MyForm(QtGui.QMainWindow):
         
         Parameters:
         -----------
-        No parameters needed.
+        image - numpy array depicting an image on which glints should be find and marked.
         
         Returns:
         --------
@@ -411,8 +414,25 @@ class MyForm(QtGui.QMainWindow):
         painter = QtGui.QPainter(self)
         
         if self.timer_on:
-            result_pupil = QtGui.QImage(self.pupil, 320, 240, QtGui.QImage.Format_RGB888)#.rgbSwapped()
-            result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)
+            result_pupil = QtGui.QImage(self.pupil, 320, 240, QtGui.QImage.Format_RGB888)   # I will work on color convention here - Tomek
+            result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)   # same here
         
             painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
             painter.drawImage(QtCore.QPoint(5, 300), result_glint)
+
+##########################################################
+    def runEyetracker(self):
+        '''
+        Starts eyetracker with parameters picked in gui.
+        
+        Parameters:
+        -----------
+        No parameters needed.
+        
+        Returns:
+        --------
+        Function does not return anything.
+        
+        '''
+        
+        pass
