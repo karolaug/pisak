@@ -532,7 +532,10 @@ class MyForm(QtGui.QMainWindow):
             for key in self.config.keys():
                 command.append(key)
                 command.append(str(self.config[key]))
+            self.hide()
             call( command )
+            self.show()
+            
         else:
             pass
         
