@@ -34,6 +34,7 @@ from ..camera.camera import Camera
 from .graphical import Ui_StartingWindow
 
 import os
+from subprocess import call
 
 ########################################################################
 
@@ -526,8 +527,15 @@ class MyForm(QtGui.QMainWindow):
         
         '''
         
+        if self.config['AlgorithmIndex'] == 1:
+            command = ['python' , 'raw_output.py']
+            for key in self.config.keys():
+                command.append(key)
+                command.append(str(self.config[key]))
+            call( command )
+        else:
+            pass
+        
         # This is here for informational reasons, I will remove it, when I'm done - Tomek
         #self.h = self.resolutions_h[ind]
         #self.w = self.resolutions_w[ind]
-        
-        pass
