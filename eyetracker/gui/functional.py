@@ -168,7 +168,7 @@ class MyForm(QtGui.QMainWindow):
         
         self.config['Mirrored']        = 0
         self.config['Fliped']          = 0
-        self.config['Alpha']           = 0.4
+        self.config['Alpha']           = 0.1
         self.config['ResolutionIndex'] = 1
         self.config['PupilBar']        = 0
         self.config['GlintBar']        = 0
@@ -189,19 +189,51 @@ class MyForm(QtGui.QMainWindow):
         Function does not return anything.
         '''
         
-        self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
-        self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )       
+        warningFlag = False
         
-        self.ui.hsb_pupil.setValue(self.config['PupilBar'])
-        self.ui.hsb_glint.setValue(self.config['GlintBar'])
-        
+        try:
+            self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
+        except KeyError:
+            self.config['AlgorithmIndex']  = 0
+            self.ui.cmb_setAlgorithm.setCurrentIndex(0)
+            print 'No AlgorithmIndex in configuration file present -- loading default value.'
+            warningFlag = True
+            
+        try:
+            self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )       
+        except KeyError:
+            self.config['ResolutionIndex']  = 0
+            self.ui.cmb_setResolution.setCurrentIndex(0)
+            print 'No ResolutionIndex in configuration file present -- loading default value.'
+            warningFlag = True
+            
+        try:
+            self.ui.hsb_pupil.setValue(self.config['PupilBar'])
+            self.ui.hsb_glint.setValue(self.config['GlintBar'])
+        except KeyError:
+            self.config['PupilBar'] = 0
+            self.config['GlintBar'] = 0
+            self.ui.hsb_pupil.setValue(0)
+            self.ui.hsb_glint.setValue(0)
+            print 'Either GlintBar or PupilBar (or both) not present in configuration file -- loading default values.'
+            warningFlag = True
+                    
         self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
+
+        try:
+            if self.config['Mirrored'] == 1:
+                self.ui.chb_mirror.toggle()
+            if self.config['Fliped'] == 1:
+                self.ui.chb_flip.toggle()
+        except KeyError:
+            self.config['Mirrored'] == 0
+            self.config['Fliped'] == 0
+            print 'Either Mirrored or Fliped (or both) not present in configuration file -- loading default values.'
+            warningFlag = True
         
-        if self.config['Mirrored'] == 1:
-            self.ui.chb_mirror.toggle()
-        if self.config['Fliped'] == 1:
-            self.ui.chb_flip.toggle()       
+        if warningFlag == True:
+            print 'Some variables were not present in configuration file. Saving current settings should solve this issue.'
 
 ############################# CLEAR CONFIG
     def clearSettings(self):
@@ -242,7 +274,7 @@ class MyForm(QtGui.QMainWindow):
                 stringToWrite = key + ' ' + str(self.config[key]) + '\n'
                 f.write(stringToWrite)
             
-            #f.write('Fliped {}\n'.format(self.flipped) )
+            #f.write('Fliped {}\n'.format(self.flipped) ) # this is here for historical reasons - Tomek
 
 ############################## LOAD CONFIG
     def loadSettings(self):
@@ -316,7 +348,7 @@ class MyForm(QtGui.QMainWindow):
         self.camera.close()
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
         self.camera = Camera(self.cameras[self.selectedCamera], 
-                             {3 : 320, 4 : 240})
+                             {3 : self.w, 4 : self.h})
         self.ui.timer.start(100, self)
 
 ######################### MIRROR METHON
@@ -375,9 +407,6 @@ class MyForm(QtGui.QMainWindow):
         ind = self.ui.cmb_setResolution.currentIndex()
         
         self.config['ResolutionIndex']  = ind
-        
-        self.h = self.resolutions_h[ind]
-        self.w = self.resolutions_w[ind]
         
 ######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
     def hsbPupil_Change(self, value):
@@ -459,8 +488,8 @@ class MyForm(QtGui.QMainWindow):
         painter = QtGui.QPainter(self)
         
         if self.timer_on:
-            result_pupil = QtGui.QImage(self.pupil, 320, 240, QtGui.QImage.Format_RGB888)   # I will work on color convention here - Tomek
-            result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)   # same here
+            result_pupil = QtGui.QImage(self.pupil, self.w, self.h, QtGui.QImage.Format_RGB888)   # I will work on color convention here - Tomek
+            result_glint = QtGui.QImage(self.glint, self.w, self.h, QtGui.QImage.Format_RGB888)   # same here
         
             painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
             painter.drawImage(QtCore.QPoint(5, 300), result_glint)
@@ -479,5 +508,9 @@ class MyForm(QtGui.QMainWindow):
         Function does not return anything.
         
         '''
+        
+        # This is here for informational reasons, I will remove it, when I'm done - Tomek
+        #self.h = self.resolutions_h[ind]
+        #self.w = self.resolutions_w[ind]
         
         pass
