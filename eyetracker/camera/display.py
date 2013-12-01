@@ -25,18 +25,21 @@ from ..analysis.detect import pupil, glint
 from ..analysis.processing import threshold, mark, gray2bgr, bgr2gray
 
 def drawGlint(image):
-    '''
+    ''' Find and draw glint on image.
+
     Function takes an image, converts it to grayscale if it is not,
     detects glint and draws it on a new image.
 
-    Parameters:
+    Parameters
     -----------
-    image - image where the glint is to be detected
-    
-    Returns:
+    image : np.array
+        image where the glint is to be detected
+
+    Returns
     --------
-    color image - returns a numpy array in a bgr scale with the glint 
-    marked in blue
+    color image : np.array
+        returns a numpy array in a bgr scale with the glint
+        marked in blue
     '''
     if len(image.shape) == 3:
         image = bgr2gray(image)
@@ -46,19 +49,23 @@ def drawGlint(image):
     return bgr
 
 def drawPupil(image, thres):
-    '''
+    ''' Find and draw pupil on image.
+
     Function takes an image, applies 'trunc' threshold(cv2.THRESH_TRUNC),
     detects pupil and draws it on a new image.
 
-    Parameters:
+    Parameters
     -----------
-    image - image where the pupil is to be detected
-    thres - value of the threshold
-    
-    Returns:
+    image : np.array
+        image where the pupil is to be detected
+    thres : int
+        value of the threshold
+
+    Returns
     --------
-    color image - returns a numpy array in a bgr scale with the pupil 
-    marked in red
+    cimage - np.array
+        returns a numpy array in a bgr scale with the pupil
+        marked in red
     '''
     if len(image.shape) == 3:
         image = bgr2gray(image)
@@ -69,25 +76,29 @@ def drawPupil(image, thres):
     return bgr
 
 def displayImage(image, where='new'):
-    '''
+    ''' Display image in new or existing window.
+
     Function displays the image in a new window or in the pointed window.
     Returns the displayed image as a numpy array.
 
-    Parameters:
+    Parameters
     -----------
-    image - numpy array being an image to be displayed
-    where - name of the window as string in which the image is to be
-    displayed, not providing the name will create a new one
-    
-    Returns:
+    image - no.array
+        numpy array being an image to be displayed
+    where : string
+        name of the window as string in which the image is to be
+        displayed, not providing the name will create a new one
+
+    Returns
     -----------
-    image - numpy array being an displayed image.
+    image : np.array
+        ddisplayed image.
     '''
     if where == 'new':
         namedWindow('new', flags=CV_WINDOW_AUTOSIZE)
         imshow(where, image)
     return image
-            
+
 if __name__ == '__main__':
     from cv2 import imread, waitKey
 

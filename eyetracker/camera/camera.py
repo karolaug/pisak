@@ -23,27 +23,30 @@
 from cv2 import VideoCapture
 
 class Camera(object):
-    '''
+    ''' Communicate with the camera.
+
     Class governing the communication with the camera.
 
-    Parameters:
+    Parameters
     -----------
-    camera - the index of the camera, best taken from func lookForCameras,
-    from eyetracker.camera.capture
-    dic - dic{propID : value}, to check corresponding propIDs check
-    opencv documentation: http://docs.opencv.org/modules/highgui/doc/ under
-    the term VideoCapture::get - they will be set in the moment of object
-    creation.
+    camera : int
+        the index of the camera, best taken from func lookForCameras,
+        from eyetracker.camera.capture
+    dic : dic{propID : value}
+        to check corresponding propIDs check
+        opencv documentation: http://docs.opencv.org/modules/highgui/doc/ under
+        the term VideoCapture::get - they will be set in the moment of object
+        creation.
 
-    Defines:
+    Defines
     --------
-    self.camera - index of the camera
-    self.cap - capturing object
+    self.camera : index of the camera
+    self.cap : capturing object
 
-    self.frame - returns a frame from camera
+    self.frame : returns a frame from camera
 
-    self.close - closes cap
-    self.reOpen - reopens cap
+    self.close : closes cap
+    self.reOpen : reopens cap
     '''
     def __init__(self, camera, dic=None):
         self.camera = int(camera)
@@ -52,14 +55,14 @@ class Camera(object):
             for propID, value in dic.iteritems():
                 self.cap.set(propID, value)
         first_frame = self.frame() #initialize at the start so that no loss of time occurs later on, not needed later on so no 'self'
-    
-    def frame(self):
-        '''
-        Read frame from camera.
 
-        Returns:
+    def frame(self):
+        ''' Read frame from camera.
+
+        Returns
         --------
-        frame - numpy array being a frame from camera
+        frame : np.array
+            frame from camera
         '''
         if self.cap.isOpened:
             return self.cap.read()[1]
@@ -68,25 +71,22 @@ class Camera(object):
             return None
 
     def set(self, **kwargs):
-        '''
-        Set camera parameters.
+        ''' Set camera parameters.
 
-        Parameters:
+        Parameters
         -----------
-        **kwargs - {propID : value}
+        kwargs : {propID : value}
         '''
         for propID, value in kwargs.iteritems():
             self.cap.set(propID, value)
 
     def close(self):
-        '''
-        Closes cap, you can reopen it with self.reOpen.
+        ''' Closes cap, you can reopen it with self.reOpen.
         '''
         self.cap.release()
 
     def reOpen(self, cameraIndex):
-        '''
-        Reopens cap.
+        ''' Reopens cap.
         '''
         self.cap.open(self.camera)
         first_frame = self.frame() #same purpose as in __init__

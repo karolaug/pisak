@@ -20,25 +20,21 @@
 # University of Warsaw 2013
 
 from glob import iglob
-    
-def lookForCameras():
-    '''
-    Function looks for cameras plugged into computer.
-    
-    Parameters:
-    -----------
-    No parameters needed.
 
-    Returns:
+def lookForCameras():
+    ''' Function looks for cameras available cameras.
+
+    Returns
     --------
-    dic - {'Camera_i' : index}, where i is the 1,2,3 etc. and index
-    is an int corresponding to the camera that should be passed on
-    to cv2.VideoCapture or to class Camera from eyetracker.camera.camera
+    dic : {'Camera_i' : index}
+        where i is the 1,2,3 etc. and index
+        is an int corresponding to the camera that should be passed on
+        to cv2.VideoCapture or to class Camera from eyetracker.camera.camera
     '''
-    listOfCameras = {''.join(['Camera_', str(i+1)]) : int(i) 
+    listOfCameras = {''.join(['Camera_', str(i+1)]) : int(i)
                      for i, cam in enumerate(iglob('/dev/video*'))}
     #listOfCameras['dummy'] = None
     return listOfCameras
 
 if __name__ == '__main__':
-    print 'Lista odnalezionych kamer wraz z "dummy":\n', lookForCameras()
+    print 'Found cameras:\n', lookForCameras()

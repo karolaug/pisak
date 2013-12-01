@@ -30,32 +30,32 @@ def blink():
     #should return bin
     pass
 
-def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None, 
+def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
           blockSize=3):
-    '''
-    Function detects glint on the retina, based on the func 
-    cv2.goodFeaturesToTrack.
+    ''' Function detects glint on the retina.
 
-    Parameters:
+    Based on the funccv2.goodFeaturesToTrack.
+    For more info on parameters check the docs for opencv and
+    goofFeaturesToTrack.
+
+    Parameters
     -----------
-    image - image of the eye where the glints are supposed to be detected
-    Optional:
-      maxCorners - how many glints should it detect, default is 2
-      quality - minimal accepted quality of image corners
-      minDist - minimum distance between the detected glints, default is 20
-      mask - area of the image that should be used for glint detection, 
-      default is None so it looks through the whole picture
-      blockSize - size of an average block for computing a derivative
-      covariation matrix over each pixel neighborhood
+    image : np.array
+        image of the eye where the glints are supposed to be detected
+    maxCorners : int
+        how many glints should it detect, default is 2
+    quality : minimal accepted quality of image corners
+    minDist : minimum distance between the detected glints, default is 20
+    mask : area of the image that should be used for glint detection
+        default is None so it looks through the whole picture
+    blockSize : size of an average block for computing a derivative
+    covariation : matrix over each pixel neighborhood
 
-    for more info on parameters check the docs for opencv and 
-    goofFeaturesToTrack
-
-    Returns:
+    Returns
     --------
-    where - array of coordinates(a list [x, y]) for found glints
+    where : array of coordinates(a list [x, y]) for found glints
     '''
-    where = cv2.goodFeaturesToTrack(image, maxCorners=maxCorners, 
+    where = cv2.goodFeaturesToTrack(image, maxCorners=maxCorners,
                                     qualityLevel=quality, minDistance=minDist,
                                     mask=mask, blockSize=blockSize)
     #TODO: add constrain of max distance
@@ -63,37 +63,41 @@ def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
         where = np.array([where[i][0] for i in xrange(where.shape[0])])
     return where
 
-def pupil(image, dp=1, minDist=100, param1=50, param2=10, minRadius=20, 
+def pupil(image, dp=1, minDist=100, param1=50, param2=10, minRadius=20,
           maxRadius=70):
-    '''
-    Function detects pupil on the image of an eye, based on the func 
-    cv2.HoughCircles.
+    ''' Function detects pupil on the image of an eye.
+    Based on the funccv2.HoughCircles. for more info on
+    parameters check the docs for opencv and HoughCircles.
 
-    Parameters:
+    Parameters
     -----------
-    image - image of the eye where the pupil is supposed to be detected
-    Optional:
-      dp - inverse ratio of the accumulator resolution to the image's,
-      default 1
-      minDist - minimum distance between found circles, default 100
-      param1 - higher threshold for the Canny edge detector, default 50
-      param2 - accumulator threshold for the circles centers, smaller it is,
-      more false positives, default 10
-      minRadius - minimal radius of the detected circle, default 20
-      maxRadius - maximal radius of the detected circle, default 70
-    
-    for more info on parameters check the docs for opencv and HoughCircles
+    image - np.array
+        image of the eye where the pupil is supposed to be detected
+    dp : int
+        inverse ratio of the accumulator resolution to the image's,
+    minDist : int
+        minimum distance between found circles
+    param1 : int
+        higher threshold for the Canny edge detector
+    param2 : int
+        accumulator threshold for the circles centers, smaller it is,
+        more false positives
+    minRadius : int
+        minimal radius of the detected circle
+    maxRadius : int
+        maximal radius of the detected circle
 
-    Returns:
+    Returns
     --------
-    where - array of coordinates and the radius of the circle(a list 
-    [x, y, z] for found pupils
+    where : array
+        coordinates and the radius of the circle (a list
+        [x, y, z]) for found pupils
     '''
-    circles = cv2.HoughCircles(image, cv2.cv.CV_HOUGH_GRADIENT, dp, minDist, 
-                               param1=param1, param2=param2, 
+    circles = cv2.HoughCircles(image, cv2.cv.CV_HOUGH_GRADIENT, dp, minDist,
+                               param1=param1, param2=param2,
                                minRadius=minRadius, maxRadius=maxRadius)
     if circles != None:
-        circles = np.uint16(np.around(circles))[0] 
+        circles = np.uint16(np.around(circles))[0]
     return circles
 
 if __name__ == '__main__':
@@ -102,16 +106,16 @@ if __name__ == '__main__':
     im_gray = cv2.imread('../../pictures/eyeIR.png', 0)
 
     where_glint = glint(im_gray)
-    
+
     im_bw = threshold(im_gray, thresh_v=73)
     where_pupil = pupil(im_bw)
 
     im = gray2bgr(im_gray)
-    
+
     mark(im, where_glint)
-    
+
     mark(im, where_pupil, color='blue')
-    
+
     while(1):
         cv2.imshow('Pupil(blue) and glint(red) detection, exit with "q" or "esc"', im)
         k = cv2.waitKey(0) & 0xFF

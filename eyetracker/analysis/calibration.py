@@ -25,19 +25,20 @@ import numpy as np
 from .processing import mark
 
 def get_resolution():#for use only if PySide is not in use, it's there already
-    '''
-    Only to be used in Linux and when PySide is not in use, as there 
-    the size of the screen can be queried from 
-    "app = QtGui.QApplication(sys.argv)" 
-    with 
-    "app.dektop().screenGeometry()".
+    ''' Check what current resolution is
+
+    Only to be used in Linux and when PySide is not in use, as there
+    the size of the screen can be queried from
+    app = QtGui.QApplication(sys.argv) with
+    app.dektop().screenGeometry().
 
     Function uses Linux command "xrandr" to query the system about current
     resoulution.
 
-    Returns:
+    Returns
     --------
-    tuple(width, height) - where width and height are "int"
+    size : tuple of int (width, height)
+        size of screen in pixels
     '''
     from os import popen
     screen = popen('xrandr -q').readlines()[0] #to do: mistake-proof parsing
@@ -50,34 +51,34 @@ screen_size = get_resolution()
 base_image = np.zeros((screen_size[1], screen_size[0], 3), np.uint8)
 
 def draw_circle(where_mark, radius, color='red', image=base_image):
-    '''
-    Clears the image and draws a new circle.
+    ''' Clears the image and draws a new circle.
 
-    Parameters:
+    Parameters
     -----------
-    where_mark - where is to be placed new mark
-    radius - radius of the mark
-    color - color of the mark, allowed are keys from analysis.processing colors dictionary, as of now it is red, green or blue
+    where_mark : where is to be placed new mark
+    radius : radius of the mark
+    color : color of the mark
+        allowed are keys from analysis.processing colors dictionary
+        as of now it is red, green or blue
 
-    Returns:
+    Returns
     --------
-    image as np.array of shape (height, width, 3) with the drawn circle
+    image : np.array of shape (height, width, 3) with the drawn circle
     '''
     mod_image = image.copy()
     mark(mod_image, where_mark, radius, colors[color], thickness=10)
     return mod_image
 
 def calibration(with_purkinje=False):
-    '''
-    Displays a set of points to look at for calibration.
+    ''' Displays a set of points to look at for calibration.
 
-    Parameters:
+    Parameters
     -----------
-    with_purkinje - If with_purkinje=True, additional dictionary is returned
-    with vector distances of virtual purkinje image and the estimated middle
-    of retina.
+    with_purkinje : If with_purkinje=True, additional dictionary is returned
+        with vector distances of virtual purkinje image and the estimated middle
+        of retina.
 
-    Returns:
+    Returns
     --------
     Dictionary of tuples being the cooridnates of the estimated middle of
     retina while looking at different points on the screen.
@@ -85,7 +86,7 @@ def calibration(with_purkinje=False):
     Additional dictionary of vector distances if with_purkinje=True.
     '''
 
-    
+
 
 
 if __name__ == '__main__':
