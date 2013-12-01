@@ -55,7 +55,8 @@ class MyForm(QtGui.QMainWindow):
     self.selectedCamera - selected camera name as chosen by the user (default is a name of the first avalaible device),
     self.timer_on - flag showing wether timer is ticking or not,
     
-    self.config - dictionary with all configuration variables,
+    self.config - dictionary with all configuration variables in use,
+    self.defaults - dictionary containing all default values of configuration variables,
     self.configFileName - path to the configuration file,
     
     self.alpha - control parameter of the running average, it describes
@@ -79,6 +80,17 @@ class MyForm(QtGui.QMainWindow):
         self.ui.setupUi(self)
         
         ############################# PARAMETERS INITIALIZATION
+        
+        self.defaults                    = {}
+        self.defaults['Mirrored']        = 0
+        self.defaults['Fliped']          = 0
+        self.defaults['Alpha']           = 0.1
+        self.defaults['ResolutionIndex'] = 1
+        self.defaults['PupilBar']        = 0
+        self.defaults['GlintBar']        = 0
+        self.defaults['Sampling']        = 30.0
+        self.defaults['AlgorithmIndex']  = 0
+        
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
@@ -103,7 +115,6 @@ class MyForm(QtGui.QMainWindow):
 
         try:                                                                                # THIS IS BAD - I WILL WORK ON IT LATER - Tomek.
             self.camera  = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
-            #self.average = float32(self.camera.frame())
         except KeyError:
             print 'No camera device detected.'
         
@@ -166,14 +177,14 @@ class MyForm(QtGui.QMainWindow):
         Function does not return anything.
         '''
         
-        self.config['Mirrored']        = 0
-        self.config['Fliped']          = 0
-        self.config['Alpha']           = 0.1
-        self.config['ResolutionIndex'] = 1
-        self.config['PupilBar']        = 0
-        self.config['GlintBar']        = 0
-        self.config['Sampling']        = 30.0
-        self.config['AlgorithmIndex']  = 0
+        self.config['Mirrored']        = self.defaults['Mirrored']
+        self.config['Fliped']          = self.defaults['Fliped']
+        self.config['Alpha']           = self.defaults['Alpha']
+        self.config['ResolutionIndex'] = self.defaults['ResolutionIndex']
+        self.config['PupilBar']        = self.defaults['PupilBar']
+        self.config['GlintBar']        = self.defaults['GlintBar']
+        self.config['Sampling']        = self.defaults['Sampling']
+        self.config['AlgorithmIndex']  = self.defaults['AlgorithmIndex']
 
 ##################### SET STATE OF WIDGETS 
     def setWidgetsState(self):
@@ -194,16 +205,16 @@ class MyForm(QtGui.QMainWindow):
         try:
             self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
         except KeyError:
-            self.config['AlgorithmIndex']  = 0
-            self.ui.cmb_setAlgorithm.setCurrentIndex(0)
+            self.config['AlgorithmIndex']  = self.defaults['AlgorithmIndex']
+            self.ui.cmb_setAlgorithm.setCurrentIndex(self.defaults['AlgorithmIndex'])
             print 'No AlgorithmIndex in configuration file present -- loading default value.'
             warningFlag = True
             
         try:
             self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )       
         except KeyError:
-            self.config['ResolutionIndex']  = 0
-            self.ui.cmb_setResolution.setCurrentIndex(0)
+            self.config['ResolutionIndex']  = self.defaults['ResolutionIndex']
+            self.ui.cmb_setResolution.setCurrentIndex(self.defaults['ResolutionIndex'])
             print 'No ResolutionIndex in configuration file present -- loading default value.'
             warningFlag = True
             
@@ -211,10 +222,10 @@ class MyForm(QtGui.QMainWindow):
             self.ui.hsb_pupil.setValue(self.config['PupilBar'])
             self.ui.hsb_glint.setValue(self.config['GlintBar'])
         except KeyError:
-            self.config['PupilBar'] = 0
-            self.config['GlintBar'] = 0
-            self.ui.hsb_pupil.setValue(0)
-            self.ui.hsb_glint.setValue(0)
+            self.config['PupilBar'] = self.defaults['PupilBar']
+            self.config['GlintBar'] = self.defaults['GlintBar']
+            self.ui.hsb_pupil.setValue(self.defaults['PupilBar'])
+            self.ui.hsb_glint.setValue(self.defaults['GlintBar'])
             print 'Either GlintBar or PupilBar (or both) not present in configuration file -- loading default values.'
             warningFlag = True
                     
@@ -222,13 +233,19 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
 
         try:
-            if self.config['Mirrored'] == 1:
+            if self.config['Mirrored'] == 1:                    # *
                 self.ui.chb_mirror.toggle()
             if self.config['Fliped'] == 1:
                 self.ui.chb_flip.toggle()
         except KeyError:
-            self.config['Mirrored'] == 0
-            self.config['Fliped'] == 0
+            self.config['Mirrored'] == self.defaults['Mirrored']
+            self.config['Fliped'] == self.defaults['Fliped']
+            
+            if self.config['Mirrored'] == 1:                    # this is a copy of * - I will correct this - Tomek
+                self.ui.chb_mirror.toggle()
+            if self.config['Fliped'] == 1:
+                self.ui.chb_flip.toggle()
+                
             print 'Either Mirrored or Fliped (or both) not present in configuration file -- loading default values.'
             warningFlag = True
         
