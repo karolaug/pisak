@@ -1,12 +1,12 @@
-analysis Package
+analysis Module
 ================
 
-:mod:`analysis` Package
------------------------
+
+This is desc of analysis module.
+
 
 .. automodule:: eyetracker.analysis
     :members:
-    :undoc-members:
     :show-inheritance:
 
 :mod:`calibration` Module
@@ -14,7 +14,6 @@ analysis Package
 
 .. automodule:: eyetracker.analysis.calibration
     :members:
-    :undoc-members:
     :show-inheritance:
 
 :mod:`detect` Module
@@ -22,7 +21,6 @@ analysis Package
 
 .. automodule:: eyetracker.analysis.detect
     :members:
-    :undoc-members:
     :show-inheritance:
 
 :mod:`processing` Module
@@ -30,6 +28,5 @@ analysis Package
 
 .. automodule:: eyetracker.analysis.processing
     :members:
-    :undoc-members:
     :show-inheritance:
 

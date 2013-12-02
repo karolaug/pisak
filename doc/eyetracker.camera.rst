@@ -1,12 +1,17 @@
-camera Package
+camera Module
 ==============
 
-:mod:`camera` Package
----------------------
+This is desc of camara module.
 
 .. automodule:: eyetracker.camera
     :members:
-    :undoc-members:
+    :show-inheritance:
+
+:mod:`camera` Module
+--------------------
+
+.. automodule:: eyetracker.camera.camera
+    :members:
     :show-inheritance:
 
 :mod:`capture` Module
@@ -14,7 +19,6 @@ camera Package
 
 .. automodule:: eyetracker.camera.capture
     :members:
-    :undoc-members:
     :show-inheritance:
 
 :mod:`display` Module
@@ -22,6 +26,5 @@ camera Package
 
 .. automodule:: eyetracker.camera.display
     :members:
-    :undoc-members:
     :show-inheritance:
 

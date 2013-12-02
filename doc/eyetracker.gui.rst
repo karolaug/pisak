@@ -1,12 +1,12 @@
-gui Package
+gui Module
 ===========
 
-:mod:`gui` Package
-------------------
+
+This is desc of gui module.
+
 
 .. automodule:: eyetracker.gui
     :members:
-    :undoc-members:
     :show-inheritance:
 
 :mod:`functional` Module
@@ -14,7 +14,6 @@ gui Package
 
 .. automodule:: eyetracker.gui.functional
     :members:
-    :undoc-members:
     :show-inheritance:
 
 :mod:`graphical` Module
@@ -22,6 +21,5 @@ gui Package
 
 .. automodule:: eyetracker.gui.graphical
     :members:
-    :undoc-members:
     :show-inheritance:
 
