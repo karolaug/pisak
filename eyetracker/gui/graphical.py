@@ -65,7 +65,7 @@ class Ui_StartingWindow(object):
 
         self.lbl_title = QtGui.QLabel(self.centralwidget)
         self.lbl_title.setEnabled(True)
-        self.lbl_title.setGeometry(QtCore.QRect(260, 10, 120, 16))
+        self.lbl_title.setGeometry(QtCore.QRect(260, 10, 200, 16))
         font = QtGui.QFont()
         font.setBold(True)
         font.setItalic(True)
