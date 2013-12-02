@@ -34,6 +34,7 @@ from ..camera.camera import Camera
 from .graphical import Ui_StartingWindow
 
 import os
+from subprocess import call
 
 ########################################################################
 
@@ -44,6 +45,7 @@ class MyForm(QtGui.QMainWindow):
 
     Defines
     --------
+<<<<<<< HEAD
     self.cameras : list
         all camera devices connected to the computer,
     self.algorithms : list
@@ -76,7 +78,6 @@ class MyForm(QtGui.QMainWindow):
     self.camera : class
         encapsulating a camera device as described in
         eyetracker/camera/camera.py.
-
     '''
 
     def __init__(self, parent=None):
@@ -85,6 +86,17 @@ class MyForm(QtGui.QMainWindow):
         self.ui.setupUi(self)
 
         ############################# PARAMETERS INITIALIZATION
+        
+        self.defaults                    = {}
+        self.defaults['Mirrored']        = 0
+        self.defaults['Fliped']          = 0
+        self.defaults['Alpha']           = 0.1
+        self.defaults['ResolutionIndex'] = 1
+        self.defaults['PupilBar']        = 0
+        self.defaults['GlintBar']        = 0
+        self.defaults['Sampling']        = 30.0
+        self.defaults['AlgorithmIndex']  = 0
+        
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
@@ -109,7 +121,6 @@ class MyForm(QtGui.QMainWindow):
 
         try:                                                                                # THIS IS BAD - I WILL WORK ON IT LATER - Tomek.
             self.camera  = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
-            #self.average = float32(self.camera.frame())
         except KeyError:
             print 'No camera device detected.'
 
@@ -163,34 +174,70 @@ class MyForm(QtGui.QMainWindow):
         Function sets all gui parameters to its default values.
 
         '''
-
-        self.config['Mirrored']        = 0
-        self.config['Fliped']          = 0
-        self.config['Alpha']           = 0.4
-        self.config['ResolutionIndex'] = 1
-        self.config['PupilBar']        = 0
-        self.config['GlintBar']        = 0
-        self.config['Sampling']        = 30.0
-        self.config['AlgorithmIndex']  = 0
+        self.config['Mirrored']        = self.defaults['Mirrored']
+        self.config['Fliped']          = self.defaults['Fliped']
+        self.config['Alpha']           = self.defaults['Alpha']
+        self.config['ResolutionIndex'] = self.defaults['ResolutionIndex']
+        self.config['PupilBar']        = self.defaults['PupilBar']
+        self.config['GlintBar']        = self.defaults['GlintBar']
+        self.config['Sampling']        = self.defaults['Sampling']
+        self.config['AlgorithmIndex']  = self.defaults['AlgorithmIndex']
 
 ##################### SET STATE OF WIDGETS
     def setWidgetsState(self):
         ''' Set state of gui widgets according to self.config variable.
         '''
-
-        self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
-        self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )
-
-        self.ui.hsb_pupil.setValue(self.config['PupilBar'])
-        self.ui.hsb_glint.setValue(self.config['GlintBar'])
-
+        warningFlag = False
+        
+        try:
+            self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
+        except KeyError:
+            self.config['AlgorithmIndex']  = self.defaults['AlgorithmIndex']
+            self.ui.cmb_setAlgorithm.setCurrentIndex(self.defaults['AlgorithmIndex'])
+            print 'No AlgorithmIndex in configuration file present -- loading default value.'
+            warningFlag = True
+            
+        try:
+            self.ui.cmb_setResolution.setCurrentIndex(self.config['ResolutionIndex'] )       
+        except KeyError:
+            self.config['ResolutionIndex']  = self.defaults['ResolutionIndex']
+            self.ui.cmb_setResolution.setCurrentIndex(self.defaults['ResolutionIndex'])
+            print 'No ResolutionIndex in configuration file present -- loading default value.'
+            warningFlag = True
+            
+        try:
+            self.ui.hsb_pupil.setValue(self.config['PupilBar'])
+            self.ui.hsb_glint.setValue(self.config['GlintBar'])
+        except KeyError:
+            self.config['PupilBar'] = self.defaults['PupilBar']
+            self.config['GlintBar'] = self.defaults['GlintBar']
+            self.ui.hsb_pupil.setValue(self.defaults['PupilBar'])
+            self.ui.hsb_glint.setValue(self.defaults['GlintBar'])
+            print 'Either GlintBar or PupilBar (or both) not present in configuration file -- loading default values.'
+            warningFlag = True
+                    
         self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
 
-        if self.config['Mirrored'] == 1:
-            self.ui.chb_mirror.toggle()
-        if self.config['Fliped'] == 1:
-            self.ui.chb_flip.toggle()
+        try:
+            if self.config['Mirrored'] == 1:                    # *
+                self.ui.chb_mirror.toggle()
+            if self.config['Fliped'] == 1:
+                self.ui.chb_flip.toggle()
+        except KeyError:
+            self.config['Mirrored'] == self.defaults['Mirrored']
+            self.config['Fliped'] == self.defaults['Fliped']
+            
+            if self.config['Mirrored'] == 1:                    # this is a copy of * - I will correct this - Tomek
+                self.ui.chb_mirror.toggle()
+            if self.config['Fliped'] == 1:
+                self.ui.chb_flip.toggle()
+                
+            print 'Either Mirrored or Fliped (or both) not present in configuration file -- loading default values.'
+            warningFlag = True
+        
+        if warningFlag == True:
+            print 'Some variables were not present in configuration file. Saving current settings should solve this issue.'
 
 ############################# CLEAR CONFIG
     def clearSettings(self):
@@ -217,7 +264,7 @@ class MyForm(QtGui.QMainWindow):
                 stringToWrite = key + ' ' + str(self.config[key]) + '\n'
                 f.write(stringToWrite)
 
-            #f.write('Fliped {}\n'.format(self.flipped) )
+            #f.write('Fliped {}\n'.format(self.flipped) ) # this is here for historical reasons - Tomek
 
 ############################## LOAD CONFIG
     def loadSettings(self):
@@ -267,8 +314,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui.timer.stop()
         self.camera.close()
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
-        self.camera = Camera(self.cameras[self.selectedCamera],
-                             {3 : 320, 4 : 240})
+        self.camera = Camera(self.cameras[self.selectedCamera], 
+                             {3 : self.w, 4 : self.h})
         self.ui.timer.start(100, self)
 
 ######################### MIRROR METHON
@@ -302,9 +349,6 @@ class MyForm(QtGui.QMainWindow):
         ind = self.ui.cmb_setResolution.currentIndex()
 
         self.config['ResolutionIndex']  = ind
-
-        self.h = self.resolutions_h[ind]
-        self.w = self.resolutions_w[ind]
 
 ######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
     def hsbPupil_Change(self, value):
@@ -371,8 +415,8 @@ class MyForm(QtGui.QMainWindow):
         painter = QtGui.QPainter(self)
 
         if self.timer_on:
-            result_pupil = QtGui.QImage(self.pupil, 320, 240, QtGui.QImage.Format_RGB888)   # I will work on color convention here - Tomek
-            result_glint = QtGui.QImage(self.glint, 320, 240, QtGui.QImage.Format_RGB888)   # same here
+            result_pupil = QtGui.QImage(self.pupil, self.w, self.h, QtGui.QImage.Format_RGB888)   # I will work on color convention here - Tomek
+            result_glint = QtGui.QImage(self.glint, self.w, self.h, QtGui.QImage.Format_RGB888)   # same here
 
             painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
             painter.drawImage(QtCore.QPoint(5, 300), result_glint)
@@ -381,5 +425,20 @@ class MyForm(QtGui.QMainWindow):
     def runEyetracker(self):
         ''' Starts eyetracker with parameters picked from gui.
         '''
+        
+        if self.config['AlgorithmIndex'] == 1:
+            command = ['python' , 'raw_output.py']
+            for key in self.config.keys():
+                command.append(key)
+                command.append(str(self.config[key]))
+            self.hide()
+            call( command )
+            self.show()
+            
+        else:
+            pass
+        
+        # This is here for informational reasons, I will remove it, when I'm done - Tomek
+        #self.h = self.resolutions_h[ind]
+        #self.w = self.resolutions_w[ind]
 
-        pass
