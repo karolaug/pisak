@@ -410,8 +410,8 @@ class MyForm(QtGui.QMainWindow):
         painter = QtGui.QPainter(self)
 
         if self.timer_on:
-            result_pupil = QtGui.QImage(self.pupil, self.w, self.h, QtGui.QImage.Format_RGB888)   # I will work on color convention here - Tomek
-            result_glint = QtGui.QImage(self.glint, self.w, self.h, QtGui.QImage.Format_RGB888)   # same here
+            result_pupil = QtGui.QImage(self.pupil, self.w, self.h, QtGui.QImage.Format_RGB888).rgbSwapped()   # I will work on color convention here - Tomek
+            result_glint = QtGui.QImage(self.glint, self.w, self.h, QtGui.QImage.Format_RGB888).rgbSwapped()   # same here
 
             painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
             painter.drawImage(QtCore.QPoint(5, 300), result_glint)
