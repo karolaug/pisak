@@ -45,7 +45,6 @@ class MyForm(QtGui.QMainWindow):
 
     Defines
     --------
-<<<<<<< HEAD
     self.cameras : list
         all camera devices connected to the computer,
     self.algorithms : list
@@ -60,21 +59,17 @@ class MyForm(QtGui.QMainWindow):
         selected camera name as chosen by the user (default is a name of the first avalaible device),
     self.timer_on : boolean
         flag showing wether timer is ticking or not,
-
     self.config : path
         dictionary with all configuration variables,
     self.configFileName : path
         path to the configuration file,
-
     self.alpha : int
         control parameter of the running average, it describes
         how fast previous images would be forgotten, 1 - no average,
         0 - never forget anything.
-
     self.ui : class
         encapsulating graphical part of an interface, as described
         in eyetracker/gui/graphical.py file,
-
     self.camera : class
         encapsulating a camera device as described in
         eyetracker/camera/camera.py.
@@ -128,7 +123,7 @@ class MyForm(QtGui.QMainWindow):
         self.timer_on = False # it starts above, but timer_on says if it already ticked at least once.
 
 
-        ################################### EVENTS BINDINGS
+################################### EVENTS BINDINGS
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
         self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)

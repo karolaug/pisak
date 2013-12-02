@@ -32,19 +32,16 @@ class Camera(object):
     camera : int
         the index of the camera, best taken from func lookForCameras,
         from eyetracker.camera.capture
-    dic : dic{propID : value}
+    dic : dic{propID  value}
         to check corresponding propIDs check
-        opencv documentation: http://docs.opencv.org/modules/highgui/doc/ under
-        the term VideoCapture::get - they will be set in the moment of object
-        creation.
+        opencv documentation under the term VideoCapture. 
+        They will be set in the moment of object creation.
 
     Defines
     --------
     self.camera : index of the camera
     self.cap : capturing object
-
     self.frame : returns a frame from camera
-
     self.close : closes cap
     self.reOpen : reopens cap
     '''

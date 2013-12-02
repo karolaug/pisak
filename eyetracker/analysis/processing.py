@@ -143,9 +143,11 @@ def adaptiveThreshold(image, max_v=255, adaptiveMethod='gaussian',
     thresh_type : string
         prethresholding, possible thresholds 'bin'(binary) or 'bin_inv'(inversed binary)
     blockSize : int
-        Size of a pixel neighborhood that is used to calculate a threshold value, the size must be an odd number.
+        Size of a pixel neighborhood that is used to calculate a threshold value,
+        the size must be an odd number.
     subtConstant : int
-        a constant that will be subtracted from mean or weighted mean(depending on adaptiveMethod chosen)
+        a constant that will be subtracted from mean or weighted mean 
+        (depending on adaptiveMethod chosen)
 
     Returns
     -----------
@@ -172,11 +174,13 @@ def mark(image, where, radius=10, color='red', thickness=3):
     Parameters
     -----------
     image : np.array
-        3d array depicting the original image that is to be marked, needs to be in three scale color
+        3d array depicting the original image that is to be marked,
+        needs to be in three scale color
     where : np.array
-        array of sets of coordinates(x, y or x, y, radius) of the object
+        array of sets of coordinates (x, y or x, y, radius) of the object
     radius : int
-        set same radius for all objects, if a set of coordinates has a third value this will be overruled
+        set same radius for all objects, if a set of coordinates has
+        a third value this will be overruled
     color : string
         color of circles marking the object, possible: 'blue', 'green' or 'red'
     thickness : int

@@ -50,41 +50,48 @@ screen_size = get_resolution()
 
 base_image = np.zeros((screen_size[1], screen_size[0], 3), np.uint8)
 
-def draw_circle(where_mark, radius, color='red', image=base_image):
+def draw_circle(where_mark, radius, color='red', image=False):
     ''' Clears the image and draws a new circle.
 
     Parameters
     -----------
-    where_mark : where is to be placed new mark
-    radius : radius of the mark
-    color : color of the mark
+    where_mark : int
+        where is to be placed new mark
+    radius : int
+        radius of the mark
+    color : string
+        color of the mark
         allowed are keys from analysis.processing colors dictionary
         as of now it is red, green or blue
 
     Returns
     --------
-    image : np.array of shape (height, width, 3) with the drawn circle
+    image : np.array
+        shape (height, width, 3) with the drawn circle
     '''
+
+    if image == False:
+        image = np.zeros((screen_size[1], screen_size[0], 3), np.uint8)
     mod_image = image.copy()
     mark(mod_image, where_mark, radius, colors[color], thickness=10)
     return mod_image
 
-def calibration(with_purkinje=False):
-    ''' Displays a set of points to look at for calibration.
-
-    Parameters
-    -----------
-    with_purkinje : If with_purkinje=True, additional dictionary is returned
-        with vector distances of virtual purkinje image and the estimated middle
-        of retina.
-
-    Returns
-    --------
-    Dictionary of tuples being the cooridnates of the estimated middle of
-    retina while looking at different points on the screen.
-
-    Additional dictionary of vector distances if with_purkinje=True.
-    '''
+#def calibration(with_purkinje=False):
+#    ''' Displays a set of points to look at for calibration.
+#
+#    Parameters
+#    -----------
+#    with_purkinje : If with_purkinje=True, additional dictionary is returned
+#        with vector distances of virtual purkinje image and the estimated middle
+#        of retina.
+#
+#    Returns
+#    --------
+#    Dictionary of tuples being the cooridnates of the estimated middle of
+#    retina while looking at different points on the screen.
+#
+#    Additional dictionary of vector distances if with_purkinje=True.
+#    '''
 
 
 

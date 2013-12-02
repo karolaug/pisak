@@ -44,16 +44,22 @@ def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
         image of the eye where the glints are supposed to be detected
     maxCorners : int
         how many glints should it detect, default is 2
-    quality : minimal accepted quality of image corners
-    minDist : minimum distance between the detected glints, default is 20
-    mask : area of the image that should be used for glint detection
+    quality : 
+        minimal accepted quality of image corners
+    minDist :
+        minimum distance between the detected glints, default is 20
+    mask :
+        area of the image that should be used for glint detection
         default is None so it looks through the whole picture
-    blockSize : size of an average block for computing a derivative
-    covariation : matrix over each pixel neighborhood
+    blockSize :
+        size of an average block for computing a derivative
+    covariation :
+        matrix over each pixel neighborhood
 
     Returns
     --------
-    where : array of coordinates(a list [x, y]) for found glints
+    where : array
+        ccoordinates(a list [x, y]) for found glints
     '''
     where = cv2.goodFeaturesToTrack(image, maxCorners=maxCorners,
                                     qualityLevel=quality, minDistance=minDist,
@@ -66,6 +72,7 @@ def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
 def pupil(image, dp=1, minDist=100, param1=50, param2=10, minRadius=20,
           maxRadius=70):
     ''' Function detects pupil on the image of an eye.
+    
     Based on the funccv2.HoughCircles. for more info on
     parameters check the docs for opencv and HoughCircles.
 

@@ -26,10 +26,10 @@ def lookForCameras():
 
     Returns
     --------
-    dic : {'Camera_i' : index}
+    dic : {Camera_i , index}
         where i is the 1,2,3 etc. and index
         is an int corresponding to the camera that should be passed on
-        to cv2.VideoCapture or to class Camera from eyetracker.camera.camera
+        to cv2.VideoCapture or to class Camera from eyetracker.camera.camera.
     '''
     listOfCameras = {''.join(['Camera_', str(i+1)]) : int(i)
                      for i, cam in enumerate(iglob('/dev/video*'))}

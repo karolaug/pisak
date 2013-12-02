@@ -63,7 +63,7 @@ def drawPupil(image, thres):
 
     Returns
     --------
-    cimage - np.array
+    cimage : np.array
         returns a numpy array in a bgr scale with the pupil
         marked in red
     '''
@@ -83,7 +83,7 @@ def displayImage(image, where='new'):
 
     Parameters
     -----------
-    image - no.array
+    image : np.array
         numpy array being an image to be displayed
     where : string
         name of the window as string in which the image is to be
