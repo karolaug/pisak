@@ -20,7 +20,9 @@
 # e-mails: saszasasha@gmail.com karol@augustin.pl tomasz@spustek.pl
 # University of Warsaw 2013
 
-import cv2
+
+
+import cv2      # this would not be necessary in a while
 
 from itertools import izip
 from PyQt4 import QtCore, QtGui
@@ -44,7 +46,7 @@ class MyForm(QtGui.QMainWindow):
     Class governing the functional part of the default graphical user interface.
 
     Defines
-    --------
+    -------
     self.cameras : list
         all camera devices connected to the computer,
     self.algorithms : list
@@ -122,6 +124,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.timer.start(1000/self.config['Sampling'], self)
         self.timer_on = False # it starts above, but timer_on says if it already ticked at least once.
 
+        #self.q = False      # this is to be szurnięte!
 
 ################################### EVENTS BINDINGS
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
@@ -382,7 +385,7 @@ class MyForm(QtGui.QMainWindow):
         '''
 
         pupilThreshold = self.ui.hsb_pupil.value()
-        self.pupil = drawPupil(image, pupilThreshold)
+        self.pupil , self.where_pupil = drawPupil(image, pupilThreshold)
 
     def glintUpdate(self, image):
         '''
@@ -394,7 +397,7 @@ class MyForm(QtGui.QMainWindow):
         '''
 
         glintThreshold = self.ui.hsb_glint.value()
-        self.glint = drawGlint(image)#, glintThreshold
+        self.glint , self.where_glint = drawGlint(image)#, glintThreshold
 
 ##########################################################
     def paintEvent(self, event):
@@ -416,19 +419,41 @@ class MyForm(QtGui.QMainWindow):
             painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
             painter.drawImage(QtCore.QPoint(5, 300), result_glint)
 
+    def closeEvent(self, event):
+        '''
+
+        Parameters
+        -----------
+        event : object
+            standard event handler as described in QT4 documentation.
+
+        '''
+        #self.q = True
+        #sys.exit(0)
+        
 ##########################################################
     def runEyetracker(self):
         ''' Starts eyetracker with parameters picked from gui.
         '''
         
         if self.config['AlgorithmIndex'] == 1:
-            command = ['python' , 'raw_output.py']
-            for key in self.config.keys():
-                command.append(key)
-                command.append(str(self.config[key]))
-            self.hide()
-            call( command )
-            self.show()
+            #command = ['python' , 'raw_output.py']         # this is to be left here
+            #for key in self.config.keys():
+                #command.append(key)
+                #command.append(str(self.config[key]))
+            #self.hide()
+            #call( command )
+            #self.emit(SIGNAL("some text"), self.config)
+            #self.show()
+            
+            
+            # this is to be szurniete!
+            while(1):
+                print 'Pupil coordinates: {}.'.format(self.where_pupil)
+                print 'Glint coordinates: {}.'.format(self.where_glint)
+            
+                #if self.q == True:
+                #    break
             
         else:
             pass

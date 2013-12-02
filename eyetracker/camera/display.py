@@ -46,7 +46,7 @@ def drawGlint(image):
     where_glint = glint(image)
     bgr = gray2bgr(image)
     mark(bgr, where_glint)
-    return bgr
+    return bgr, where_glint
 
 def drawPupil(image, thres):
     ''' Find and draw pupil on image.
@@ -73,7 +73,7 @@ def drawPupil(image, thres):
     where_pupil = pupil(thresholded)
     bgr = gray2bgr(thresholded)
     mark(bgr, where_pupil, color='blue')
-    return bgr
+    return bgr, where_pupil
 
 def displayImage(image, where='new'):
     ''' Display image in new or existing window.
