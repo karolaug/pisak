@@ -21,6 +21,7 @@
 # University of Warsaw 2013
 
 from PyQt4 import QtCore, QtGui
+import eyetracker
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -179,7 +180,7 @@ class Ui_StartingWindow(object):
         '''
 
         StartingWindow.setWindowTitle(_translate("StartingWindow", "Eyetracter -- start", None))
-        self.lbl_title.setText(_translate("StartingWindow", "Eyetracker v_0.2", None))
+        self.lbl_title.setText(_translate("StartingWindow", "Eyetracker "+eyetracker.version, None))
         self.btn_start.setText(_translate("StartingWindow", "START", None))
         self.lbl_setCamera.setText(_translate("StartingWindow", "Choose camera:", None))
         self.lbl_setResolution.setText(_translate("StartingWindow", "Choose resolution:", None))
