@@ -248,6 +248,7 @@ def runningAverage(image , average , alpha):
     '''
     average = float32(average)
     cv2.accumulateWeighted( image , average , alpha)
+    #print 'Alpha value is {}.'.format(alpha)
     image = cv2.convertScaleAbs(average)
 
     return image

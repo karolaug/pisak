@@ -21,9 +21,6 @@
 # University of Warsaw 2013
 
 
-
-import cv2      # this would not be necessary in a while
-
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
@@ -36,7 +33,6 @@ from ..camera.camera import Camera
 from .graphical import Ui_StartingWindow
 
 import os
-from subprocess import call
 
 ########################################################################
 
@@ -65,10 +61,6 @@ class MyForm(QtGui.QMainWindow):
         dictionary with all configuration variables,
     self.configFileName : path
         path to the configuration file,
-    self.alpha : int
-        control parameter of the running average, it describes
-        how fast previous images would be forgotten, 1 - no average,
-        0 - never forget anything.
     self.ui : class
         encapsulating graphical part of an interface, as described
         in eyetracker/gui/graphical.py file,
@@ -139,6 +131,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.chb_mirror.stateChanged.connect(self.imageMirror)
         self.ui.hsb_pupil.valueChanged[int].connect(self.hsbPupil_Change)
         self.ui.hsb_glint.valueChanged[int].connect(self.hsbGlint_Change)
+        self.ui.led_alpha.editingFinished.connect(self.alphaChange)
 
 ########################################### CLOCK TICKS
     def timerEvent(self, event):
@@ -239,6 +232,12 @@ class MyForm(QtGui.QMainWindow):
                 self.ui.chb_mirror.toggle()
             if self.config['Fliped'] == 1:
                 self.ui.chb_flip.toggle()
+        
+        try:
+            self.ui.led_alpha.setText(str(self.config['Alpha']))
+        except KeyError:
+            self.config['Alpha'] = self.defaults['Alpha']
+            self.ui.led_alpha.setText(str(self.config['Alpha']))    # same here - Tomek
                 
             print 'Either Mirrored or Fliped (or both) not present in configuration file -- loading default values.'
             warningFlag = True
@@ -323,7 +322,7 @@ class MyForm(QtGui.QMainWindow):
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
         self.camera = Camera(self.cameras[self.selectedCamera], 
                              {3 : self.w, 4 : self.h})
-        self.ui.timer.start(100, self)
+        self.ui.timer.start(1000/self.config['Sampling'], self)
 
 ######################### MIRROR METHON
     def imageMirror(self):
@@ -356,6 +355,32 @@ class MyForm(QtGui.QMainWindow):
         ind = self.ui.cmb_setResolution.currentIndex()
 
         self.config['ResolutionIndex']  = ind
+        
+######################### ALPHA PARAMETER CHANGING METHOD        
+    def alphaChange(self):
+        '''
+        Set a chosen alpha parameter for smoothing purposes.
+        
+        Alpha is a control parameter of the running average. It describes
+        how fast previous images would be forgotten, 1 - no average,
+        0 - never forget anything.
+        
+        value : string
+            value to be assigned to alpha parameter. It would be converted
+            to np.float32
+        '''
+        try:
+            alpha = float(self.ui.led_alpha.text())
+        except ValueError:
+            self.ui.led_alpha.setText( str(self.config['Alpha']) )
+            print 'Alpha should be a floating point number!'
+            return
+        
+        if alpha < 0. or alpha > 1.:
+            self.ui.led_alpha.setText( str(self.config['Alpha']) )
+            print 'Alpha should be between 0.0 and 1.0!'
+        else:
+            self.config['Alpha'] = alpha
 
 ######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
     def hsbPupil_Change(self, value):

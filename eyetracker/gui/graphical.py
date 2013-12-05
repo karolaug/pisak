@@ -65,7 +65,7 @@ class Ui_StartingWindow(object):
 
         self.lbl_title = QtGui.QLabel(self.centralwidget)
         self.lbl_title.setEnabled(True)
-        self.lbl_title.setGeometry(QtCore.QRect(260, 10, 200, 16))
+        self.lbl_title.setGeometry(QtCore.QRect(260, 10, StartingWindow.width(), 16))
         font = QtGui.QFont()
         font.setBold(True)
         font.setItalic(True)
@@ -137,6 +137,14 @@ class Ui_StartingWindow(object):
         self.lbl_glint.setText(_fromUtf8(""))
         self.lbl_glint.setObjectName(_fromUtf8("lbl_glint2"))
 
+        self.lbl_alpha = QtGui.QLabel(self.centralwidget)
+        self.lbl_alpha.setGeometry(QtCore.QRect(360, 390, 140, 16))
+        self.lbl_alpha.setObjectName(_fromUtf8("lbl_alpha"))
+        
+        self.led_alpha = QtGui.QLineEdit(self.centralwidget)
+        self.led_alpha.setGeometry(QtCore.QRect(500, 390, 30, 20))
+        self.led_alpha.setObjectName(_fromUtf8("lineEdit"))
+
         self.cmb_setAlgorithm = QtGui.QComboBox(self.centralwidget)
         self.cmb_setAlgorithm.setGeometry(QtCore.QRect(20, 560, 120, 35))
         self.cmb_setAlgorithm.setObjectName(_fromUtf8("cmb_setAlgorithm"))
@@ -188,6 +196,7 @@ class Ui_StartingWindow(object):
         self.chb_mirror.setText(_translate("StartingWindow", "Mirror", None))
         self.lbl_pupilDetection.setText(_translate("StartingWindow", "Pupil detection:", None))
         self.lbl_glintDetection.setText(_translate("StartingWindow", "Glint detection:", None))
+        self.lbl_alpha.setText(_translate("StartingWindow", "Alpha smoothing:", None))
         #self.btn_load.setText(_translate("StartingWindow", "LOAD", None))
         self.btn_save.setText(_translate("StartingWindow", "SAVE", None))
 
