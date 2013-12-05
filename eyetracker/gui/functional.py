@@ -94,6 +94,8 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['Sampling']        = 30.0
         self.defaults['AlgorithmIndex']  = 0
         
+        self.tmp = 'notgo'
+        
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
@@ -130,7 +132,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
         self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)
-        self.ui.btn_start.clicked.connect(self.runEyetracker)
+        self.ui.btn_start.clicked.connect(self.startButtonClicked)
         self.ui.btn_clear.clicked.connect(self.clearSettings)
         self.ui.btn_save.clicked.connect(self.saveSettings)
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
@@ -160,9 +162,16 @@ class MyForm(QtGui.QMainWindow):
         self.pupilUpdate(im)
         self.glintUpdate(im)
 
+        #if self.tmp == 'go':
+            #print 'Pupil coordinates: {}.'.format(self.where_pupil)
+            #print 'Glint coordinates: {}.'.format(self.where_glint)
+
+
         if self.timer_on == False:
             self.timer_on = True
-
+        
+        self.runEyetracker()
+        
         self.update()
 
 ####################### SET DEFAULT CONFIG
@@ -290,7 +299,7 @@ class MyForm(QtGui.QMainWindow):
                         self.config[str(tmp[0])] = float(tmp[1])
 
         except IOError:
-            # No config file yet -- using defaults
+            print 'No config file yet -- using defaults'
             self.setDefaultSettings()
 
 ############################## ALGORITHM CHANGING METHOD
@@ -397,7 +406,7 @@ class MyForm(QtGui.QMainWindow):
         '''
 
         glintThreshold = self.ui.hsb_glint.value()
-        self.glint , self.where_glint = drawGlint(image)#, glintThreshold
+        self.glint , self.where_glint = drawGlint(image)#, glintThreshold - can be an additional input here
 
 ##########################################################
     def paintEvent(self, event):
@@ -413,8 +422,8 @@ class MyForm(QtGui.QMainWindow):
         painter = QtGui.QPainter(self)
 
         if self.timer_on:
-            result_pupil = QtGui.QImage(self.pupil, self.w, self.h, QtGui.QImage.Format_RGB888).rgbSwapped()   # I will work on color convention here - Tomek
-            result_glint = QtGui.QImage(self.glint, self.w, self.h, QtGui.QImage.Format_RGB888).rgbSwapped()   # same here
+            result_pupil = QtGui.QImage(self.pupil, self.w, self.h, QtGui.QImage.Format_RGB888).rgbSwapped()
+            result_glint = QtGui.QImage(self.glint, self.w, self.h, QtGui.QImage.Format_RGB888).rgbSwapped()
 
             painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
             painter.drawImage(QtCore.QPoint(5, 300), result_glint)
@@ -428,32 +437,27 @@ class MyForm(QtGui.QMainWindow):
             standard event handler as described in QT4 documentation.
 
         '''
-        #self.q = True
-        #sys.exit(0)
         
+    def startButtonClicked(self):
+        '''
+        Handles the behavior of the start/stop button, based on parameters picked from gui.
+        '''
+        
+        if self.tmp == 'notgo':
+            self.tmp = 'go'
+            self.ui.btn_start.setText('Stop')
+        else:
+            self.tmp = 'notgo'
+            self.ui.btn_start.setText('Start')
+            
 ##########################################################
     def runEyetracker(self):
         ''' Starts eyetracker with parameters picked from gui.
         '''
         
-        if self.config['AlgorithmIndex'] == 1:
-            #command = ['python' , 'raw_output.py']         # this is to be left here
-            #for key in self.config.keys():
-                #command.append(key)
-                #command.append(str(self.config[key]))
-            #self.hide()
-            #call( command )
-            #self.emit(SIGNAL("some text"), self.config)
-            #self.show()
-            
-            
-            # this is to be szurniete!
-            while(1):
-                print 'Pupil coordinates: {}.'.format(self.where_pupil)
-                print 'Glint coordinates: {}.'.format(self.where_glint)
-            
-                #if self.q == True:
-                #    break
+        if self.config['AlgorithmIndex'] == 1 and self.tmp == 'go':
+            print 'Pupil coordinates: {}.'.format(self.where_pupil)
+            print 'Glint coordinates: {}.'.format(self.where_glint)
             
         else:
             pass
