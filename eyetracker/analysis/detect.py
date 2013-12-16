@@ -30,6 +30,12 @@ def blink():
     #should return bin
     pass
 
+def findBestGlints(where_glint):
+    '''
+    
+    '''
+    return where_glint
+
 def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
           blockSize=3):
     ''' Function detects glint on the retina.
