@@ -420,7 +420,7 @@ class MyForm(QtGui.QMainWindow):
         image : np.array
             image on which glints should be find and marked.
         '''
-        self.glint , self.where_glint = drawGlint(image , self.config['GlintBar'])
+        self.glint , self.where_glint = drawGlint(image , self.where_pupil , self.config['GlintBar'])
 
 ##########################################################
     def paintEvent(self, event):
