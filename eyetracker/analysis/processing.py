@@ -252,6 +252,7 @@ def runningAverage(image , average , alpha):
     image = cv2.convertScaleAbs(average)
 
     return image
+    #return average
 
 if __name__ == '__main__':
     from numpy import array

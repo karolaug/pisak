@@ -82,7 +82,7 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['Alpha']           = 0.1
         self.defaults['ResolutionIndex'] = 1
         self.defaults['PupilBar']        = 0
-        self.defaults['GlintBar']        = 0
+        self.defaults['GlintBar']        = 2
         self.defaults['Sampling']        = 30.0
         self.defaults['AlgorithmIndex']  = 0
         
@@ -118,8 +118,6 @@ class MyForm(QtGui.QMainWindow):
         self.ui.timer.start(1000/self.config['Sampling'], self)
         self.timer_on = False # it starts above, but timer_on says if it already ticked at least once.
 
-        #self.q = False      # this is to be szurnięte!
-
 ################################### EVENTS BINDINGS
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
@@ -154,11 +152,6 @@ class MyForm(QtGui.QMainWindow):
 
         self.pupilUpdate(im)
         self.glintUpdate(im)
-
-        #if self.tmp == 'go':
-            #print 'Pupil coordinates: {}.'.format(self.where_pupil)
-            #print 'Glint coordinates: {}.'.format(self.where_glint)
-
 
         if self.timer_on == False:
             self.timer_on = True
@@ -417,9 +410,7 @@ class MyForm(QtGui.QMainWindow):
             image on which pupil should be find and marked.
 
         '''
-
-        pupilThreshold = self.ui.hsb_pupil.value()
-        self.pupil , self.where_pupil = drawPupil(image, pupilThreshold)
+        self.pupil , self.where_pupil = drawPupil(image, self.config['PupilBar'])
 
     def glintUpdate(self, image):
         '''
@@ -429,9 +420,7 @@ class MyForm(QtGui.QMainWindow):
         image : np.array
             image on which glints should be find and marked.
         '''
-
-        glintThreshold = self.ui.hsb_glint.value()
-        self.glint , self.where_glint = drawGlint(image)#, glintThreshold - can be an additional input here
+        self.glint , self.where_glint = drawGlint(image , self.config['GlintBar'])
 
 ##########################################################
     def paintEvent(self, event):
