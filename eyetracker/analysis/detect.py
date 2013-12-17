@@ -31,9 +31,6 @@ def blink():
     pass
 
 def findBestGlints(shape , where_glint , where_pupil , algorithm = 'pupil'):
-    '''
-    
-    '''
     
     if len(where_glint) < 3:
         return where_glint

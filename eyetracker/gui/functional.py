@@ -442,6 +442,3 @@ class MyForm(QtGui.QMainWindow):
         if self.config['AlgorithmIndex'] == 1 and self.tmp == 'go':
             print 'Pupil coordinates: {}.'.format(self.where_pupil)
             print 'Glint coordinates: {}.'.format(self.where_glint)
-            
-        else:
-            pass
