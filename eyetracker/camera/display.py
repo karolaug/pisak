@@ -24,7 +24,7 @@ from cv2 import namedWindow, CV_WINDOW_AUTOSIZE, imshow
 from ..analysis.detect import pupil, glint, findBestGlints
 from ..analysis.processing import threshold, mark, gray2bgr, bgr2gray
 
-def drawGlint(image , numberOfGlints):
+def drawGlint(image , where_pupil , numberOfGlints):
     ''' Find and draw glint on image.
 
     Function takes an image, converts it to grayscale if it is not,
@@ -34,6 +34,10 @@ def drawGlint(image , numberOfGlints):
     -----------
     image : np.array
         image where the glint is to be detected
+    where_pupil : np.array
+        coordinates of pupil on a given image
+    numberOfGlints : int
+        number of points to find on an image
 
     Returns
     --------
@@ -46,7 +50,7 @@ def drawGlint(image , numberOfGlints):
         
     where_glint = glint(image , numberOfGlints)
     
-    where_glint = findBestGlints(where_glint)
+    where_glint = findBestGlints(image.shape , where_glint , where_pupil)
     
     bgr = gray2bgr(image)
     mark(bgr, where_glint)

@@ -27,7 +27,7 @@ from PyQt4 import QtCore, QtGui
 from ..analysis.processing import imageFlipMirror, runningAverage
 
 from ..camera.display import drawPupil, drawGlint
-from ..camera.capture import lookForCameras
+from ..camera.camera import lookForCameras
 from ..camera.camera import Camera
 
 from .graphical import Ui_StartingWindow
@@ -420,7 +420,7 @@ class MyForm(QtGui.QMainWindow):
         image : np.array
             image on which glints should be find and marked.
         '''
-        self.glint , self.where_glint = drawGlint(image , self.config['GlintBar'])
+        self.glint , self.where_glint = drawGlint(image , self.where_pupil , self.config['GlintBar'])
 
 ##########################################################
     def paintEvent(self, event):

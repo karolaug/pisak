@@ -1,2 +1,2 @@
-from . import (display,
-               capture)
+from . import (camera,
+               display)
