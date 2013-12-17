@@ -19,7 +19,7 @@
 # e-mail: saszasasha@gmail.com
 # University of Warsaw 2013
 
-from cv2 import namedWindow, CV_WINDOW_AUTOSIZE, imshow
+from cv2 import namedWindow, CV_WINDOW_AUTOSIZE, imshow, waitKey
 
 from ..analysis.detect import pupil, glint, findBestGlints
 from ..analysis.processing import threshold, mark, gray2bgr, bgr2gray

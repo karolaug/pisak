@@ -132,19 +132,16 @@ class MyForm(QtGui.QMainWindow):
             standard event handler as described in QT4 documentation.
        '''
         im = self.camera.frame()
-
-        im = runningAverage(im , im , self.config['Alpha'])
-
         im = imageFlipMirror(im, self.config['Mirrored'], self.config['Fliped'])
 
-        self.pupilUpdate(im)
-        self.glintUpdate(im)
-
         if self.timer_on == False:
+            self.im = im
             self.timer_on = True
-        
+
+        self.im = runningAverage(im, self.im, self.config['Alpha'])
+        self.pupilUpdate(self.im)
+        self.glintUpdate(self.im)
         self.runEyetracker()
-        
         self.update()
 
     def setDefaultSettings(self):
@@ -198,7 +195,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
 
         try:
-            if self.config['Mirrored'] == 1:                    # *
+            if self.config['Mirrored'] == 1:
                 self.ui.chb_mirror.toggle()
             if self.config['Fliped'] == 1:
                 self.ui.chb_flip.toggle()
@@ -206,7 +203,7 @@ class MyForm(QtGui.QMainWindow):
             self.config['Mirrored'] == self.defaults['Mirrored']
             self.config['Fliped'] == self.defaults['Fliped']
             
-            if self.config['Mirrored'] == 1:                    # this is a copy of * - I will correct this - Tomek
+            if self.config['Mirrored'] == 1:
                 self.ui.chb_mirror.toggle()
             if self.config['Fliped'] == 1:
                 self.ui.chb_flip.toggle()
@@ -215,11 +212,11 @@ class MyForm(QtGui.QMainWindow):
             self.ui.led_alpha.setText(str(self.config['Alpha']))
         except KeyError:
             self.config['Alpha'] = self.defaults['Alpha']
-            self.ui.led_alpha.setText(str(self.config['Alpha']))    # same here - Tomek
-                
+            self.ui.led_alpha.setText(str(self.config['Alpha']))
+
             print 'Either Mirrored or Fliped (or both) not present in configuration file -- loading default values.'
             warningFlag = True
-        
+
         if warningFlag == True:
             print 'Some variables were not present in configuration file. Saving current settings should solve this issue.'
 
@@ -434,7 +431,6 @@ class MyForm(QtGui.QMainWindow):
             self.tmp = 'notgo'
             self.ui.btn_start.setText('Start')
             
-##########################################################
     def runEyetracker(self):
         ''' Starts eyetracker with parameters picked from gui.
         '''
