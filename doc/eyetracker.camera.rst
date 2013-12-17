@@ -14,13 +14,6 @@ This is desc of camara module.
     :members:
     :show-inheritance:
 
-:mod:`capture` Module
----------------------
-
-.. automodule:: eyetracker.camera.capture
-    :members:
-    :show-inheritance:
-
 :mod:`display` Module
 ---------------------
 
