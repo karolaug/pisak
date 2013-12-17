@@ -105,6 +105,7 @@ def displayImage(image, where='new'):
     if where == 'new':
         namedWindow('new', flags=CV_WINDOW_AUTOSIZE)
         imshow(where, image)
+        waitKey(5) & 0xFF
     return image
 
 if __name__ == '__main__':
