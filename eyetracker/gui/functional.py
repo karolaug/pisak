@@ -27,7 +27,7 @@ from PyQt4 import QtCore, QtGui
 from ..analysis.processing import imageFlipMirror, runningAverage
 
 from ..camera.display import drawPupil, drawGlint
-from ..camera.capture import lookForCameras
+from ..camera.camera import lookForCameras
 from ..camera.camera import Camera
 
 from .graphical import Ui_StartingWindow
