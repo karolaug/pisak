@@ -1,7 +1,8 @@
 camera Module
 ==============
 
-This is desc of camara module.
+Camera module is used to interfere with video cameras and display the results of image
+processing algorithms implemented in :ref:`analysis <analysis>` module.
 
 .. automodule:: eyetracker.camera
     :members:

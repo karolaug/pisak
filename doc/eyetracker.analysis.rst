@@ -1,8 +1,11 @@
+.. _analysis:
+
 analysis Module
 ================
 
 
-This is desc of analysis module.
+Analysis module implements image processing algorithms it is divided into to three parts:
+calibration, detect and processing.
 
 
 .. automodule:: eyetracker.analysis
