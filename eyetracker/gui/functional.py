@@ -34,8 +34,6 @@ from .graphical import Ui_StartingWindow
 
 import os
 
-########################################################################
-
 class MyForm(QtGui.QMainWindow):
     ''' Functional part of GUI interface.
 
@@ -73,9 +71,6 @@ class MyForm(QtGui.QMainWindow):
         QtGui.QWidget.__init__(self, parent)
         self.ui = Ui_StartingWindow()
         self.ui.setupUi(self)
-
-        ############################# PARAMETERS INITIALIZATION
-        
         self.defaults                    = {}
         self.defaults['Mirrored']        = 0
         self.defaults['Fliped']          = 0
@@ -85,40 +80,33 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['GlintBar']        = 2
         self.defaults['Sampling']        = 30.0
         self.defaults['AlgorithmIndex']  = 0
-        
         self.tmp = 'notgo'
-        
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
-
         self.algorithms = ['NESW' , 'Raw output']
         for algorithm in self.algorithms:
             self.ui.cmb_setAlgorithm.addItem(algorithm)
-
         self.resolutions_w = [160,320,640,1280]
         self.resolutions_h = [120,240,480,720]
         for w, h in izip(self.resolutions_w, self.resolutions_h):
             self.ui.cmb_setResolution.addItem(''.join([str(w), 'x', str(h)]))
-
-
-        self.loadSettings()      # this will create self.config containing all necessary settings
-        self.setWidgetsState()   # this will set up state of widgets according to loaded settings
+        self.loadSettings()
+        self.setWidgetsState()
 
         self.w = 320
         self.h = 240
 
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
 
-        try:                                                                                # THIS IS BAD - I WILL WORK ON IT LATER - Tomek.
+        try:
             self.camera  = Camera(self.cameras['Camera_1'], {3 : self.w, 4 : self.h})
         except KeyError:
             print 'No camera device detected.'
 
         self.ui.timer.start(1000/self.config['Sampling'], self)
-        self.timer_on = False # it starts above, but timer_on says if it already ticked at least once.
+        self.timer_on = False
 
-################################### EVENTS BINDINGS
         self.ui.cmb_setCamera.currentIndexChanged.connect(self.cameraChange)
         self.ui.cmb_setResolution.currentIndexChanged.connect(self.resolutionChange)
         self.ui.cmb_setAlgorithm.currentIndexChanged.connect(self.algorithmChange)
@@ -131,7 +119,6 @@ class MyForm(QtGui.QMainWindow):
         self.ui.hsb_glint.valueChanged[int].connect(self.hsbGlint_Change)
         self.ui.led_alpha.editingFinished.connect(self.alphaChange)
 
-########################################### CLOCK TICKS
     def timerEvent(self, event):
         ''' Function controlling the main flow of this gui.
 
@@ -160,7 +147,6 @@ class MyForm(QtGui.QMainWindow):
         
         self.update()
 
-####################### SET DEFAULT CONFIG
     def setDefaultSettings(self):
         ''' Set GUI defaul configuration.
 
@@ -176,7 +162,6 @@ class MyForm(QtGui.QMainWindow):
         self.config['Sampling']        = self.defaults['Sampling']
         self.config['AlgorithmIndex']  = self.defaults['AlgorithmIndex']
 
-##################### SET STATE OF WIDGETS
     def setWidgetsState(self):
         ''' Set state of gui widgets according to self.config variable.
         '''
@@ -238,7 +223,6 @@ class MyForm(QtGui.QMainWindow):
         if warningFlag == True:
             print 'Some variables were not present in configuration file. Saving current settings should solve this issue.'
 
-############################# CLEAR CONFIG
     def clearSettings(self):
         ''' Restore GUI default configuration.
 
@@ -250,7 +234,6 @@ class MyForm(QtGui.QMainWindow):
         self.saveSettings()
         self.setWidgetsState()
 
-############################## SAVE CONFIG
     def saveSettings(self):
         ''' Save GUI settings.
 
@@ -263,9 +246,6 @@ class MyForm(QtGui.QMainWindow):
                 stringToWrite = key + ' ' + str(self.config[key]) + '\n'
                 f.write(stringToWrite)
 
-            #f.write('Fliped {}\n'.format(self.flipped) ) # this is here for historical reasons - Tomek
-
-############################## LOAD CONFIG
     def loadSettings(self):
         ''' Load GUI settings from file.
 
@@ -294,7 +274,6 @@ class MyForm(QtGui.QMainWindow):
             print 'No config file yet -- using defaults'
             self.setDefaultSettings()
 
-############################## ALGORITHM CHANGING METHOD
     def algorithmChange(self):
         ''' Change eyetracker algorithm.
 
@@ -305,7 +284,6 @@ class MyForm(QtGui.QMainWindow):
 
         self.config['AlgorithmIndex']  = ind
 
-################################ CAMERA CHANGING METHOD
     def cameraChange(self):
         ''' Change camera between avalaible devices.
         '''
@@ -317,7 +295,6 @@ class MyForm(QtGui.QMainWindow):
                              {3 : self.w, 4 : self.h})
         self.ui.timer.start(1000/self.config['Sampling'], self)
 
-######################### MIRROR METHON
     def imageMirror(self):
         ''' Set a variable telling the gui to mirror incomming frames from a camera.
         '''
@@ -327,7 +304,6 @@ class MyForm(QtGui.QMainWindow):
         else:
             self.config['Mirrored'] = 0
 
-####################### FLIP METHOD
     def imageFlip(self):
         ''' Set a variable telling the gui to flip incomming frames from a camera.
         '''
@@ -337,7 +313,6 @@ class MyForm(QtGui.QMainWindow):
         else:
             self.config['Fliped'] = 0
 
-######################### RESOLUTION CHANGING METHOD
     def resolutionChange(self):
         ''' Set a chosen resolution of a camera.
 
@@ -349,7 +324,6 @@ class MyForm(QtGui.QMainWindow):
 
         self.config['ResolutionIndex']  = ind
         
-######################### ALPHA PARAMETER CHANGING METHOD        
     def alphaChange(self):
         '''
         Set a chosen alpha parameter for smoothing purposes.
@@ -375,7 +349,6 @@ class MyForm(QtGui.QMainWindow):
         else:
             self.config['Alpha'] = alpha
 
-######### CHANGING PARAMETERS ACCORDING TO SCROLLBARS
     def hsbPupil_Change(self, value):
         ''' Set a text in a gui according to the possition of a slider.
 
@@ -400,7 +373,6 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_glint.setText(str(value))
         self.config['GlintBar'] = value
 
-############## UPDATE OBRAZU
     def pupilUpdate(self, image):
         '''
 
@@ -422,7 +394,6 @@ class MyForm(QtGui.QMainWindow):
         '''
         self.glint , self.where_glint = drawGlint(image , self.where_pupil , self.config['GlintBar'])
 
-##########################################################
     def paintEvent(self, event):
         '''
 
@@ -442,19 +413,18 @@ class MyForm(QtGui.QMainWindow):
             painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
             painter.drawImage(QtCore.QPoint(5, 300), result_glint)
 
-    def closeEvent(self, event):
-        '''
-
-        Parameters
-        -----------
-        event : object
-            standard event handler as described in QT4 documentation.
-
-        '''
+#    def closeEvent(self, event):
+#        '''
+#
+#        Parameters
+#        -----------
+#        event : object
+#            standard event handler as described in QT4 documentation.
+#
+#        '''
         
     def startButtonClicked(self):
-        '''
-        Handles the behavior of the start/stop button, based on parameters picked from gui.
+        ''' Handles the behavior of the start/stop button, based on parameters picked from gui.
         '''
         
         if self.tmp == 'notgo':
@@ -475,8 +445,3 @@ class MyForm(QtGui.QMainWindow):
             
         else:
             pass
-        
-        # This is here for informational reasons, I will remove it, when I'm done - Tomek
-        #self.h = self.resolutions_h[ind]
-        #self.w = self.resolutions_w[ind]
-

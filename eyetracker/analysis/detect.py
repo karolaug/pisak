@@ -111,7 +111,6 @@ def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
     where = cv2.goodFeaturesToTrack(image, maxCorners=maxCorners,
                                     qualityLevel=quality, minDistance=minDist,
                                     mask=mask, blockSize=blockSize)
-    #TODO: add constrain of max distance
     if where != None:
         where = np.array([where[i][0] for i in xrange(where.shape[0])])
     return where

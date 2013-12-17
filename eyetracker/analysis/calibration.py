@@ -41,7 +41,7 @@ def get_resolution():#for use only if PySide is not in use, it's there already
         size of screen in pixels
     '''
     from os import popen
-    screen = popen('xrandr -q').readlines()[0] #to do: mistake-proof parsing
+    screen = popen('xrandr -q').readlines()[0]
     width = int(screen.split()[7])
     height = int(screen.split()[9][:-1])
     return (width, height)
@@ -92,9 +92,3 @@ def draw_circle(where_mark, radius, color='red', image=False):
 #
 #    Additional dictionary of vector distances if with_purkinje=True.
 #    '''
-
-
-
-
-if __name__ == '__main__':
-    '''to do!'''

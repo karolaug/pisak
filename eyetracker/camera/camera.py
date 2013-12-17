@@ -66,7 +66,7 @@ class Camera(object):
         if dic:
             for propID, value in dic.iteritems():
                 self.cap.set(propID, value)
-        first_frame = self.frame() #initialize at the start so that no loss of time occurs later on, not needed later on so no 'self'
+        first_frame = self.frame()
 
     def frame(self):
         ''' Read frame from camera.
@@ -101,5 +101,4 @@ class Camera(object):
         ''' Reopens cap.
         '''
         self.cap.open(self.camera)
-        first_frame = self.frame() #same purpose as in __init__
-
+        first_frame = self.frame()
