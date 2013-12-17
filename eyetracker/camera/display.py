@@ -99,14 +99,15 @@ def displayImage(image, where='new'):
 
     Returns
     -----------
-    image : np.array
-        ddisplayed image.
+    key: int
+        number representation of the key that was pressed during
+        the image display
     '''
     if where == 'new':
         namedWindow('new', flags=CV_WINDOW_AUTOSIZE)
-        imshow(where, image)
-        waitKey(5) & 0xFF
-    return image
+    imshow(where, image)
+    key = waitKey(1) & 0xFF
+    return key
 
 if __name__ == '__main__':
     from cv2 import imread, waitKey
