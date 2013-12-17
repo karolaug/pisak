@@ -8,11 +8,10 @@ cam = eyetracker.camera.camera.Camera(cam_id['Camera_1'])
 while True:
     frame = cam.frame()
     
-## you'r code ##
+''' your code '''
 
 
 
 
-
-
+''' end of your code'''
     eyetracker.camera.display.displayImage(frame)
