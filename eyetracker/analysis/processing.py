@@ -253,6 +253,11 @@ def runningAverage(image, average, alpha):
 
     return image
 
+def averageGlints(where_glint) , glints_stack:
+    return where_glint , glints_stack
+    
+    return 
+
 if __name__ == '__main__':
     from numpy import array
 
