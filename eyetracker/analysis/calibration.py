@@ -47,7 +47,7 @@ def get_resolution():#for use only if PySide is not in use, it's there already
     return (width, height)
 
 def where_circles(resolution=False, rad=30):
-    ''' Clears the image and draws a new circle.
+    ''' Counts where the circles should be drawn.
 
     Parameters
     -----------
@@ -70,15 +70,16 @@ def where_circles(resolution=False, rad=30):
     
     circles = {'C' : (w/2, h/2), 'N' : (w/2, rad), 'S' : (w/2, h-rad), 
                'W': (rad, h/2), 'E' : (w-rad, h/2), 'NW' : (rad, rad),
-               'NE' : (w-rad, rad), 'SE' : (w-rad, h-rad), 'SW' : (rad, h-rad),
-               'radius' : rad}
+               'NE' : (w-rad, rad), 'SE' : (w-rad, h-rad), 
+               'SW' : (rad, h-rad), 'radius' : rad}
     
-    return circles, resolution
+    return circles, resolution, rad
 
-def draw_watch_points(circles, resolution):
+def draw_watch_points(circles, resolution, rad):
     base_image = np.zeros((resolution[1], resolution[0], 3), np.uint8)
     mod_image = base_image.copy()
-    
+    for i in circles:
+        mark(mod_image, )
 
 def calibrate(resolution=False):
     '''TO DO!!!
