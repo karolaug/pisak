@@ -24,6 +24,8 @@
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
+import numpy as np
+
 from ..analysis.processing import imageFlipMirror, runningAverage
 
 from ..camera.display import drawPupil, drawGlint
@@ -74,7 +76,7 @@ class MyForm(QtGui.QMainWindow):
         self.defaults                    = {}
         self.defaults['Mirrored']        = 0
         self.defaults['Fliped']          = 0
-        self.defaults['Alpha']           = 4.
+        self.defaults['Alpha']           = 6.
         self.defaults['ResolutionIndex'] = 1
         self.defaults['PupilBar']        = 0
         self.defaults['GlintBar']        = 2
@@ -107,7 +109,8 @@ class MyForm(QtGui.QMainWindow):
         except KeyError:
             print 'No camera device detected.'
 
-        self.glints_stack = []
+        self.glints_stack = np.zeros([self.config['Alpha'],3])
+        self.pupils_stack = np.zeros([self.config['Alpha'],3])
 
         self.ui.timer.start(1000/self.config['Sampling'], self)
         self.timer_on = False
@@ -150,7 +153,8 @@ class MyForm(QtGui.QMainWindow):
         self.pupilUpdate(self.im)
         self.glintUpdate(self.im)
         
-        #self.where_pupil , self.where_glint = runningAverageOfPositions()
+        #print self.where_pupil
+        #print self.where_pupil.shape[0]
         
         self.runEyetracker()
         
@@ -319,6 +323,8 @@ class MyForm(QtGui.QMainWindow):
 
         self.ui.timer.stop()
         self.camera.close()
+        self.glints_stack = np.zeros([self.config['Alpha'],3])
+        self.pupils_stack = np.zeros([self.config['Alpha'],3])
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
         self.camera = Camera(self.cameras[self.selectedCamera], 
                              {3 : self.w, 4 : self.h})
@@ -332,6 +338,9 @@ class MyForm(QtGui.QMainWindow):
             self.config['Mirrored'] = 1
         else:
             self.config['Mirrored'] = 0
+            
+        #self.glints_stack = np.zeros([self.config['Alpha'],3])
+        #self.pupils_stack = np.zeros([self.config['Alpha'],3])
 
     def imageFlip(self):
         ''' Set a variable telling the gui to flip incomming frames from a camera.
@@ -341,6 +350,9 @@ class MyForm(QtGui.QMainWindow):
             self.config['Fliped'] = 1
         else:
             self.config['Fliped'] = 0
+            
+        #self.glints_stack = np.zeros([self.config['Alpha'],3])
+        #self.pupils_stack = np.zeros([self.config['Alpha'],3])
 
     def resolutionChange(self):
         ''' Set a chosen resolution of a camera.
@@ -378,6 +390,9 @@ class MyForm(QtGui.QMainWindow):
             print 'Alpha should be between 0.0 and 10.0!'
         else:
             self.config['Alpha'] = alpha
+            
+        self.glints_stack = np.zeros([self.config['Alpha'],3])
+        self.pupils_stack = np.zeros([self.config['Alpha'],3])
 
     def additional_1Change(self):
         '''
@@ -464,7 +479,7 @@ class MyForm(QtGui.QMainWindow):
             image on which pupil should be find and marked.
 
         '''
-        self.pupil , self.where_pupil = drawPupil(image, self.config['PupilBar'])
+        self.pupil , self.where_pupil , self.pupils_stack = drawPupil(image , self.config['PupilBar'] , self.pupils_stack)
 
     def glintUpdate(self, image):
         '''

@@ -21,7 +21,7 @@
 # University of Warsaw 2013
 
 import cv2
-from numpy import float32
+import numpy as np
 
 thresholds = {'otsu' : cv2.THRESH_OTSU, 'bin' : cv2.THRESH_BINARY,
               'bin_inv' : cv2.THRESH_BINARY_INV,
@@ -246,17 +246,35 @@ def runningAverage(image, average, alpha):
     image : np.array
         averaged image as numpy array.
     '''
-    average = float32(average)
+    average = np.float32(average)
     cv2.accumulateWeighted(image, average, alpha)
     #print 'Alpha value is {}.'.format(alpha)
     image = cv2.convertScaleAbs(average)
 
     return image
 
-def averageGlints(where_glint) , glints_stack:
+def averageGlints(where_glint , glints_stack):
     return where_glint , glints_stack
+
+def averagePupils(where_pupil , pupils_stack):
+    try:
+        if where_pupil.shape[0] == 1:
+            #print '!!!'
+            #print pupils_stack.shape
+            #print where_pupil.shape
+            pupils_stack = np.vstack((pupils_stack , where_pupil))[1:,:]
+            #print pupils_stack
+            
+            where_pupil[0,0] = pupils_stack[:,0].mean()
+            where_pupil[0,1] = pupils_stack[:,1].mean()
+            where_pupil[0,2] = pupils_stack[:,2].mean()
+        else:
+            pass
+            
+    except AttributeError:      # it means no pupil was found
+        pass
     
-    return 
+    return where_pupil , pupils_stack
 
 if __name__ == '__main__':
     from numpy import array
