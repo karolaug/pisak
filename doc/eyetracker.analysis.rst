@@ -4,7 +4,7 @@ analysis Module
 ================
 
 
-Analysis module implements image processing algorithms it is divided into to three parts:
+Analysis module implements image processing algorithms. It is divided into three parts:
 calibration, detect and processing.
 
 

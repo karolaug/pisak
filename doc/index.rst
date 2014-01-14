@@ -1,11 +1,11 @@
 eyetracker-ng
 ==================
 
-Eyetracker-ng is educational eye-tracking program fully implemented in python and 
-licensed under GPL 3+ license. It's main purpose is to provide functional tool for
+Eyetracker-ng is an educational eye-tracking program fully implemented in python and 
+licensed under GPL 3+ license. It's main purpose is to provide functional tools for
 learning basics of image processing.
 
-Beeing fully functional program, eyetracker-ng can be used to develop costom image
+Being a fully functional program, eyetracker-ng can also be used to develop custom image
 processing algorithms by providing easy to use opencv wrapper.
 
 You can find basic examples of image processing algorithms in :ref:`tutorial <tutorial>` section.
