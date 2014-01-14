@@ -24,6 +24,8 @@
 from itertools import izip
 from PyQt4 import QtCore, QtGui
 
+import numpy as np
+
 from ..analysis.processing import imageFlipMirror, runningAverage
 
 from ..camera.display import drawPupil, drawGlint
@@ -74,12 +76,15 @@ class MyForm(QtGui.QMainWindow):
         self.defaults                    = {}
         self.defaults['Mirrored']        = 0
         self.defaults['Fliped']          = 0
-        self.defaults['Alpha']           = 0.1
+        self.defaults['Alpha']           = 6.
         self.defaults['ResolutionIndex'] = 1
         self.defaults['PupilBar']        = 0
         self.defaults['GlintBar']        = 2
         self.defaults['Sampling']        = 30.0
         self.defaults['AlgorithmIndex']  = 0
+        self.defaults['Additional_1']    = 1.
+        self.defaults['Additional_2']    = 1.
+        
         self.tmp = 'notgo'
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
@@ -104,6 +109,9 @@ class MyForm(QtGui.QMainWindow):
         except KeyError:
             print 'No camera device detected.'
 
+        self.glints_stack = np.zeros([self.config['Alpha'],3])
+        self.pupils_stack = np.zeros([self.config['Alpha'],3])
+
         self.ui.timer.start(1000/self.config['Sampling'], self)
         self.timer_on = False
 
@@ -118,6 +126,8 @@ class MyForm(QtGui.QMainWindow):
         self.ui.hsb_pupil.valueChanged[int].connect(self.hsbPupil_Change)
         self.ui.hsb_glint.valueChanged[int].connect(self.hsbGlint_Change)
         self.ui.led_alpha.editingFinished.connect(self.alphaChange)
+        self.ui.led_additional_1.editingFinished.connect(self.additional_1Change)
+        self.ui.led_additional_2.editingFinished.connect(self.additional_2Change)
 
     def timerEvent(self, event):
         ''' Function controlling the main flow of this gui.
@@ -138,10 +148,16 @@ class MyForm(QtGui.QMainWindow):
             self.im = im
             self.timer_on = True
 
-        self.im = runningAverage(im, self.im, self.config['Alpha'])
+        #self.im = runningAverage(im, self.im, self.config['Alpha'])
+        self.im = im
         self.pupilUpdate(self.im)
         self.glintUpdate(self.im)
+        
+        #print self.where_pupil
+        #print self.where_pupil.shape[0]
+        
         self.runEyetracker()
+        
         self.update()
 
     def setDefaultSettings(self):
@@ -158,6 +174,8 @@ class MyForm(QtGui.QMainWindow):
         self.config['GlintBar']        = self.defaults['GlintBar']
         self.config['Sampling']        = self.defaults['Sampling']
         self.config['AlgorithmIndex']  = self.defaults['AlgorithmIndex']
+        self.config['Additional_1']    = self.defaults['Additional_1']
+        self.config['Additional_2']    = self.defaults['Additional_2']
 
     def setWidgetsState(self):
         ''' Set state of gui widgets according to self.config variable.
@@ -207,16 +225,34 @@ class MyForm(QtGui.QMainWindow):
                 self.ui.chb_mirror.toggle()
             if self.config['Fliped'] == 1:
                 self.ui.chb_flip.toggle()
-        
+
+            print 'Either Mirrored or Fliped (or both) not present in configuration file -- loading default values.'
+            warningFlag = True
+            
         try:
             self.ui.led_alpha.setText(str(self.config['Alpha']))
         except KeyError:
             self.config['Alpha'] = self.defaults['Alpha']
             self.ui.led_alpha.setText(str(self.config['Alpha']))
-
-            print 'Either Mirrored or Fliped (or both) not present in configuration file -- loading default values.'
+            print 'Parameter for alpha smoothing not present in configuration file -- loading default values.'
             warningFlag = True
-
+        
+        try:
+            self.ui.led_additional_1.setText(str(self.config['Additional_1']))
+        except KeyError:
+            self.config['Additional_1'] = self.defaults['Additional_1']
+            self.ui.led_additional_1.setText(str(self.config['Additional_1']))
+            print 'Additional_1 parameter not present in configuration file -- loading default values.'
+            warningFlag = True
+            
+        try:
+            self.ui.led_additional_2.setText(str(self.config['Additional_2']))
+        except KeyError:
+            self.config['Additional_2'] = self.defaults['Additional_2']
+            self.ui.led_additional_2.setText(str(self.config['Additional_2']))
+            print 'Additional_2 parameter not present in configuration file -- loading default values.'
+            warningFlag = True
+            
         if warningFlag == True:
             print 'Some variables were not present in configuration file. Saving current settings should solve this issue.'
 
@@ -287,6 +323,8 @@ class MyForm(QtGui.QMainWindow):
 
         self.ui.timer.stop()
         self.camera.close()
+        self.glints_stack = np.zeros([self.config['Alpha'],3])
+        self.pupils_stack = np.zeros([self.config['Alpha'],3])
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
         self.camera = Camera(self.cameras[self.selectedCamera], 
                              {3 : self.w, 4 : self.h})
@@ -300,6 +338,9 @@ class MyForm(QtGui.QMainWindow):
             self.config['Mirrored'] = 1
         else:
             self.config['Mirrored'] = 0
+            
+        #self.glints_stack = np.zeros([self.config['Alpha'],3])
+        #self.pupils_stack = np.zeros([self.config['Alpha'],3])
 
     def imageFlip(self):
         ''' Set a variable telling the gui to flip incomming frames from a camera.
@@ -309,6 +350,9 @@ class MyForm(QtGui.QMainWindow):
             self.config['Fliped'] = 1
         else:
             self.config['Fliped'] = 0
+            
+        #self.glints_stack = np.zeros([self.config['Alpha'],3])
+        #self.pupils_stack = np.zeros([self.config['Alpha'],3])
 
     def resolutionChange(self):
         ''' Set a chosen resolution of a camera.
@@ -326,8 +370,9 @@ class MyForm(QtGui.QMainWindow):
         Set a chosen alpha parameter for smoothing purposes.
         
         Alpha is a control parameter of the running average. It describes
-        how fast previous images would be forgotten, 1 - no average,
-        0 - never forget anything.
+        how many previous glint and pupil positions should be averaged.
+        By arbitrary alpha should not exceed 10 and could not be a negative
+        number.
         
         value : string
             value to be assigned to alpha parameter. It would be converted
@@ -340,11 +385,66 @@ class MyForm(QtGui.QMainWindow):
             print 'Alpha should be a floating point number!'
             return
         
-        if alpha < 0. or alpha > 1.:
+        if alpha < 0. or alpha > 10.:
             self.ui.led_alpha.setText( str(self.config['Alpha']) )
-            print 'Alpha should be between 0.0 and 1.0!'
+            print 'Alpha should be between 0.0 and 10.0!'
         else:
             self.config['Alpha'] = alpha
+            
+        self.glints_stack = np.zeros([self.config['Alpha'],3])
+        self.pupils_stack = np.zeros([self.config['Alpha'],3])
+
+    def additional_1Change(self):
+        '''
+        Set a chosen additional_1 parameter for some purposes.
+        
+        What is additional_1 --> Sasha
+        
+        value : string
+            value to be assigned to additional_1 parameter. It would be converted
+            to np.float32
+        '''
+        try:
+            additional_1 = float(self.ui.led_additional_1.text())
+        except ValueError:
+            self.ui.led_additional_1.setText( str(1) )                          # for now...
+            #self.ui.led_additional_1.setText( str(self.config['Alpha']) )      # in future
+            print 'Additional_1 should be a floating point number!'
+            return
+        
+        if additional_1 < 0. or additional_1 > 10.:
+            self.ui.led_additional_1.setText( str(1) )                          # for now...
+            #self.ui.led_alpha.setText( str(self.config['Alpha']) )             # in future
+            print 'Additional_1 should be between 0.0 and 10.0!'
+        else:
+            #self.config['Additional_1'] = alpha                                # in future
+            pass
+            
+    def additional_2Change(self):
+        '''
+        Set a chosen additional_2 parameter for some purposes.
+        
+        What is additional_2 --> Sasha
+        
+        value : string
+            value to be assigned to additional_1 parameter. It would be converted
+            to np.float32
+        '''
+        try:
+            additional_2 = float(self.ui.led_additional_2.text())
+        except ValueError:
+            self.ui.led_additional_2.setText( str(1) )                          # for now...
+            #self.ui.led_additional_2.setText( str(self.config['Alpha']) )      # in future
+            print 'Additional_1 should be a floating point number!'
+            return
+        
+        if additional_2 < 0. or additional_2 > 10.:
+            self.ui.led_additional_2.setText( str(1) )                          # for now...
+            #self.ui.led_alpha.setText( str(self.config['Alpha']) )             # in future
+            print 'Additional_2 should be between 0.0 and 10.0!'
+        else:
+            #self.config['Additional_2'] = alpha                                # in future
+            pass
 
     def hsbPupil_Change(self, value):
         ''' Set a text in a gui according to the possition of a slider.
@@ -379,7 +479,7 @@ class MyForm(QtGui.QMainWindow):
             image on which pupil should be find and marked.
 
         '''
-        self.pupil , self.where_pupil = drawPupil(image, self.config['PupilBar'])
+        self.pupil , self.where_pupil , self.pupils_stack = drawPupil(image , self.config['PupilBar'] , self.pupils_stack)
 
     def glintUpdate(self, image):
         '''
@@ -389,7 +489,7 @@ class MyForm(QtGui.QMainWindow):
         image : np.array
             image on which glints should be find and marked.
         '''
-        self.glint , self.where_glint = drawGlint(image , self.where_pupil , self.config['GlintBar'])
+        self.glint , self.where_glint , self.glints_stack = drawGlint(image , self.where_pupil , self.config['GlintBar'] , self.glints_stack)
 
     def paintEvent(self, event):
         '''

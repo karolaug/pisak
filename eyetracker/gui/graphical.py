@@ -143,7 +143,23 @@ class Ui_StartingWindow(object):
         
         self.led_alpha = QtGui.QLineEdit(self.centralwidget)
         self.led_alpha.setGeometry(QtCore.QRect(500, 390, 50, 20))
-        self.led_alpha.setObjectName(_fromUtf8("lineEdit"))
+        self.led_alpha.setObjectName(_fromUtf8("led_alpha"))
+        
+        self.lbl_additional_1 = QtGui.QLabel(self.centralwidget)
+        self.lbl_additional_1.setGeometry(QtCore.QRect(360, 440, 140, 16))
+        self.lbl_additional_1.setObjectName(_fromUtf8("lbl_additional_1"))
+        
+        self.led_additional_1 = QtGui.QLineEdit(self.centralwidget)
+        self.led_additional_1.setGeometry(QtCore.QRect(500, 440, 50, 20))
+        self.led_additional_1.setObjectName(_fromUtf8("led_additional_1"))
+
+        self.lbl_additional_2 = QtGui.QLabel(self.centralwidget)
+        self.lbl_additional_2.setGeometry(QtCore.QRect(360, 490, 140, 16))
+        self.lbl_additional_2.setObjectName(_fromUtf8("lbl_additional_2"))
+        
+        self.led_additional_2 = QtGui.QLineEdit(self.centralwidget)
+        self.led_additional_2.setGeometry(QtCore.QRect(500, 490, 50, 20))
+        self.led_additional_2.setObjectName(_fromUtf8("led_additional_2"))
 
         self.cmb_setAlgorithm = QtGui.QComboBox(self.centralwidget)
         self.cmb_setAlgorithm.setGeometry(QtCore.QRect(20, 560, 120, 35))
@@ -197,6 +213,8 @@ class Ui_StartingWindow(object):
         self.lbl_pupilDetection.setText(_translate("StartingWindow", "Pupil detection:", None))
         self.lbl_glintDetection.setText(_translate("StartingWindow", "Glint detection:", None))
         self.lbl_alpha.setText(_translate("StartingWindow", "Alpha smoothing:", None))
+        self.lbl_additional_1.setText(_translate("StartingWindow", "Additional_1:", None))
+        self.lbl_additional_2.setText(_translate("StartingWindow", "Additional_2:", None))
         #self.btn_load.setText(_translate("StartingWindow", "LOAD", None))
         self.btn_save.setText(_translate("StartingWindow", "SAVE", None))
 

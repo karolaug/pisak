@@ -82,8 +82,7 @@ def draw_watch_points(circles, resolution, rad):
         mark(mod_image, )
 
 def calibrate(resolution=False):
-    '''TO DO!!!
-    '''
+
     if not resolution:
         resolution = get_resolution()
 
@@ -91,6 +90,3 @@ def calibrate(resolution=False):
     mod_image = base_image.copy()
     return
 
-
-if __name__ == '__main__':
-    '''to do!'''
