@@ -79,7 +79,8 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['Alpha']           = 6.
         self.defaults['ResolutionIndex'] = 1
         self.defaults['PupilBar']        = 0
-        self.defaults['GlintBar']        = 2
+        self.defaults['NumberOfGlints']  = 2
+        self.defaults['NumberOfPupils']  = 1
         self.defaults['Sampling']        = 30.0
         self.defaults['AlgorithmIndex']  = 0
         self.defaults['Additional_1']    = 1.
@@ -124,6 +125,7 @@ class MyForm(QtGui.QMainWindow):
         self.ui.chb_flip.stateChanged.connect(self.imageFlip)
         self.ui.chb_mirror.stateChanged.connect(self.imageMirror)
         self.ui.hsb_pupil.valueChanged[int].connect(self.hsbPupil_Change)
+        self.ui.hsb_pupil2.valueChanged[int].connect(self.hsbPupilNumber_Change)
         self.ui.hsb_glint.valueChanged[int].connect(self.hsbGlint_Change)
         self.ui.led_alpha.editingFinished.connect(self.alphaChange)
         self.ui.led_additional_1.editingFinished.connect(self.additional_1Change)
@@ -171,7 +173,8 @@ class MyForm(QtGui.QMainWindow):
         self.config['Alpha']           = self.defaults['Alpha']
         self.config['ResolutionIndex'] = self.defaults['ResolutionIndex']
         self.config['PupilBar']        = self.defaults['PupilBar']
-        self.config['GlintBar']        = self.defaults['GlintBar']
+        self.config['NumberOfGlints']  = self.defaults['NumberOfGlints']
+        self.config['NumberOfPupils']  = self.defaults['NumberOfPupils']
         self.config['Sampling']        = self.defaults['Sampling']
         self.config['AlgorithmIndex']  = self.defaults['AlgorithmIndex']
         self.config['Additional_1']    = self.defaults['Additional_1']
@@ -200,16 +203,20 @@ class MyForm(QtGui.QMainWindow):
             
         try:
             self.ui.hsb_pupil.setValue(self.config['PupilBar'])
-            self.ui.hsb_glint.setValue(self.config['GlintBar'])
+            self.ui.hsb_pupil2.setValue(self.config['NumberOfPupils'])
+            self.ui.hsb_glint.setValue(self.config['NumberOfGlints'])
         except KeyError:
             self.config['PupilBar'] = self.defaults['PupilBar']
-            self.config['GlintBar'] = self.defaults['GlintBar']
+            self.config['NumberOfGlints'] = self.defaults['NumberOfGlints']
+            self.config['NumberOfPupils'] = self.defaults['NumberOfPupils']
             self.ui.hsb_pupil.setValue(self.defaults['PupilBar'])
-            self.ui.hsb_glint.setValue(self.defaults['GlintBar'])
-            print 'Either GlintBar or PupilBar (or both) not present in configuration file -- loading default values.'
+            self.ui.hsb_glint.setValue(self.defaults['NumberOfGlints'])
+            self.ui.hsb_pupil2.setValue(self.defaults['NumberOfPupils'])
+            print 'Either NumberOfGlints, NumberOfPupils or PupilBar (or any combination of them) not present in configuration file -- loading default values.'
             warningFlag = True
                     
         self.ui.lbl_pupil.setText(str(self.ui.hsb_pupil.value()))
+        self.ui.lbl_pupil2.setText(str(self.ui.hsb_pupil2.value()))
         self.ui.lbl_glint.setText(str(self.ui.hsb_glint.value()))
 
         try:
@@ -458,6 +465,18 @@ class MyForm(QtGui.QMainWindow):
         self.ui.lbl_pupil.setText(str(value))
         self.config['PupilBar'] = value
 
+    def hsbPupilNumber_Change(self, value):
+        ''' Set a text in a gui according to the possition of a slider.
+
+        Parameters
+        -----------
+        value : int
+            value to be displayed in an apriopriate label
+        '''
+
+        self.ui.lbl_pupil2.setText(str(value))
+        self.config['NumberOfPupils'] = value
+
     def hsbGlint_Change(self, value):
         ''' Set a text in a gui according to the possition of a slider.
 
@@ -468,7 +487,7 @@ class MyForm(QtGui.QMainWindow):
         '''
 
         self.ui.lbl_glint.setText(str(value))
-        self.config['GlintBar'] = value
+        self.config['NumberOfGlints'] = value
 
     def pupilUpdate(self, image):
         '''
@@ -479,7 +498,7 @@ class MyForm(QtGui.QMainWindow):
             image on which pupil should be find and marked.
 
         '''
-        self.pupil , self.where_pupil , self.pupils_stack = drawPupil(image , self.config['PupilBar'] , self.pupils_stack)
+        self.pupil , self.where_pupil , self.pupils_stack = drawPupil(image , self.config['PupilBar'] , self.pupils_stack , self.config['NumberOfPupils'])
 
     def glintUpdate(self, image):
         '''
@@ -489,7 +508,7 @@ class MyForm(QtGui.QMainWindow):
         image : np.array
             image on which glints should be find and marked.
         '''
-        self.glint , self.where_glint , self.glints_stack = drawGlint(image , self.where_pupil , self.config['GlintBar'] , self.glints_stack)
+        self.glint , self.where_glint , self.glints_stack = drawGlint(image , self.where_pupil , self.config['NumberOfGlints'] , self.glints_stack)
 
     def paintEvent(self, event):
         '''

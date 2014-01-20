@@ -121,19 +121,35 @@ class Ui_StartingWindow(object):
         self.lbl_pupil.setText(_fromUtf8(""))
         self.lbl_pupil.setObjectName(_fromUtf8("lbl_pupil1"))
 
+        self.lbl_pupilNumber = QtGui.QLabel(self.centralwidget)
+        self.lbl_pupilNumber.setGeometry(QtCore.QRect(360, 310, 111, 20))
+        self.lbl_pupilNumber.setObjectName(_fromUtf8("lbl_pupilNbumber"))
+
+        self.hsb_pupil2 = QtGui.QScrollBar(self.centralwidget)
+        self.hsb_pupil2.setEnabled(True)
+        self.hsb_pupil2.setGeometry(QtCore.QRect(360, 340, 160, 16))
+        self.hsb_pupil2.setMaximum(5)
+        self.hsb_pupil2.setOrientation(QtCore.Qt.Horizontal)
+        self.hsb_pupil2.setObjectName(_fromUtf8("hsb_pupil2"))
+
+        self.lbl_pupil2 = QtGui.QLabel(self.centralwidget)
+        self.lbl_pupil2.setGeometry(QtCore.QRect(530, 340, 30, 16))
+        self.lbl_pupil2.setText(_fromUtf8(""))
+        self.lbl_pupil2.setObjectName(_fromUtf8("lbl_pupil2"))
+
         self.lbl_glintDetection = QtGui.QLabel(self.centralwidget)
-        self.lbl_glintDetection.setGeometry(QtCore.QRect(360, 310, 111, 20))
+        self.lbl_glintDetection.setGeometry(QtCore.QRect(360, 370, 111, 20))
         self.lbl_glintDetection.setObjectName(_fromUtf8("lbl_glintDetection"))
 
         self.hsb_glint = QtGui.QScrollBar(self.centralwidget)
         self.hsb_glint.setEnabled(True)
-        self.hsb_glint.setGeometry(QtCore.QRect(360, 340, 160, 16))
+        self.hsb_glint.setGeometry(QtCore.QRect(360, 410, 160, 16))
         self.hsb_glint.setMaximum(5)
         self.hsb_glint.setOrientation(QtCore.Qt.Horizontal)
         self.hsb_glint.setObjectName(_fromUtf8("hsb_glint2"))
 
         self.lbl_glint = QtGui.QLabel(self.centralwidget)
-        self.lbl_glint.setGeometry(QtCore.QRect(530, 340, 30, 16))
+        self.lbl_glint.setGeometry(QtCore.QRect(530, 410, 30, 16))
         self.lbl_glint.setText(_fromUtf8(""))
         self.lbl_glint.setObjectName(_fromUtf8("lbl_glint2"))
 
@@ -211,7 +227,8 @@ class Ui_StartingWindow(object):
         self.chb_flip.setText(_translate("StartingWindow", "Flip", None))
         self.chb_mirror.setText(_translate("StartingWindow", "Mirror", None))
         self.lbl_pupilDetection.setText(_translate("StartingWindow", "Pupil detection:", None))
-        self.lbl_glintDetection.setText(_translate("StartingWindow", "Glint detection:", None))
+        self.lbl_pupilNumber.setText(_translate("StartingWindow", "Number of pupils to track:", None))
+        self.lbl_glintDetection.setText(_translate("StartingWindow", "Number of glints to track:", None))
         self.lbl_alpha.setText(_translate("StartingWindow", "Alpha smoothing:", None))
         self.lbl_additional_1.setText(_translate("StartingWindow", "Additional_1:", None))
         self.lbl_additional_2.setText(_translate("StartingWindow", "Additional_2:", None))

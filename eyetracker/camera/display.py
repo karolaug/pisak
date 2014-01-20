@@ -60,7 +60,7 @@ def drawGlint(image , where_pupil , numberOfGlints , glints_stack):
     mark(bgr, where_glint)
     return bgr, where_glint , glints_stack
 
-def drawPupil(image, thres , pupils_stack):
+def drawPupil(image, thres , pupils_stack , numberOfPupils):
     ''' Find and draw pupil on image.
 
     Function takes an image, applies 'trunc' threshold(cv2.THRESH_TRUNC),
@@ -84,7 +84,7 @@ def drawPupil(image, thres , pupils_stack):
     thresholded = threshold(image, thresh_v=thres)
     where_pupil = pupil(thresholded)
     
-    where_pupil , pupils_stack = averagePupils(where_pupil , pupils_stack)
+    #where_pupil , pupils_stack = averagePupils(where_pupil , pupils_stack)
     
     bgr = gray2bgr(thresholded)
     mark(bgr, where_pupil, color='blue')
