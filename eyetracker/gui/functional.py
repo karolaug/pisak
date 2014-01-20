@@ -90,7 +90,8 @@ class MyForm(QtGui.QMainWindow):
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
             self.ui.cmb_setCamera.addItem(i)
-        self.algorithms = ['NESW' , 'Raw output']
+        #self.algorithms = ['NESW' , 'Raw output']
+        self.algorithms = ['Raw output']
         for algorithm in self.algorithms:
             self.ui.cmb_setAlgorithm.addItem(algorithm)
         self.resolutions_w = [160,320,640,1280]
