@@ -2,7 +2,7 @@
 
 import os
 import subprocess
-
+import pkg_resources
 __docformat__ = "restructuredtext"
 
 
@@ -59,3 +59,9 @@ def version():
     eyetracker_dir = os.path.dirname(__file__)
     if __is_git_repo(eyetracker_dir):
         return __git_describe(eyetracker_dir)
+    else:
+        try:
+            ver = pkg_resources.resource_string('eyetracker', 'version').rstrip()
+            return ver
+        except:
+            return ''
