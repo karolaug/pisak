@@ -65,7 +65,7 @@ class Ui_StartingWindow(object):
 
         self.lbl_title = QtGui.QLabel(self.centralwidget)
         self.lbl_title.setEnabled(True)
-        self.lbl_title.setGeometry(QtCore.QRect(260, 10, StartingWindow.width(), 16))
+        self.lbl_title.setGeometry(QtCore.QRect(100, 10, StartingWindow.width(), 16))
         font = QtGui.QFont()
         font.setBold(True)
         font.setItalic(True)
@@ -75,26 +75,26 @@ class Ui_StartingWindow(object):
         self.lbl_title.setObjectName(_fromUtf8("lbl_title"))
 
         self.btn_start = QtGui.QPushButton(self.centralwidget)
-        self.btn_start.setGeometry(QtCore.QRect(150, 560, 120, 35))
+        self.btn_start.setGeometry(QtCore.QRect(150, 560, 160, 35))
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(_fromUtf8("pictures/start.svg")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.btn_start.setIcon(icon1)
         self.btn_start.setObjectName(_fromUtf8("btn_start"))
 
         self.lbl_setCamera = QtGui.QLabel(self.centralwidget)
-        self.lbl_setCamera.setGeometry(QtCore.QRect(360, 40, 111, 20))
+        self.lbl_setCamera.setGeometry(QtCore.QRect(360, 40, 160, 20))
         self.lbl_setCamera.setObjectName(_fromUtf8("lbl_setCamera"))
 
         self.lbl_setResolution = QtGui.QLabel(self.centralwidget)
-        self.lbl_setResolution.setGeometry(QtCore.QRect(360, 110, 141, 20))
+        self.lbl_setResolution.setGeometry(QtCore.QRect(360, 110, 160, 20))
         self.lbl_setResolution.setObjectName(_fromUtf8("lbl_setResolution"))
 
         self.cmb_setCamera = QtGui.QComboBox(self.centralwidget)
-        self.cmb_setCamera.setGeometry(QtCore.QRect(360, 70, 100, 30))
+        self.cmb_setCamera.setGeometry(QtCore.QRect(360, 70, 160, 30))
         self.cmb_setCamera.setObjectName(_fromUtf8("cmb_setCamera"))
 
         self.cmb_setResolution = QtGui.QComboBox(self.centralwidget)
-        self.cmb_setResolution.setGeometry(QtCore.QRect(360, 140, 100, 30))
+        self.cmb_setResolution.setGeometry(QtCore.QRect(360, 140, 160, 30))
         self.cmb_setResolution.setObjectName(_fromUtf8("cmb_setResolution"))
 
         self.chb_flip = QtGui.QCheckBox(self.centralwidget)
@@ -106,7 +106,7 @@ class Ui_StartingWindow(object):
         self.chb_mirror.setObjectName(_fromUtf8("chb_mirror"))
 
         self.lbl_pupilDetection = QtGui.QLabel(self.centralwidget)
-        self.lbl_pupilDetection.setGeometry(QtCore.QRect(360, 250, 111, 20))
+        self.lbl_pupilDetection.setGeometry(QtCore.QRect(360, 250, 160, 20))
         self.lbl_pupilDetection.setObjectName(_fromUtf8("lbl_pupilDetection"))
 
         self.hsb_pupil = QtGui.QScrollBar(self.centralwidget)
@@ -117,12 +117,12 @@ class Ui_StartingWindow(object):
         self.hsb_pupil.setObjectName(_fromUtf8("hsb_pupil1"))
 
         self.lbl_pupil = QtGui.QLabel(self.centralwidget)
-        self.lbl_pupil.setGeometry(QtCore.QRect(530, 280, 30, 16))
+        self.lbl_pupil.setGeometry(QtCore.QRect(530, 280, 50, 16))
         self.lbl_pupil.setText(_fromUtf8(""))
         self.lbl_pupil.setObjectName(_fromUtf8("lbl_pupil1"))
 
         self.lbl_pupilNumber = QtGui.QLabel(self.centralwidget)
-        self.lbl_pupilNumber.setGeometry(QtCore.QRect(360, 310, 111, 20))
+        self.lbl_pupilNumber.setGeometry(QtCore.QRect(360, 310, 250, 20))
         self.lbl_pupilNumber.setObjectName(_fromUtf8("lbl_pupilNbumber"))
 
         self.hsb_pupil2 = QtGui.QScrollBar(self.centralwidget)
@@ -133,12 +133,12 @@ class Ui_StartingWindow(object):
         self.hsb_pupil2.setObjectName(_fromUtf8("hsb_pupil2"))
 
         self.lbl_pupil2 = QtGui.QLabel(self.centralwidget)
-        self.lbl_pupil2.setGeometry(QtCore.QRect(530, 340, 30, 16))
+        self.lbl_pupil2.setGeometry(QtCore.QRect(530, 340, 50, 16))
         self.lbl_pupil2.setText(_fromUtf8(""))
         self.lbl_pupil2.setObjectName(_fromUtf8("lbl_pupil2"))
 
         self.lbl_glintDetection = QtGui.QLabel(self.centralwidget)
-        self.lbl_glintDetection.setGeometry(QtCore.QRect(360, 370, 111, 20))
+        self.lbl_glintDetection.setGeometry(QtCore.QRect(360, 370, 250, 20))
         self.lbl_glintDetection.setObjectName(_fromUtf8("lbl_glintDetection"))
 
         self.hsb_glint = QtGui.QScrollBar(self.centralwidget)
@@ -149,7 +149,7 @@ class Ui_StartingWindow(object):
         self.hsb_glint.setObjectName(_fromUtf8("hsb_glint2"))
 
         self.lbl_glint = QtGui.QLabel(self.centralwidget)
-        self.lbl_glint.setGeometry(QtCore.QRect(530, 410, 30, 16))
+        self.lbl_glint.setGeometry(QtCore.QRect(530, 410, 50, 16))
         self.lbl_glint.setText(_fromUtf8(""))
         self.lbl_glint.setObjectName(_fromUtf8("lbl_glint2"))
 
