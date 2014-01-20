@@ -138,27 +138,27 @@ class Ui_StartingWindow(object):
         self.lbl_glint.setObjectName(_fromUtf8("lbl_glint2"))
 
         self.lbl_alpha = QtGui.QLabel(self.centralwidget)
-        self.lbl_alpha.setGeometry(QtCore.QRect(360, 390, 140, 16))
+        self.lbl_alpha.setGeometry(QtCore.QRect(0,0,0,0))#(360, 390, 140, 16))
         self.lbl_alpha.setObjectName(_fromUtf8("lbl_alpha"))
         
         self.led_alpha = QtGui.QLineEdit(self.centralwidget)
-        self.led_alpha.setGeometry(QtCore.QRect(500, 390, 50, 20))
+        self.led_alpha.setGeometry(QtCore.QRect(0,0,0,0))#(500, 390, 50, 20))
         self.led_alpha.setObjectName(_fromUtf8("led_alpha"))
         
         self.lbl_additional_1 = QtGui.QLabel(self.centralwidget)
-        self.lbl_additional_1.setGeometry(QtCore.QRect(360, 440, 140, 16))
+        self.lbl_additional_1.setGeometry(QtCore.QRect(0,0,0,0))#(360, 440, 140, 16))
         self.lbl_additional_1.setObjectName(_fromUtf8("lbl_additional_1"))
         
         self.led_additional_1 = QtGui.QLineEdit(self.centralwidget)
-        self.led_additional_1.setGeometry(QtCore.QRect(500, 440, 50, 20))
+        self.led_additional_1.setGeometry(QtCore.QRect(0,0,0,0))#(500, 440, 50, 20))
         self.led_additional_1.setObjectName(_fromUtf8("led_additional_1"))
 
         self.lbl_additional_2 = QtGui.QLabel(self.centralwidget)
-        self.lbl_additional_2.setGeometry(QtCore.QRect(360, 490, 140, 16))
+        self.lbl_additional_2.setGeometry(QtCore.QRect(0,0,0,0))#(360, 490, 140, 16))
         self.lbl_additional_2.setObjectName(_fromUtf8("lbl_additional_2"))
         
         self.led_additional_2 = QtGui.QLineEdit(self.centralwidget)
-        self.led_additional_2.setGeometry(QtCore.QRect(500, 490, 50, 20))
+        self.led_additional_2.setGeometry(QtCore.QRect(0,0,0,0))#(500, 490, 50, 20))
         self.led_additional_2.setObjectName(_fromUtf8("led_additional_2"))
 
         self.cmb_setAlgorithm = QtGui.QComboBox(self.centralwidget)
