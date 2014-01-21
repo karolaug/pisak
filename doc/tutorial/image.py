@@ -11,7 +11,6 @@ while True:
     
     ''' your code '''
 
-    frame = 255 - frame
 
 
     ''' end of your code'''
