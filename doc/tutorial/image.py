@@ -1,6 +1,4 @@
 import eyetracker
-import cv2
-import numpy as np
 
 cam_id = eyetracker.camera.camera.lookForCameras()
 
