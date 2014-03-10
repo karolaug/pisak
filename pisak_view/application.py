@@ -23,7 +23,7 @@ class CategoryTile(Clutter.Actor):
         self.label.set_text(self.category)
         self.add_actor(self.preview)
         self.add_actor(self.label)
-        
+
 
 class LibraryScroll(Clutter.Actor):
     def __init__(self):
@@ -37,14 +37,18 @@ class LibraryScroll(Clutter.Actor):
         margin = Clutter.Margin()
         margin.left = margin.right = unit.mm(12)
         self.set_margin(margin)
+        self.connect("allocation-changed", self.resize_page)
     
     def _init_tiles(self):
-        self.layout = Clutter.BinLayout()
+        self.layout = Clutter.FixedLayout()
         self.set_layout_manager(self.layout)
         self.pop_out = Clutter.Actor()
         self.add_actor(self.pop_out)
         self.page_actor = self.generate_page(self.page)
         self.add_actor(self.page_actor)
+    
+    def resize_page(self, *args):
+        self.page_actor.set_size(self.get_width(), self.get_height())
     
     def generate_page(self, page):
         page_actor = Clutter.Actor()
@@ -66,12 +70,11 @@ class LibraryScroll(Clutter.Actor):
     
     @staticmethod
     def slide_in(page_actor):
-        #page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 1000, ["x"], [0])
-        page_actor.set_x(0)
+        page_actor.set_x(1366)
+        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 500, ["x"], [0])
     
-    @staticmethod    
-    def slide_out(page_actor):
-        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 1000, ["x"], [-1366])
+    def slide_out(self, page_actor):
+        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 500, ["x"], [-1366])
     
     def next_page(self):
         self.page = (self.page + 1) % self.page_count
