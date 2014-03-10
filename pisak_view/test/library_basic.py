@@ -1,6 +1,9 @@
 import unittest
 import tempfile
 import shutil
+import base64
+import io
+import os.path
 from pisak_view import model
 
 class LibraryTest(unittest.TestCase):
@@ -11,17 +14,33 @@ class LibraryTest(unittest.TestCase):
         shutil.rmtree(self.library_path)
 
         
-class LibraryUsageTest(LibraryTest):
-    TEST_IMAGE = ("hon/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgFBgcGBQgHBgcJCAgJDBMMDA"
+class LibraryPhotoTest(LibraryTest):
+    TEST_IMAGE = ("/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgFBgcGBQgHBgcJCAgJDBMMDA"
         "sLDBgREg4THBgdHRsYGxofIywlHyEqIRobJjQnKi4vMTIxHiU2OjYwOiwwMTD"
         "/wAALCAAgACABAREA/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAUEAEAAAAA"
         "AAAAAAAAAAAAAAAA/9oACAEBAAA/AL+AAAAA/9k=")
 
+    def setUp(self):
+        super(LibraryPhotoTest, self).setUp()
+        test_filename = os.path.join(self.library_path, "test.jpg")
+        test_file = open(test_filename, "wb")
+        encoded_file = io.StringIO(self.TEST_IMAGE)
+        base64.decode(encoded_file, test_file)
+        test_file.close()
+        encoded_file.close()
+
+
+class LibraryUsageTest(LibraryPhotoTest):
     def test_create(self):
         new_library = model.create_library(self.library_path)
-        self.assertIsInstance(len(new_library.categories), int)
-        new_library.scan()
-        new_library.close()
+        try:
+            self.assertIsInstance(len(new_library.categories), int)
+            new_photos = new_library.scan()
+            self.assertEqual(len(new_photos), 1)
+            new_photos = new_library.scan()
+            self.assertEqual(len(new_photos), 0)
+        finally:
+            new_library.close()
 
 
 class LibraryConfictTest(LibraryTest):
