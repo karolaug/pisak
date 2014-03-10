@@ -112,14 +112,15 @@ class LibraryViewContents(Clutter.Actor):
 class LibraryView(Clutter.Actor):
     def __init__(self):
         super(LibraryView, self).__init__()
+        self.set_clip_to_allocation(True)
         self._init_elements()
     
     def _init_elements(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        self.add_actor(PisakBackground())
         self.contents = LibraryViewContents()
         self.add_actor(self.contents)
+        self.add_actor(PisakBackground())
     
     def next_page(self):
         self.contents.next_page()
