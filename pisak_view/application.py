@@ -30,6 +30,7 @@ class LibraryScroll(Clutter.Actor):
         super(LibraryScroll, self).__init__()
         self.categories = ["Kategoria %d" % i for i in range(12)]
         self.page = 0
+        self.time_interval=1000
         self.page_count = int((len(self.categories) + (6 // 2)) // 6)
         self._init_tiles()
         self.set_x_expand(True)
@@ -38,7 +39,8 @@ class LibraryScroll(Clutter.Actor):
         margin.left = margin.right = unit.mm(12)
         self.set_margin(margin)
         self.connect("allocation-changed", self.resize_page)
-    
+        self._init_timer()
+
     def _init_tiles(self):
         self.layout = Clutter.FixedLayout()
         self.set_layout_manager(self.layout)
@@ -46,7 +48,17 @@ class LibraryScroll(Clutter.Actor):
         self.add_actor(self.pop_out)
         self.page_actor = self.generate_page(self.page)
         self.add_actor(self.page_actor)
-    
+        
+
+    def _init_timer(self):
+
+        self.scroll_timer=Clutter.Timeline.new(self.time_interval)
+        self.scroll_timer.set_repeat_count(-1)
+        self.scroll_timer.connect('completed', lambda _: self.next_page())
+        self.scroll_timer.start() 
+        self.is_flipping= True
+
+
     def resize_page(self, *args):
         self.page_actor.set_size(self.get_width(), self.get_height())
     
@@ -72,8 +84,10 @@ class LibraryScroll(Clutter.Actor):
     def slide_in(page_actor):
         page_actor.set_x(1366)
         page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 500, ["x"], [0])
+        
     
-    def slide_out(self, page_actor):
+    @staticmethod    
+    def slide_out(page_actor):
         page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 500, ["x"], [-1366])
     
     def next_page(self):
@@ -86,7 +100,16 @@ class LibraryScroll(Clutter.Actor):
         self.slide_out(self.page_actor)
         #self.page_actor.destroy()
         self.page_actor = new_page_actor
-    
+
+    def toggle_flip(self):
+
+        '''Makes pages to start or stop flipping'''
+        if self.is_flipping:
+            self.scroll_timer.stop()
+            self.is_flipping= False
+        else:
+            self.scroll_timer.start()
+            self.is_flipping= True
 
 class LibraryViewContents(Clutter.Actor):
     def __init__(self):
@@ -104,8 +127,8 @@ class LibraryViewContents(Clutter.Actor):
         self.add_actor(self.scroll)
         self.add_actor(self.scrollbar)
     
-    def next_page(self):
-        self.scroll.next_page()
+    def toggle_flip(self):
+        self.scroll.toggle_flip()
         #self.scrollbar.update(self.scroll.get_page())
     
 
@@ -122,8 +145,8 @@ class LibraryView(Clutter.Actor):
         self.add_actor(self.contents)
         self.add_actor(PisakBackground())
     
-    def next_page(self):
-        self.contents.next_page()
+    def toggle_flip(self):
+        self.contents.toggle_flip()
 
 
 class PisakBackground(Clutter.Actor):
@@ -141,21 +164,33 @@ class PisakViewerButtons(Clutter.Actor):
         self.viewer = viewer
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
+        self.exit_button=Mx.Button()
+        self.exit_button.set_label('exit')
+        self.exit_button.set_y_expand(True)
+        self.exit_button.set_width(unit.mm(30))
+        self.exit_button.connect("clicked", lambda _: self.exit_app() )
+        self.set_x_align(Clutter.ActorAlign.CENTER)
+        
         self.button = Mx.Button()
         self.button.set_label(">>")
         self.button.set_y_expand(True)
         self.button.set_width(unit.mm(30))
-        self.button.connect("clicked", lambda _: self.next_page())
-        self.set_x_align(Clutter.ActorAlign.END)
+        self.button.connect("clicked", lambda _: self.toggle_flip() )
+        #self.set_x_align(Clutter.ActorAlign.END)
         self.add_actor(self.button)
+        self.add_actor(self.exit_button)
 
-    def next_page(self):
-        self.viewer.next_page()
+    def exit_app(self):
+        self.viewer.exit_app()
+        
+    def toggle_flip(self):
+        self.viewer.toggle_flip()
 
 
 class PisakViewerContainer(Clutter.Actor):
-    def __init__(self):
+    def __init__(self,stage):
         super(PisakViewerContainer, self).__init__()
+        self.stage=stage
         self._init_elements()
         margin = Clutter.Margin()
         margin.left = margin.right = margin.top = margin.bottom = unit.mm(12)
@@ -178,8 +213,11 @@ class PisakViewerContainer(Clutter.Actor):
         self.add_actor(self.main)
         self.add_actor(self.buttons)
      
-    def next_page(self):
-        self.main.next_page()
+    def toggle_flip(self):
+        self.main.toggle_flip()
+
+    def exit_app(self):
+        self.stage.exit_app()
 
 
 class PisakViewerStage(Clutter.Stage):
@@ -192,8 +230,11 @@ class PisakViewerStage(Clutter.Stage):
         self.set_layout_manager(self.layout)
         #self.background = PisakBackground()
         #self.add_actor(self.background)
-        self.contents = PisakViewerContainer()
+        self.contents = PisakViewerContainer(self)
         self.add_actor(self.contents)
+
+    def exit_app(self):
+        self.destroy()
     
 
 class PisakViewApp(object):
