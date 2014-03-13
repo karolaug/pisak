@@ -17,7 +17,7 @@ class CategoryTile(Clutter.Actor):
         self.set_layout_manager(self.layout)
         self.layout.set_vertical(True)
         self.preview = Mx.Image()
-        self.preview.set_from_file("pisak_view/krolikarnia.jpg")
+        self.preview.set_from_file("./pisak_view/krolikarnia.jpg")
         self.preview.set_scale_mode(Mx.ImageScaleMode.FIT)
         self.label = Mx.Label()
         self.label.set_text(self.category)
@@ -26,13 +26,11 @@ class CategoryTile(Clutter.Actor):
 
 
 class LibraryScroll(Clutter.Actor):
-    def __init__(self, contents):
+    def __init__(self):
         super(LibraryScroll, self).__init__()
-        self.contents=contents
         self.categories = ["Kategoria %d" % i for i in range(12)]
         self.page = 0
         self.time_interval=1000
-        self.animation_speed=500
         self.page_count = int((len(self.categories) + (6 // 2)) // 6)
         self._init_tiles()
         self.set_x_expand(True)
@@ -82,24 +80,26 @@ class LibraryScroll(Clutter.Actor):
         #page_actor.set_x(1366 - self.get_x())
         return page_actor
     
-    def slide_in(self,page_actor):
-        page_actor.set_x(-1366)
-        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, self.animation_speed, ["x"], [0])
+    @staticmethod
+    def slide_in(page_actor):
+        page_actor.set_x(1366)
+        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 500, ["x"], [0])
         
-    def slide_out(self,page_actor):
-        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, self.animation_speed, ["x"], [1366])
+    
+    @staticmethod    
+    def slide_out(page_actor):
+        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 500, ["x"], [-1366])
     
     def next_page(self):
         self.page = (self.page + 1) % self.page_count
         new_page_actor = self.generate_page(self.page)
         
+        #self.remove_actor(self.page_actor)
         self.add_actor(new_page_actor)
         self.slide_in(new_page_actor)
         self.slide_out(self.page_actor)
+        #self.page_actor.destroy()
         self.page_actor = new_page_actor
-
-        progress= float(self.page +1 )/self.page_count
-        self.update_scrollbar(progress)
 
     def toggle_flip(self):
 
@@ -111,9 +111,6 @@ class LibraryScroll(Clutter.Actor):
             self.scroll_timer.start()
             self.is_flipping= True
 
-    def update_scrollbar(self,progress):
-        self.contents.update_scrollbar(progress)
-
 class LibraryViewContents(Clutter.Actor):
     def __init__(self):
         super(LibraryViewContents, self).__init__()
@@ -124,22 +121,11 @@ class LibraryViewContents(Clutter.Actor):
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
         self.layout.set_vertical(True)
-        self.layout.set_spacing(30)
-        self.scroll = LibraryScroll(self)
-        #self.scrollbar = Clutter.Texture.new_from_file("pisak_view/jagoda.jpg")
-        #self.scrollbar.set_height(20)
-
-        self.scrollbar=Mx.ProgressBar.new()
-        self.scrollbar.set_x_expand(True)
-        page_ratio=1./self.scroll.page_count 
-        self.scrollbar.set_progress(page_ratio)
-        self.scrollbar.set_height(30)
-        
+        self.scroll = LibraryScroll()
+        self.scrollbar = Clutter.Texture.new_from_file("./pisak_view/jagoda.jpg")
+        self.scrollbar.set_height(20)
         self.add_actor(self.scroll)
         self.add_actor(self.scrollbar)
-
-    def update_scrollbar(self,progress):
-        self.scrollbar.animatev(Clutter.AnimationMode.LINEAR, self.scroll.animation_speed, ['progress'],[progress])
     
     def toggle_flip(self):
         self.scroll.toggle_flip()
@@ -168,7 +154,7 @@ class PisakBackground(Clutter.Actor):
         super(PisakBackground, self).__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        self.image = Clutter.Texture.new_from_file("hyperbolic_vignette.png")
+        self.image = Clutter.Texture.new_from_file("./pisak_view/hyperbolic_vignette.png")
         self.add_actor(self.image)
 
 
@@ -190,6 +176,7 @@ class PisakViewerButtons(Clutter.Actor):
         self.button.set_y_expand(True)
         self.button.set_width(unit.mm(30))
         self.button.connect("clicked", lambda _: self.toggle_flip() )
+        #self.set_x_align(Clutter.ActorAlign.END)
         self.add_actor(self.button)
         self.add_actor(self.exit_button)
 
