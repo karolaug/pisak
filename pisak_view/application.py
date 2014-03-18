@@ -20,9 +20,9 @@ class LibraryViewContents(Clutter.Actor):
         self.scroll = widgets.PagedTileView()
         self.scroll.set_model(self.MODEL)
 
-        self.scrollbar=Mx.ProgressBar.new()
+        self.scrollbar = Mx.ProgressBar()
         self.scrollbar.set_x_expand(True)
-        page_ratio=1./self.scroll.page_count 
+        page_ratio = 1. / self.scroll.page_count 
         self.scrollbar.set_progress(page_ratio)
         self.scrollbar.set_height(30)
         
@@ -34,7 +34,6 @@ class LibraryViewContents(Clutter.Actor):
     
     def next_page(self):
         self.scroll.next_page()
-        #self.scrollbar.update(self.scroll.get_page())
     
 
 class LibraryView(Clutter.Actor):
