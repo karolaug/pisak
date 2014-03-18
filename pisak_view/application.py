@@ -1,94 +1,12 @@
 import sys
 from gi.repository import Clutter, Mx
 import unit
-
-class VignetteShader(Clutter.ShaderEffect):
-    pass    
-
-
-class CategoryTile(Clutter.Actor):
-    def __init__(self, category):
-        super(CategoryTile, self).__init__()
-        self.category = category
-        self._init_elements()
-        
-    def _init_elements(self):
-        self.layout = Clutter.BoxLayout()
-        self.set_layout_manager(self.layout)
-        self.layout.set_vertical(True)
-        self.preview = Mx.Image()
-        self.preview.set_from_file("pisak_view/krolikarnia.jpg")
-        self.preview.set_scale_mode(Mx.ImageScaleMode.FIT)
-        self.label = Mx.Label()
-        self.label.set_text(self.category)
-        self.add_actor(self.preview)
-        self.add_actor(self.label)
-
-
-class LibraryScroll(Clutter.Actor):
-    def __init__(self):
-        super(LibraryScroll, self).__init__()
-        self.categories = ["Kategoria %d" % i for i in range(12)]
-        self.page = 0
-        self.page_count = int((len(self.categories) + (6 // 2)) // 6)
-        self._init_tiles()
-        self.set_x_expand(True)
-        self.set_y_expand(True)
-        margin = Clutter.Margin()
-        margin.left = margin.right = unit.mm(12)
-        self.set_margin(margin)
-        self.connect("allocation-changed", self.resize_page)
-    
-    def _init_tiles(self):
-        self.layout = Clutter.FixedLayout()
-        self.set_layout_manager(self.layout)
-        self.pop_out = Clutter.Actor()
-        self.add_actor(self.pop_out)
-        self.page_actor = self.generate_page(self.page)
-        self.add_actor(self.page_actor)
-    
-    def resize_page(self, *args):
-        self.page_actor.set_size(self.get_width(), self.get_height())
-    
-    def generate_page(self, page):
-        page_actor = Clutter.Actor()
-        page_layout = Clutter.GridLayout()
-        page_actor.set_layout_manager(page_layout)
-        page_layout.set_row_spacing(unit.mm(12))
-        page_layout.set_column_spacing(unit.mm(12))
-        for i in range(2):
-            for j in range(3):
-                index = int(page * 6 + i * 3 + j)
-                if index < len(self.categories):
-                    tile = CategoryTile(self.categories[index])
-                    page_layout.attach(tile, j, i, 1, 1)
-        page_actor.set_size(self.get_width(), self.get_height())
-        page_actor.set_x_expand(True)
-        page_actor.set_y_expand(True)
-        #page_actor.set_x(1366 - self.get_x())
-        return page_actor
-    
-    @staticmethod
-    def slide_in(page_actor):
-        page_actor.set_x(1366)
-        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 500, ["x"], [0])
-    
-    def slide_out(self, page_actor):
-        page_actor.animatev(Clutter.AnimationMode.EASE_IN_OUT_QUAD, 500, ["x"], [-1366])
-    
-    def next_page(self):
-        self.page = (self.page + 1) % self.page_count
-        new_page_actor = self.generate_page(self.page)
-        
-        #self.remove_actor(self.page_actor)
-        self.add_actor(new_page_actor)
-        self.slide_in(new_page_actor)
-        self.slide_out(self.page_actor)
-        #self.page_actor.destroy()
-        self.page_actor = new_page_actor
-    
+import widgets
 
 class LibraryViewContents(Clutter.Actor):
+    MODEL = {
+        "items": [{"label": "Kategoria %d" % i, "image_path": "pisak_view/krolikarnia.jpg"} for i in range(8)]
+    }
     def __init__(self):
         super(LibraryViewContents, self).__init__()
         self._init_elements()
@@ -98,11 +16,21 @@ class LibraryViewContents(Clutter.Actor):
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
         self.layout.set_vertical(True)
-        self.scroll = LibraryScroll()
-        self.scrollbar = Clutter.Texture.new_from_file("pisak_view/jagoda.jpg")
-        self.scrollbar.set_height(20)
+        self.layout.set_spacing(30)
+        self.scroll = widgets.PagedTileView()
+        self.scroll.set_model(self.MODEL)
+
+        self.scrollbar=Mx.ProgressBar.new()
+        self.scrollbar.set_x_expand(True)
+        page_ratio=1./self.scroll.page_count 
+        self.scrollbar.set_progress(page_ratio)
+        self.scrollbar.set_height(30)
+        
         self.add_actor(self.scroll)
         self.add_actor(self.scrollbar)
+
+    def update_scrollbar(self,progress):
+        self.scrollbar.animatev(Clutter.AnimationMode.LINEAR, self.scroll.animation_speed, ['progress'],[progress])
     
     def next_page(self):
         self.scroll.next_page()
