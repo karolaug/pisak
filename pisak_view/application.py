@@ -4,7 +4,7 @@ import widgets
 
 class LibraryViewContents(Clutter.Actor):
     MODEL = {
-        "items": [{"label": "Kategoria %d" % i, "image_path": "pisak_view/krolikarnia.jpg"} for i in range(8)]
+        "items": [{"label": "Kategoria %d" % i, "image_path": "pisak_view/krolikarnia.jpg"} for i in range(20)]
     }
     def __init__(self):
         super(LibraryViewContents, self).__init__()
@@ -21,15 +21,20 @@ class LibraryViewContents(Clutter.Actor):
 
         self.scrollbar = Mx.ProgressBar()
         self.scrollbar.set_x_expand(True)
-        page_ratio = 1. / self.scroll.page_count 
-        self.scrollbar.set_progress(page_ratio)
         self.scrollbar.set_height(30)
+        self.scroll.connect("page-changed", self.update_scrollbar)
         
         self.add_actor(self.scroll)
         self.add_actor(self.scrollbar)
 
-    def update_scrollbar(self,progress):
-        self.scrollbar.animatev(Clutter.AnimationMode.LINEAR, self.scroll.animation_speed, ['progress'],[progress])
+    def update_scrollbar(self, scroll, page):
+        if page == -1:
+            progress = 0.0
+        elif scroll.page_count == 1:
+            progress = 1.0
+        else:
+            progress = page / (scroll.page_count - 1.0)
+        self.scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
     
     def next_page(self):
         self.scroll.next_page()
