@@ -1,4 +1,4 @@
-from gi.repository import Clutter, Mx
+from gi.repository import Clutter, Mx, GObject
 import unit
 import time
 
@@ -62,6 +62,10 @@ class PagedViewLayout(Clutter.BinLayout):
 
 
 class PagedTileView(Clutter.Actor):
+    __gsignals__ = {
+        "page-changed": (GObject.SIGNAL_RUN_FIRST, None, (int,))
+    }
+
     def __init__(self):
         super(PagedTileView, self).__init__()
         self.page = None
@@ -117,6 +121,9 @@ class PagedTileView(Clutter.Actor):
         if self.page != None:
             self.page_actor = self.generate_page(self.page)
             self.add_child(self.page_actor)
+            self.emit("page-changed", self.page)
+        else:
+            self.emit("page-changed", -1)
     
     def set_model(self, model):
         self.model = model
