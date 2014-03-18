@@ -3,10 +3,10 @@
 from gi.repository import Clutter
 import sys
 import os.path
-from pisak_view import model
+import model
 import random
 
-XDG_PHOTOS_DIR = "/home/piwaniuk/Obrazy"
+XDG_PHOTOS_DIR = "./obrazy"
 
 class HiliteTile(Clutter.Actor):
     def __init__(self, photo_library):
@@ -19,7 +19,7 @@ class HiliteTile(Clutter.Actor):
         self.add_actor(self.base)
         self.add_actor(self.photo)
 
-def create_stage():
+def create_stage(XDG_PHOTOS_DIR):
     Clutter.init(sys.argv)
 
     stage = Clutter.Stage()
@@ -64,7 +64,7 @@ def set_fullscreen(stage, cont):
     stage.set_fullscreen(True)
 
 def main():
-    stage = create_stage()
+    stage = create_stage(XDG_PHOTOS_DIR)
     stage.show_all()
     set_fullscreen(stage, lambda _, __: draw(stage))
     Clutter.main()

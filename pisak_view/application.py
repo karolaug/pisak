@@ -16,12 +16,21 @@ class LibraryViewContents(Clutter.Actor):
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
         self.layout.set_vertical(True)
+        self.layout.set_spacing(30)
         self.scroll = widgets.PagedTileView()
         self.scroll.set_model(self.MODEL)
-        self.scrollbar = Clutter.Texture.new_from_file("pisak_view/jagoda.jpg")
-        self.scrollbar.set_height(20)
+
+        self.scrollbar=Mx.ProgressBar.new()
+        self.scrollbar.set_x_expand(True)
+        page_ratio=1./self.scroll.page_count 
+        self.scrollbar.set_progress(page_ratio)
+        self.scrollbar.set_height(30)
+        
         self.add_actor(self.scroll)
         self.add_actor(self.scrollbar)
+
+    def update_scrollbar(self,progress):
+        self.scrollbar.animatev(Clutter.AnimationMode.LINEAR, self.scroll.animation_speed, ['progress'],[progress])
     
     def next_page(self):
         self.scroll.next_page()
