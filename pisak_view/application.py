@@ -1,4 +1,3 @@
-import sys
 from gi.repository import Clutter, Mx
 import unit
 import widgets
@@ -135,6 +134,4 @@ class PisakViewApp(object):
     
     def main(self):
         Clutter.main()
-
-PisakViewApp(sys.argv).main()
 
