@@ -3,7 +3,7 @@
 import sys
 import os
 import unit
-from gi.repository import Clutter
+from gi.repository import Clutter, Mx
 import widgets
 import random
 
@@ -171,8 +171,10 @@ class PracticePanel(Clutter.Actor):
         button.set_hilite_color(self.on_color)
         self.previous_button=button
         self.idx = (self.idx +1) % (len(self.action_buttons) + len(self.active_letters_indices))
+        self.set_reactive(True)
         
     def on_click_event(self):
+        self.set_reactive(False)
         self.stop_timer_cycle()
         self.idx -= 1
         if self.idx >= len(self.active_letters_indices) or self.idx==-1:
@@ -327,7 +329,6 @@ class MainPanel(Clutter.Actor):
         self.result_font='Sans 40'
         self.word_font='Sans 70'
         self.time_interval=800
-	#self.widget_transition_time = 500
         self.idx=0
         self.on_color=Clutter.Color.new(80,100,220,255)
         self.off_color=Clutter.Color.new(200,200,180,255)
@@ -354,8 +355,10 @@ class MainPanel(Clutter.Actor):
         self.previous_button=button
         self.idx = (self.idx +1) % self.idx_count
         self.scanning_on = True
+        self.set_reactive(True)
 
     def on_click_event(self):
+        self.set_reactive(False)
         if self.scanning_on:
             self.stop_timer_cycle()
             button=self.buttons[self.idx -1]
@@ -395,12 +398,12 @@ class MainPanel(Clutter.Actor):
         self.update_word_field( word= self.container.word)
         self.update_image( word=self.container.word)
 
-    #def slide_in(self,widget):
-        #widget.set_opacity(0)
-        #widget.animatev(Clutter.AnimationMode.LINEAR, self.widget_transition_time, ["opacity"], [255])
+    def slide_in(self,widget):
+        widget.set_opacity(0)
+        widget.animatev(Clutter.AnimationMode.LINEAR, self.widget_transition_time, ["opacity"], [255])
 
-    #def slide_out(self,widget):
-        #widget.animatev(Clutter.AnimationMode.LINEAR, self.widget_transition_time, ["opacity"], [0])
+    def slide_out(self,widget):
+        widget.animatev(Clutter.AnimationMode.LINEAR, self.widget_transition_time, ["opacity"], [0])
 
 class PisakEduContainer(Clutter.Actor):
     def __init__(self):
