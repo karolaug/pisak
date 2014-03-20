@@ -2,31 +2,57 @@ from gi.repository import Clutter, Mx
 import unit
 import widgets
 
-class LibraryViewContents(Clutter.Actor):
+class LibraryView(Clutter.Actor):
     MODEL = {
-        "items": [{"label": "Kategoria %d" % i, "image_path": "pisak_view/krolikarnia.jpg"} for i in range(20)]
+        "items": [{"label": "Kategoria %d" % i, "image_path": "pisak_view/krolikarnia.jpg"} for i in range(20)],
+        "page_interval": 6000
     }
     def __init__(self):
-        super(LibraryViewContents, self).__init__()
+        super(LibraryView, self).__init__()
+        self.set_clip_to_allocation(True)
         self._init_elements()
-        self.set_y_expand(True)
     
     def _init_elements(self):
-        self.layout = Clutter.BoxLayout()
+        self._init_layout()
+        self._init_content()
+        self._init_overlay()
+    
+    def _init_layout(self):
+        self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        self.layout.set_vertical(True)
-        self.layout.set_spacing(30)
-        self.scroll = widgets.PagedTileView()
-        self.scroll.set_model(self.MODEL)
-
-        self.scrollbar = Mx.ProgressBar()
-        self.scrollbar.set_x_expand(True)
-        self.scrollbar.set_height(30)
-        self.scroll.connect("page-changed", self.update_scrollbar)
         
-        self.add_actor(self.scroll)
-        self.add_actor(self.scrollbar)
-
+    def _init_content(self):
+        self.content = Clutter.Actor()
+        self.add_child(self.content)
+        self._init_content_layout()
+        self._init_content_scroll()
+        self._init_content_scrollbar()
+    
+    def _init_content_scrollbar(self):
+        self.content_scrollbar = Mx.ProgressBar()
+        self.content_scrollbar.set_x_expand(True)
+        self.content_scrollbar.set_height(30)
+        self.content.add_child(self.content_scrollbar)
+    
+    def _init_content_scroll(self):
+        self.content_scroll = widgets.PagedTileView()
+        self.content_scroll.set_model(self.MODEL)
+        self.content_scroll.connect("page-changed", self.update_scrollbar)
+        self.content_scroll.connect("page-selected", self.page_selected)
+        self.content.add_child(self.content_scroll)
+        
+    def _init_content_layout(self):
+        self.content_layout = Clutter.BoxLayout()
+        self.content.set_layout_manager(self.content_layout)
+        self.content_layout.set_vertical(True)
+        self.content_layout.set_spacing(30)
+    
+    def _init_overlay(self):
+        self.add_actor(Clutter.Texture.new_from_file("hyperbolic_vignette.png"))
+    
+    def next_page(self):
+        self.content_scroll.next_page()
+        
     def update_scrollbar(self, scroll, page):
         if page == -1:
             progress = 0.0
@@ -34,36 +60,13 @@ class LibraryViewContents(Clutter.Actor):
             progress = 1.0
         else:
             progress = page / (scroll.page_count - 1.0)
-        self.scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
+        self.content_scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
     
-    def next_page(self):
-        self.scroll.next_page()
+    def page_selected(self, scroll, page):
+        print("Page selected:", page)
     
-
-class LibraryView(Clutter.Actor):
-    def __init__(self):
-        super(LibraryView, self).__init__()
-        self.set_clip_to_allocation(True)
-        self._init_elements()
-    
-    def _init_elements(self):
-        self.layout = Clutter.BinLayout()
-        self.set_layout_manager(self.layout)
-        self.contents = LibraryViewContents()
-        self.add_actor(self.contents)
-        self.add_actor(PisakBackground())
-    
-    def next_page(self):
-        self.contents.next_page()
-
-
-class PisakBackground(Clutter.Actor):
-    def __init__(self):
-        super(PisakBackground, self).__init__()
-        self.layout = Clutter.BinLayout()
-        self.set_layout_manager(self.layout)
-        self.image = Clutter.Texture.new_from_file("hyperbolic_vignette.png")
-        self.add_actor(self.image)
+    def select(self):
+        self.content_scroll.select()
 
 
 class PisakViewerButtons(Clutter.Actor):
@@ -111,18 +114,24 @@ class PisakViewerContainer(Clutter.Actor):
      
     def next_page(self):
         self.main.next_page()
+    
+    def select(self):
+        self.main.select()
 
 
 class PisakViewerStage(Clutter.Stage):
     def __init__(self):
         super(PisakViewerStage, self).__init__()
         self._init_elements()
+        self.connect("key-release-event", self.key_release)
+    
+    def key_release(self, source, event):
+        if event.keyval == 0x20:
+            self.contents.select()
     
     def _init_elements(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        #self.background = PisakBackground()
-        #self.add_actor(self.background)
         self.contents = PisakViewerContainer()
         self.add_actor(self.contents)
     
@@ -135,7 +144,6 @@ class PisakViewApp(object):
         self.stage.connect("destroy", lambda _: Clutter.main_quit())
         self.stage.set_fullscreen(True)
         self.stage.show_all()
-    
     
     def main(self):
         Clutter.main()
