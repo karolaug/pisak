@@ -321,7 +321,7 @@ class MainPanel(Clutter.Actor):
         self.word_field.set_font(self.word_font)
 
     def update_image(self,word):
-        self.image.set_image_from_file('./words/pictures/' + word + '.png')
+        self.image.set_image_from_file('./words/pictures/' + word + '.jpg')
 
     def _init_params(self):
         self.result_font='Sans 40'
