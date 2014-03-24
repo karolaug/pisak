@@ -6,6 +6,7 @@ class Tile(Clutter.Actor):
     def __init__(self):
         super(Tile, self).__init__()
         self._init_elements()
+        hilite = 0.0
         
     def _init_elements(self):
         self._init_preview()
@@ -36,6 +37,20 @@ class Tile(Clutter.Actor):
         self.set_label(model["label"])
         if "image_path" in model:
             self.set_preview_from_file(model["image_path"])
+    
+    def hilite_off(self):
+        self.set_hilite(0.0)
+    
+    def hilite_on(self):
+        self.set_hilite(1.0)
+    
+    def set_hilite(self, hilite):
+        self.hilite = hilite
+        if self.hilite < 0.5:
+            color = Clutter.Color.new(255, 255, 255, 0)
+        else:
+            color = Clutter.Color.new(64, 128, 192, 192)
+        self.set_background_color(color)
 
 
 class PagedViewLayout(Clutter.BinLayout):
@@ -62,6 +77,31 @@ class PagedViewLayout(Clutter.BinLayout):
         self.layout_changed()
 
 
+class _TilePageCycle(object):
+    def __init__(self, actor):
+        self.actor = actor
+        self.index = None
+        self.interval = 1000
+        self.remaining = len(self.actor.tiles) * 2
+    
+    def expose_next(self):
+        if self.index != None:
+            self.actor.tiles[self.index].hilite_off()
+            self.index = (self.index + 1) % len(self.actor.tiles)
+        else:
+            self.index = 0
+        self.actor.tiles[self.index].hilite_on()
+        self.remaining -= 1
+        return self.remaining > 0
+    
+    def stop(self):
+        if self.index != None:
+            self.actor.tiles[self.index].hilite_off()
+            self.index = None
+    
+    def select(self):
+        pass
+
 
 class TilePage(Clutter.Actor):
     def __init__(self, items, page):
@@ -84,23 +124,9 @@ class TilePage(Clutter.Actor):
                     tile = Clutter.Actor()
                 self.layout.attach(tile, j, i, 1, 1)
     
-    #def start_cycle(self):
-    #    self.cycle_active = True
-    #    Clutter.threads_add_timeout(0, 1000, self.timeout_tile, None)
-    
-    #def stop_cycle(self):
-    #    self.cycle_active = False
-    
-    #def timeout_tile(self, source):
-    #    if self.cycle_active():  
-    #        self.next_tile()
-    #        return True
-    #    else:
-    #        return False
-    
-    #def next_tile(self):
-    #    self.next
-        
+    def create_cycle(self):
+        return _TilePageCycle(self)
+
 class _PagedTileViewCycle(object):
     def __init__(self, actor):
         self.actor = actor
@@ -108,12 +134,16 @@ class _PagedTileViewCycle(object):
     
     def expose_next(self):
         self.actor.next_page()
+        return True
     
     def stop(self):
         pass
     
     def select(self):
-        return 
+        print("PTVC select")
+        ret =  self.actor.page_actor.create_cycle()
+        print(self.actor, self.actor.page_actor, ret)
+        return ret
 
 class PagedTileView(Clutter.Actor):
     __gsignals__ = {

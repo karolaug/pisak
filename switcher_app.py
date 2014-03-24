@@ -31,7 +31,7 @@ class KeyboardSwitcherInput(SwitcherInput):
         self.stage = stage
         self.stage.connect("key-release-event", self._key_handler)
     
-    def _key_handler(self, event):
+    def _key_handler(self, source, event):
         if event.keyval == self.SWITCHER_KEY_VALUE:
             self.emit("switcher-select")
 
@@ -47,8 +47,8 @@ class Switcher(object):
             self.cycle_stack[-1].stop()  
         self.cycle_stack.append(cycle)
         self.cycle_stack[-1].expose_next()
-        print("add timeout")
         self.timeout_tag = object()
+        print ("add cycle", cycle)
         Clutter.threads_add_timeout(0, self.cycle_stack[-1].interval, self.switcher_timeout, self.timeout_tag)
     
     def add_input(self, switcher_input):
@@ -67,5 +67,10 @@ class Switcher(object):
             return False
     
     def _select(self, source):
-        pass
+        print("select")
+        selection = self.cycle_stack[-1].select()
+        print("selection", selection)
+        if selection:
+            self.push_cycle(selection)
+            
 
