@@ -14,6 +14,7 @@ class SwitcherAppTest(unittest.TestCase):
         class DummyCycle(object):
             def __init__(self):
                 self.exposed = False
+                self.interval = 1000
             def expose_next(self):
                 self.exposed = True
                 

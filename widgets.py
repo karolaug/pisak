@@ -84,26 +84,27 @@ class TilePage(Clutter.Actor):
                     tile = Clutter.Actor()
                 self.layout.attach(tile, j, i, 1, 1)
     
-    def start_cycle(self):
-        self.cycle_active = True
-        Clutter.threads_add_timeout(0, 1000, self.timeout_tile, None)
+    #def start_cycle(self):
+    #    self.cycle_active = True
+    #    Clutter.threads_add_timeout(0, 1000, self.timeout_tile, None)
     
-    def stop_cycle(self):
-        self.cycle_active = False
+    #def stop_cycle(self):
+    #    self.cycle_active = False
     
-    def timeout_tile(self, source):
-        if self.cycle_active():  
-            self.next_tile()
-            return True
-        else:
-            return False
+    #def timeout_tile(self, source):
+    #    if self.cycle_active():  
+    #        self.next_tile()
+    #        return True
+    #    else:
+    #        return False
     
-    def next_tile(self):
-        self.next
+    #def next_tile(self):
+    #    self.next
         
 class _PagedTileViewCycle(object):
     def __init__(self, actor):
         self.actor = actor
+        self.interval = 3000
     
     def expose_next(self):
         self.actor.next_page()
@@ -130,7 +131,6 @@ class PagedTileView(Clutter.Actor):
         self.pages_current, self.pages_old = set(), set()
         self._init_tiles()
         self._paginate_items()
-        self.start_cycle()
     
     def _init_tiles(self):
         self.layout = PagedViewLayout()
@@ -185,13 +185,13 @@ class PagedTileView(Clutter.Actor):
         self.update_page_actor()
         self.slide()
     
-    def selection_tick(self):
-        if self.selection.phase == "page":
-            self.next_page()
-        elif self.selection.phase == "row":
-            self.next_row()
-        else:
-            self.next_column()
+    #def selection_tick(self):
+    #    if self.selection.phase == "page":
+    #        self.next_page()
+    #    elif self.selection.phase == "row":
+    #        self.next_row()
+    #    else:
+    #        self.next_column()
     
     def select(self):
         #if self.selection.phase == "page":
@@ -203,12 +203,12 @@ class PagedTileView(Clutter.Actor):
         #    self.emit("item-selected", 0)
     
     
-    def start_cycle(self):
-        self.cycle_active = True
-        Clutter.threads_add_timeout(0, 3000, self.timeout_page, None)
+    #def start_cycle(self):
+    #    self.cycle_active = True
+    #    Clutter.threads_add_timeout(0, 3000, self.timeout_page, None)
     
-    def stop_cycle(self):
-        self.cycle_active = False
+    #def stop_cycle(self):
+    #    self.cycle_active = False
     
     def create_cycle(self):
         return _PagedTileViewCycle(self)
