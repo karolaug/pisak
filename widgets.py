@@ -56,6 +56,7 @@ class PagedViewLayout(Clutter.BinLayout):
             elif child in self.pages_old:
                 allocation.set_origin(-allocation.get_width(), 0)
                 child.allocate(allocation, flags)
+
     def slide(self, new, old):
         self.pages_new, self.pages_old = new, old
         self.layout_changed()
@@ -100,7 +101,18 @@ class TilePage(Clutter.Actor):
     def next_tile(self):
         self.next
         
+class _PagedTileViewCycle(object):
+    def __init__(self, actor):
+        self.actor = actor
     
+    def expose_next(self):
+        self.actor.next_page()
+    
+    def stop(self):
+        pass
+    
+    def select(self):
+        return 
 
 class PagedTileView(Clutter.Actor):
     __gsignals__ = {
@@ -197,6 +209,9 @@ class PagedTileView(Clutter.Actor):
     
     def stop_cycle(self):
         self.cycle_active = False
+    
+    def create_cycle(self):
+        return _PagedTileViewCycle(self)
     
         
 

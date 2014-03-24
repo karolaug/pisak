@@ -48,7 +48,7 @@ class PagedTileViewTest(unittest.TestCase):
     @on_stage
     def test_model(self, stage):
         view = widgets.PagedTileView()
-        model = {"items": [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]}
+        model = {"items": [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}], "page_interval": 3000}
         view.set_model(model)
 
 

@@ -1,6 +1,7 @@
 from gi.repository import Clutter, Mx
 import unit
 import widgets
+import switcher_app
 
 class LibraryView(Clutter.Actor):
     MODEL = {
@@ -44,11 +45,11 @@ class LibraryView(Clutter.Actor):
     def _init_content_layout(self):
         self.content_layout = Clutter.BoxLayout()
         self.content.set_layout_manager(self.content_layout)
-        self.content_layout.set_vertical(True)
+        self.content_layout.set_orientation(Clutter.Orientation.VERTICAL)
         self.content_layout.set_spacing(30)
     
     def _init_overlay(self):
-        self.add_actor(Clutter.Texture.new_from_file("hyperbolic_vignette.png"))
+        self.add_child(Clutter.Texture.new_from_file("hyperbolic_vignette.png"))
     
     def next_page(self):
         self.content_scroll.next_page()
@@ -67,6 +68,9 @@ class LibraryView(Clutter.Actor):
     
     def select(self):
         self.content_scroll.select()
+    
+    def create_cycle(self):
+        return self.content_scroll.create_cycle()
 
 
 class PisakViewerButtons(Clutter.Actor):
@@ -81,11 +85,10 @@ class PisakViewerButtons(Clutter.Actor):
         self.button.set_width(unit.mm(30))
         self.button.connect("clicked", lambda _: self.next_page())
         self.set_x_align(Clutter.ActorAlign.END)
-        self.add_actor(self.button)
+        self.add_child(self.button)
 
     def next_page(self):
         self.viewer.next_page()
-
 
 class PisakViewerContainer(Clutter.Actor):
     def __init__(self):
@@ -106,45 +109,63 @@ class PisakViewerContainer(Clutter.Actor):
         self.buttons.set_height(unit.mm(25))
         
         layout = Clutter.BoxLayout()
-        layout.set_vertical(True)
+        layout.set_orientation(Clutter.Orientation.VERTICAL)
         self.set_layout_manager(layout)
         layout.set_spacing(unit.mm(12))
-        self.add_actor(self.main)
-        self.add_actor(self.buttons)
+        self.add_child(self.main)
+        self.add_child(self.buttons)
      
     def next_page(self):
         self.main.next_page()
     
     def select(self):
         self.main.select()
+    
+    def create_cycle(self):
+        return self.main.create_cycle()
 
 
 class PisakViewerStage(Clutter.Stage):
-    def __init__(self):
+    def __init__(self, context):
         super(PisakViewerStage, self).__init__()
+        self.context = context
         self._init_elements()
-        self.connect("key-release-event", self.key_release)
-    
-    def key_release(self, source, event):
-        if event.keyval == 0x20:
-            self.contents.select()
+        self.context.switcher.push_cycle(self.content.create_cycle())
+        self.input = switcher_app.KeyboardSwitcherInput(self)
+        self.context.switcher.add_input(self.input)
     
     def _init_elements(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        self.contents = PisakViewerContainer()
-        self.add_actor(self.contents)
+        self.content = PisakViewerContainer()
+        self.add_child(self.content)
     
 
 class PisakViewApp(object):
+    """
+    Main application class. This is the entry point .
+    """
     def __init__(self, argv):
-        PisakViewApp.APP = self
+        """
+        Initialize the aplication.
+        @param argv application arguments
+        """
         Clutter.init(argv)
-        self.stage = PisakViewerStage()
+        self._initialize_context()
+        self._initialize_stage(argv)
+    
+    def _initialize_stage(self, argv):
+        self.stage = PisakViewerStage(self.context)
         self.stage.connect("destroy", lambda _: Clutter.main_quit())
         self.stage.set_fullscreen(True)
         self.stage.show_all()
     
+    def _initialize_context(self):
+        self.context = switcher_app.Context(self)
+    
     def main(self):
+        """
+        Starts the application main loop.
+        """
         Clutter.main()
 
