@@ -181,23 +181,16 @@ class PracticePanel(Clutter.Actor):
             self.direction='rows'
         self.start_timer_cycle()
 
-    def choose_action(self,button):
-        button_label=button.get_label()
-        if button_label=='sprawdź':
-            self.check_result()
-        elif button_label =='skasuj':
-            if len(self.added_letters_indices) > 0:
-                self.delete_letter()
-        elif button_label=='wyczyść':
-            if len(self.added_letters_indices) > 0:
-                self.clear_all()
-        elif button_label =='czytaj':
-            self.read_out_loud()
-        elif button_label=='literuj':
-            self.spell()
-        elif button_label=='wróć':
-            self.back_to_main()
-
+    def choose_action(self, button):
+        button_label = button.get_label()
+        actions = {'sprawdź' : self.check_result, 
+                   'skasuj' : self.delete_letter, 
+                   'wyczyść' : self.clear_all, 
+                   'czytaj' : self.read_out_loud, 
+                   'literuj' : self.spell, 
+                   'wróć' : self.back_to_main}
+        actions[button_label]()
+        
     def add_letter(self,button):
         letter=button.get_letter_label()
         pos=self.gap_indices[ len(self.added_letters_indices)]
@@ -211,16 +204,18 @@ class PracticePanel(Clutter.Actor):
         self.container.change_panel()
 
     def delete_letter(self):
-        pos=self.added_letters_indices[-1]
-        self.text_field.delete_text(pos ,pos+1)
-        self.text_field.insert_text('_',pos)
-        self.added_letters_indices.remove(pos)
-
-    def clear_all(self):
-        for pos in self.added_letters_indices:
+        if len(self.added_letters_indices) > 0:
+            pos=self.added_letters_indices[-1]
             self.text_field.delete_text(pos ,pos+1)
             self.text_field.insert_text('_',pos)
-            self.added_letters_indices= self.added_letters_indices[:-1]
+            self.added_letters_indices.remove(pos)
+
+    def clear_all(self):
+        if len(self.added_letters_indices) > 0:
+            for pos in self.added_letters_indices:
+                self.text_field.delete_text(pos ,pos+1)
+                self.text_field.insert_text('_',pos)
+                self.added_letters_indices= self.added_letters_indices[:-1]
 
     def read_out_loud(self):
         print('Reading out loud:   '+self.word)
