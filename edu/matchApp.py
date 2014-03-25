@@ -3,7 +3,7 @@ import os
 from pisak import unit, widgets
 from gi.repository import Clutter
 import random
-from pisak.pisak_edu.PisakEdu import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
+from pisak.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
 
 class PracticePanel(Clutter.Actor):
     def __init__(self,container):
@@ -73,7 +73,7 @@ class PracticePanel(Clutter.Actor):
         
     def _init_image(self):
         self.image=widgets.Image()
-        self.image.set_image_from_file('./words/pictures/' + self.word + '.jpg')
+        self.image.set_image_from_file('words/pictures/' + self.word + '.jpg')
         self.layout.attach(self.image , 2, 1,2,self.word_count)
         self.image.set_x_expand(True)
         self.image.set_y_expand(True)
@@ -117,7 +117,7 @@ class PracticePanel(Clutter.Actor):
                 self.word_buttons[i].set_text(current_word_buttons[i].get_text())
 
     def update_image(self):
-        self.image.set_image_from_file('./words/pictures/' + self.word + '.jpg')
+        self.image.set_image_from_file('words/pictures/' + self.word + '.jpg')
 
     def _init_timer(self):
         self.timer=Clutter.Timeline.new(self.time_interval)

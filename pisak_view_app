@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 -m pisak_view.application
+python3 -m view.application

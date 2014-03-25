@@ -4,7 +4,7 @@ import shutil
 import base64
 import io
 import os.path
-from pisak_view import model
+from view import model
 
 class LibraryTest(unittest.TestCase):
     def setUp(self):

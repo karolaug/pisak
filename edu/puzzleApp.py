@@ -3,7 +3,7 @@ import os
 from gi.repository import Clutter
 from pisak import widgets, unit
 import random
-from pisak.pisak_edu.PisakEdu import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
+from pisak.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
 
 class PracticePanel(Clutter.Actor):
     def __init__(self,container):
