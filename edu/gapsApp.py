@@ -60,25 +60,15 @@ class PracticePanel(Clutter.Actor):
         letters=['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w',
                  'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b',
                  'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź']
-        self.letter_buttons = [self.set_button(i, letter) 
+        self.letter_buttons = [self.set_letter_button(i, letter) 
                                for i, letter in enumerate(letters)]
             
     def _init_action_buttons(self):
-        self.action_buttons=[]
-        button_names=['sprawdź','skasuj','czytaj', 'literuj','wyczyść','wróć']
-        for col , b in enumerate(button_names):
-            one_button=widgets.ActionButton()
-            one_button.set_label(b)
-            one_button.set_icon_from_file('./icons/'+b+'.png')
-            one_button.set_hilite_color(self.off_color)
-            self.action_buttons.append(one_button)
-            if b=='sprawdź':
-                self.layout.attach(one_button,col, self.row_count +1,2,1)
-            elif b=='wróć':
-                self.layout.attach(one_button,col+1, self.row_count +1 ,2,1)
-            else:
-                self.layout.attach(one_button,col+1, self.row_count+1 ,1,1)
-
+        button_names=['sprawdź','skasuj', 'czytaj', 
+                      'literuj', 'wyczyść', 'wróć']
+        self.action_buttons = [self.set_action_button(index, action) 
+                               for index, action in enumerate(button_names)]
+            
         
     def _init_text_field(self):
         self.text_field=widgets.TextField()
@@ -96,13 +86,26 @@ class PracticePanel(Clutter.Actor):
         self.timer.connect('completed', lambda _: self.on_timer_event())
         self.start_timer_cycle()
 
-    def set_button(self, index, letter):
+    def set_letter_button(self, index, letter):
         button = widgets.LetterButton()
         button.set_letter_label(letter)
         button.set_font(self.font_name)
         button.set_hilite_color(self.off_color)
         self.layout.attach(button, index % self.col_count, 
                            index/self.col_count+1, 1, 1)
+        return button
+
+    def set_action_button(self, index, action):
+        button = widgets.ActionButton()
+        button.set_label(action)
+        button.set_icon_from_file(''.join(['./icons/', action, '.png']))
+        button.set_hilite_color(self.off_color)
+        where = {'sprawdź' : (button, index, self.row_count+1, 2, 1),
+                 'wróć' : (button, index+1, self.row_count+1, 2, 1)}
+        try:
+            self.layout.attach(*where[action])
+        except KeyError:
+            self.layout.attach(button,index+1, self.row_count+1 ,1,1)
         return button
 
     def start_timer_cycle(self):
