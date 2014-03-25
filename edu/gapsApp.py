@@ -71,13 +71,12 @@ class PracticePanel(Clutter.Actor):
             
         
     def _init_text_field(self):
-        self.text_field=widgets.TextField()
+        self.text_field = widgets.TextField()
         self.text_field.set_font(self.font_name)
-        self.layout.attach(self.text_field,0,0,self.col_count,1)
+        self.layout.attach(self.text_field, 0, 0, self.col_count, 1)
         self.text_field.set_background_color(self.white_color)
-        user_word=list(self.word)
-        for idx in self.gap_indices:
-            user_word[idx]='_'
+        user_word = [letter if index not in self.gap_indices else '_' 
+                     for index, letter in enumerate(self.word)]
         self.text_field.set_text(''.join(user_word))
 
     def _init_timer(self):
