@@ -1,6 +1,7 @@
 from gi.repository import Clutter, Mx, GObject
 import unit
 import time
+import switcher_app
 
 class Tile(Clutter.Actor):
     def __init__(self):
@@ -77,7 +78,7 @@ class PagedViewLayout(Clutter.BinLayout):
         self.layout_changed()
 
 
-class _TilePageCycle(object):
+class _TilePageCycle(switcher_app.Cycle):
     def __init__(self, actor):
         self.actor = actor
         self.index = None
@@ -92,6 +93,8 @@ class _TilePageCycle(object):
             self.index = 0
         self.actor.tiles[self.index].hilite_on()
         self.remaining -= 1
+    
+    def has_next(self):
         return self.remaining > 0
     
     def stop(self):
@@ -127,13 +130,15 @@ class TilePage(Clutter.Actor):
     def create_cycle(self):
         return _TilePageCycle(self)
 
-class _PagedTileViewCycle(object):
+class _PagedTileViewCycle(switcher_app.Cycle):
     def __init__(self, actor):
         self.actor = actor
         self.interval = 3000
     
     def expose_next(self):
         self.actor.next_page()
+    
+    def has_next(self):
         return True
     
     def stop(self):

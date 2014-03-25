@@ -1,16 +1,22 @@
 import unittest
 import switcher_app
 import time
-from gi.repository import GObject
+from gi.repository import GObject, Clutter
 
 class SwitcherAppTest(unittest.TestCase):
     def test_context(self):
+        """
+        Context for a dummy application.
+        """
         class DummyApp(object):
             pass
         app = DummyApp()
         context = switcher_app.Context(app)
     
     def test_switcher(self):
+        """
+        Create switcher and add a dummy cycle to it.
+        """
         class DummyCycle(object):
             def __init__(self):
                 self.exposed = False
@@ -24,17 +30,21 @@ class SwitcherAppTest(unittest.TestCase):
         self.assertTrue(cycle.exposed)
      
     def test_key_switcher_input(self):
+        """
+        Test keyboard input with switcher.
+        """
         class DummyStage(GObject.GObject):
             __gsignals__ = {
-                "key-release-event": (GObject.SIGNAL_RUN_FIRST, None, ())
+                "key-release-event": (GObject.SIGNAL_RUN_FIRST, None, (object,))
             }
             
             def __init__(self):
                 super().__init__()
-                self.keyval = 0x20
             
             def trigger_key(self):
-                self.emit("key-release-event")
+                event = Clutter.KeyEvent()
+                event.keyval = 0x20
+                self.emit("key-release-event", event)
                 
         triggered = False
         def response(source):
@@ -48,6 +58,9 @@ class SwitcherAppTest(unittest.TestCase):
         self.assertTrue(triggered)
      
     def test_switcher_add_input(self):
+        """
+        Test adding an input to a switcher.
+        """
         class DummyInput(switcher_app.SwitcherInput):
             def trigger(self):
                 self.emit("switcher-select")
