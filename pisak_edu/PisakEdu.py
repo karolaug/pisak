@@ -1,7 +1,7 @@
 from gi.repository import Clutter
 from pisak import widgets
 
-class RewardPanel(Clutter.Actor):
+class Panel(Clutter.Actor):
     def __init__(self, container):
         super().__init__()
         self.container = container
@@ -10,16 +10,34 @@ class RewardPanel(Clutter.Actor):
         self.set_y_expand(True)
         self.set_x_expand(True)
         self.set_reactive(True)
-        self.connect('button_release_event', lambda x,y: self.exit_panel())
+        self.connect('button_release_event', lambda x, y: self.exit_panel())
         self._init_elements()
+
+    def _init_elements(self):
+        #to be overwritten by child
+        pass
+
+    def set_font(self, font_name):
+        self.info.set_font(font_name)
+
+    def set_info(self, info):
+        self.info.set_text(info)
+
+    def exit_panel(self):
+        self.container.change_panel()
+ 
+
+class RewardPanel(Panel):
+    def __init__(self, container):
+        super().__init__(container)
 
     def _init_elements(self):
         self._init_reward_info()
         self._init_reward()
 
     def _init_reward_info(self):
-        self.reward_info = widgets.TextField()
-        self.add_actor(self.reward_info)
+        self.info = widgets.TextField()
+        self.add_actor(self.info)
 
     def _init_reward(self):
         pass #self.reward = song/movie
@@ -27,39 +45,13 @@ class RewardPanel(Clutter.Actor):
     def run_reward(self, reward_file_path):
         pass #self.reward.play
 
-    def set_reward_info(self, reward_info):
-        self.reward_info.set_text(reward_info)
-
-    def set_font(self, font_name):
-        self.reward_info.set_font(font_name)
-
-    def exit_panel(self):
-        self.container.change_panel()
-
-class ResultInfoPanel(Clutter.Actor):
+class ResultInfoPanel(Panel):
     def __init__(self, container):
-        super().__init__()
-        self.container = container
-        layout = Clutter.BinLayout()
-        self.set_layout_manager(layout)
-        self.set_y_expand(True)
-        self.set_x_expand(True)
-        self.set_reactive(True)
-        self.connect('button_release_event', lambda x,y: self.exit_panel())
-        self._init_result_info()
+        super().__init__(container)
 
-    def _init_result_info(self):
-        self.result_info = widgets.TextField()
-        self.add_actor(self.result_info)
-
-    def set_result_info(self, result_info):
-        self.result_info.set_text(result_info)
-
-    def set_font(self, font_name):
-        self.result_info.set_font(font_name)
-
-    def exit_panel(self):
-        self.container.change_panel()
+    def _init_elements(self):
+        self.info = widgets.TextField()
+        self.add_actor(self.info)
 
 class PisakEduStage(Clutter.Stage):
     def __init__(self, container):

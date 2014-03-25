@@ -270,13 +270,13 @@ class PisakEduContainer(Clutter.Actor):
                     info='Gratulacje.\nWpisałeś poprawne słowo.\nZdobywasz punkt.'
             else:
                 info='Niestety.\nSpróbuj jeszcze raz.'
-            new_panel.set_result_info(info)
+            new_panel.set_info(info)
             new_panel.set_font('Sans 60')
         elif self.current_panel_name =='result_info':
             if self.result==self.points_limit:
                 new_panel=RewardPanel(self)
                 self.current_panel_name='reward'
-                new_panel.set_reward_info('Chcesz wyłączyć? (piosenkę / film)\nKliknij.')
+                new_panel.set_info('Chcesz wyłączyć? (piosenkę / film)\nKliknij.')
                 new_panel.set_font('Sans 40')
             elif self.result < self.points_limit:
                 self.current_panel_name='practice'
