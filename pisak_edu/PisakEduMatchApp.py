@@ -1,69 +1,9 @@
 import sys
 import os
-import unit
+from pisak import unit, widgets
 from gi.repository import Clutter
-import widgets
 import random
-
-class RewardPanel(Clutter.Actor):
-    def __init__(self,container):
-        super(RewardPanel, self).__init__()
-        self.container=container
-        layout = Clutter.BinLayout()
-        self.set_layout_manager(layout)
-        self.set_y_expand(True)
-        self.set_x_expand(True)
-        self.set_reactive(True)
-        self.connect('button_release_event', lambda x,y: self.exit_panel())
-        self._init_elements()
-
-    def _init_elements(self):
-        self._init_reward_info()
-        self._init_reward()
-
-    def _init_reward_info(self):
-        self.reward_info=widgets.TextField()
-        self.add_actor(self.reward_info)
-
-    def _init_reward(self):
-        pass #self.reward = song/movie
-
-    def run_reward(self,reward_file_path):
-        pass #self.reward.play
-
-    def set_reward_info(self,reward_info):
-        self.reward_info.set_text(reward_info)
-
-    def set_font(self,font_name):
-        self.reward_info.set_font(font_name)
-
-    def exit_panel(self):
-        self.container.change_panel()
-
-class ResultInfoPanel(Clutter.Actor):
-    def __init__(self,container):
-        super(ResultInfoPanel, self).__init__()
-        self.container=container
-        layout = Clutter.BinLayout()
-        self.set_layout_manager(layout)
-        self.set_y_expand(True)
-        self.set_x_expand(True)
-        self.set_reactive(True)
-        self.connect('button_release_event', lambda x,y: self.exit_panel())
-        self._init_result_info()
-
-    def _init_result_info(self):
-        self.result_info=widgets.TextField()
-        self.add_actor(self.result_info)
-
-    def set_result_info(self,result_info):
-        self.result_info.set_text(result_info)
-
-    def set_font(self,font_name):
-        self.result_info.set_font(font_name)
-
-    def exit_panel(self):
-        self.container.change_panel()
+from pisak.pisak_edu.PisakEdu import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
 
 class PracticePanel(Clutter.Actor):
     def __init__(self,container):
@@ -360,34 +300,4 @@ class PisakEduContainer(Clutter.Actor):
     def exit_app(self):
         self.destroy()
 
-class PisakEduStage(Clutter.Stage):
-    def __init__(self):
-        super(PisakEduStage, self).__init__()
-        self.layout = Clutter.BinLayout()
-        self.set_layout_manager(self.layout)
-        color = Clutter.Color.new(100,170,190,255)
-        self.set_background_color(color)
-        self._init_elements()
-
-    def _init_elements(self):
-        self.contents = PisakEduContainer()
-        self.contents.connect('destroy', lambda _:self.exit_app())
-        self.add_actor(self.contents)
-
-    def exit_app(self):
-        self.destroy()
-
-
-class PisakEduApp(object):
-    def __init__(self, argv):
-        PisakEduApp.APP = self
-        Clutter.init(argv)
-        self.stage = PisakEduStage()
-        self.stage.connect("destroy", lambda _: Clutter.main_quit())
-        self.stage.set_fullscreen(True)
-        self.stage.show_all()
-    
-    def main(self):
-        Clutter.main()
-
-PisakEduApp(sys.argv).main()
+PisakEduApp(PisakEduContainer, sys.argv).main()
