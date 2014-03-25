@@ -7,7 +7,7 @@ from pisak.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakE
 
 class PracticePanel(Clutter.Actor):
     def __init__(self,container):
-        super(PracticePanel, self).__init__()
+        super().__init__()
         self.container=container
         self.word=container.word
         self.layout=Clutter.GridLayout()
@@ -60,14 +60,8 @@ class PracticePanel(Clutter.Actor):
         letters=['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w',
                  'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b',
                  'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź']
-        self.letter_buttons=[]
-        for i , letter in enumerate(letters):
-            one_button=widgets.LetterButton()
-            one_button.set_letter_label(letter)
-            one_button.set_font(self.font_name)
-            one_button.set_hilite_color(self.off_color)
-            self.letter_buttons.append(one_button)
-            self.layout.attach(one_button, i % self.col_count , i / self.col_count + 1 ,1,1)
+        self.letter_buttons = [self.set_button(i, letter) 
+                               for i, letter in enumerate(letters)]
             
     def _init_action_buttons(self):
         self.action_buttons=[]
@@ -101,6 +95,15 @@ class PracticePanel(Clutter.Actor):
         self.timer.set_repeat_count(-1)
         self.timer.connect('completed', lambda _: self.on_timer_event())
         self.start_timer_cycle()
+
+    def set_button(self, index, letter):
+        button = widgets.LetterButton()
+        button.set_letter_label(letter)
+        button.set_font(self.font_name)
+        button.set_hilite_color(self.off_color)
+        self.layout.attach(button, index % self.col_count, 
+                           index/self.col_count+1, 1, 1)
+        return button
 
     def start_timer_cycle(self):
         self.timer.start()
