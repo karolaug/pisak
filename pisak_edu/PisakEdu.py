@@ -13,6 +13,10 @@ class Panel(Clutter.Actor):
         self.connect('button_release_event', lambda x, y: self.exit_panel())
         self._init_elements()
 
+    def _init_info(self):
+        self.info = widgets.TextField()
+        self.add_actor(self.info)
+
     def _init_elements(self):
         #to be overwritten by child
         pass
@@ -32,12 +36,8 @@ class RewardPanel(Panel):
         super().__init__(container)
 
     def _init_elements(self):
-        self._init_reward_info()
+        self._init_info()
         self._init_reward()
-
-    def _init_reward_info(self):
-        self.info = widgets.TextField()
-        self.add_actor(self.info)
 
     def _init_reward(self):
         pass #self.reward = song/movie
@@ -50,8 +50,7 @@ class ResultInfoPanel(Panel):
         super().__init__(container)
 
     def _init_elements(self):
-        self.info = widgets.TextField()
-        self.add_actor(self.info)
+        self._init_info()
 
 class PisakEduStage(Clutter.Stage):
     def __init__(self, container):
