@@ -1,8 +1,13 @@
 import unittest
 import widgets
+import functools
 from gi.repository import Clutter, GObject
 
 def on_stage(function):
+    """
+    Decorator which supplies a Clutter stage to a wrapped function.
+    """
+    @functools.wraps(function)
     def ret(*args):
         stage = Clutter.Stage()
         args = args + (stage,)
@@ -17,7 +22,7 @@ class TileTest(unittest.TestCase):
     @on_stage
     def test_create(self, stage):
         """
-        Create a tile."
+        Create a tile
         """
         tile = widgets.Tile()
         tile.set_label("test")
@@ -54,6 +59,7 @@ class TileTest(unittest.TestCase):
         tile.hilite_on()
         tile.hilite_off()
 
+
 class PagedTileViewTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
@@ -87,7 +93,8 @@ class PagedTileViewTest(unittest.TestCase):
         # the cycle is infinite
         self.assertTrue(cycle.has_next())
         cycle.stop()
-        
+
+
 class TilePageTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
