@@ -99,7 +99,6 @@ class PisakViewerContainer(Clutter.Actor):
         self.set_margin(margin)
         
     def _init_elements(self):
-        color_1 = Clutter.Color.new(128, 160, 224, 255)
         self.main = LibraryView()
         self.main.set_x_expand(True)
         self.main.set_y_expand(True)
