@@ -1,5 +1,5 @@
 from gi.repository import Clutter
-from pisak import widgets
+from pisak import buttons
 
 class Panel(Clutter.Actor):
     def __init__(self, container):
@@ -14,7 +14,7 @@ class Panel(Clutter.Actor):
         self._init_elements()
 
     def _init_info(self):
-        self.info = widgets.TextField()
+        self.info = buttons.TextField()
         self.add_actor(self.info)
 
     def _init_elements(self):

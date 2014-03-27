@@ -1,6 +1,6 @@
 import sys
 import os
-from pisak import unit, widgets
+from pisak import unit, buttons
 from gi.repository import Clutter
 import random
 from pisak.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
@@ -48,7 +48,7 @@ class PracticePanel(Clutter.Actor):
         self._init_action_buttons()
 
     def _init_result_field(self):
-        self.result_field=widgets.TextField()
+        self.result_field=buttons.TextField()
         self.layout.attach(self.result_field , 0, 0, 4 ,1)
         self.result_field.set_x_expand(True)
         
@@ -62,7 +62,7 @@ class PracticePanel(Clutter.Actor):
         words.insert(random.randint(0,self.word_count-2),self.container.word)
         self.word_buttons=[]
         for i, b in enumerate(words):
-            one_button=widgets.TextField()
+            one_button=buttons.TextField()
             one_button.set_text(b)
             one_button.set_background_color(self.off_color)
             one_button.set_font(self.word_font)
@@ -72,7 +72,7 @@ class PracticePanel(Clutter.Actor):
             one_button.set_y_expand(True)
         
     def _init_image(self):
-        self.image=widgets.Image()
+        self.image=buttons.Image()
         self.image.set_image_from_file('words/pictures/' + self.word + '.jpg')
         self.layout.attach(self.image , 2, 1,2,self.word_count)
         self.image.set_x_expand(True)
@@ -83,7 +83,7 @@ class PracticePanel(Clutter.Actor):
         action_button_names=['czytaj',
                                'literuj','następny','zamknij']
         for col , b in enumerate(action_button_names):
-            one_button=widgets.ActionButton()
+            one_button=buttons.ActionButton()
             one_button.set_label(b)
             one_button.set_icon_from_file('./icons/'+b+'.png')
             one_button.set_hilite_color(self.off_color)

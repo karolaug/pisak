@@ -1,6 +1,6 @@
 import sys
 import os
-from pisak import unit, widgets
+from pisak import unit, buttons
 from gi.repository import Clutter
 import random
 from pisak.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
@@ -71,7 +71,7 @@ class PracticePanel(Clutter.Actor):
             
         
     def _init_text_field(self):
-        self.text_field = widgets.TextField()
+        self.text_field = buttons.TextField()
         self.text_field.set_font(self.font_name)
         self.layout.attach(self.text_field, 0, 0, self.col_count, 1)
         self.text_field.set_background_color(self.white_color)
@@ -86,7 +86,7 @@ class PracticePanel(Clutter.Actor):
         self.start_timer_cycle()
 
     def set_letter_button(self, index, letter):
-        button = widgets.LetterButton()
+        button = buttons.LetterButton()
         button.set_letter_label(letter)
         button.set_font(self.font_name)
         button.set_hilite_color(self.off_color)
@@ -95,7 +95,7 @@ class PracticePanel(Clutter.Actor):
         return button
 
     def set_action_button(self, index, action):
-        button = widgets.ActionButton()
+        button = buttons.ActionButton()
         button.set_label(action)
         button.set_icon_from_file(''.join(['./icons/', action, '.png']))
         button.set_hilite_color(self.off_color)
@@ -254,18 +254,18 @@ class MainPanel(Clutter.Actor):
         self._init_buttons()
 
     def _init_result_field(self):
-        self.result_field=widgets.TextField()
+        self.result_field=buttons.TextField()
         self.layout.attach(self.result_field , 0, 0, 5 ,1)
         self.result_field.set_x_expand(True)
         
     def _init_word_field(self):
-        self.word_field=widgets.TextField()
+        self.word_field=buttons.TextField()
         self.layout.attach(self.word_field , 0, 1,2,4)
         self.word_field.set_x_expand(True)
         self.word_field.set_y_expand(True)
         
     def _init_image(self):
-        self.image=widgets.Image()
+        self.image=buttons.Image()
         self.layout.attach(self.image , 2, 1,3,4)
         self.image.set_x_expand(True)
         self.image.set_y_expand(True)
@@ -275,7 +275,7 @@ class MainPanel(Clutter.Actor):
         button_names=['ćwicz','czytaj',
                                'literuj','następny','zamknij']
         for col , b in enumerate(button_names):
-            one_button=widgets.ActionButton()
+            one_button=buttons.ActionButton()
             one_button.set_label(b)
             one_button.set_icon_from_file('./icons/'+b+'.png')
             one_button.set_hilite_color(self.off_color)
