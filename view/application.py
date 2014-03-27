@@ -5,7 +5,7 @@ import switcher_app
 
 class LibraryView(Clutter.Actor):
     MODEL = {
-        "items": [{"label": "Kategoria %d" % i, "image_path": "pisak_view/krolikarnia.jpg"} for i in range(20)],
+        "items": [{"label": "Kategoria %d" % i, "image_path": "view/krolikarnia.jpg"} for i in range(20)],
         "page_interval": 6000
     }
     def __init__(self):

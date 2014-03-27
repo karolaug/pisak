@@ -1,7 +1,6 @@
 from gi.repository import Clutter, Mx, GObject
-import unit
+from pisak import unit, switcher_app
 import time
-import switcher_app
 
 class Tile(Clutter.Actor):
     def __init__(self):
