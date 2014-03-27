@@ -1,25 +1,13 @@
 import unittest
 import widgets
-import functools
+import tests.clutter
 from gi.repository import Clutter, GObject
-
-def on_stage(function):
-    """
-    Decorator which supplies a Clutter stage to a wrapped function.
-    """
-    @functools.wraps(function)
-    def ret(*args):
-        stage = Clutter.Stage()
-        args = args + (stage,)
-        function(*args)
-        stage.destroy()
-    return ret
 
 class TileTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
         
-    @on_stage
+    @tests.clutter.on_stage
     def test_create(self, stage):
         """
         Create a tile
@@ -28,7 +16,7 @@ class TileTest(unittest.TestCase):
         tile.set_label("test")
         stage.add_child(tile)
     
-    @on_stage
+    @tests.clutter.on_stage
     def test_model(self, stage):
         """
         Initialize a tile with a model.
@@ -38,7 +26,7 @@ class TileTest(unittest.TestCase):
         stage.add_child(tile)
         tile.set_model(model)
     
-    @on_stage
+    @tests.clutter.on_stage
     def test_model_bad(self, stage):
         """
         Initialize a tile with an invalid model.
@@ -64,7 +52,7 @@ class PagedTileViewTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
     
-    @on_stage
+    @tests.clutter.on_stage
     def test_create(self, stage):
         """
         Create a paged tile view.
@@ -73,7 +61,7 @@ class PagedTileViewTest(unittest.TestCase):
         stage.add_child(view)
         stage.destroy()
     
-    @on_stage
+    @tests.clutter.on_stage
     def test_model(self, stage):
         """
         Initialize a paged tile view with a model.
@@ -99,7 +87,7 @@ class TilePageTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
         
-    @on_stage
+    @tests.clutter.on_stage
     def test_create(self, stage):
         """
         Create a tile page.
@@ -118,7 +106,7 @@ class TilePageTest(unittest.TestCase):
         cycle = widgets._TilePageCycle(page)
         cycle.select()
     
-    @on_stage
+    @tests.clutter.on_stage
     def test_cycle(self, stage):
         """
         Cycle exposing and stopping.
