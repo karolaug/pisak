@@ -1,11 +1,17 @@
+import os.path
 from gi.repository import Clutter, Mx
 from pisak import unit
 from pisak import widgets
 from pisak import switcher_app
+from pisak import res
 
 class LibraryView(Clutter.Actor):
     MODEL = {
-        "items": [{"label": "Kategoria %d" % i, "image_path": "pisak/viewer/krolikarnia.jpg"} for i in range(20)],
+        "items": [{
+              "label": "Kategoria %d" % i,
+              "image_path": os.path.join(res.PATH, "krolikarnia.jpg")
+            } for i in range(20)
+        ],
         "page_interval": 6000
     }
     def __init__(self):
@@ -49,7 +55,8 @@ class LibraryView(Clutter.Actor):
         self.content_layout.set_spacing(30)
     
     def _init_overlay(self):
-        self.add_child(Clutter.Texture.new_from_file("pisak/res/hyperbolic_vignette.png"))
+        background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
+        self.add_child(Clutter.Texture.new_from_file(background_path))
     
     def next_page(self):
         self.content_scroll.next_page()
