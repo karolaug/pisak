@@ -3,7 +3,7 @@ import os
 from pisak import unit, buttons
 from gi.repository import Clutter
 import random
-from pisak.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
+from concept.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
 
 class PracticePanel(Clutter.Actor):
     def __init__(self,container):
@@ -73,7 +73,7 @@ class PracticePanel(Clutter.Actor):
         
     def _init_image(self):
         self.image=buttons.Image()
-        self.image.set_image_from_file('words/pictures/' + self.word + '.jpg')
+        self.image.set_image_from_file('concept/edu/words/pictures/' + self.word + '.jpg')
         self.layout.attach(self.image , 2, 1,2,self.word_count)
         self.image.set_x_expand(True)
         self.image.set_y_expand(True)
@@ -85,7 +85,7 @@ class PracticePanel(Clutter.Actor):
         for col , b in enumerate(action_button_names):
             one_button=buttons.ActionButton()
             one_button.set_label(b)
-            one_button.set_icon_from_file('./icons/'+b+'.png')
+            one_button.set_icon_from_file('concept/edu/icons/'+b+'.png')
             one_button.set_hilite_color(self.off_color)
             self.action_buttons.append(one_button)
             self.layout.attach(one_button,col,self.word_count+1,1,1)
@@ -117,7 +117,7 @@ class PracticePanel(Clutter.Actor):
                 self.word_buttons[i].set_text(current_word_buttons[i].get_text())
 
     def update_image(self):
-        self.image.set_image_from_file('words/pictures/' + self.word + '.jpg')
+        self.image.set_image_from_file('concept/edu/words/pictures/' + self.word + '.jpg')
 
     def _init_timer(self):
         self.timer=Clutter.Timeline.new(self.time_interval)
@@ -225,7 +225,7 @@ class PisakEduContainer(Clutter.Actor):
         self._init_panel()
 
     def _init_training_set(self):
-        self.word_pictures_list=os.listdir('./words/pictures')
+        self.word_pictures_list=os.listdir('concept/edu/words/pictures')
         self.words_list=[ i[ : i.index('.')] for i in self.word_pictures_list ]
         random.shuffle(self.words_list)
 

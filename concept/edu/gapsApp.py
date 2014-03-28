@@ -3,7 +3,7 @@ import os
 from pisak import unit, buttons
 from gi.repository import Clutter
 import random
-from pisak.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
+from concept.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
 
 class PracticePanel(Clutter.Actor):
     def __init__(self,container):
@@ -97,7 +97,7 @@ class PracticePanel(Clutter.Actor):
     def set_action_button(self, index, action):
         button = buttons.ActionButton()
         button.set_label(action)
-        button.set_icon_from_file(''.join(['./icons/', action, '.png']))
+        button.set_icon_from_file(''.join(['concept/edu/icons/', action, '.png']))
         button.set_hilite_color(self.off_color)
         where = {'sprawdź' : (button, index, self.row_count+1, 2, 1),
                  'wróć' : (button, index+1, self.row_count+1, 2, 1)}
@@ -277,7 +277,7 @@ class MainPanel(Clutter.Actor):
         for col , b in enumerate(button_names):
             one_button=buttons.ActionButton()
             one_button.set_label(b)
-            one_button.set_icon_from_file('./icons/'+b+'.png')
+            one_button.set_icon_from_file('concept/edu/icons/'+b+'.png')
             one_button.set_hilite_color(self.off_color)
             self.buttons.append(one_button)
             self.layout.attach(one_button,col,5,1,1)
@@ -298,7 +298,7 @@ class MainPanel(Clutter.Actor):
         self.word_field.set_font(self.word_font)
 
     def update_image(self,word):
-        self.image.set_image_from_file('./words/pictures/' + word + '.jpg')
+        self.image.set_image_from_file('concept/edu/words/pictures/' + word + '.jpg')
 
     def _init_params(self):
         self.result_font='Sans 40'
@@ -396,7 +396,7 @@ class PisakEduContainer(Clutter.Actor):
         self._init_panel()
 
     def _init_training_set(self):
-        self.word_pictures_list=os.listdir('./words/pictures')
+        self.word_pictures_list=os.listdir('concept/edu/words/pictures')
         self.words_list=[ i[ : i.index('.')] for i in self.word_pictures_list ]
         random.shuffle(self.words_list)
 
