@@ -1,5 +1,5 @@
 import unittest
-import widgets
+from pisak import widgets
 import tests.clutter
 from gi.repository import Clutter, GObject
 

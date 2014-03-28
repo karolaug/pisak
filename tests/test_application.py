@@ -1,8 +1,8 @@
 import unittest
 import time
 from gi.repository import GObject, Clutter
-import switcher_app
-from view import application
+from pisak import switcher_app
+from pisak.viewer import application
 
 class ViewerContainerTests(unittest.TestCase):
     def test_context(self):

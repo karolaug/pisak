@@ -1,6 +1,6 @@
 import unittest
 from gi.repository import Clutter
-import view
+from pisak import view
 import tests.clutter
 
 class AbstractViewContainerTest(unittest.TestCase):

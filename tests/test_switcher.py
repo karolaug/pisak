@@ -1,5 +1,5 @@
 import unittest
-import switcher_app
+from pisak import switcher_app
 import time
 from gi.repository import GObject, Clutter
 
