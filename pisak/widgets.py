@@ -1,12 +1,11 @@
 from gi.repository import Clutter, Mx, GObject
 from pisak import unit, switcher_app
-import time
 
 class Tile(Clutter.Actor):
     def __init__(self):
         super(Tile, self).__init__()
         self._init_elements()
-        hilite = 0.0
+        self.hilite = 0.0
         
     def _init_elements(self):
         self._init_preview()

@@ -1,6 +1,6 @@
 import os.path
 from gi.repository import Clutter, Mx
-from pisak import unit
+from pisak import unit, view
 from pisak import widgets
 from pisak import switcher_app
 from pisak import res
@@ -98,17 +98,23 @@ class PisakViewerButtons(Clutter.Actor):
         self.viewer.next_page()
 
 class PisakViewerContainer(Clutter.Actor):
-    def __init__(self):
+    def __init__(self, context):
         super(PisakViewerContainer, self).__init__()
+        self.context = context
         self._init_elements()
         margin = Clutter.Margin()
         margin.left = margin.right = margin.top = margin.bottom = unit.mm(12)
         self.set_margin(margin)
         
-    def _init_elements(self):
-        self.main = LibraryView()
+    def _init_main(self):
+        self.library_view = LibraryView()
+        self.main = view.BasicViewContainer(self.context)
+        self.main.push_view(self.library_view)
         self.main.set_x_expand(True)
         self.main.set_y_expand(True)
+
+    def _init_elements(self):
+        self._init_main()
         self.buttons = PisakViewerButtons(self)
         self.buttons.set_y_expand(False)
         self.buttons.set_x_expand(True)
@@ -128,7 +134,7 @@ class PisakViewerContainer(Clutter.Actor):
         self.main.select()
     
     def create_cycle(self):
-        return self.main.create_cycle()
+        return self.library_view.create_cycle()
 
 
 class PisakViewerStage(Clutter.Stage):
@@ -143,7 +149,7 @@ class PisakViewerStage(Clutter.Stage):
     def _init_elements(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        self.content = PisakViewerContainer()
+        self.content = PisakViewerContainer(self.context)
         self.add_child(self.content)
     
 

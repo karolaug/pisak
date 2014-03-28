@@ -75,7 +75,7 @@ class PagedTileViewTest(unittest.TestCase):
         model = {"items": [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}], "page_interval": 3000}
         view.set_model(model)
         cycle = view.create_cycle()
-        for i in range(3 * len(model["items"])):
+        for _ in range(3 * len(model["items"])):
             self.assertTrue(cycle.has_next())
             cycle.expose_next()
         # the cycle is infinite

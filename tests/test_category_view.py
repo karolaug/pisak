@@ -1,5 +1,5 @@
 import unittest
-from gi.repository import GObject, Clutter
+#from gi.repository import GObject, Clutter
 
 class CategoryViewTest(unittest.TestCase):
     pass

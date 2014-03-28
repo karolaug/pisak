@@ -1,6 +1,5 @@
 import unittest
-import time
-from gi.repository import GObject, Clutter
+from gi.repository import Clutter
 from pisak import switcher_app
 from pisak.viewer import application
 
@@ -17,7 +16,8 @@ class ViewerContainerTests(unittest.TestCase):
         
     def test_content(self):
         Clutter.init([])
-        content = application.PisakViewerContainer()
+        context = switcher_app.Context(object())
+        content = application.PisakViewerContainer(context)
         cycle = content.create_cycle()
         cycle.expose_next()
         cycle.expose_next()

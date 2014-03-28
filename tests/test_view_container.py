@@ -44,17 +44,17 @@ class AbstractViewContainerTest(unittest.TestCase):
    
     @tests.clutter.on_stage
     def test_basic_view_container(self, stage):
-       """
-       View container as clutter actor
-       """
-       context = object()
-       view_container = view.BasicViewContainer(context)
-       view_actor_1 = Clutter.Actor()
-       view_actor_2 = Clutter.Actor()
-       stage.add_child(view_container)
-       view_container.push_view(view_actor_1)
-       view_container.push_view(view_actor_2)
-       view_container.pop_view()
+        """
+        View container as clutter actor
+        """
+        context = object()
+        view_container = view.BasicViewContainer(context)
+        view_actor_1 = Clutter.Actor()
+        view_actor_2 = Clutter.Actor()
+        stage.add_child(view_container)
+        view_container.push_view(view_actor_1)
+        view_container.push_view(view_actor_2)
+        view_container.pop_view()
 
 
 if __name__ == '__main__':
