@@ -1,3 +1,6 @@
+"""
+Module defines classes specific to Viewer application.
+"""
 import os.path
 from gi.repository import Clutter, Mx
 from pisak import unit, view
@@ -6,6 +9,9 @@ from pisak import switcher_app
 from pisak import res
 
 class LibraryView(Clutter.Actor):
+    """
+    Actor widget which presents categories in the photo library.
+    """
     MODEL = {
         "items": [{
               "label": "Kategoria %d" % i,
@@ -44,8 +50,8 @@ class LibraryView(Clutter.Actor):
     def _init_content_scroll(self):
         self.content_scroll = widgets.PagedTileView()
         self.content_scroll.set_model(self.MODEL)
-        self.content_scroll.connect("page-changed", self.update_scrollbar)
-        self.content_scroll.connect("page-selected", self.page_selected)
+        self.content_scroll.connect("page-changed", self._update_scrollbar)
+        self.content_scroll.connect("page-selected", self._page_selected)
         self.content.add_child(self.content_scroll)
         
     def _init_content_layout(self):
@@ -59,9 +65,12 @@ class LibraryView(Clutter.Actor):
         self.add_child(Clutter.Texture.new_from_file(background_path))
     
     def next_page(self):
+        """
+        Force next page in view.
+        """
         self.content_scroll.next_page()
         
-    def update_scrollbar(self, scroll, page):
+    def _update_scrollbar(self, scroll, page):
         if page == -1:
             progress = 0.0
         elif scroll.page_count == 1:
@@ -70,18 +79,28 @@ class LibraryView(Clutter.Actor):
             progress = page / (scroll.page_count - 1.0)
         self.content_scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
     
-    def page_selected(self, scroll, page):
+    def _page_selected(self, scroll, page):
         print("Page selected:", page)
     
     def select(self):
+        """
+        Force selection of current page.
+        """
         self.content_scroll.select()
     
     def create_cycle(self):
+        """
+        Create a new cycle which is used by switcher to show consecutive pages from the model.
+        """
         return self.content_scroll.create_cycle()
 
 
 class PisakViewerButtons(Clutter.Actor):
     def __init__(self, viewer):
+        """
+        Widget of buttons associated with a LibraryView.
+        @param viewer an instance of LibraryView
+        """
         super(PisakViewerButtons, self).__init__()
         self.viewer = viewer
         self.layout = Clutter.BoxLayout()
@@ -90,15 +109,22 @@ class PisakViewerButtons(Clutter.Actor):
         self.button.set_label(">>")
         self.button.set_y_expand(True)
         self.button.set_width(unit.mm(30))
-        self.button.connect("clicked", lambda _: self.next_page())
+        self.button.connect("clicked", lambda _: self._next_page())
         self.set_x_align(Clutter.ActorAlign.END)
         self.add_child(self.button)
 
-    def next_page(self):
+    def _next_page(self):
+        """
+        Signal handler.
+        """
         self.viewer.next_page()
 
 class PisakViewerContainer(Clutter.Actor):
     def __init__(self, context):
+        """
+        Application container, which creates other widgets.
+        @param contect switcher application context passed from application
+        """
         super(PisakViewerContainer, self).__init__()
         self.context = context
         self._init_elements()
@@ -128,17 +154,30 @@ class PisakViewerContainer(Clutter.Actor):
         self.add_child(self.buttons)
      
     def next_page(self):
+        """
+        Force next page in the library view.
+        """
         self.main.next_page()
     
     def select(self):
+        """
+        Force select current page in the library view.
+        """
         self.main.select()
     
     def create_cycle(self):
+        """
+        Create new page-switching cycle in the library view
+        """
         return self.library_view.create_cycle()
 
 
 class PisakViewerStage(Clutter.Stage):
     def __init__(self, context):
+        """
+        Clutter stage which sets up the switcher application.
+        @param context switcher application context passed from application
+        """
         super(PisakViewerStage, self).__init__()
         self.context = context
         self._init_elements()
