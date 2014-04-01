@@ -1,7 +1,6 @@
 import os.path
-import os
 
-LIBRARY_SUBDIR = ".pisak_view"
+LIBRARY_SUBDIR = ".view"
 
 def create_library(path):
     library_dir = os.path.join(path, LIBRARY_SUBDIR)

@@ -1,6 +1,5 @@
 import unittest
-import switcher_app
-import time
+from pisak import switcher_app
 from gi.repository import GObject, Clutter
 
 class SwitcherAppTest(unittest.TestCase):
@@ -11,7 +10,7 @@ class SwitcherAppTest(unittest.TestCase):
         class DummyApp(object):
             pass
         app = DummyApp()
-        context = switcher_app.Context(app)
+        switcher_app.Context(app)
     
     def test_switcher(self):
         """

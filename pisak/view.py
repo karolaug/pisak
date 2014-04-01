@@ -11,7 +11,6 @@ class AbstractViewContainer(object):
         self._post_push_view(view)
     
     def pop_view(self):
-        #print(self.__class__.__mro__)
         self._pre_pop_view(self._view_stack[-1])
         self._view_stack.pop()
     
@@ -25,6 +24,8 @@ class AbstractViewContainer(object):
 class BasicViewContainer(AbstractViewContainer, Clutter.Actor):
     def __init__(self, context):
         super().__init__(context)
+        self.layout = Clutter.BinLayout()
+        self.set_layout_manager(self.layout)
         self._current_view = Clutter.Actor()
         self.add_child(self._current_view)
     

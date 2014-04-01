@@ -2,8 +2,7 @@
 
 from gi.repository import Clutter
 import sys
-import os.path
-import model
+from pisak.viewer import model
 import random
 
 XDG_PHOTOS_DIR = "./obrazy"
@@ -50,14 +49,14 @@ def draw(stage):
     y_pad = padding / (rows + 1)
 
     for i in range(cols):
-      for j in range(rows):
-        x = i * w + (i + 1) * x_pad
-        y = j * h + (j + 1) * y_pad
-        rect = HiliteTile(stage.photo_library)
-        rect.set_size(w * stage.get_width(), h * stage.get_height())
-        rect.set_x(x * stage.get_width())
-        rect.set_y(y * stage.get_height())
-        Clutter.Container.add_actor(stage, rect)
+        for j in range(rows):
+            x = i * w + (i + 1) * x_pad
+            y = j * h + (j + 1) * y_pad
+            rect = HiliteTile(stage.photo_library)
+            rect.set_size(w * stage.get_width(), h * stage.get_height())
+            rect.set_x(x * stage.get_width())
+            rect.set_y(y * stage.get_height())
+            Clutter.Container.add_actor(stage, rect)
     
 def set_fullscreen(stage, cont):
     stage.connect("notify::allocation", cont)

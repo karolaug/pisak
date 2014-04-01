@@ -1,13 +1,11 @@
 from gi.repository import Clutter, Mx, GObject
-import unit
-import time
-import switcher_app
+from pisak import unit, switcher_app
 
 class Tile(Clutter.Actor):
     def __init__(self):
         super(Tile, self).__init__()
         self._init_elements()
-        hilite = 0.0
+        self.hilite = 0.0
         
     def _init_elements(self):
         self._init_preview()
@@ -247,6 +245,4 @@ class PagedTileView(Clutter.Actor):
     
     def create_cycle(self):
         return _PagedTileViewCycle(self)
-    
-        
 

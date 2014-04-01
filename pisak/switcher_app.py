@@ -105,7 +105,7 @@ class Switcher(object):
             # timeout event not from current cycle
             return False
         elif self._has_next():
-            has_next = self._expose_next()
+            self._expose_next()
             return True
         else:
             self._stop_cycle()
