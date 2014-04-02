@@ -220,3 +220,64 @@ class PisakViewApp(object):
         """
         Clutter.main()
 
+
+class SlideshowCycle(switcher_app.Cycle):
+    def __init__(self, view_actor):
+        self.view_actor = view_actor
+        self.remaining = len(self.view_actor.photos)
+    
+    def has_next(self):
+        return self.remaining > 0
+    
+    def expose_next(self):
+        self.view_actor.next_photo()
+    
+    def select(self):
+        raise NotImplementedError()
+
+
+class PhotoViewIdleCycle(switcher_app.Cycle):
+    def __init__(self, view_actor):
+        self.view_actor = view_actor
+    
+    def has_next(self):
+        return True
+    
+    def expose_next(self):
+        pass
+    
+    def select(self):
+        return self.view_actor.create_slideshow_cycle()
+
+
+class PhotoView(Clutter.Actor):
+    def __init__(self, context):
+        super().__init__()
+        self.context = context
+        self.photo_actor = Clutter.Actor()
+        self.add_child(self.photo_actor)
+        self.model = None
+        self.photos = []
+        self.current_photo = None
+
+    def _update_photo(self, index):
+        self.current_photo = index
+        self.remove_child(self.photo_actor)
+        self.photo_actor = Clutter.Actor()
+        self.add_child(self.photo_actor)
+    
+    def set_model(self, model):
+        self.model = model
+        self._update_photo(self.model["initial_photo"])
+
+    def create_slideshow_cycle(self):
+        return SlideshowCycle(self)
+
+    def create_idle_cycle(self):
+        return PhotoViewIdleCycle(self)
+    
+    
+    
+    
+    
+    

@@ -246,3 +246,14 @@ class PagedTileView(Clutter.Actor):
     def create_cycle(self):
         return _PagedTileViewCycle(self)
 
+
+class PhotoSlide(Clutter.Actor):
+    def __init__(self):
+        super().__init__()
+        self.image_actor = Mx.Image()
+        self.add_child(self.image_actor)
+    
+    def set_model(self, model):
+        self.model = model
+        self.image_actor.set_from_file(self.model["photo_path"])
+
