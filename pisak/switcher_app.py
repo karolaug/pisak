@@ -15,7 +15,7 @@ class Context(object):
         self._initialize_switcher() 
     
     def _initialize_switcher(self):
-        self.switcher = Switcher()
+        self.switcher = Switcher(self)
 
 
 class SwitcherInput(GObject.GObject):
@@ -60,11 +60,18 @@ class Cycle(object):
     def select(self):
         """
         Select current element.
+        @return: Function which handles and applies the selection.
         """
         raise NotImplementedError
 
+def selection_add_cycle(cycle):
+    def add_cycle(context):
+        context.switcher.push_cycle(cycle)
+    return add_cycle
+
 class Switcher(object):
-    def __init__(self):
+    def __init__(self, context):
+        self.context = context
         self.cycle_stack = []
         self.inputs = {}
         self.timeout_token = None
@@ -112,10 +119,7 @@ class Switcher(object):
             return False
     
     def _select(self, source):
-        print("select")
         selection = self.cycle_stack[-1].select()
-        print("selection", selection)
-        if selection:
-            self.push_cycle(selection)
+        selection(self.context)
             
 

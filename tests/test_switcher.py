@@ -23,7 +23,7 @@ class SwitcherAppTest(unittest.TestCase):
             def expose_next(self):
                 self.exposed = True
                 
-        switcher = switcher_app.Switcher()
+        switcher = switcher_app.Switcher(object())
         cycle = DummyCycle()
         switcher.push_cycle(cycle)
         self.assertTrue(cycle.exposed)
@@ -64,14 +64,13 @@ class SwitcherAppTest(unittest.TestCase):
             def trigger(self):
                 self.emit("switcher-select")
         
-        switcher = switcher_app.Switcher()
+        switcher = switcher_app.Switcher(object())
         input_1 = DummyInput()
         input_2 = DummyInput()
         switcher.add_input(input_1)
         switcher.add_input(input_2)
         switcher.remove_input(input_1)
         switcher.remove_input(input_2)
-        
 
 
 if __name__ == '__main__':

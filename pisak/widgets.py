@@ -143,10 +143,8 @@ class _PagedTileViewCycle(switcher_app.Cycle):
         pass
     
     def select(self):
-        print("PTVC select")
-        ret =  self.actor.page_actor.create_cycle()
-        print(self.actor, self.actor.page_actor, ret)
-        return ret
+        cycle =  self.actor.page_actor.create_cycle()
+        return switcher_app.selection_add_cycle(cycle)
 
 class PagedTileView(Clutter.Actor):
     __gsignals__ = {
