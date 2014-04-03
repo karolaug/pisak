@@ -275,12 +275,15 @@ class PhotoView(Clutter.Actor):
     def _update_photo(self, index):
         self.current_photo = index
         self.remove_child(self.photo_actor)
-        self.photo_actor = Clutter.Actor()
+        self.photo_actor = widgets.PhotoSlide()
+        self.photo_actor.set_model(self.photos[index])
         self.add_child(self.photo_actor)
     
     def set_model(self, model):
         self.model = model
-        self._update_photo(self.model["initial_photo"])
+        self.photos = self.model["items"]
+        self.current_photo = self.model["initial_photo"]
+        self._update_photo(self.current_photo)
 
     def create_slideshow_cycle(self):
         return SlideshowCycle(self)
