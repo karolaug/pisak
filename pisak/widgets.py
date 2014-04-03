@@ -101,7 +101,7 @@ class _TilePageCycle(switcher_app.Cycle):
             self.index = None
     
     def select(self):
-        new_view = None
+        new_view = Clutter.Actor()
         return switcher_app.selection_change_view(new_view)
 
 
