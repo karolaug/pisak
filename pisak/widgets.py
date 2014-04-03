@@ -101,7 +101,8 @@ class _TilePageCycle(switcher_app.Cycle):
             self.index = None
     
     def select(self):
-        pass
+        new_view = None
+        return switcher_app.selection_change_view(new_view)
 
 
 class TilePage(Clutter.Actor):

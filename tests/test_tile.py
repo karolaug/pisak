@@ -1,5 +1,5 @@
 import unittest
-from pisak import widgets
+from pisak import widgets, switcher_app
 import tests.clutter
 from gi.repository import Clutter, GObject
 
@@ -104,7 +104,27 @@ class TilePageTest(unittest.TestCase):
         items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
         page = widgets.TilePage(items, 0)
         cycle = widgets._TilePageCycle(page)
-        cycle.select()
+        cycle.has_next()
+        
+    def test_select_cycle(self):
+        """
+        Test cycle selection
+        """
+        pushed = False
+        class DummyApplication(object):
+            def push_view(self, view):
+                nonlocal pushed
+                pushed = True
+        
+        items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
+        page = widgets.TilePage(items, 0)
+        cycle = widgets._TilePageCycle(page)
+        cycle.expose_next()
+        selection = cycle.select()
+        dummy_application = DummyApplication()
+        dummy_context = switcher_app.Context(dummy_application)
+        selection(dummy_context)
+        self.assertTrue(pushed)
     
     @tests.clutter.on_stage
     def test_cycle(self, stage):

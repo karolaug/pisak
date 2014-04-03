@@ -65,9 +65,20 @@ class Cycle(object):
         raise NotImplementedError
 
 def selection_add_cycle(cycle):
+    """
+    Closure constructor for adding a new cycle
+    """
     def add_cycle(context):
         context.switcher.push_cycle(cycle)
     return add_cycle
+
+def selection_change_view(view):
+    """
+    Closure constructor for adding a new view
+    """
+    def add_view(context):
+        context.application.push_view(view)
+    return add_view
 
 class Switcher(object):
     def __init__(self, context):

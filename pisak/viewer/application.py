@@ -170,6 +170,12 @@ class PisakViewerContainer(Clutter.Actor):
         Create new page-switching cycle in the library view
         """
         return self.library_view.create_cycle()
+    
+    def push_view(self, new_view):
+        """
+        Add new view to the container
+        """
+        self.main.push_view(new_view)
 
 
 class PisakViewerStage(Clutter.Stage):
@@ -190,6 +196,9 @@ class PisakViewerStage(Clutter.Stage):
         self.set_layout_manager(self.layout)
         self.content = PisakViewerContainer(self.context)
         self.add_child(self.content)
+    
+    def push_view(self, new_view):
+        self.content.push_view(new_view)
     
 
 class PisakViewApp(object):
@@ -213,6 +222,9 @@ class PisakViewApp(object):
     
     def _initialize_context(self):
         self.context = switcher_app.Context(self)
+    
+    def push_view(self, view):
+        self.stage.push_view(view)
     
     def main(self):
         """
