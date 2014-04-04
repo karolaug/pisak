@@ -2,13 +2,40 @@
 Module defines classes specific to Viewer application.
 """
 import os.path
-from gi.repository import Clutter, Mx
+from gi.repository import Clutter, Mx, GObject
 from pisak import unit, view
 from pisak import widgets
 from pisak import switcher_app
 from pisak import res
 
-class LibraryView(Clutter.Actor):
+class CategoryView(widgets.ScrollingView):
+    """
+    Actor widget which presents photos in the selected category.
+    """
+    MODEL = {
+        "items": [{
+              "label": "Zdjęcie %d" % i,
+              "image_path": os.path.join(res.PATH, "krolikarnia.jpg")
+            } for i in range(20)
+        ],
+        "page_interval": 6000
+    }
+    __gsignals__ = {
+        "photo-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
+    }
+    
+    def __init__(self):
+        super().__init__()
+
+    def _init_overlay(self):
+        background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
+        self.add_child(Clutter.Texture.new_from_file(background_path))
+
+    def _tile_selected(self, scroll, photo):
+        self.emit('photo-selected', photo)
+
+    
+class LibraryView(widgets.ScrollingView):
     """
     Actor widget which presents categories in the photo library.
     """
@@ -20,79 +47,19 @@ class LibraryView(Clutter.Actor):
         ],
         "page_interval": 6000
     }
+    __gsignals__ = {
+        "category-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
+    }
+    
     def __init__(self):
-        super(LibraryView, self).__init__()
-        self.set_clip_to_allocation(True)
-        self._init_elements()
-    
-    def _init_elements(self):
-        self._init_layout()
-        self._init_content()
-        self._init_overlay()
-    
-    def _init_layout(self):
-        self.layout = Clutter.BinLayout()
-        self.set_layout_manager(self.layout)
-        
-    def _init_content(self):
-        self.content = Clutter.Actor()
-        self.add_child(self.content)
-        self._init_content_layout()
-        self._init_content_scroll()
-        self._init_content_scrollbar()
-    
-    def _init_content_scrollbar(self):
-        self.content_scrollbar = Mx.ProgressBar()
-        self.content_scrollbar.set_x_expand(True)
-        self.content_scrollbar.set_height(30)
-        self.content.add_child(self.content_scrollbar)
-    
-    def _init_content_scroll(self):
-        self.content_scroll = widgets.PagedTileView()
-        self.content_scroll.set_model(self.MODEL)
-        self.content_scroll.connect("page-changed", self._update_scrollbar)
-        self.content_scroll.connect("page-selected", self._page_selected)
-        self.content.add_child(self.content_scroll)
-        
-    def _init_content_layout(self):
-        self.content_layout = Clutter.BoxLayout()
-        self.content.set_layout_manager(self.content_layout)
-        self.content_layout.set_orientation(Clutter.Orientation.VERTICAL)
-        self.content_layout.set_spacing(30)
-    
+        super().__init__()
+
     def _init_overlay(self):
         background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
         self.add_child(Clutter.Texture.new_from_file(background_path))
-    
-    def next_page(self):
-        """
-        Force next page in view.
-        """
-        self.content_scroll.next_page()
-        
-    def _update_scrollbar(self, scroll, page):
-        if page == -1:
-            progress = 0.0
-        elif scroll.page_count == 1:
-            progress = 1.0
-        else:
-            progress = page / (scroll.page_count - 1.0)
-        self.content_scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
-    
-    def _page_selected(self, scroll, page):
-        print("Page selected:", page)
-    
-    def select(self):
-        """
-        Force selection of current page.
-        """
-        self.content_scroll.select()
-    
-    def create_cycle(self):
-        """
-        Create a new cycle which is used by switcher to show consecutive pages from the model.
-        """
-        return self.content_scroll.create_cycle()
+
+    def _tile_selected(self, scroll, category):
+        self.emit('category-selected', category)
 
 
 class PisakViewerButtons(Clutter.Actor):
@@ -119,6 +86,7 @@ class PisakViewerButtons(Clutter.Actor):
         """
         self.viewer.next_page()
 
+
 class PisakViewerContainer(Clutter.Actor):
     def __init__(self, context):
         """
@@ -134,6 +102,7 @@ class PisakViewerContainer(Clutter.Actor):
         
     def _init_main(self):
         self.library_view = LibraryView()
+        self.library_view.connect('category-selected', self.enter_category)
         self.main = view.BasicViewContainer(self.context)
         self.main.push_view(self.library_view)
         self.main.set_x_expand(True)
@@ -152,6 +121,15 @@ class PisakViewerContainer(Clutter.Actor):
         layout.set_spacing(unit.mm(12))
         self.add_child(self.main)
         self.add_child(self.buttons)
+
+    def enter_category(self, library, category):
+        self.category_view = CategoryView()
+        self.category_view.connect('photo-selected', self.enter_photo)
+        self.main.push_view(self.category_view)
+        self.context.switcher.push_cycle(self.category_view.create_cycle())
+        
+    def enter_photo(self, category, photo):
+        print('photo nr', photo, 'selected')
      
     def next_page(self):
         """

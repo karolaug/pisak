@@ -102,7 +102,7 @@ class Switcher(object):
         switcher_input.disconnect(handler_id)
     
     def _start_cycle(self):
-        self._expose_next()
+        #self._expose_next()
         self.timeout_token = object()
         Clutter.threads_add_timeout(0, self.cycle_stack[-1].interval, self.switcher_timeout, self.timeout_token)
     

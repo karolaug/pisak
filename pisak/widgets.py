@@ -101,11 +101,14 @@ class _TilePageCycle(switcher_app.Cycle):
             self.index = None
     
     def select(self):
-        new_view = Clutter.Actor()
-        return switcher_app.selection_change_view(new_view)
+        self.actor.select(self.index)
 
 
 class TilePage(Clutter.Actor):
+    __gsignals__ = {
+        "tile-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
+    }
+    
     def __init__(self, items, page):
         super().__init__()
         self.layout = Clutter.GridLayout()
@@ -125,6 +128,9 @@ class TilePage(Clutter.Actor):
                 else:
                     tile = Clutter.Actor()
                 self.layout.attach(tile, j, i, 1, 1)
+
+    def select(self, tile):
+        self.emit("tile-selected", tile)
     
     def create_cycle(self):
         return _TilePageCycle(self)
@@ -150,7 +156,8 @@ class _PagedTileViewCycle(switcher_app.Cycle):
 class PagedTileView(Clutter.Actor):
     __gsignals__ = {
         "page-changed": (GObject.SIGNAL_RUN_FIRST, None, (int,)),
-        "page-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
+        "page-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,)),
+        "tile-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,)),
     }
 
     def __init__(self):
@@ -200,6 +207,7 @@ class PagedTileView(Clutter.Actor):
     def update_page_actor(self):
         if self.page != None:
             self.page_actor = self.generate_page(self.page)
+            self.page_actor.connect("tile-selected", self._tile_selected)
             self.add_child(self.page_actor)
             self.emit("page-changed", self.page)
         else:
@@ -234,6 +242,8 @@ class PagedTileView(Clutter.Actor):
         #else:
         #    self.emit("item-selected", 0)
     
+    def _tile_selected(self, page, tile):
+        self.emit("tile-selected", tile)
     
     #def start_cycle(self):
     #    self.cycle_active = True
@@ -245,6 +255,87 @@ class PagedTileView(Clutter.Actor):
     def create_cycle(self):
         return _PagedTileViewCycle(self)
 
+
+class ScrollingView(Clutter.Actor):
+    """
+    Base class for widgets presenting scrolling paged tiles.
+    """
+    def __init__(self):
+        super().__init__()
+        self.set_clip_to_allocation(True)
+        self._init_elements()
+    
+    def _init_elements(self):
+        self._init_layout()
+        self._init_content()
+        self._init_overlay()
+    
+    def _init_layout(self):
+        self.layout = Clutter.BinLayout()
+        self.set_layout_manager(self.layout)
+        
+    def _init_content(self):
+        self.content = Clutter.Actor()
+        self.add_child(self.content)
+        self._init_content_layout()
+        self._init_content_scroll()
+        self._init_content_scrollbar()
+    
+    def _init_content_scrollbar(self):
+        self.content_scrollbar = Mx.ProgressBar()
+        self.content_scrollbar.set_x_expand(True)
+        self.content_scrollbar.set_height(30)
+        self.content.add_child(self.content_scrollbar)
+    
+    def _init_content_scroll(self):
+        self.content_scroll = PagedTileView()
+        self.content_scroll.set_model(self.MODEL)
+        self.content_scroll.connect("page-changed", self._update_scrollbar)
+        self.content_scroll.connect("page-selected", self._page_selected)
+        self.content_scroll.connect("tile-selected", self._tile_selected)
+        self.content.add_child(self.content_scroll)
+        
+    def _init_content_layout(self):
+        self.content_layout = Clutter.BoxLayout()
+        self.content.set_layout_manager(self.content_layout)
+        self.content_layout.set_orientation(Clutter.Orientation.VERTICAL)
+        self.content_layout.set_spacing(30)
+    
+    def _init_overlay(self):
+        raise NotImplementedError()
+    
+    def next_page(self):
+        """
+        Force next page in view.
+        """
+        self.content_scroll.next_page()
+        
+    def _update_scrollbar(self, scroll, page):
+        if page == -1:
+            progress = 0.0
+        elif scroll.page_count == 1:
+            progress = 1.0
+        else:
+            progress = page / (scroll.page_count - 1.0)
+        self.content_scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
+    
+    def _page_selected(self, scroll, page):
+        print("Page selected:", page)
+
+    def _tile_selected(self, scroll, tile):
+        raise NotImplementedError() 
+    
+    def select(self):
+        """
+        Force selection of current page.
+        """
+        self.content_scroll.select()
+    
+    def create_cycle(self):
+        """
+        Create a new cycle which is used by switcher to show consecutive pages from the model.
+        """
+        return self.content_scroll.create_cycle()
 
 class PhotoSlide(Clutter.Actor):
     def __init__(self):
