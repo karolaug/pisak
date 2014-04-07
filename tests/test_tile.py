@@ -93,7 +93,12 @@ class TilePageTest(unittest.TestCase):
         Create a tile page.
         """
         items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
-        page = widgets.TilePage(items, 0)
+        tiles = []
+        for item in items:
+            tile = widgets.Tile()
+            tile.set_model(item)
+            tiles.append(tile)
+        page = widgets.TilePage(tiles)
         stage.add_child(page)
         stage.destroy()
     
@@ -102,7 +107,12 @@ class TilePageTest(unittest.TestCase):
         Get a cycle from a tile page.
         """
         items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
-        page = widgets.TilePage(items, 0)
+        tiles = []
+        for item in items:
+            tile = widgets.Tile()
+            tile.set_model(item)
+            tiles.append(tile)
+        page = widgets.TilePage(tiles)
         cycle = widgets._TilePageCycle(page)
         cycle.has_next()
         
@@ -110,21 +120,30 @@ class TilePageTest(unittest.TestCase):
         """
         Test cycle selection
         """
-        pushed = False
         class DummyApplication(object):
+            def __init__(self):
+                self.pushed = False
             def push_view(self, view):
-                nonlocal pushed
-                pushed = True
+                self.pushed = True
+        dummy_context = switcher_app.Context(DummyApplication())
+        
+        def tile_activated(source):
+            dummy_context.application.push_view(None)
         
         items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
-        page = widgets.TilePage(items, 0)
+        tiles = []
+        for item in items:
+            tile = widgets.Tile()
+            tile.connect("activate", tile_activated)
+            tile.set_model(item)
+            tiles.append(tile)
+        page = widgets.TilePage(tiles)
         cycle = widgets._TilePageCycle(page)
         cycle.expose_next()
         selection = cycle.select()
-        dummy_application = DummyApplication()
-        dummy_context = switcher_app.Context(dummy_application)
+        print(selection)
         selection(dummy_context)
-        self.assertTrue(pushed)
+        self.assertTrue(dummy_context.application.pushed)
     
     @tests.clutter.on_stage
     def test_cycle(self, stage):
@@ -132,7 +151,12 @@ class TilePageTest(unittest.TestCase):
         Cycle exposing and stopping.
         """
         items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
-        page = widgets.TilePage(items, 0)
+        tiles = []
+        for item in items:
+            tile = widgets.Tile()
+            tile.set_model(item)
+            tiles.append(tile)
+        page = widgets.TilePage(tiles)
         cycle = page.create_cycle()
         cycle.expose_next()
         cycle.expose_next()
@@ -143,7 +167,12 @@ class TilePageTest(unittest.TestCase):
         Cycle expiration after 2 rounds.
         """
         items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
-        page = widgets.TilePage(items, 0)
+        tiles = []
+        for item in items:
+            tile = widgets.Tile()
+            tile.set_model(item)
+            tiles.append(tile)
+        page = widgets.TilePage(tiles)
         cycle = page.create_cycle()
         for _ in range(len(items) * 2):
             self.assertTrue(cycle.has_next())

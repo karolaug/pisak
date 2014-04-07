@@ -2,41 +2,45 @@ from gi.repository import Clutter, Mx, GObject
 from pisak import unit, switcher_app
 
 class Tile(Clutter.Actor):
+    __gsignals__ = {
+        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+
     def __init__(self):
         super(Tile, self).__init__()
         self._init_elements()
         self.hilite = 0.0
-        
+
     def _init_elements(self):
         self._init_preview()
         self._init_label()
         self._init_layout()
-    
+
     def _init_preview(self):
         self.preview = Mx.Image()
         self.add_child(self.preview)
         self.preview.set_scale_mode(Mx.ImageScaleMode.FIT)
-    
+
     def _init_label(self):
         self.label = Mx.Label()
         self.add_child(self.label)
-    
+
     def _init_layout(self):
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
         self.layout.set_orientation(Clutter.Orientation.VERTICAL)
-    
+
     def set_label(self, text):
         self.label.set_text(text)
-    
+
     def set_preview_from_file(self, path):
         self.preview.set_from_file(path)
-    
+
     def set_model(self, model):
         self.set_label(model["label"])
         if "image_path" in model:
             self.set_preview_from_file(model["image_path"])
-    
+
     def hilite_off(self):
         self.set_hilite(0.0)
     
@@ -101,7 +105,8 @@ class _TilePageCycle(switcher_app.Cycle):
             self.index = None
     
     def select(self):
-        self.actor.select(self.index)
+        activated_actor = self.actor.tiles[self.index]
+        return switcher_app.selection_activate_actor(activated_actor)
 
 
 class TilePage(Clutter.Actor):
@@ -109,7 +114,11 @@ class TilePage(Clutter.Actor):
         "tile-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
     }
     
-    def __init__(self, items, page):
+    def __init__(self, tiles):
+        """
+        Create a page of tiles aligned in grid.
+        @param tiles A list of tiles to be placed on the page.
+        """
         super().__init__()
         self.layout = Clutter.GridLayout()
         self.set_layout_manager(self.layout)
@@ -117,16 +126,11 @@ class TilePage(Clutter.Actor):
         self.layout.set_column_spacing(unit.mm(12))
         self.layout.set_column_homogeneous(True)
         self.layout.set_row_homogeneous(True)
-        self.tiles = []
+        self.tiles = tiles
         for i in range(2):
             for j in range(3):
-                index = int(page * 6 + i * 3 + j)
-                if index < len(items):
-                    tile = Tile()
-                    tile.set_model(items[index])
-                    self.tiles.append(tile)
-                else:
-                    tile = Clutter.Actor()
+                index = int(i * 3 + j)
+                tile = tiles[index] if index < len(tiles) else Clutter.Actor()
                 self.layout.attach(tile, j, i, 1, 1)
 
     def select(self, tile):
@@ -156,7 +160,6 @@ class _PagedTileViewCycle(switcher_app.Cycle):
 class PagedTileView(Clutter.Actor):
     __gsignals__ = {
         "page-changed": (GObject.SIGNAL_RUN_FIRST, None, (int,)),
-        "page-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,)),
         "tile-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,)),
     }
 
@@ -166,17 +169,36 @@ class PagedTileView(Clutter.Actor):
         self.page_actor = None
         self.items = []
         self.page_interval = None
-        self.cycle_active = False
         self.pages_current, self.pages_old = set(), set()
+        self.tile_class = Tile
         self._init_tiles()
         self._paginate_items()
+    
+    @property
+    def tile_class(self):
+        return self._tile_class
+    
+    @tile_class.setter
+    def tile_class(self, value):
+        if issubclass(value, Tile):
+            self._tile_class = value
+        else:
+            raise ValueError("Expected Tile subclass")
     
     def _init_tiles(self):
         self.layout = PagedViewLayout()
         self.set_layout_manager(self.layout)
     
     def generate_page(self, page):
-        return TilePage(self.items, page)
+        tiles = []
+        
+        for i in range(6):
+            index = int(page * 6 + i)
+            if index < len(self.items):
+                tile = self.tile_class()
+                tile.set_model(self.items[index])
+                tiles.append(tile)
+        return TilePage(tiles)
     
     def timeout_page(self, source):
         if self.cycle_active:
@@ -225,32 +247,8 @@ class PagedTileView(Clutter.Actor):
         self.update_page_actor()
         self.slide()
     
-    #def selection_tick(self):
-    #    if self.selection.phase == "page":
-    #        self.next_page()
-    #    elif self.selection.phase == "row":
-    #        self.next_row()
-    #    else:
-    #        self.next_column()
-    
-    def select(self):
-        #if self.selection.phase == "page":
-        self.emit("page-selected", self.page)
-        #    #self.selection.phase = "row"
-        #elif self.selection.phase == "row":
-        #    self.selection.phase = "column"
-        #else:
-        #    self.emit("item-selected", 0)
-    
     def _tile_selected(self, page, tile):
         self.emit("tile-selected", tile)
-    
-    #def start_cycle(self):
-    #    self.cycle_active = True
-    #    Clutter.threads_add_timeout(0, 3000, self.timeout_page, None)
-    
-    #def stop_cycle(self):
-    #    self.cycle_active = False
     
     def create_cycle(self):
         return _PagedTileViewCycle(self)
@@ -291,7 +289,6 @@ class ScrollingView(Clutter.Actor):
         self.content_scroll = PagedTileView()
         self.content_scroll.set_model(self.MODEL)
         self.content_scroll.connect("page-changed", self._update_scrollbar)
-        self.content_scroll.connect("page-selected", self._page_selected)
         self.content_scroll.connect("tile-selected", self._tile_selected)
         self.content.add_child(self.content_scroll)
         
@@ -318,12 +315,9 @@ class ScrollingView(Clutter.Actor):
         else:
             progress = page / (scroll.page_count - 1.0)
         self.content_scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
-    
-    def _page_selected(self, scroll, page):
-        print("Page selected:", page)
 
     def _tile_selected(self, scroll, tile):
-        raise NotImplementedError() 
+        raise NotImplementedError()
     
     def select(self):
         """

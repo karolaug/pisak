@@ -72,13 +72,13 @@ def selection_add_cycle(cycle):
         context.switcher.push_cycle(cycle)
     return add_cycle
 
-def selection_change_view(view):
+def selection_activate_actor(actor):
     """
-    Closure constructor for adding a new view
+    Closure constructor for activating and element
     """
-    def add_view(context):
-        context.application.push_view(view)
-    return add_view
+    def activate_actor(context):
+        actor.emit("activate")
+    return activate_actor
 
 class Switcher(object):
     def __init__(self, context):
@@ -102,7 +102,8 @@ class Switcher(object):
         switcher_input.disconnect(handler_id)
     
     def _start_cycle(self):
-        #self._expose_next()
+        # show first element immediately on start
+        self._expose_next()
         self.timeout_token = object()
         Clutter.threads_add_timeout(0, self.cycle_stack[-1].interval, self.switcher_timeout, self.timeout_token)
     

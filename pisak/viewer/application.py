@@ -73,7 +73,7 @@ class PisakViewerButtons(Clutter.Actor):
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
         self.button = Mx.Button()
-        self.button.set_label(">>")
+        self.button.set_label("Koniec")
         self.button.set_y_expand(True)
         self.button.set_width(unit.mm(30))
         self.button.connect("clicked", lambda _: self._next_page())
