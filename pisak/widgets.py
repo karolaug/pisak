@@ -1,5 +1,6 @@
 from gi.repository import Clutter, Mx, GObject
 from pisak import unit, switcher_app
+import collections
 
 class Tile(Clutter.Actor):
     __gsignals__ = {
@@ -170,20 +171,20 @@ class PagedTileView(Clutter.Actor):
         self.items = []
         self.page_interval = None
         self.pages_current, self.pages_old = set(), set()
-        self.tile_class = Tile
+        self.tile_handler = None
         self._init_tiles()
         self._paginate_items()
     
     @property
-    def tile_class(self):
-        return self._tile_class
+    def tile_handler(self):
+        return self._tile_handler
     
-    @tile_class.setter
-    def tile_class(self, value):
-        if issubclass(value, Tile):
-            self._tile_class = value
+    @tile_handler.setter
+    def tile_handler(self, value):
+        if value == None or isinstance(value, collections.Callable):
+            self._tile_handler = value
         else:
-            raise ValueError("Expected Tile subclass")
+            raise ValueError("Handler is not callable")
     
     def _init_tiles(self):
         self.layout = PagedViewLayout()
@@ -195,10 +196,15 @@ class PagedTileView(Clutter.Actor):
         for i in range(6):
             index = int(page * 6 + i)
             if index < len(self.items):
-                tile = self.tile_class()
+                tile = Tile()
+                tile.connect("activate", self.activate_tile)
                 tile.set_model(self.items[index])
                 tiles.append(tile)
         return TilePage(tiles)
+    
+    def activate_tile(self, source):
+        if self.tile_handler:
+            self.tile_handler(source)
     
     def timeout_page(self, source):
         if self.cycle_active:

@@ -8,6 +8,7 @@ from pisak import widgets
 from pisak import switcher_app
 from pisak import res
 
+
 class CategoryView(widgets.ScrollingView):
     """
     Actor widget which presents photos in the selected category.
@@ -26,7 +27,7 @@ class CategoryView(widgets.ScrollingView):
     
     def __init__(self):
         super().__init__()
-
+    
     def _init_overlay(self):
         background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
         self.add_child(Clutter.Texture.new_from_file(background_path))
