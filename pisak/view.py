@@ -30,9 +30,12 @@ class BasicViewContainer(AbstractViewContainer, Clutter.Actor):
         self.add_child(self._current_view)
     
     def _post_push_view(self, view):
-        self.remove_child(self._current_view)
-        self._current_view = view
-        self.add_child(self._current_view)
+        if view != None:
+            self.remove_child(self._current_view)
+            self._current_view = view
+            self.add_child(self._current_view)
+        else:
+            raise ValueError("View must not be None")
         
     def _pre_pop_view(self, view):
         self.remove_child(self._current_view)

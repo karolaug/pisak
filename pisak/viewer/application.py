@@ -25,8 +25,10 @@ class CategoryView(widgets.ScrollingView):
         "photo-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
     }
     
-    def __init__(self):
+    def __init__(self, context):
         super().__init__()
+        self.context= context
+        self.content_scroll.tile_handler = self.show_photo
     
     def _init_overlay(self):
         background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
@@ -34,6 +36,9 @@ class CategoryView(widgets.ScrollingView):
 
     def _tile_selected(self, scroll, photo):
         self.emit('photo-selected', photo)
+    
+    def show_photo(self, tile):
+        print("show photo")
 
     
 class LibraryView(widgets.ScrollingView):
@@ -52,8 +57,10 @@ class LibraryView(widgets.ScrollingView):
         "category-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
     }
     
-    def __init__(self):
+    def __init__(self, context):
         super().__init__()
+        self.context= context
+        self.content_scroll.tile_handler = self.show_category
 
     def _init_overlay(self):
         background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
@@ -61,6 +68,9 @@ class LibraryView(widgets.ScrollingView):
 
     def _tile_selected(self, scroll, category):
         self.emit('category-selected', category)
+
+    def show_category(self, tile):
+        self.context.application.push_view(CategoryView(self.context))
 
 
 class PisakViewerButtons(Clutter.Actor):
@@ -102,7 +112,7 @@ class PisakViewerContainer(Clutter.Actor):
         self.set_margin(margin)
         
     def _init_main(self):
-        self.library_view = LibraryView()
+        self.library_view = LibraryView(self.context)
         self.library_view.connect('category-selected', self.enter_category)
         self.main = view.BasicViewContainer(self.context)
         self.main.push_view(self.library_view)
