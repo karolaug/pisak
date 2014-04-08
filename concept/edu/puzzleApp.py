@@ -121,20 +121,13 @@ class PracticePanel(Clutter.Actor):
                 button=self.action_buttons[self.idx - len(self.active_letters_indices)]
             button.set_hilite_color(self.selection_color)
             button_label=button.get_label()
-            if button_label=='sprawdź':
-                self.check_result()
-            elif button_label =='skasuj':
-                if len(self.added_letters_indices) > 0:
-                    self.delete_letter()
-            elif button_label=='wyczyść':
-                if len(self.added_letters_indices) > 0:
-                    self.clear_all()
-            elif button_label =='czytaj':
-                self.read_out_loud()
-            elif button_label=='literuj':
-                self.spell()
-            elif button_label=='wróć':
-                self.back_to_main()
+            actions = {'sprawdź' : self.check_result, 
+                   'skasuj' : self.delete_letter, 
+                   'wyczyść' : self.clear_all, 
+                   'czytaj' : self.read_out_loud, 
+                   'literuj' : self.spell, 
+                   'wróć' : self.back_to_main}
+            actions[button_label]()
         else:
             self.add_letter(self.idx)
         self.idx=0
@@ -156,28 +149,30 @@ class PracticePanel(Clutter.Actor):
         self.container.change_panel()
 
     def delete_letter(self):
-        letter=self.text_field.get_text()[-1]
-        start_pos=len(self.text_field.get_text())-1
-        self.text_field.delete_text(start_pos , start_pos+1)
-        idx=self.added_letters_indices[-1]
-        button=self.letter_buttons[idx]
-        button.set_background_color(self.off_color)
-        button.set_letter_label(letter)
-        self.added_letters_indices.remove(idx)
-        self.active_letters_indices.append(idx)
-        self.active_letters_indices.sort()
-
-    def clear_all(self):
-        for i in self.added_letters_indices:
-            letter=self.shuffled_word[i]
-            button=self.letter_buttons[i]
+        if len(self.added_letters_indices) > 0:
+            letter=self.text_field.get_text()[-1]
+            start_pos=len(self.text_field.get_text())-1
+            self.text_field.delete_text(start_pos , start_pos+1)
+            idx=self.added_letters_indices[-1]
+            button=self.letter_buttons[idx]
             button.set_background_color(self.off_color)
             button.set_letter_label(letter)
-            self.active_letters_indices.append(i)
-        self.active_letters_indices.sort()
-        self.added_letters_indices=[]
-        end_pos= len(self.text_field.get_text())
-        self.text_field.delete_text(0 ,end_pos)
+            self.added_letters_indices.remove(idx)
+            self.active_letters_indices.append(idx)
+            self.active_letters_indices.sort()
+
+    def clear_all(self):
+        if len(self.added_letters_indices) > 0:
+            for i in self.added_letters_indices:
+                letter=self.shuffled_word[i]
+                button=self.letter_buttons[i]
+                button.set_background_color(self.off_color)
+                button.set_letter_label(letter)
+                self.active_letters_indices.append(i)
+            self.active_letters_indices.sort()
+            self.added_letters_indices=[]
+            end_pos= len(self.text_field.get_text())
+            self.text_field.delete_text(0 ,end_pos)
 
     def read_out_loud(self):
         print('Reading out loud:   '+self.word)
