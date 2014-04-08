@@ -3,6 +3,50 @@ Basic classes for application using switcher
 """
 from gi.repository import GObject, Clutter
 
+
+class Application(object):
+    """
+    Abstract application class. This is the entry point for switcher apps.
+    """
+    def __init__(self, argv):
+        """
+        Initialize the aplication.
+        @param argv application arguments
+        """
+        self._initialize_context()
+        self._initialize_stage(argv)
+    
+    def _initialize_stage(self, argv):
+        Clutter.init(argv)
+        self.stage = self.create_stage(argv)
+        self.stage.connect("destroy", lambda _: Clutter.main_quit())
+    
+    def self_create_stage(self, argv):
+        raise NotImplementedError()
+    
+    def _initialize_context(self):
+        self.context = Context(self)
+    
+    def push_view(self, view_actor):
+        '''
+        Show new view on top.
+        @param view_actor New view
+        '''
+        self.stage.push_view(view_actor)
+    
+    def pop_view(self):
+        '''
+        Discard current view and go back to previous
+        '''
+        self.stage.pop_view()
+    
+    def main(self):
+        """
+        Starts the application main loop.
+        """
+        self.stage.show_all()
+        Clutter.main()
+
 class Context(object):
     """
     Switcher application context. Provides to application-wide components such as input and switcher timing.

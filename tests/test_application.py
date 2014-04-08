@@ -26,8 +26,21 @@ class ViewerContainerTests(unittest.TestCase):
         cycle.stop()
     
     def test_views(self):
-        view_1 = Clutter.Actor()
-        view_2 = Clutter.Actor()
+        class DummyCycle(switcher_app.Cycle):
+            interval = 1000
+            
+            def expose_next(self):
+                pass
+            
+            def stop(self):
+                pass
+
+        class ViewActor(Clutter.Actor):
+            def create_cycle(self):                
+                return DummyCycle()
+        
+        view_1 = ViewActor()
+        view_2 = ViewActor()
         context = switcher_app.Context(object())
         content = application.PisakViewerContainer(context)
         content.push_view(view_1)
@@ -38,7 +51,20 @@ class ApplicationTests(unittest.TestCase):
         Clutter.init([])
     
     def test_push_view(self):
-        dummy_view = Clutter.Actor()
+        class DummyCycle(switcher_app.Cycle):
+            interval = 1000
+            
+            def expose_next(self):
+                pass
+            
+            def stop(self):
+                pass
+
+        class ViewActor(Clutter.Actor):
+            def create_cycle(self):                
+                return DummyCycle()
+        
+        dummy_view = ViewActor()
         viewer_app = application.PisakViewApp([])
         viewer_app.push_view(dummy_view)
 

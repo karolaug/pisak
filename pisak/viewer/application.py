@@ -136,8 +136,7 @@ class PisakViewerContainer(Clutter.Actor):
     def enter_category(self, library, category):
         self.category_view = CategoryView()
         self.category_view.connect('photo-selected', self.enter_photo)
-        self.main.push_view(self.category_view)
-        self.context.switcher.push_cycle(self.category_view.create_cycle())
+        self.push_view(self.category_view)
         
     def enter_photo(self, category, photo):
         print('photo nr', photo, 'selected')
@@ -165,6 +164,7 @@ class PisakViewerContainer(Clutter.Actor):
         Add new view to the container
         """
         self.main.push_view(new_view)
+        self.context.switcher.push_cycle(new_view.create_cycle())
 
 
 class PisakViewerStage(Clutter.Stage):
@@ -190,36 +190,14 @@ class PisakViewerStage(Clutter.Stage):
         self.content.push_view(new_view)
     
 
-class PisakViewApp(object):
+class PisakViewApp(switcher_app.Application):
     """
-    Main application class. This is the entry point .
-    """
-    def __init__(self, argv):
-        """
-        Initialize the aplication.
-        @param argv application arguments
-        """
-        Clutter.init(argv)
-        self._initialize_context()
-        self._initialize_stage(argv)
-    
-    def _initialize_stage(self, argv):
-        self.stage = PisakViewerStage(self.context)
-        self.stage.connect("destroy", lambda _: Clutter.main_quit())
-        self.stage.set_fullscreen(True)
-        self.stage.show_all()
-    
-    def _initialize_context(self):
-        self.context = switcher_app.Context(self)
-    
-    def push_view(self, view):
-        self.stage.push_view(view)
-    
-    def main(self):
-        """
-        Starts the application main loop.
-        """
-        Clutter.main()
+    Pisak viewer app with pisak viewer stage.
+    """    
+    def create_stage(self, argv):
+        stage = PisakViewerStage(self.context)
+        stage.set_fullscreen(True)
+        return stage
 
 
 class SlideshowCycle(switcher_app.Cycle):
