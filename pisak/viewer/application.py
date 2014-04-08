@@ -38,7 +38,7 @@ class CategoryView(widgets.ScrollingView):
         self.emit('photo-selected', photo)
     
     def show_photo(self, tile):
-        print("show photo")
+        self.context.application.push_view(PhotoView(self.context))
 
     
 class LibraryView(widgets.ScrollingView):
@@ -216,6 +216,7 @@ class SlideshowCycle(switcher_app.Cycle):
 
 
 class PhotoViewIdleCycle(switcher_app.Cycle):
+    interval = 3600
     def __init__(self, view_actor):
         self.view_actor = view_actor
     
@@ -233,7 +234,11 @@ class PhotoView(Clutter.Actor):
     def __init__(self, context):
         super().__init__()
         self.context = context
-        self.photo_actor = Clutter.Actor()
+        self.set_layout_manager(Clutter.BoxLayout())
+        self.set_x_expand(True)
+        self.set_y_expand(True)
+        self.photo_actor = Mx.Image()
+        self.photo_actor.set_from_file(os.path.join(res.PATH, "krolikarnia.jpg"))
         self.add_child(self.photo_actor)
         self.model = None
         self.photos = []
@@ -257,6 +262,9 @@ class PhotoView(Clutter.Actor):
 
     def create_idle_cycle(self):
         return PhotoViewIdleCycle(self)
+    
+    def create_cycle(self):
+        return self.create_idle_cycle()
     
     
     
