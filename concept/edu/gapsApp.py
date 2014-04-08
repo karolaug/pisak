@@ -75,9 +75,9 @@ class PracticePanel(Clutter.Actor):
         self.text_field.set_font(self.font_name)
         self.layout.attach(self.text_field, 0, 0, self.col_count, 1)
         self.text_field.set_background_color(self.white_color)
-        user_word = [letter if index not in self.gap_indices else '_' 
-                     for index, letter in enumerate(self.word)]
-        self.text_field.set_text(''.join(user_word))
+        self.user_word = [letter if index not in self.gap_indices else '_' 
+                          for index, letter in enumerate(self.word)]
+        self.text_field.set_text(''.join(self.user_word))
 
     def _init_timer(self):
         self.timer=Clutter.Timeline.new(self.time_interval)
@@ -199,8 +199,8 @@ class PracticePanel(Clutter.Actor):
         self.added_letters_indices.append(pos)
 
     def check_result(self):
-        user_word=self.text_field.get_text()
-        self.container.user_word=user_word
+        self.user_word = self.text_field.get_text()
+        self.container.user_word = self.user_word
         self.container.change_panel()
 
     def delete_letter(self):

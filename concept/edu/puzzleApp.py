@@ -151,8 +151,8 @@ class PracticePanel(Clutter.Actor):
         self.active_letters_indices.remove(self.active_letters_indices[idx])
 
     def check_result(self):
-        user_word=self.text_field.get_text()
-        self.container.user_word=user_word
+        self.user_word = self.text_field.get_text()
+        self.container.user_word = self.user_word
         self.container.change_panel()
 
     def delete_letter(self):
