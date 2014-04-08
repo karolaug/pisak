@@ -6,7 +6,7 @@ import random
 
 
 class Image(Clutter.Actor):
-    MODEL = 'krolikarnia.jpg'
+    MODEL = './pisak/res/krolikarnia.jpg'
     def __init__(self):
         super(Image, self).__init__()
         self.layout = Clutter.BinLayout()
@@ -83,13 +83,13 @@ class Buttons(Clutter.Actor):
         self._init_elements()
 
     def _init_elements(self):
-        self.buttons = {'rotate': self.image.rotate, 'mirror': self.image.mirror, 'invert': self.image.invert,
-                        'zoom': self.image._zoom_cycle, 'solarize': self.image.solarize, 'grayscale': self.image.grayscale,
-                        'original': self.image.original, 'exit': self.exit_app}
+        self.buttons = {'obróć': self.image.rotate, 'lustro': self.image.mirror, 'negatyw': self.image.invert,
+                        'powiększenie': self.image._zoom_cycle, 'prześwietlenie': self.image.solarize, 'skala szarości': self.image.grayscale,
+                        'oryginał': self.image.original, 'wyjście': self.exit_app}
         for b in sorted(self.buttons):
             button = Mx.Button()
             button.set_label(b)
-            button.set_size(unit.mm(25), unit.mm(25))
+            button.set_size(unit.mm(50), unit.mm(25))
             self.add_actor(button)
             button.connect("button_release_event", lambda x,b=button: self.select(x,b))
 
