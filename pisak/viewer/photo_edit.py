@@ -89,7 +89,7 @@ class Buttons(Clutter.Actor):
         for b in sorted(self.buttons):
             button = Mx.Button()
             button.set_label(b)
-            button.set_size(unit.mm(50), unit.mm(25))
+            button.set_size(unit.mm(50), unit.mm(15))
             self.add_actor(button)
             button.connect("button_release_event", lambda x,b=button: self.select(x,b))
 
