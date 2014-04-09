@@ -1,12 +1,12 @@
 from gi.repository import Clutter, Mx, Cogl
 from PIL import ImageOps as ImO, Image as Im
 import sys
-import unit
+from pisak import unit, res
 import random
-
+import os.path
 
 class Image(Clutter.Actor):
-    MODEL = './pisak/res/krolikarnia.jpg'
+    MODEL = os.path.join(res.PATH, 'krolikarnia.jpg')
     def __init__(self):
         super(Image, self).__init__()
         self.layout = Clutter.BinLayout()
