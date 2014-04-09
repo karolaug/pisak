@@ -3,7 +3,7 @@ Module defines classes specific to Viewer application.
 """
 import os.path
 from gi.repository import Clutter, Mx, GObject
-from pisak import unit, view
+from pisak import unit, view, buttons
 from pisak import widgets
 from pisak import switcher_app
 from pisak import res
@@ -82,13 +82,12 @@ class PisakViewerButtons(Clutter.Actor):
         super(PisakViewerButtons, self).__init__()
         self.viewer = viewer
         self.layout = Clutter.BoxLayout()
+        self.layout.set_orientation(Clutter.Orientation.VERTICAL)
         self.set_layout_manager(self.layout)
-        self.button = Mx.Button()
-        self.button.set_label("Koniec")
-        self.button.set_y_expand(True)
-        self.button.set_width(unit.mm(30))
-        self.button.connect("clicked", lambda _: self._next_page())
-        self.set_x_align(Clutter.ActorAlign.END)
+        self.button = buttons.MenuButton()
+        self.button.set_model({"label": "Koniec"})
+        #self.button.connect("clicked", lambda _: self._next_page())
+        #self.set_x_align(Clutter.ActorAlign.START)
         self.add_child(self.button)
 
     def _next_page(self):
@@ -122,12 +121,14 @@ class PisakViewerContainer(Clutter.Actor):
     def _init_elements(self):
         self._init_main()
         self.buttons = PisakViewerButtons(self)
-        self.buttons.set_y_expand(False)
-        self.buttons.set_x_expand(True)
-        self.buttons.set_height(unit.mm(25))
+        
+        self.buttons.set_y_expand(True)
+        self.buttons.set_x_expand(False)
+        self.buttons.set_width(unit.mm(25))
+        self.buttons.set_depth(-1.0)
         
         layout = Clutter.BoxLayout()
-        layout.set_orientation(Clutter.Orientation.VERTICAL)
+        layout.set_orientation(Clutter.Orientation.HORIZONTAL)
         self.set_layout_manager(layout)
         layout.set_spacing(unit.mm(12))
         self.add_child(self.main)

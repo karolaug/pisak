@@ -1,4 +1,27 @@
-from gi.repository import Clutter, Mx
+from gi.repository import Clutter, Mx, GObject
+from pisak import unit
+
+class MenuButton(Mx.Button):
+    HEIGHT = unit.mm(16)
+    __gsignals__ = {
+        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+    
+    def __init__(self):
+        super().__init__()
+        self.connect("clicked", self.click_activate)
+        self.set_height(MenuButton.HEIGHT)
+        self.set_x_expand(True)
+        self.set_y_expand(False)
+        
+    
+    def set_model(self, model):
+        self.model = model
+        self.set_label(self.model["label"])
+    
+    def click_activate(self):
+        self.emit("activated")
+
 
 class LetterButton(Clutter.Actor):
     def __init__(self):
