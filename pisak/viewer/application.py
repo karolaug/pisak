@@ -4,11 +4,11 @@ Module defines classes specific to Viewer application.
 import os.path
 import random
 from gi.repository import Clutter, Mx, GObject
+from PIL import Image
 from pisak import unit, view, buttons
 from pisak import widgets
 from pisak import switcher_app
 from pisak import res
-
 
 class CategoryView(widgets.ScrollingView):
     """
@@ -276,8 +276,70 @@ class PhotoView(Clutter.Actor):
     def create_cycle(self):
         return self.create_idle_cycle()
     
+
+class PhotoEditionMenu(Clutter.Actor):
+    """
+    Widget of buttons associated with a PhotoView being in the edition mode.
+    @param view an instance of PhotoView.
+    """
+    SPACING = unit.mm(4)
+    def __init__(self, view):
+        super().__init__()
+        self.view = view
+        self.buffer = view.buffer
+        self._init_layout()
+        self._init_buttons()
+        
+    def _init_layout(self):
+        self.layout = Clutter.BoxLayout()
+        self.layout.set_orientation(Clutter.Orientation.VERTICAL)
+        self.layout.set_spacing(self.SPACING)
+        self.set_layout_manager(self.layout)
+        margin = Clutter.Margin()
+        margin.top = margin.bottom = self.SPACING
+        self.set_margin(margin)
+
+    def _init_buttons(self):
+        self.buttons = {'grayscale': ['skala szarości', self.buffer.grayscale], 'save': ['zapisz', self.buffer.save],
+                        'original': ['oryginał', self.buffer.original], 'mirror': ['lustro', self.buffer.mirror],
+                        'rotate': ['obróć', self.buffer.rotate], 'zoom': ['powiększenie', self.buffer.zoom]}
+        for b in self.buttons:
+            button = buttons.MenuButton()
+            button.set_model({'label': self.buttons[b][0]})
+            button.connect('activate', self.buttons[b][1])
+            self.add_child(button) 
+
     
-    
-    
-    
-    
+class PhotoBuffer(object):
+    """
+    Buffer containing a currently edited photo.
+    """
+    def __init__(self, view, photo):
+        self.view = view
+        self.photo = photo
+        self.path = photo.path
+        self.buffer = self.original_photo = Image.open(path)
+
+    def mirror(self, source, event):
+        self.buffer = self.buffer.transpose(Image.FLIP_LEFT_RIGHT)
+
+    def grayscale(self, source, event):
+        self.buffer = self.buffer.convert('L')
+
+    def rotate(self, source, event):
+        self.buffer = self.buffer.transpose(Image.ROTATE_90)
+
+    def zoom(self, source, event):
+        width, height = self.buffer.size[0], self.buffer.size[1]
+        x0, y0 = width/30, height/30
+        x1, y1 = width-x0, height-y0
+        self.buffer = self.buffer.transform((width, height), Image.EXTENT, (x0, y0, x1, y1))
+
+    def original(self, source, event):
+        self.buffer = self.original_photo
+
+    def save(self, source, event):
+        raise NotImplementedError()
+
+    def buffer_to_data(self):
+        self.data = self.buffer.tostring()
