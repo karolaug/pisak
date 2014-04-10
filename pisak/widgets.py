@@ -302,7 +302,7 @@ class ScrollingView(Clutter.Actor):
         self.content_layout = Clutter.BoxLayout()
         self.content.set_layout_manager(self.content_layout)
         self.content_layout.set_orientation(Clutter.Orientation.VERTICAL)
-        self.content_layout.set_spacing(30)
+        #self.content_layout.set_spacing(30)
     
     def _init_overlay(self):
         raise NotImplementedError()

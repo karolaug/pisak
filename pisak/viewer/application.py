@@ -2,6 +2,7 @@
 Module defines classes specific to Viewer application.
 """
 import os.path
+import random
 from gi.repository import Clutter, Mx, GObject
 from pisak import unit, view, buttons
 from pisak import widgets
@@ -16,7 +17,9 @@ class CategoryView(widgets.ScrollingView):
     MODEL = {
         "items": [{
               "label": "Zdjęcie %d" % i,
-              "image_path": os.path.join(res.PATH, "krolikarnia.jpg")
+              "image_path": os.path.join(
+                        res.PATH,
+                        random.choice(["krolikarnia.jpg", "kolejka.jpg"]))
             } for i in range(20)
         ],
         "page_interval": 6000
@@ -48,7 +51,9 @@ class LibraryView(widgets.ScrollingView):
     MODEL = {
         "items": [{
               "label": "Kategoria %d" % i,
-              "image_path": os.path.join(res.PATH, "krolikarnia.jpg")
+              "image_path": os.path.join(
+                        res.PATH,
+                        random.choice(["krolikarnia.jpg", "kolejka.jpg"]))
             } for i in range(20)
         ],
         "page_interval": 6000
@@ -134,7 +139,7 @@ class PisakViewerContainer(Clutter.Actor):
         layout = Clutter.BoxLayout()
         layout.set_orientation(Clutter.Orientation.HORIZONTAL)
         self.set_layout_manager(layout)
-        layout.set_spacing(unit.mm(12))
+        layout.set_spacing(unit.mm(4))
         self.add_child(self.main)
         self.add_child(self.buttons)
 
