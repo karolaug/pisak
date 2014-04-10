@@ -74,6 +74,7 @@ class LibraryView(widgets.ScrollingView):
 
 
 class PisakViewerButtons(Clutter.Actor):
+    SPACING = unit.mm(4)
     def __init__(self, viewer):
         """
         Widget of buttons associated with a LibraryView.
@@ -83,12 +84,18 @@ class PisakViewerButtons(Clutter.Actor):
         self.viewer = viewer
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation.VERTICAL)
+        self.layout.set_spacing(self.SPACING)
         self.set_layout_manager(self.layout)
+        margin = Clutter.Margin()
+        margin.top = margin.bottom = self.SPACING
+        self.set_margin(margin)
         self.button = buttons.MenuButton()
         self.button.set_model({"label": "Koniec"})
-        #self.button.connect("clicked", lambda _: self._next_page())
-        #self.set_x_align(Clutter.ActorAlign.START)
         self.add_child(self.button)
+        for index in range(7):
+            button = buttons.MenuButton()
+            button.set_model({"label": "Przycisk %d" % index})
+            self.add_child(button)
 
     def _next_page(self):
         """
@@ -106,9 +113,6 @@ class PisakViewerContainer(Clutter.Actor):
         super(PisakViewerContainer, self).__init__()
         self.context = context
         self._init_elements()
-        margin = Clutter.Margin()
-        margin.left = margin.right = margin.top = margin.bottom = unit.mm(12)
-        self.set_margin(margin)
         
     def _init_main(self):
         self.library_view = LibraryView(self.context)
