@@ -7,6 +7,7 @@ import os.path
 
 class Image(Clutter.Actor):
     MODEL = os.path.join(res.PATH, 'krolikarnia.jpg')
+    PIXEL_FORMATS = {'RGB': Cogl.PixelFormat.RGB_888, 'L': Cogl.PixelFormat.A_8}
     def __init__(self):
         super(Image, self).__init__()
         self.layout = Clutter.BinLayout()
@@ -15,59 +16,60 @@ class Image(Clutter.Actor):
         self.set_image_from_data()
 
     def _init_elements(self):
-        self.pixel_formats = {'RGB': Cogl.PixelFormat.RGB_888, 'L': Cogl.PixelFormat.A_8}
         self.image = Mx.Image()
         self.image.set_scale_mode(Mx.ImageScaleMode.FIT)
         self.add_child(self.image)
-        self.buffer = Im.open(self.MODEL)
+        self.original_photo = self.buffer = Im.open(self.MODEL)
+        self.zoom_timer = None
 
     def set_image_from_data(self):
-        self.data = self.buffer.tostring()
-        self.mode = self.pixel_formats[self.buffer.mode]
-        self.width, self.height = self.buffer.size[0], self.buffer.size[1]
-        self.row_stride = len(self.data) / self.height
-        self.image.set_from_data(self.data, self.mode, self.width, self.height, self.row_stride)
+        data = self.buffer.tostring()
+        mode = self.PIXEL_FORMATS[self.buffer.mode]
+        width, height = self.buffer.size[0], self.buffer.size[1]
+        row_stride = len(data) / height
+        self.image.set_from_data(data, mode, width, height, row_stride)
         
-    def mirror(self):
+    def mirror(self, button, event):
         axis = [Im.FLIP_LEFT_RIGHT, Im.FLIP_TOP_BOTTOM]
         self.buffer = self.buffer.transpose(axis[random.randint(0,1)])
         self.set_image_from_data()
 
-    def grayscale(self):
+    def grayscale(self, button, event):
         self.buffer = self.buffer.convert('L')
         self.set_image_from_data()
         
-    def rotate(self):     
+    def rotate(self, button, event):     
         self.buffer = self.buffer.rotate(90, resample=Im.AFFINE)
         self.set_image_from_data()
 
-    def _zoom_cycle(self):
-        if not hasattr(self, 'zoom_timer'):
+    def _zoom_cycle(self, button, event):
+        if not self.zoom_timer:
             self.zoom_timer = Clutter.Timeline.new(200)
             self.zoom_timer.set_repeat_count(35)
-            self.zoom_timer.connect('completed', lambda _: self.zoom())
+            self.zoom_timer.connect('completed', self.zoom)
             self.zoom_timer.start()
         else:
             self.zoom_timer.stop()
-            delattr(self, 'zoom_timer')
+            self.zoom_timer = None
 
-    def zoom(self):
-        x0, y0 = self.width/50, self.height/50
-        x1, y1 = self.width-x0, self.height-y0
-        self.buffer = self.buffer.transform((self.width, self.height),Im.EXTENT,(x0, y0, x1, y1))
+    def zoom(self, event):
+        width, height = self.buffer.size[0], self.buffer.size[1]
+        x0, y0 = width/50, height/50
+        x1, y1 = width-x0, height-y0
+        self.buffer = self.buffer.transform((width, height), Im.EXTENT, (x0, y0, x1, y1))
         self.set_image_from_data()
         
-    def invert(self):
+    def invert(self, button, event):
         self.buffer = ImO.invert(self.buffer)
         self.set_image_from_data()
 
-    def solarize(self):
+    def solarize(self, button, event):
         threshold = 80
         self.buffer = ImO.solarize(self.buffer, threshold)
         self.set_image_from_data()
 
-    def original(self):
-        self.buffer = Im.open(self.MODEL)
+    def original(self, button, event):
+        self.buffer = self.original_photo
         self.set_image_from_data()
         
         
@@ -83,21 +85,18 @@ class Buttons(Clutter.Actor):
         self._init_elements()
 
     def _init_elements(self):
-        self.buttons = {'obróć': self.image.rotate, 'lustro': self.image.mirror, 'negatyw': self.image.invert,
-                        'powiększenie': self.image._zoom_cycle, 'prześwietlenie': self.image.solarize, 'skala szarości': self.image.grayscale,
-                        'oryginał': self.image.original, 'wyjście': self.exit_app}
-        for b in sorted(self.buttons):
+        buttons = {'rotate': ['obróć', self.image.rotate], 'mirror': ['lustro', self.image.mirror],
+                   'invert': ['negatyw', self.image.invert], 'zoom': ['powiększenie', self.image._zoom_cycle],
+                   'solarize': ['prześwietlenie', self.image.solarize], 'grayscale': ['skala szarości', self.image.grayscale],
+                   'original': ['oryginał', self.image.original], 'exit': ['wyjście', self.exit_app]}
+        for b in reversed(sorted(buttons)):
             button = Mx.Button()
-            button.set_label(b)
+            button.set_label(buttons[b][0])
             button.set_size(unit.mm(50), unit.mm(15))
             self.add_actor(button)
-            button.connect("button_release_event", lambda x,b=button: self.select(x,b))
+            button.connect("button_release_event", buttons[b][1])
 
-    def select(self, button, x):
-        label = button.get_label()
-        self.buttons[label]()
-
-    def exit_app(self):
+    def exit_app(self, button, event):
         self.container.exit_app()
 
 
