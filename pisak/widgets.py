@@ -286,7 +286,7 @@ class ScrollingView(Clutter.Actor):
         self._init_content_scrollbar()
     
     def _init_content_scrollbar(self):
-        self.content_scrollbar = Mx.ProgressBar()
+        self.content_scrollbar = ProgressBar()
         self.content_scrollbar.set_x_expand(True)
         self.content_scrollbar.set_height(30)
         self.content.add_child(self.content_scrollbar)
@@ -337,6 +337,44 @@ class ScrollingView(Clutter.Actor):
         """
         return self.content_scroll.create_cycle()
 
+
+class ProgressBar(Clutter.Actor):
+    __gproperties__ = {
+        'progress': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
+    }
+    
+    def __init__(self):
+        super(ProgressBar, self).__init__()
+        self.progress = 0
+        self.canvas = None
+        self.connect("notify::progress", self.update_bar)
+
+    def do_set_property(self, prop, value):
+        self.progress = value
+        
+    def do_get_property(self, prop):
+        return self.progress
+        
+    def update_bar(self, bar, prop):
+        def update_canvas(canvas, context, width, height):
+            context.scale(width, height)
+            context.rectangle(0, 0, self.progress, 1)
+            context.set_source_rgba(0, 0.5, 0.5, 1)
+            context.fill()
+            context.rectangle(self.progress, 0, 1, 1)
+            context.set_source_rgba(0, 0, 0, 1)
+            context.fill()
+            return True
+        if self.canvas:
+            self.canvas.invalidate()
+        else:
+            self.canvas = Clutter.Canvas()
+            self.canvas.set_size(unit.mm(20), unit.mm(5))
+            self.canvas.connect("draw", update_canvas)
+            self.set_content(self.canvas)
+            self.canvas.invalidate()
+        
+        
 class PhotoSlide(Clutter.Actor):
     def __init__(self):
         super().__init__()
