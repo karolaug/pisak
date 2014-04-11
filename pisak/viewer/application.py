@@ -193,8 +193,28 @@ class PisakViewerStage(Clutter.Stage):
     def _init_elements(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
+        self._init_background()
         self.content = PisakViewerContainer(self.context)
         self.add_child(self.content)
+    
+    def _init_background(self):
+        def fence_pattern(canvas, context, w, h):
+            context.scale(w, h)
+            context.set_line_width(0.05)
+            context.set_source_rgba(0, 0, 0, 0.15)
+            lines = [(0, 0, 1, 1), (0, 1, 1, 0)]
+            for x1, y1, x2, y2 in lines:
+                context.move_to(x1, y1)
+                context.line_to(x2, y2)
+                context.stroke()
+            return True
+        background_image = Clutter.Canvas()
+        background_image.set_size(unit.mm(2), unit.mm(2))
+        background_image.connect("draw", fence_pattern)
+        background_image.invalidate()
+        self.set_content(background_image)
+        self.set_content_repeat(Clutter.ContentRepeat.BOTH)
+        self.set_content_scaling_filters(Clutter.ScalingFilter.TRILINEAR, Clutter.ScalingFilter.TRILINEAR)
     
     def push_view(self, new_view):
         self.content.push_view(new_view)
