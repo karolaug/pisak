@@ -320,7 +320,7 @@ class ScrollingView(Clutter.Actor):
             progress = 1.0
         else:
             progress = page / (scroll.page_count - 1.0)
-        self.content_scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
+        self.content_scrollbar.update(progress)
 
     def _tile_selected(self, scroll, tile):
         raise NotImplementedError()
@@ -346,6 +346,7 @@ class ProgressBar(Clutter.Actor):
     def __init__(self):
         super(ProgressBar, self).__init__()
         self._init_bar()
+        self._init_transition()
         self.connect("notify::progress", lambda source, prop: self.canvas.invalidate())
         self.set_property('progress', 0)
 
@@ -355,12 +356,22 @@ class ProgressBar(Clutter.Actor):
         self.canvas.connect("draw", self.update_bar)
         self.set_content(self.canvas)
 
+    def _init_transition(self):
+        self.transition = Clutter.PropertyTransition.new('progress')
+        self.transition.set_duration(500)
+        
     def do_set_property(self, prop, value):
         self.progress = value
         
     def do_get_property(self, prop):
         return self.progress
-        
+
+    def update(self, new_progress):
+        self.transition.set_from(self.progress)
+        self.transition.set_to(new_progress)
+        self.remove_transition('progress')
+        self.add_transition('progress', self.transition)
+
     def update_bar(self, canvas, context, width, height):
         context.scale(width, height)
         context.rectangle(0, 0, self.progress, 1)
