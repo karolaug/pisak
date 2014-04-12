@@ -345,9 +345,15 @@ class ProgressBar(Clutter.Actor):
     
     def __init__(self):
         super(ProgressBar, self).__init__()
-        self.progress = 0
-        self.canvas = None
-        self.connect("notify::progress", self.update_bar)
+        self._init_bar()
+        self.connect("notify::progress", lambda source, prop: self.canvas.invalidate())
+        self.set_property('progress', 0)
+
+    def _init_bar(self):
+        self.canvas = Clutter.Canvas()
+        self.canvas.set_size(unit.mm(20), unit.mm(5))
+        self.canvas.connect("draw", self.update_bar)
+        self.set_content(self.canvas)
 
     def do_set_property(self, prop, value):
         self.progress = value
@@ -355,24 +361,15 @@ class ProgressBar(Clutter.Actor):
     def do_get_property(self, prop):
         return self.progress
         
-    def update_bar(self, bar, prop):
-        def update_canvas(canvas, context, width, height):
-            context.scale(width, height)
-            context.rectangle(0, 0, self.progress, 1)
-            context.set_source_rgba(0, 0.5, 0.5, 1)
-            context.fill()
-            context.rectangle(self.progress, 0, 1, 1)
-            context.set_source_rgba(0, 0, 0, 1)
-            context.fill()
-            return True
-        if self.canvas:
-            self.canvas.invalidate()
-        else:
-            self.canvas = Clutter.Canvas()
-            self.canvas.set_size(unit.mm(20), unit.mm(5))
-            self.canvas.connect("draw", update_canvas)
-            self.set_content(self.canvas)
-            self.canvas.invalidate()
+    def update_bar(self, canvas, context, width, height):
+        context.scale(width, height)
+        context.rectangle(0, 0, self.progress, 1)
+        context.set_source_rgba(0, 0.5, 0.5, 1)
+        context.fill()
+        context.rectangle(self.progress, 0, 1, 1)
+        context.set_source_rgba(0, 0, 0, 1)
+        context.fill()
+        return True
         
         
 class PhotoSlide(Clutter.Actor):
