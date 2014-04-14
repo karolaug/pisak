@@ -349,10 +349,14 @@ class ProgressBar(Clutter.Actor):
         self._init_transition()
         self.connect("notify::progress", lambda source, prop: self.canvas.invalidate())
         self.set_property('progress', 0)
+        self.connect("allocation-changed", lambda *_: self._resize_canvas())
+    
+    def _resize_canvas(self):
+        self.canvas.set_size(self.get_width(), self.get_height())
 
     def _init_bar(self):
         self.canvas = Clutter.Canvas()
-        self.canvas.set_size(unit.mm(20), unit.mm(5))
+        self._resize_canvas()
         self.canvas.connect("draw", self.update_bar)
         self.set_content(self.canvas)
 
@@ -375,7 +379,7 @@ class ProgressBar(Clutter.Actor):
     def update_bar(self, canvas, context, width, height):
         context.scale(width, height)
         context.rectangle(0, 0, self.progress, 1)
-        context.set_source_rgba(0, 0.5, 0.5, 1)
+        context.set_source_rgba(0, 0.894, 0.765, 1)
         context.fill()
         context.rectangle(self.progress, 0, 1, 1)
         context.set_source_rgba(0, 0, 0, 1)
