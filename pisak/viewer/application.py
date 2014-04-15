@@ -102,6 +102,20 @@ class PisakViewerButtons(Clutter.Actor):
             button.set_model({"label": "Przycisk %d" % index})
             self.add_child(button)
 
+    def hilite_off(self):
+        self.set_hilite(0.0)
+    
+    def hilite_on(self):
+        self.set_hilite(1.0)
+    
+    def set_hilite(self, hilite):
+        self.hilite = hilite
+        if self.hilite < 0.5:
+            color = Clutter.Color.new(255, 255, 255, 0)
+        else:
+            color = Clutter.Color.new(64, 128, 192, 192)
+        self.set_background_color(color)
+
     def _next_page(self):
         """
         Signal handler.
