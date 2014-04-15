@@ -1,7 +1,8 @@
 from gi.repository import Clutter, Mx, GObject
-from pisak import unit, switcher_app
+from pisak import unit, switcher_app, res
 import collections
 from pisak.res import colors
+import os.path
 
 
 class Tile(Clutter.Actor):
@@ -22,6 +23,7 @@ class Tile(Clutter.Actor):
     def _init_preview(self):
         self.preview = Mx.Image()
         self.add_child(self.preview)
+        #TODO: upscaling
         self.preview.set_scale_mode(Mx.ImageScaleMode.CROP)
 
     def _init_label(self):
@@ -130,7 +132,7 @@ class TilePage(Clutter.Actor):
         self.layout.set_column_homogeneous(True)
         self.layout.set_row_homogeneous(True)
         self.tiles = tiles
-        for i in range(2):
+        for i in range(4):
             for j in range(3):
                 index = int(i * 3 + j)
                 tile = tiles[index] if index < len(tiles) else Clutter.Actor()
@@ -195,8 +197,8 @@ class PagedTileView(Clutter.Actor):
     def generate_page(self, page):
         tiles = []
         
-        for i in range(6):
-            index = int(page * 6 + i)
+        for i in range(12):
+            index = int(page * 12 + i)
             if index < len(self.items):
                 tile = Tile()
                 tile.connect("activate", self.activate_tile)
@@ -335,10 +337,10 @@ class ScrollingView(Clutter.Actor):
         self.content_layout = Clutter.BoxLayout()
         self.content.set_layout_manager(self.content_layout)
         self.content_layout.set_orientation(Clutter.Orientation.VERTICAL)
-        #self.content_layout.set_spacing(30)
     
     def _init_overlay(self):
-        raise NotImplementedError()
+        background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
+        self.add_child(Clutter.Texture.new_from_file(background_path))
     
     def next_page(self):
         """

@@ -32,10 +32,6 @@ class CategoryView(widgets.ScrollingView):
         super().__init__()
         self.context= context
         self.content_scroll.tile_handler = self.show_photo
-    
-    def _init_overlay(self):
-        background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
-        self.add_child(Clutter.Texture.new_from_file(background_path))
 
     def _tile_selected(self, scroll, photo):
         self.emit('photo-selected', photo)
@@ -66,10 +62,6 @@ class LibraryView(widgets.ScrollingView):
         super().__init__()
         self.context= context
         self.content_scroll.tile_handler = self.show_category
-
-    def _init_overlay(self):
-        background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
-        self.add_child(Clutter.Texture.new_from_file(background_path))
 
     def _tile_selected(self, scroll, category):
         self.emit('category-selected', category)
