@@ -1,6 +1,8 @@
 from gi.repository import Clutter, Mx, GObject
 from pisak import unit, switcher_app
 import collections
+from pisak.res import colors
+
 
 class Tile(Clutter.Actor):
     __gsignals__ = {
@@ -51,9 +53,9 @@ class Tile(Clutter.Actor):
     def set_hilite(self, hilite):
         self.hilite = hilite
         if self.hilite < 0.5:
-            color = Clutter.Color.new(255, 255, 255, 0)
+            color = colors.TRANSPARENT
         else:
-            color = Clutter.Color.new(64, 128, 192, 192)
+            color = colors.HILITE_1
         self.set_background_color(color)
 
 
