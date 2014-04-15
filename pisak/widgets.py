@@ -320,7 +320,7 @@ class ScrollingView(Clutter.Actor):
             progress = 1.0
         else:
             progress = page / (scroll.page_count - 1.0)
-        self.content_scrollbar.update(progress)
+        self.content_scrollbar.update(progress, page + 1, scroll.page_count)
 
     def _tile_selected(self, scroll, tile):
         raise NotImplementedError()
@@ -350,7 +350,7 @@ class ProgressBar(Clutter.Actor):
         self.connect("notify::progress", lambda source, prop: self.canvas.invalidate())
         self.set_property('progress', 0)
         self.connect("allocation-changed", lambda *_: self._resize_canvas())
-    
+
     def _resize_canvas(self):
         self.canvas.set_size(self.get_width(), self.get_height())
 
@@ -363,18 +363,20 @@ class ProgressBar(Clutter.Actor):
     def _init_transition(self):
         self.transition = Clutter.PropertyTransition.new('progress')
         self.transition.set_duration(500)
-        
+
     def do_set_property(self, prop, value):
         self.progress = value
         
     def do_get_property(self, prop):
         return self.progress
 
-    def update(self, new_progress):
+    def update(self, new_progress, page, page_count):
         self.transition.set_from(self.progress)
         self.transition.set_to(new_progress)
         self.remove_transition('progress')
         self.add_transition('progress', self.transition)
+        self.page = page
+        self.page_count = page_count
 
     def update_bar(self, canvas, context, width, height):
         context.scale(width, height)
@@ -384,6 +386,12 @@ class ProgressBar(Clutter.Actor):
         context.rectangle(self.progress, 0, 1, 1)
         context.set_source_rgba(0, 0, 0, 1)
         context.fill()
+        context.set_font_size(1)
+        context.set_source_rgb(255, 255, 255)
+        context.select_font_face('Monospace', 0, 0)
+        context.move_to(0.85, 0.9)
+        context.scale(0.05, 1)
+        context.show_text(''.join([str(self.page), '/', str(self.page_count)]))
         return True
         
         
