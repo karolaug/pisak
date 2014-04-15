@@ -22,7 +22,7 @@ class Tile(Clutter.Actor):
     def _init_preview(self):
         self.preview = Mx.Image()
         self.add_child(self.preview)
-        self.preview.set_scale_mode(Mx.ImageScaleMode.FIT)
+        self.preview.set_scale_mode(Mx.ImageScaleMode.CROP)
 
     def _init_label(self):
         self.label = Mx.Label()
