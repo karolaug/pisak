@@ -1,5 +1,5 @@
 from gi.repository import Clutter, Mx, GObject
-from pisak import unit, switcher_app, res
+from pisak import unit, switcher_app, res, buttons
 import collections
 from pisak.res import colors
 import os.path
@@ -90,7 +90,7 @@ class _TilePageCycle(switcher_app.Cycle):
         self.actor = actor
         self.index = None
         self.interval = 1000
-        self.remaining = len(self.actor.tiles) * 2
+        self.remaining = len(self.actor.tiles)
     
     def expose_next(self):
         if self.index != None:
@@ -266,7 +266,7 @@ class PagedTileView(Clutter.Actor):
 
 
 class ScrollingViewCycle(switcher_app.Cycle):
-    interval = 3000
+    interval = 1000
     def __init__(self, actor):
         super().__init__()
         self.actor = actor
@@ -277,19 +277,15 @@ class ScrollingViewCycle(switcher_app.Cycle):
         self.index = (self.index + 1) % len(self.STEPS)
     
     def stop(self):
-        #self.actor.menu.hilite_off()
-        pass
+        self.actor.menu.hilite_off()
     
     def has_next(self):
         return True
     
     def show_menu(self):
-        pass
-        #self.actor.menu.hilite_on()
+        self.actor.menu.hilite_on()
     
     def show_page(self):
-        pass
-        #self.actor.menu.hilite_off()
         self.actor.select_page()
     
     def next_page(self):
@@ -302,26 +298,79 @@ ScrollingViewCycle.STEPS = [
     ScrollingViewCycle.next_page]
 
 
+class ButtonsMenu(Clutter.Actor):
+    SPACING = unit.mm(4)
+    def __init__(self, context):
+        """
+        Widget of buttons associated with a LibraryView.
+        @param viewer an instance of LibraryView
+        """
+        super().__init__()
+        self.context = context
+        self.layout = Clutter.BoxLayout()
+        self.layout.set_orientation(Clutter.Orientation.VERTICAL)
+        self.layout.set_spacing(self.SPACING)
+        self.set_layout_manager(self.layout)
+        margin = Clutter.Margin()
+        margin.top = margin.bottom = self.SPACING
+        self.set_y_expand(True)
+        self.set_margin(margin)
+        self.button = buttons.MenuButton()
+        self.button.set_model({"label": "Koniec"})
+        self.add_child(self.button)
+        for index in range(7):
+            button = buttons.MenuButton()
+            button.set_model({"label": "Przycisk %d" % index})
+            self.add_child(button)
+
+    def hilite_off(self):
+        self.set_hilite(0.0)
+    
+    def hilite_on(self):
+        self.set_hilite(1.0)
+    
+    def set_hilite(self, hilite):
+        self.hilite = hilite
+        if self.hilite < 0.5:
+            color = colors.TRANSPARENT
+        else:
+            color = colors.HILITE_1
+        self.set_background_color(color)
+
+    def _next_page(self):
+        """
+        Signal handler.
+        """
+        self.viewer.next_page()
+
+
 class ScrollingView(Clutter.Actor):
     """
     Base class for widgets presenting scrolling paged tiles.
     """
-    def __init__(self):
+    def __init__(self, context):
         super().__init__()
-        self.set_clip_to_allocation(True)
+        self.context = context
         self._init_elements()
     
     def _init_elements(self):
+        self._init_menu()
         self._init_layout()
         self._init_content()
-        self._init_overlay()
+        
+    def _init_menu(self):
+        self.menu = ButtonsMenu(self.context)
+        self.menu.set_width(unit.mm(70))
+        self.add_child(self.menu)
     
     def _init_layout(self):
-        self.layout = Clutter.BinLayout()
+        self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
+        self.layout.set_orientation(Clutter.Orientation.HORIZONTAL)
         
     def _init_content(self):
         self.content = Clutter.Actor()
+        self.content.set_clip_to_allocation(True)
         self.add_child(self.content)
         self._init_content_layout()
         self._init_content_scroll()
@@ -343,10 +392,6 @@ class ScrollingView(Clutter.Actor):
         self.content_layout = Clutter.BoxLayout()
         self.content.set_layout_manager(self.content_layout)
         self.content_layout.set_orientation(Clutter.Orientation.VERTICAL)
-    
-    def _init_overlay(self):
-        background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
-        self.add_child(Clutter.Texture.new_from_file(background_path))
     
     def next_page(self):
         """

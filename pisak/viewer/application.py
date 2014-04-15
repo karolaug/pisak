@@ -29,8 +29,7 @@ class CategoryView(widgets.ScrollingView):
     }
     
     def __init__(self, context):
-        super().__init__()
-        self.context= context
+        super().__init__(context)
         self.content_scroll.tile_handler = self.show_photo
 
     def _tile_selected(self, scroll, photo):
@@ -59,8 +58,7 @@ class LibraryView(widgets.ScrollingView):
     }
     
     def __init__(self, context):
-        super().__init__()
-        self.context= context
+        super().__init__(context)
         self.content_scroll.tile_handler = self.show_category
 
     def _tile_selected(self, scroll, category):
@@ -68,51 +66,6 @@ class LibraryView(widgets.ScrollingView):
 
     def show_category(self, tile):
         self.context.application.push_view(CategoryView(self.context))
-
-
-class PisakViewerButtons(Clutter.Actor):
-    SPACING = unit.mm(4)
-    def __init__(self, viewer):
-        """
-        Widget of buttons associated with a LibraryView.
-        @param viewer an instance of LibraryView
-        """
-        super(PisakViewerButtons, self).__init__()
-        self.viewer = viewer
-        self.layout = Clutter.BoxLayout()
-        self.layout.set_orientation(Clutter.Orientation.VERTICAL)
-        self.layout.set_spacing(self.SPACING)
-        self.set_layout_manager(self.layout)
-        margin = Clutter.Margin()
-        margin.top = margin.bottom = self.SPACING
-        self.set_margin(margin)
-        self.button = buttons.MenuButton()
-        self.button.set_model({"label": "Koniec"})
-        self.add_child(self.button)
-        for index in range(7):
-            button = buttons.MenuButton()
-            button.set_model({"label": "Przycisk %d" % index})
-            self.add_child(button)
-
-    def hilite_off(self):
-        self.set_hilite(0.0)
-    
-    def hilite_on(self):
-        self.set_hilite(1.0)
-    
-    def set_hilite(self, hilite):
-        self.hilite = hilite
-        if self.hilite < 0.5:
-            color = Clutter.Color.new(255, 255, 255, 0)
-        else:
-            color = Clutter.Color.new(64, 128, 192, 192)
-        self.set_background_color(color)
-
-    def _next_page(self):
-        """
-        Signal handler.
-        """
-        self.viewer.next_page()
 
 
 class PisakViewerContainer(view.BasicViewContainer):
