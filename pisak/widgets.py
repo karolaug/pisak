@@ -262,6 +262,37 @@ class PagedTileView(Clutter.Actor):
         return _PagedTileViewCycle(self)
 
 
+
+class ScrollingViewCycle(switcher_app.Cycle):
+    interval = 10000
+    def __init__(self, actor):
+        super().__init__()
+        self.actor = actor
+        self.index = 0
+    
+    def expose_next(self):
+        self.STEPS[self.index](self)
+        self.index = (self.index + 1) % len(self.STEPS)
+    
+    def show_menu(self):
+        pass
+        #self.actor.menu.hilite_on()
+    
+    def show_page(self):
+        pass
+        #self.actor.menu.hilite_off()
+        #self.actor.select_page()
+    
+    def next_page(self):
+        pass
+        #self.actor.next_page()
+    
+    
+ScrollingViewCycle.STEPS = [
+    ScrollingViewCycle.show_menu, ScrollingViewCycle.show_page,
+    ScrollingViewCycle.next_page]
+
+
 class ScrollingView(Clutter.Actor):
     """
     Base class for widgets presenting scrolling paged tiles.
@@ -337,7 +368,7 @@ class ScrollingView(Clutter.Actor):
         """
         Create a new cycle which is used by switcher to show consecutive pages from the model.
         """
-        return self.content_scroll.create_cycle()
+        return ScrollingViewCycle(self)
 
 class PhotoSlide(Clutter.Actor):
     def __init__(self):
