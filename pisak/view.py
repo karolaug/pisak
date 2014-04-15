@@ -8,6 +8,8 @@ class AbstractViewContainer(object):
     
     def push_view(self, view):
         self._view_stack.append(view)
+        initial_cycle = view.create_initial_cycle()
+        self.context.switcher.push_cycle(initial_cycle)
         self._post_push_view(view)
     
     def pop_view(self):

@@ -252,7 +252,7 @@ class PagedTileView(Clutter.Actor):
         self._paginate_items()
     
     def _paginate_items(self):
-        self.page_count = int((len(self.items) + (6 - 1)) // 6)
+        self.page_count = int((len(self.items) + (12 - 1)) // 12)
         self.page = 0 if self.page_count else None
         self.update_page_actor()
         self.slide()
@@ -266,7 +266,7 @@ class PagedTileView(Clutter.Actor):
 
 
 class ScrollingViewCycle(switcher_app.Cycle):
-    interval = 10000
+    interval = 3000
     def __init__(self, actor):
         super().__init__()
         self.actor = actor
@@ -276,6 +276,13 @@ class ScrollingViewCycle(switcher_app.Cycle):
         self.STEPS[self.index](self)
         self.index = (self.index + 1) % len(self.STEPS)
     
+    def stop(self):
+        #self.actor.menu.hilite_off()
+        pass
+    
+    def has_next(self):
+        return True
+    
     def show_menu(self):
         pass
         #self.actor.menu.hilite_on()
@@ -283,11 +290,11 @@ class ScrollingViewCycle(switcher_app.Cycle):
     def show_page(self):
         pass
         #self.actor.menu.hilite_off()
-        #self.actor.select_page()
+        self.actor.select_page()
     
     def next_page(self):
         pass
-        #self.actor.next_page()
+        self.actor.next_page()
     
     
 ScrollingViewCycle.STEPS = [
@@ -330,7 +337,6 @@ class ScrollingView(Clutter.Actor):
         self.content_scroll = PagedTileView()
         self.content_scroll.set_model(self.MODEL)
         self.content_scroll.connect("page-changed", self._update_scrollbar)
-        self.content_scroll.connect("tile-selected", self._tile_selected)
         self.content.add_child(self.content_scroll)
         
     def _init_content_layout(self):
@@ -347,6 +353,14 @@ class ScrollingView(Clutter.Actor):
         Force next page in view.
         """
         self.content_scroll.next_page()
+    
+    def select_page(self):
+        """
+        Push cycle of the current page
+        """
+        page_actor = self.content_scroll.page_actor
+        page_cycle = page_actor.create_cycle()
+        self.context.switcher.push_cycle(page_cycle)
         
     def _update_scrollbar(self, scroll, page):
         if page == -1:
@@ -356,17 +370,10 @@ class ScrollingView(Clutter.Actor):
         else:
             progress = page / (scroll.page_count - 1.0)
         self.content_scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
-
-    def _tile_selected(self, scroll, tile):
-        raise NotImplementedError()
     
-    def select(self):
-        """
-        Force selection of current page.
-        """
-        self.content_scroll.select()
     
-    def create_cycle(self):
+    
+    def create_initial_cycle(self):
         """
         Create a new cycle which is used by switcher to show consecutive pages from the model.
         """
