@@ -377,7 +377,7 @@ class ScrollingView(Clutter.Actor):
         self._init_content_scrollbar()
     
     def _init_content_scrollbar(self):
-        self.content_scrollbar = Mx.ProgressBar()
+        self.content_scrollbar = ProgressBar()
         self.content_scrollbar.set_x_expand(True)
         self.content_scrollbar.set_height(30)
         self.content.add_child(self.content_scrollbar)
@@ -414,9 +414,7 @@ class ScrollingView(Clutter.Actor):
             progress = 1.0
         else:
             progress = page / (scroll.page_count - 1.0)
-        self.content_scrollbar.animatev(Clutter.AnimationMode.LINEAR, 500, ['progress'], [progress])
-    
-    
+        self.content_scrollbar.update(progress)
     
     def create_initial_cycle(self):
         """
@@ -424,6 +422,56 @@ class ScrollingView(Clutter.Actor):
         """
         return ScrollingViewCycle(self)
 
+
+class ProgressBar(Clutter.Actor):
+    __gproperties__ = {
+        'progress': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
+    }
+    
+    def __init__(self):
+        super(ProgressBar, self).__init__()
+        self._init_bar()
+        self._init_transition()
+        self.connect("notify::progress", lambda source, prop: self.canvas.invalidate())
+        self.set_property('progress', 0)
+        self.connect("allocation-changed", lambda *_: self._resize_canvas())
+    
+    def _resize_canvas(self):
+        self.canvas.set_size(self.get_width(), self.get_height())
+
+    def _init_bar(self):
+        self.canvas = Clutter.Canvas()
+        self._resize_canvas()
+        self.canvas.connect("draw", self.update_bar)
+        self.set_content(self.canvas)
+
+    def _init_transition(self):
+        self.transition = Clutter.PropertyTransition.new('progress')
+        self.transition.set_duration(500)
+        
+    def do_set_property(self, prop, value):
+        self.progress = value
+        
+    def do_get_property(self, prop):
+        return self.progress
+
+    def update(self, new_progress):
+        self.transition.set_from(self.progress)
+        self.transition.set_to(new_progress)
+        self.remove_transition('progress')
+        self.add_transition('progress', self.transition)
+
+    def update_bar(self, canvas, context, width, height):
+        context.scale(width, height)
+        context.rectangle(0, 0, self.progress, 1)
+        context.set_source_rgba(0, 0.894, 0.765, 1)
+        context.fill()
+        context.rectangle(self.progress, 0, 1, 1)
+        context.set_source_rgba(0, 0, 0, 1)
+        context.fill()
+        return True
+        
+        
 class PhotoSlide(Clutter.Actor):
     def __init__(self):
         super().__init__()
