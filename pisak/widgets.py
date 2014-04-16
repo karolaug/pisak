@@ -286,7 +286,7 @@ class ScrollingView(Clutter.Actor):
         self._init_content_scrollbar()
     
     def _init_content_scrollbar(self):
-        self.content_scrollbar = ProgressBar()
+        self.content_scrollbar = SignedProgressBar()
         self.content_scrollbar.set_x_expand(True)
         self.content_scrollbar.set_height(30)
         self.content.add_child(self.content_scrollbar)
@@ -386,6 +386,14 @@ class ProgressBar(Clutter.Actor):
         context.rectangle(self.progress, 0, 1, 1)
         context.set_source_rgba(0, 0, 0, 1)
         context.fill()
+        return True
+
+class SignedProgressBar(ProgressBar):
+    def __init__(self):
+        super().__init__()
+        
+    def update_bar(self, canvas, context, width, height):
+        super().update_bar(canvas, context, width, height)
         context.set_font_size(1)
         context.set_source_rgb(255, 255, 255)
         context.select_font_face('Monospace', 0, 0)
@@ -393,8 +401,7 @@ class ProgressBar(Clutter.Actor):
         context.scale(0.05, 1)
         context.show_text(''.join([str(self.page), '/', str(self.page_count)]))
         return True
-        
-        
+
 class PhotoSlide(Clutter.Actor):
     def __init__(self):
         super().__init__()
