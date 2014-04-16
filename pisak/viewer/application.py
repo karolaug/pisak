@@ -322,7 +322,10 @@ class PhotoEditionMenu(Clutter.Actor):
     def _init_buttons(self):
         self.buttons = {'grayscale': ['skala szarości', self.buffer.grayscale], 'save': ['zapisz', self.buffer.save],
                         'original': ['oryginał', self.buffer.original], 'mirror': ['lustro', self.buffer.mirror],
-                        'rotate': ['obróć', self.buffer.rotate], 'zoom': ['powiększenie', self.buffer.zoom]}
+                        'rotate': ['obróć', self.buffer.rotate], 'zoom': ['powiększenie', self.buffer.zoom],
+                        'invert': ['negatyw', self.buffer.invert], 'edges': ['krawędzie', self.buffer.edges],
+                        'contour': ['szkic', self.buffer.contour], 'noise': ['szum', self.buffer.noise],
+                        'sepia': ['sepia', self.buffer.sepia], 'solarize': ['prześwietlenie', self.buffer.solarize]}
         for b in self.buttons:
             button = buttons.MenuButton()
             button.set_model({'label': self.buttons[b][0]})
@@ -334,11 +337,20 @@ class PhotoBuffer(object):
     """
     Buffer containing a currently edited photo.
     """
-    def __init__(self, view, photo):
+    PIXEL_FORMATS = {'L_1': Cogl.PixelFormat.A_8, 'RGB_2': Cogl.PixelFormat.RGB_565,
+                     'RGB_3': Cogl.PixelFormat.RGB_888, 'RGBA_2': Cogl.PixelFormat.RGBA_4444,
+                     'RGBA_4': Cogl.PixelFormat.RGBA_8888}
+    def __init__(self, view, photo, slide):
         self.view = view
-        self.photo = photo
         self.path = photo.path
-        self.buffer = self.original_photo = Image.open(path)
+        self.slide = slide
+        self.original_photo = Image.open(path)
+        self.buffer = self.original_photo.copy()
+        if self.buffer.mode == 'P':
+            self.original_photo = self.buffer.convert('RGB') #translates through built-in palette
+            self.buffer = self.original_photo.copy()
+        self.zoom_timer = None
+        self.noise_timer = None
 
     def mirror(self, source, event):
         self.buffer = self.buffer.transpose(Image.FLIP_LEFT_RIGHT)
@@ -349,17 +361,92 @@ class PhotoBuffer(object):
     def rotate(self, source, event):
         self.buffer = self.buffer.transpose(Image.ROTATE_90)
 
+    def solarize(self, source, event):
+        threshold = 80
+        out = self.buffer.point(lambda i: i>threshold and 255-i)
+        mask = self.buffer.convert('L')
+        mask = mask.point(lambda i: i>threshold and 255)
+        self.buffer.paste(out, None, mask)
+
+    def invert(self, source, event):
+        self.buffer = self.buffer.point(lambda i: 255-i)
+
+    def sepia(self, source, event):
+        level = 50
+        grayscale = self.buffer.convert('L')
+        red = grayscale.point(lambda i: i + level*1.5)
+        green = grayscale.point(lambda i: i + level)
+        blue = grayscale.point(lambda i: i - level*0.5)
+        bands = self.buffer.getbands()
+        if len(bands) != 4:
+            self.buffer = Image.merge('RGB', (red, green, blue))
+        elif len(bands) == 4:
+            source = self.buffer.split()
+            self.buffer = Image.merge('RGBA', (red, green, blue, source[3]))
+        
+    def edges(self, source, event):
+        self.buffer = self.buffer.filter(ImageFilter.FIND_EDGES)
+
+    def contour(self, source, event):
+        self.buffer = self.buffer.filter(ImageFilter.CONTOUR)
+
+    def noise(self, source, event):
+        if not self.noise_timer:
+            self.noise_timer = Clutter.Timeline.new(200)
+            self.noise_timer.set_repeat_count(50)
+            self.noise_timer.connect('completed', self._noise_update)
+            self.noise_timer.start()
+        else:
+            self.noise_timer.stop()
+            self.noise_timer = None
+
+    def _noise_update(self, event):
+        level = 40
+        bands = self.buffer.getbands()
+        source = self.buffer.split()
+        for idx in range(len(source)):
+            if bands[idx] != 'A':
+                color = source[idx].point(lambda i: i + random.uniform(-level, level))
+                source[idx].paste(color, None)
+        mode = self.buffer.mode
+        self.buffer = Image.merge(mode, source)
+        
     def zoom(self, source, event):
+        if not self.zoom_timer:
+            self.zoom_timer = Clutter.Timeline.new(200)
+            self.zoom_timer.set_repeat_count(35)
+            self.zoom_timer.connect('completed', self._zoom_update)
+            self.zoom_timer.start()
+        else:
+            self.zoom_timer.stop()
+            self.zoom_timer = None
+
+    def _zoom_update(self, event):
         width, height = self.buffer.size[0], self.buffer.size[1]
-        x0, y0 = width/30, height/30
+        x0, y0 = width/50, height/50
         x1, y1 = width-x0, height-y0
         self.buffer = self.buffer.transform((width, height), Image.EXTENT, (x0, y0, x1, y1))
-
+            
     def original(self, source, event):
-        self.buffer = self.original_photo
+        self.buffer = self.original_photo.copy()
 
     def save(self, source, event):
         raise NotImplementedError()
 
-    def buffer_to_data(self):
-        self.data = self.buffer.tostring()
+    def _pre_update(self):
+        data = self.buffer.tobytes()
+        width, height = self.buffer.size[0], self.buffer.size[1]
+        pixel_count = width*height
+        byte_count = len(data)
+        byte_per_pixel = int(byte_count/pixel_count)
+        row_stride = byte_count/height
+        mode = self.buffer.mode
+        pixel_format = '_'.join([mode, byte_per_pixel])
+        if pixel_format not in self.PIXEL_FORMATS:
+            print('Pixel format: {} not supported'.format(pixel_format))
+        else:
+            cogl_pixel_format = self.PIXEL_FORMATS[pixel_format]
+        self._update(data, cogl_pixel_format, width, height, row_stride)
+
+    def _update(self, data, pixel_format, width, height, row_stride):
+        self.slide.load_from_data(data, pixel_format, width, height, row_stride)
