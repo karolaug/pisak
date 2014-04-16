@@ -414,7 +414,7 @@ class ScrollingView(Clutter.Actor):
             progress = 1.0
         else:
             progress = page / (scroll.page_count - 1.0)
-        self.content_scrollbar.update(progress, page + 1, scroll.page_count)
+        self.content_scrollbar.update(progress, page, scroll.page_count)
     
     def create_initial_cycle(self):
         """
@@ -462,7 +462,7 @@ class ProgressBar(Clutter.Actor):
         self.add_transition('progress', self.transition)
         self.page = page
         self.page_count = page_count
-        self.where = ''.join([str(self.page), '/', str(self.page_count)])
+        self.where = ''.join([str(self.page+1), '/', str(self.page_count)])
 
     def update_bar(self, canvas, context, width, height):
         context.scale(width, height)
@@ -476,7 +476,8 @@ class ProgressBar(Clutter.Actor):
 
 
 class SignedProgressBar(ProgressBar):
-    def __init__(self):
+    def __init__(self, page_count='?', page=0):
+        self.where = ''.join([str(page + 1), '/', str(page_count)])
         super().__init__()
         
     def update_bar(self, canvas, context, width, height):
