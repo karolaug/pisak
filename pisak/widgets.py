@@ -377,6 +377,7 @@ class ProgressBar(Clutter.Actor):
         self.add_transition('progress', self.transition)
         self.page = page
         self.page_count = page_count
+        self.where = ''.join([str(self.page), '/', str(self.page_count)])
 
     def update_bar(self, canvas, context, width, height):
         context.scale(width, height)
@@ -399,7 +400,7 @@ class SignedProgressBar(ProgressBar):
         context.select_font_face('Monospace', 0, 0)
         context.move_to(0.85, 0.9)
         context.scale(0.05, 1) #text not stretched onto the whole bar
-        context.show_text(''.join([str(self.page), '/', str(self.page_count)]))
+        context.show_text(self.where)
         return True
 
 class PhotoSlide(Clutter.Actor):
