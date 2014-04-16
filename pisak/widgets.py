@@ -398,7 +398,7 @@ class SignedProgressBar(ProgressBar):
         context.set_source_rgb(255, 255, 255)
         context.select_font_face('Monospace', 0, 0)
         context.move_to(0.85, 0.9)
-        context.scale(0.05, 1)
+        context.scale(0.05, 1) #text not stretched onto the whole bar
         context.show_text(''.join([str(self.page), '/', str(self.page_count)]))
         return True
 
