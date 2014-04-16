@@ -4,7 +4,7 @@ Module defines classes specific to Viewer application.
 import os.path
 import random
 from gi.repository import Clutter, Mx, GObject
-from PIL import Image
+from PIL import Image, ImageFilter
 from pisak import unit, view, buttons
 from pisak import widgets
 from pisak import switcher_app
@@ -337,18 +337,17 @@ class PhotoBuffer(object):
     """
     Buffer containing a currently edited photo.
     """
-    PIXEL_FORMATS = {'L_1': Cogl.PixelFormat.A_8, 'RGB_2': Cogl.PixelFormat.RGB_565,
-                     'RGB_3': Cogl.PixelFormat.RGB_888, 'RGBA_2': Cogl.PixelFormat.RGBA_4444,
-                     'RGBA_4': Cogl.PixelFormat.RGBA_8888}
+    PIXEL_FORMATS = {'1_1': Cogl.PixelFormat.G_8, 'L_1': Cogl.PixelFormat.A_8,
+                     'RGB_2': Cogl.PixelFormat.RGB_565, 'RGB_3': Cogl.PixelFormat.RGB_888,
+                     'RGBA_2': Cogl.PixelFormat.RGBA_4444, 'RGBA_4': Cogl.PixelFormat.RGBA_8888}
     def __init__(self, view, photo, slide):
         self.view = view
         self.path = photo.path
         self.slide = slide
         self.original_photo = Image.open(path)
+        if self.original_photo.mode == 'P':
+            self.original_photo = self.original_photo.convert() #translates through built-in palette
         self.buffer = self.original_photo.copy()
-        if self.buffer.mode == 'P':
-            self.original_photo = self.buffer.convert('RGB') #translates through built-in palette
-            self.buffer = self.original_photo.copy()
         self.zoom_timer = None
         self.noise_timer = None
 
@@ -363,13 +362,25 @@ class PhotoBuffer(object):
 
     def solarize(self, source, event):
         threshold = 80
-        out = self.buffer.point(lambda i: i>threshold and 255-i)
-        mask = self.buffer.convert('L')
-        mask = mask.point(lambda i: i>threshold and 255)
-        self.buffer.paste(out, None, mask)
+        bands = self.buffer.getbands()
+        source = self.buffer.split()
+        for idx in range(len(source)):
+            if bands[idx] != 'A':
+                out = source[idx].point(lambda i: i>threshold and 255-i)
+                mask = source[idx].point(lambda i: i>threshold and 255)
+                source[idx].paste(out, None, mask)
+        mode = self.buffer.mode
+        self.buffer = Image.merge(mode, source)
 
     def invert(self, source, event):
-        self.buffer = self.buffer.point(lambda i: 255-i)
+        bands = self.buffer.getbands()
+        source = self.buffer.split()
+        for idx in range(len(source)):
+            if bands[idx] != 'A':
+                out = source[idx].point(lambda i: 255-i)
+                source[idx].paste(out, None)
+        mode = self.buffer.mode
+        self.buffer = Image.merge(mode, source)
 
     def sepia(self, source, event):
         level = 50
@@ -378,17 +389,32 @@ class PhotoBuffer(object):
         green = grayscale.point(lambda i: i + level)
         blue = grayscale.point(lambda i: i - level*0.5)
         bands = self.buffer.getbands()
-        if len(bands) != 4:
+        if 'A' not in bands:
             self.buffer = Image.merge('RGB', (red, green, blue))
-        elif len(bands) == 4:
+        else:
             source = self.buffer.split()
-            self.buffer = Image.merge('RGBA', (red, green, blue, source[3]))
+            alpha = source[bands.index('A')]
+            self.buffer = Image.merge('RGBA', (red, green, blue, alpha))
         
     def edges(self, source, event):
-        self.buffer = self.buffer.filter(ImageFilter.FIND_EDGES)
+        bands = self.buffer.getbands()
+        source = self.buffer.split()
+        for idx in range(len(source)):
+            if bands[idx] != 'A':
+                out = source[idx].filter(ImageFilter.FIND_EDGES)
+                source[idx].paste(out, None)
+        mode = self.buffer.mode
+        self.buffer = Image.merge(mode, source)
 
     def contour(self, source, event):
-        self.buffer = self.buffer.filter(ImageFilter.CONTOUR)
+        bands = self.buffer.getbands()
+        source = self.buffer.split()
+        for idx in range(len(source)):
+            if bands[idx] != 'A':
+                out = source[idx].filter(ImageFilter.CONTOUR)
+                source[idx].paste(out, None)
+        mode = self.buffer.mode
+        self.buffer = Image.merge(mode, source)
 
     def noise(self, source, event):
         if not self.noise_timer:
@@ -406,8 +432,8 @@ class PhotoBuffer(object):
         source = self.buffer.split()
         for idx in range(len(source)):
             if bands[idx] != 'A':
-                color = source[idx].point(lambda i: i + random.uniform(-level, level))
-                source[idx].paste(color, None)
+                out = source[idx].point(lambda i: i + random.uniform(-level, level))
+                source[idx].paste(out, None)
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
         
@@ -441,12 +467,13 @@ class PhotoBuffer(object):
         byte_per_pixel = int(byte_count/pixel_count)
         row_stride = byte_count/height
         mode = self.buffer.mode
-        pixel_format = '_'.join([mode, byte_per_pixel])
+        pixel_format = '_'.join([mode, str(byte_per_pixel)])
         if pixel_format not in self.PIXEL_FORMATS:
-            print('Pixel format: {} not supported'.format(pixel_format))
+            print('Pixel format {} not supported.'.format(pixel_format))
         else:
             cogl_pixel_format = self.PIXEL_FORMATS[pixel_format]
-        self._update(data, cogl_pixel_format, width, height, row_stride)
+        return data, cogl_pixel_format, width, height, row_stride
 
-    def _update(self, data, pixel_format, width, height, row_stride):
-        self.slide.load_from_data(data, pixel_format, width, height, row_stride)
+    def _update(self):
+        #pass these to the photo_actor and load from data
+        data, pixel_format, width, height, row_stride = self._pre_update()
