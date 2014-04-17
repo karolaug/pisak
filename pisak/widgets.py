@@ -245,10 +245,11 @@ class PagedTileView(Clutter.Actor):
         else:
             self.emit("page-changed", -1)
     
-    def set_model(self, model):
+    def set_model(self, model, update_on_change):
         self.model = model
         self.items = self.model["items"]
         self.page_interval = self.model["page_interval"]
+        self.connect("page-changed", update_on_change)
         self._paginate_items()
     
     def _paginate_items(self):
@@ -373,19 +374,19 @@ class ScrollingView(Clutter.Actor):
         self.content.set_clip_to_allocation(True)
         self.add_child(self.content)
         self._init_content_layout()
-        self._init_content_scroll()
         self._init_content_scrollbar()
+        self._init_content_scroll()
     
     def _init_content_scrollbar(self):
         self.content_scrollbar = SignedProgressBar()
         self.content_scrollbar.set_x_expand(True)
-        self.content_scrollbar.set_height(30)
+        self.content_scrollbar.set_height(unit.mm(5))
+        self.content_scrollbar.set_z_position(1)
         self.content.add_child(self.content_scrollbar)
     
     def _init_content_scroll(self):
         self.content_scroll = PagedTileView()
-        self.content_scroll.set_model(self.MODEL)
-        self.content_scroll.connect("page-changed", self._update_scrollbar)
+        self.content_scroll.set_model(self.MODEL, self._update_scrollbar)
         self.content.add_child(self.content_scroll)
         
     def _init_content_layout(self):
@@ -414,7 +415,7 @@ class ScrollingView(Clutter.Actor):
             progress = 1.0
         else:
             progress = page / (scroll.page_count - 1.0)
-        self.content_scrollbar.update(progress, page + 1, scroll.page_count)
+        self.content_scrollbar.update(progress, page, scroll.page_count)
     
     def create_initial_cycle(self):
         """
@@ -462,7 +463,7 @@ class ProgressBar(Clutter.Actor):
         self.add_transition('progress', self.transition)
         self.page = page
         self.page_count = page_count
-        self.where = ''.join([str(self.page), '/', str(self.page_count)])
+        self.where = ''.join([str(self.page+1), '/', str(self.page_count)])
 
     def update_bar(self, canvas, context, width, height):
         context.scale(width, height)
@@ -476,7 +477,8 @@ class ProgressBar(Clutter.Actor):
 
 
 class SignedProgressBar(ProgressBar):
-    def __init__(self):
+    def __init__(self, page_count='?', page=0):
+        self.where = ''.join([str(page + 1), '/', str(page_count)])
         super().__init__()
         
     def update_bar(self, canvas, context, width, height):
@@ -485,7 +487,7 @@ class SignedProgressBar(ProgressBar):
         context.set_source_rgb(255, 255, 255)
         context.select_font_face('Monospace', 0, 0)
         context.move_to(0.85, 0.9)
-        context.scale(0.05, 1) #text not stretched onto the whole bar
+        context.scale(0.03, 1) #text not stretched onto the whole bar
         context.show_text(self.where)
         return True
 
