@@ -380,7 +380,7 @@ class ScrollingView(Clutter.Actor):
     def _init_content_scrollbar(self):
         self.content_scrollbar = SignedProgressBar()
         self.content_scrollbar.set_x_expand(True)
-        self.content_scrollbar.set_height(30)
+        self.content_scrollbar.set_height(unit.mm(5))
         self.content_scrollbar.set_z_position(1)
         self.content.add_child(self.content_scrollbar)
     
@@ -487,7 +487,7 @@ class SignedProgressBar(ProgressBar):
         context.set_source_rgb(255, 255, 255)
         context.select_font_face('Monospace', 0, 0)
         context.move_to(0.85, 0.9)
-        context.scale(0.05, 1) #text not stretched onto the whole bar
+        context.scale(0.03, 1) #text not stretched onto the whole bar
         context.show_text(self.where)
         return True
 
