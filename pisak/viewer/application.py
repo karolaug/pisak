@@ -29,13 +29,8 @@ class CategoryView(widgets.ScrollingView):
     }
     
     def __init__(self, context):
-        super().__init__()
-        self.context= context
+        super().__init__(context)
         self.content_scroll.tile_handler = self.show_photo
-    
-    def _init_overlay(self):
-        background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
-        self.add_child(Clutter.Texture.new_from_file(background_path))
 
     def _tile_selected(self, scroll, photo):
         self.emit('photo-selected', photo)
@@ -63,13 +58,8 @@ class LibraryView(widgets.ScrollingView):
     }
     
     def __init__(self, context):
-        super().__init__()
-        self.context= context
+        super().__init__(context)
         self.content_scroll.tile_handler = self.show_category
-
-    def _init_overlay(self):
-        background_path = os.path.join(res.PATH, "hyperbolic_vignette.png")
-        self.add_child(Clutter.Texture.new_from_file(background_path))
 
     def _tile_selected(self, scroll, category):
         self.emit('category-selected', category)
@@ -78,70 +68,38 @@ class LibraryView(widgets.ScrollingView):
         self.context.application.push_view(CategoryView(self.context))
 
 
-class PisakViewerButtons(Clutter.Actor):
-    SPACING = unit.mm(4)
-    def __init__(self, viewer):
-        """
-        Widget of buttons associated with a LibraryView.
-        @param viewer an instance of LibraryView
-        """
-        super(PisakViewerButtons, self).__init__()
-        self.viewer = viewer
-        self.layout = Clutter.BoxLayout()
-        self.layout.set_orientation(Clutter.Orientation.VERTICAL)
-        self.layout.set_spacing(self.SPACING)
-        self.set_layout_manager(self.layout)
-        margin = Clutter.Margin()
-        margin.top = margin.bottom = self.SPACING
-        self.set_margin(margin)
-        self.button = buttons.MenuButton()
-        self.button.set_model({"label": "Koniec"})
-        self.add_child(self.button)
-        for index in range(7):
-            button = buttons.MenuButton()
-            button.set_model({"label": "Przycisk %d" % index})
-            self.add_child(button)
-
-    def _next_page(self):
-        """
-        Signal handler.
-        """
-        self.viewer.next_page()
-
-
-class PisakViewerContainer(Clutter.Actor):
+class PisakViewerContainer(view.BasicViewContainer):
     def __init__(self, context):
         """
         Application container, which creates other widgets.
         @param contect switcher application context passed from application
         """
-        super(PisakViewerContainer, self).__init__()
-        self.context = context
+        super().__init__(context)
         self._init_elements()
         
     def _init_main(self):
-        self.library_view = LibraryView(self.context)
-        self.library_view.connect('category-selected', self.enter_category)
-        self.main = view.BasicViewContainer(self.context)
-        self.main.push_view(self.library_view)
-        self.main.set_x_expand(True)
-        self.main.set_y_expand(True)
+        #elf.library_view = LibraryView(self.context)
+        #elf.library_view.connect('category-selected', self.enter_category)
+        #elf.main = view.BasicViewContainer(self.context)
+        #self.main.push_view(self.library_view)
+        self.set_x_expand(True)
+        self.set_y_expand(True)
 
     def _init_elements(self):
         self._init_main()
-        self.buttons = PisakViewerButtons(self)
+        #self.buttons = PisakViewerButtons(self)
         
-        self.buttons.set_y_expand(True)
-        self.buttons.set_x_expand(False)
-        self.buttons.set_width(unit.mm(25))
-        self.buttons.set_depth(-1.0)
+        #self.buttons.set_y_expand(True)
+        #self.buttons.set_x_expand(False)
+        #self.buttons.set_width(unit.mm(25))
+        #self.buttons.set_depth(-1.0)
         
         layout = Clutter.BoxLayout()
         layout.set_orientation(Clutter.Orientation.HORIZONTAL)
         self.set_layout_manager(layout)
         layout.set_spacing(unit.mm(4))
-        self.add_child(self.main)
-        self.add_child(self.buttons)
+        #self.add_child(self.main)
+        #self.add_child(self.buttons)
 
     def enter_category(self, library, category):
         self.category_view = CategoryView()
@@ -163,18 +121,18 @@ class PisakViewerContainer(Clutter.Actor):
         """
         self.main.select()
     
-    def create_cycle(self):
-        """
-        Create new page-switching cycle in the library view
-        """
-        return self.library_view.create_cycle()
+    #def create_cycle(self):
+        #"""
+        #Create new page-switching cycle in the library view
+        #"""
+        #return self.library_view.create_cycle()
     
-    def push_view(self, new_view):
-        """
-        Add new view to the container
-        """
-        self.main.push_view(new_view)
-        self.context.switcher.push_cycle(new_view.create_cycle())
+    #def push_view(self, new_view):
+        #"""
+        #Add new view to the container
+        #"""
+        #self.main.push_view(new_view)
+        #self.context.switcher.push_cycle(new_view.create_cycle())
 
 
 class PisakViewerStage(Clutter.Stage):
@@ -186,17 +144,20 @@ class PisakViewerStage(Clutter.Stage):
         super(PisakViewerStage, self).__init__()
         self.context = context
         self._init_elements()
-        self.context.switcher.push_cycle(self.content.create_cycle())
-        self.input = switcher_app.KeyboardSwitcherInput(self)
-        self.context.switcher.add_input(self.input)
-    
+        #self.context.switcher.push_cycle(self.content.create_cycle())
+        self._init_input()
+
     def _init_elements(self):
-        self.layout = Clutter.BinLayout()
-        self.set_layout_manager(self.layout)
+        self._init_layout()
         self._init_background()
+        self._init_content()
+    
+    def _init_content(self):
         self.content = PisakViewerContainer(self.context)
         self.add_child(self.content)
-    
+        library_view = LibraryView(self.context)
+        self.content.push_view(library_view)
+
     def _init_background(self):
         def fence_pattern(canvas, context, w, h):
             context.scale(w, h)
@@ -218,7 +179,15 @@ class PisakViewerStage(Clutter.Stage):
     
     def push_view(self, new_view):
         self.content.push_view(new_view)
-    
+
+    def _init_input(self):
+        self.input = switcher_app.KeyboardSwitcherInput(self)
+        self.context.switcher.add_input(self.input)
+
+    def _init_layout(self):
+        self.layout = Clutter.BinLayout()
+        self.set_layout_manager(self.layout)
+
 
 class PisakViewApp(switcher_app.Application):
     """
