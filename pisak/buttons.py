@@ -16,6 +16,8 @@ class MenuButton(Clutter.Actor):
     def __init__(self):
         super().__init__()
         self.connect("button-release-event", self.click_activate)
+        self.connect("enter-event", lambda *_: self.hilite_on())
+        self.connect("leave-event", lambda *_: self.hilite_off())
         self.set_reactive(True)
         self.set_size(MenuButton.WIDTH, MenuButton.HEIGHT)
         self.layout = Clutter.BoxLayout()
