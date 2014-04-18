@@ -21,7 +21,7 @@ class TestAppView(unittest.TestCase):
                 pass
 
         class ViewActor(Clutter.Actor):
-            def create_cycle(self):                
+            def create_initial_cycle(self):
                 return DummyCycle()
             
         app = application.PisakViewApp([])

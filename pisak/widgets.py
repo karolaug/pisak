@@ -245,11 +245,10 @@ class PagedTileView(Clutter.Actor):
         else:
             self.emit("page-changed", -1)
     
-    def set_model(self, model, update_on_change):
+    def set_model(self, model):
         self.model = model
         self.items = self.model["items"]
         self.page_interval = self.model["page_interval"]
-        self.connect("page-changed", update_on_change)
         self._paginate_items()
     
     def _paginate_items(self):
@@ -386,7 +385,8 @@ class ScrollingView(Clutter.Actor):
     
     def _init_content_scroll(self):
         self.content_scroll = PagedTileView()
-        self.content_scroll.set_model(self.MODEL, self._update_scrollbar)
+        self.content_scroll.connect("page-changed", self._update_scrollbar)
+        self.content_scroll.set_model(self.MODEL)
         self.content.add_child(self.content_scroll)
         
     def _init_content_layout(self):

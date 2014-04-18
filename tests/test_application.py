@@ -16,14 +16,6 @@ class ViewerContainerTests(unittest.TestCase):
         context = dummy_app.context
         self.assertEqual(dummy_app, context.application)
         self.assertIsInstance(context.switcher, switcher_app.Switcher)
-        
-    def test_content(self):
-        context = switcher_app.Context(object())
-        content = application.PisakViewerContainer(context)
-        cycle = content.create_cycle()
-        cycle.expose_next()
-        cycle.expose_next()
-        cycle.stop()
     
     def test_views(self):
         class DummyCycle(switcher_app.Cycle):
@@ -36,7 +28,7 @@ class ViewerContainerTests(unittest.TestCase):
                 pass
 
         class ViewActor(Clutter.Actor):
-            def create_cycle(self):                
+            def create_initial_cycle(self):
                 return DummyCycle()
         
         view_1 = ViewActor()
@@ -61,7 +53,7 @@ class ApplicationTests(unittest.TestCase):
                 pass
 
         class ViewActor(Clutter.Actor):
-            def create_cycle(self):                
+            def create_initial_cycle(self):
                 return DummyCycle()
         
         dummy_view = ViewActor()
