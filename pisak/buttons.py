@@ -1,26 +1,102 @@
-from gi.repository import Clutter, Mx, GObject
-from pisak import unit
+from gi.repository import Clutter, Mx, GObject, Cogl
+from PIL import Image as PILImage
+import os
+from pisak import unit, res
 
-class MenuButton(Mx.Button):
-    HEIGHT = unit.mm(16)
+class MenuButton(Clutter.Actor):
+    HEIGHT = unit.mm(15)
+    WIDTH = unit.mm(65)
+    MODEL = {
+        "icon_path": os.path.join(res.PATH, "icon.png")
+    }
     __gsignals__ = {
         "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
     
     def __init__(self):
         super().__init__()
-        self.connect("clicked", self.click_activate)
-        self.set_height(MenuButton.HEIGHT)
-        self.set_x_expand(True)
-        self.set_y_expand(False)
-        
+        self.connect("button-release-event", self.click_activate)
+        self.set_reactive(True)
+        self.set_size(MenuButton.WIDTH, MenuButton.HEIGHT)
+        self.layout = Clutter.BoxLayout()
+        self.layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+        self.layout.set_spacing(MenuButton.WIDTH/30.)
+        self.set_layout_manager(self.layout)
+        self._init_label()
+        self._init_icon()
+        self.hilite_off()
+        self.selection_time = 1000
     
+    def _init_label(self):
+        self.label = Clutter.Text()
+        self.label.set_width(MenuButton.WIDTH/1.5)
+        self.label.set_line_wrap(True)
+        self.label.set_font_name('monospace bold 20')
+        self.label.set_background_color(res.colors.TRANSPARENT)
+        self.add_child(self.label)
+
+    def _init_icon(self):
+        self.icon = Mx.Image()
+        self.icon.set_size(MenuButton.WIDTH/4.2, MenuButton.HEIGHT/1.2)
+        self.icon.set_scale_mode(Mx.ImageScaleMode.FIT)
+        self.add_child(self.icon)
+            
+    def set_label(self, label):
+        self.label.set_text(label)
+
+    def set_icon(self, icon_path):
+        icon = PILImage.open(icon_path)
+        source = icon.split()
+        bands = icon.getbands()
+        for idx in range(len(source)):
+            if bands[idx] != 'A':
+                out = source[idx].point(lambda i: 255)
+                source[idx].paste(out, None)
+        mode = icon.mode
+        icon = PILImage.merge(mode, source)
+        data = icon.tobytes()
+        width, height = icon.size[0], icon.size[1]
+        byte_count = len(data)
+        row_stride = byte_count/height
+        self.icon.set_from_data(data, Cogl.PixelFormat.RGBA_8888, width, height, row_stride)        
+
+    def hilite_off(self):
+        self.set_hilite(0.0)
+    
+    def hilite_on(self):
+        self.set_hilite(1.0)
+
+    def select_on(self):
+        self.set_hilite(1.5)
+
+    def set_hilite(self, hilite):
+        self.hilite = hilite
+        if self.hilite < 0.5:
+            self.background_color = res.colors.BLACK
+            self.foreground_color = res.colors.WHITE
+        elif self.hilite < 1.5:
+            self.background_color = res.colors.HILITE_1
+            self.foreground_color = res.colors.BLACK
+        else:
+            self.background_color = res.colors.WHITE
+            self.foreground_color = res.colors.BLACK
+        self.update_button()
+
+    def update_button(self):
+        self.set_background_color(self.background_color)
+        self.label.set_color(self.foreground_color)
+        icon_color = Clutter.ColorizeEffect.new(self.foreground_color)
+        self.icon.clear_effects()
+        self.icon.add_effect(icon_color)
+
     def set_model(self, model):
-        self.model = model
-        self.set_label(self.model["label"])
+        self.set_label(model["label"])
+        self.set_icon(self.MODEL["icon_path"])
     
-    def click_activate(self):
-        self.emit("activated")
+    def click_activate(self, source, event):
+        self.select_on()
+        Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
+        self.emit("activate")
 
 
 class LetterButton(Clutter.Actor):
