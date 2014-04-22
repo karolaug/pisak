@@ -1,8 +1,7 @@
 from gi.repository import Clutter, Mx, GObject
-from pisak import unit
+from pisak.res import dims
 
 class MenuButton(Mx.Button):
-    HEIGHT = unit.mm(16)
     __gsignals__ = {
         "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
@@ -10,9 +9,9 @@ class MenuButton(Mx.Button):
     def __init__(self):
         super().__init__()
         self.connect("clicked", self.click_activate)
-        self.set_height(MenuButton.HEIGHT)
-        self.set_x_expand(True)
-        self.set_y_expand(False)
+        self.set_width(dims.MENU_BUTTON_W_PX)
+        self.set_height(dims.MENU_BUTTON_H_PX)
+        #self.set_background_color(colors.BUTTON_BG)
         
     
     def set_model(self, model):
