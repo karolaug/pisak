@@ -47,20 +47,7 @@ class MenuButton(Clutter.Actor):
         self.label.set_text(label)
 
     def set_icon(self, icon_path):
-        icon = PILImage.open(icon_path)
-        source = icon.split()
-        bands = icon.getbands()
-        for idx in range(len(source)):
-            if bands[idx] != 'A':
-                out = source[idx].point(lambda i: 255)
-                source[idx].paste(out, None)
-        mode = icon.mode
-        icon = PILImage.merge(mode, source)
-        data = icon.tobytes()
-        width, height = icon.size[0], icon.size[1]
-        byte_count = len(data)
-        row_stride = byte_count/height
-        self.icon.set_from_data(data, Cogl.PixelFormat.RGBA_8888, width, height, row_stride)        
+        self.icon.set_from_file(icon_path)
 
     def hilite_off(self):
         self.set_hilite(0.0)
