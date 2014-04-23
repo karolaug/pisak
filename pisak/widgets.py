@@ -124,13 +124,12 @@ class TilePage(Clutter.Actor):
         @param tiles A list of tiles to be placed on the page.
         """
         super().__init__()
-        self.set_y_expand(False)
+        self.set_width(3 * dims.TILE_W_PX + 2 * dims.W_SPACING_PX)
+        self.set_height(4 * dims.TILE_H_PX + 3 * dims.H_SPACING_PX)
         self.layout = Clutter.GridLayout()
         self.set_layout_manager(self.layout)
         self.layout.set_row_spacing(dims.H_SPACING_PX)
         self.layout.set_column_spacing(dims.W_SPACING_PX)
-        #self.layout.set_column_homogeneous(True)
-        #self.layout.set_row_homogeneous(True)
         self.tiles = tiles
         for i in range(4):
             for j in range(3):
@@ -171,7 +170,6 @@ class PagedTileView(Clutter.Actor):
     def __init__(self):
         super(PagedTileView, self).__init__()
         self.set_clip_to_allocation(True)
-        self.set_y_expand(False)
         self.page = None
         self.page_actor = None
         self.items = []
@@ -317,7 +315,7 @@ class ButtonsMenu(Clutter.Actor):
         self.button = buttons.MenuButton()
         self.button.set_model({"label": "Koniec"})
         self.add_child(self.button)
-        for index in range(8):
+        for index in range(4):
             button = buttons.MenuButton()
             button.set_model({"label": "Przycisk %d" % index})
             self.add_child(button)
@@ -349,7 +347,6 @@ class ScrollingView(Clutter.Actor):
     """
     def __init__(self, context):
         super().__init__()
-        #self.set_x_expand(True)
         self.context = context
         self._init_elements()
     
@@ -365,27 +362,17 @@ class ScrollingView(Clutter.Actor):
         self.layout.set_row_spacing(dims.H_SPACING_PX)
         self.layout.set_column_spacing(dims.W_SPACING_PX)
         self.set_layout_manager(self.layout)
-        #self.layout.set_orientation(Clutter.Orientation.HORIZONTAL)
         
     def _init_content(self):
-        #self.content = Clutter.Actor()
-        #margin = Clutter.Margin()
-        #margin.top = margin.bottom = dims.H_SPACING_PX
-        #self.content.set_margin(margin)
-        #self.content.set_x_expand(True)
-        #self.content.set_clip_to_allocation(True)
-        #self.add_child(self.content)
-        #self._init_content_layout()
         self._init_menu()
         self._init_content_header()
         self._init_content_scrollbar()
         self._init_content_scroll()
 
     def _init_menu(self):
-        self.menu = ButtonsMenu(self.context)
+        self.menu = ButtonsMenu(self.context) 
         self.menu.set_y_expand(False)
-        self.menu.set_height(500)
-        self.layout.attach(self.menu, 0, 1, 1, 2)
+        self.layout.attach(self.menu, 0, 0, 1, 2)
 
     def _init_content_header(self):
         self.header = Mx.Label()
@@ -393,20 +380,19 @@ class ScrollingView(Clutter.Actor):
         self.header.set_height(dims.MENU_BUTTON_H_PX)
         self.header.set_x_expand(True)
         self.header.set_background_color(colors.HILITE_1)
-        self.layout.attach(self.header, 1, 1, 1, 1)
+        self.layout.attach(self.header, 1, 0, 1, 1)
 
     def _init_content_scrollbar(self):
         self.content_scrollbar = SignedProgressBar()
         self.content_scrollbar.set_height(dims.MENU_BUTTON_H_PX)
         self.content_scrollbar.set_x_expand(True)
-        self.layout.attach(self.content_scrollbar, 0, 0, 2, 1)
+        self.layout.attach(self.content_scrollbar, 0, 2, 2, 1)
     
     def _init_content_scroll(self):
         self.content_scroll = PagedTileView()
-        self.content_scroll.set_y_expand(True)
         self.content_scroll.connect("page-changed", self._update_scrollbar)
         self.content_scroll.set_model(self.MODEL)
-        self.layout.attach(self.content_scroll, 1, 2, 1, 1)
+        self.layout.attach(self.content_scroll, 1, 1, 1, 1)
         
     def _init_content_layout(self):
         self.content_layout = Clutter.BoxLayout()
@@ -429,6 +415,8 @@ class ScrollingView(Clutter.Actor):
         self.context.switcher.push_cycle(page_cycle)
         
     def _update_scrollbar(self, scroll, page):
+        print(self.content_scroll.get_position(), self.content_scroll.get_size())
+        print("p", self.content_scroll.page_actor.get_position(), self.content_scroll.page_actor.get_size())
         if page == -1:
             progress = 0.0
         elif scroll.page_count == 1:
