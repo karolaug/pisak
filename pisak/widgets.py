@@ -415,8 +415,6 @@ class ScrollingView(Clutter.Actor):
         self.context.switcher.push_cycle(page_cycle)
         
     def _update_scrollbar(self, scroll, page):
-        print(self.content_scroll.get_position(), self.content_scroll.get_size())
-        print("p", self.content_scroll.page_actor.get_position(), self.content_scroll.page_actor.get_size())
         if page == -1:
             progress = 0.0
         elif scroll.page_count == 1:
