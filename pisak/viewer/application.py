@@ -59,7 +59,7 @@ class LibraryView(widgets.ScrollingView):
     
     def __init__(self, context):
         super().__init__(context)
-        self.content_scroll.tile_handler = self.show_category
+        #self.content_scroll.tile_handler = self.show_category
 
     def _tile_selected(self, scroll, category):
         self.emit('category-selected', category)

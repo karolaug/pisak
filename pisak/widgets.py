@@ -131,7 +131,6 @@ class TilePage(Clutter.Actor):
         self.layout.set_column_spacing(dims.W_SPACING_PX)
         #self.layout.set_column_homogeneous(True)
         #self.layout.set_row_homogeneous(True)
-        self.set_background_color(colors.HILITE_1)
         self.tiles = tiles
         for i in range(4):
             for j in range(3):
@@ -171,6 +170,7 @@ class PagedTileView(Clutter.Actor):
 
     def __init__(self):
         super(PagedTileView, self).__init__()
+        self.set_clip_to_allocation(True)
         self.set_y_expand(False)
         self.page = None
         self.page_actor = None
@@ -311,17 +311,13 @@ class ButtonsMenu(Clutter.Actor):
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation.VERTICAL)
         self.layout.set_spacing(dims.H_SPACING_PX)
-        print(dims.H_SPACING_PX)
         self.set_layout_manager(self.layout)
-        margin = Clutter.Margin()
-        margin.top = margin.bottom = dims.H_SPACING_PX
         self.set_y_expand(True)
         self.set_width(dims.MENU_BUTTON_W_PX)
-        self.set_margin(margin)
         self.button = buttons.MenuButton()
         self.button.set_model({"label": "Koniec"})
         self.add_child(self.button)
-        for index in range(9):
+        for index in range(8):
             button = buttons.MenuButton()
             button.set_model({"label": "Przycisk %d" % index})
             self.add_child(button)
@@ -353,67 +349,64 @@ class ScrollingView(Clutter.Actor):
     """
     def __init__(self, context):
         super().__init__()
-        self.set_x_expand(True)
+        #self.set_x_expand(True)
         self.context = context
         self._init_elements()
     
     def _init_elements(self):
-        self._init_menu()
         self._init_layout()
         self._init_content()
-        
-    def _init_menu(self):
-        self.menu = ButtonsMenu(self.context)
-        self.add_child(self.menu)
     
     def _init_layout(self):
-        self.layout = Clutter.BoxLayout()
-        self.layout.set_spacing(dims.W_SPACING_PX)
-        self.set_layout_manager(self.layout)
-        self.layout.set_orientation(Clutter.Orientation.HORIZONTAL)
-        
-    def _init_content(self):
-        self.content = Clutter.Actor()
         margin = Clutter.Margin()
         margin.top = margin.bottom = dims.H_SPACING_PX
-        self.content.set_margin(margin)
-        self.content.set_x_expand(True)
-        self.content.set_clip_to_allocation(True)
-        self.add_child(self.content)
-        self._init_content_layout()
+        self.set_margin(margin)
+        self.layout = Clutter.GridLayout()
+        self.layout.set_row_spacing(dims.H_SPACING_PX)
+        self.layout.set_column_spacing(dims.W_SPACING_PX)
+        self.set_layout_manager(self.layout)
+        #self.layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+        
+    def _init_content(self):
+        #self.content = Clutter.Actor()
+        #margin = Clutter.Margin()
+        #margin.top = margin.bottom = dims.H_SPACING_PX
+        #self.content.set_margin(margin)
+        #self.content.set_x_expand(True)
+        #self.content.set_clip_to_allocation(True)
+        #self.add_child(self.content)
+        #self._init_content_layout()
+        self._init_menu()
         self._init_content_header()
         self._init_content_scrollbar()
         self._init_content_scroll()
-    
+
+    def _init_menu(self):
+        self.menu = ButtonsMenu(self.context)
+        self.menu.set_y_expand(False)
+        self.menu.set_height(500)
+        self.layout.attach(self.menu, 0, 1, 1, 2)
+
     def _init_content_header(self):
         self.header = Mx.Label()
         self.header.set_text("HELLO")
         self.header.set_height(dims.MENU_BUTTON_H_PX)
         self.header.set_x_expand(True)
-        self.header.set_z_position(0)
         self.header.set_background_color(colors.HILITE_1)
-        self.content.add_child(self.header)
-    
+        self.layout.attach(self.header, 1, 1, 1, 1)
+
     def _init_content_scrollbar(self):
         self.content_scrollbar = SignedProgressBar()
-        self.content_scrollbar.set_x_expand(True)
         self.content_scrollbar.set_height(dims.MENU_BUTTON_H_PX)
-        self.content_scrollbar.set_z_position(0)
-        self.content.add_child(self.content_scrollbar)
+        self.content_scrollbar.set_x_expand(True)
+        self.layout.attach(self.content_scrollbar, 0, 0, 2, 1)
     
     def _init_content_scroll(self):
         self.content_scroll = PagedTileView()
+        self.content_scroll.set_y_expand(True)
         self.content_scroll.connect("page-changed", self._update_scrollbar)
         self.content_scroll.set_model(self.MODEL)
-        
-        self.content_layout.set_alignment(
-                self.content_scroll,
-                Clutter.BoxAlignment.START, 
-                Clutter.BoxAlignment.END)
-        #self.content_scroll.set_height(dims.MENU_BUTTON_H_PX)
-        self.content_scrollbar.set_z_position(0)
-        self.content_scroll.set_y_expand(False)
-        self.content.add_child(self.content_scroll)
+        self.layout.attach(self.content_scroll, 1, 2, 1, 1)
         
     def _init_content_layout(self):
         self.content_layout = Clutter.BoxLayout()
