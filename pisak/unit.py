@@ -38,3 +38,10 @@ if __name__ == '__main__':
     print(msg.format(getattr(size_mm, 'width'), getattr(size_mm, 'height'), 
                      getattr(size_pix, 'width'), getattr(size_pix, 'height'),
                      round(SCREEN_DPI)))
+
+
+def w(v):
+    return v * Gdk.Screen.width()
+
+def h(v):
+    return v * Gdk.Screen.height()

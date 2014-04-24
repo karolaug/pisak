@@ -4,7 +4,6 @@ Does content work?
 import sys
 from pisak import switcher_app, unit
 from gi.repository import Clutter
-import cairo
 
 
 class ButtonStage(Clutter.Stage):

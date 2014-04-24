@@ -2,6 +2,7 @@ from gi.repository import Clutter, Mx, GObject, Cogl
 from PIL import Image as PILImage
 import os
 from pisak import unit, res
+from pisak.res import dims
 
 class MenuButton(Clutter.Actor):
     HEIGHT = unit.mm(15)
@@ -19,7 +20,7 @@ class MenuButton(Clutter.Actor):
         self.connect("enter-event", lambda *_: self.hilite_on())
         self.connect("leave-event", lambda *_: self.hilite_off())
         self.set_reactive(True)
-        self.set_size(MenuButton.WIDTH, MenuButton.HEIGHT)
+        self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation.HORIZONTAL)
         self.layout.set_spacing(MenuButton.WIDTH/30.)
