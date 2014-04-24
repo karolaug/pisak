@@ -2,7 +2,7 @@ from gi.repository import Clutter, Mx, GObject, Cogl
 from PIL import Image as PILImage
 import os
 from pisak import unit, res
-from pisak.res import dims
+from pisak.res import dims, colors
 
 class MenuButton(Clutter.Actor):
     HEIGHT = unit.mm(15)
@@ -35,7 +35,7 @@ class MenuButton(Clutter.Actor):
         self.label.set_width(MenuButton.WIDTH/1.5)
         self.label.set_line_wrap(True)
         self.label.set_font_name('monospace bold 20')
-        self.label.set_background_color(res.colors.TRANSPARENT)
+        self.label.set_background_color(colors.TRANSPARENT)
         self.add_child(self.label)
 
     def _init_icon(self):
@@ -62,14 +62,14 @@ class MenuButton(Clutter.Actor):
     def set_hilite(self, hilite):
         self.hilite = hilite
         if self.hilite < 0.5:
-            self.background_color = res.colors.BLACK
-            self.foreground_color = res.colors.WHITE
+            self.background_color = colors.BLACK
+            self.foreground_color = colors.WHITE
         elif self.hilite < 1.5:
-            self.background_color = res.colors.HILITE_1
-            self.foreground_color = res.colors.BLACK
+            self.background_color = colors.HILITE_1
+            self.foreground_color = colors.BLACK
         else:
-            self.background_color = res.colors.WHITE
-            self.foreground_color = res.colors.BLACK
+            self.background_color = colors.WHITE
+            self.foreground_color = colors.BLACK
         self.update_button()
 
     def update_button(self):
@@ -87,6 +87,26 @@ class MenuButton(Clutter.Actor):
         self.select_on()
         Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
+
+
+class DefaultButton(Mx.Button):
+    HEIGHT = unit.mm(16)
+    __gsignals__ = {
+        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+    def __init__(self):
+        super().__init__()
+        self.connect("clicked", self.click_activate)
+        self.set_height(MenuButton.HEIGHT)
+        self.set_x_expand(True)
+        self.set_y_expand(False)
+      
+    def set_model(self, model):
+        self.model = model
+        self.set_label(self.model["label"])
+     
+    def click_activate(self):
+        self.emit("activated")
 
 
 class LetterButton(Clutter.Actor):

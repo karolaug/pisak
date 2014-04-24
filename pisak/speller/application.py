@@ -1,4 +1,4 @@
-from gi.repository import Clutter
+from gi.repository import Clutter, GObject
 from pisak import unit, buttons, view, switcher_app
 
 
@@ -14,22 +14,68 @@ class TextView(Clutter.Text):
         self.set_background_color(color)
         self.set_font_name('monospace normal 20')
         self.set_text("Nierówny dostęp...")
-        
-        
-class Keyboard(Clutter.Actor):
+
+
+class KeyboardMenu(Clutter.Actor):
     """
-    Widget of buttons necessary for entering text.
+    Widget of functional buttons closely related to Keyboard.
     """
-    MODEL = {
-        "items": [{
-            "label": "Pole %d" % i
-        } for i in range(40)
-        ]
-    }
+    BUTTONS = [{
+        "label": "%s" % i,
+        "icon_path": "%s" % j,
+        "handler": k
+        } for i,j,k in [
+            ["02", None, None], ["_", None, None], ["ABCX", None, None],
+            ["a->A", None, None], ["A->Ą", None, None], [":-)", None, None], ["01", None, None]
+            ]
+    ]
     def __init__(self):
         super().__init__()
         self._init_layout()
         self._init_buttons()
+        
+    def _init_layout(self):
+        self.set_x_expand(True)
+        self.set_y_expand(True)
+        self.layout = Clutter.GridLayout()
+        self.layout.set_column_spacing(unit.mm(2))
+        self.layout.set_column_homogeneous(True)
+        self.set_layout_manager(self.layout)
+
+    def _init_buttons(self):
+        for i in range(7):
+            button = buttons.DefaultButton()
+            button.set_x_expand(True)
+            button.set_y_expand(True)
+            button.set_model(self.BUTTONS[i])
+            if i < 2:
+                self.layout.attach(button, i, 0, 1, 1)
+            elif i == 2:
+                self.layout.attach(button, i, 0, 2, 1)
+            elif i == 3:
+                self.layout.attach(button, i+1, 0, 2, 1)
+            elif i == 4:
+                self.layout.attach(button, i+2, 0, 2, 1)
+            elif i > 4:
+                self.layout.attach(button, i+3, 0, 1, 1)
+                
+    
+class Keyboard(Clutter.Actor):
+    """
+    Widget of buttons necessary for entering text.
+    """
+    BUTTONS = [{
+        "label": "%s" % i
+        } for i in [
+            "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P",
+            "A", "S", "D", "F", "G", "H", "J", "K", "L", "CH",
+            "Z", "X", "C", "V", "B", "N", "M", "CZ", "SZ", "RZ"
+            ]
+    ]
+    def __init__(self):
+        super().__init__()
+        self._init_layout()
+        self._init_elements()
 
     def _init_layout(self):
         self.set_x_expand(True)
@@ -37,14 +83,25 @@ class Keyboard(Clutter.Actor):
         self.layout = Clutter.GridLayout()
         self.layout.set_column_spacing(unit.mm(2))
         self.layout.set_row_spacing(unit.mm(2))
+        self.layout.set_row_homogeneous(True)
+        self.layout.set_column_homogeneous(True)
         self.set_layout_manager(self.layout)
-        
+
+    def _init_elements(self):
+        self._init_menu()
+        self._init_buttons()
+
+    def _init_menu(self):
+        menu = KeyboardMenu()
+        self.layout.attach(menu, 0, 0, 10, 1)
+
     def _init_buttons(self):
-        for i in range(40):
-            button = buttons.MenuButton()
+        for i in range(30):
+            button = buttons.DefaultButton()
+            button.set_x_expand(True)
             button.set_y_expand(True)
-            button.set_model(self.MODEL["items"][i])
-            x0, y0 = i%10, i/10
+            button.set_model(self.BUTTONS[i])
+            x0, y0 = i%10, i/10 + 1
             self.layout.attach(button, x0, y0, 1, 1)
         
         
@@ -52,12 +109,10 @@ class Extra(Clutter.Actor):
     """
     Widget of buttons containing suggested words or other extra features.
     """
-    MODEL = {
-        "items": [{
-            "label": "Pole %d" % i
-        } for i in range(9)
-        ]
-    }
+    BUTTONS = [{
+        "label": "PREDYKCJA %d" % i
+        } for i in reversed(range(1, 10))
+    ]
     def __init__(self):
         super().__init__()
         self._init_layout()
@@ -73,9 +128,10 @@ class Extra(Clutter.Actor):
 
     def _init_buttons(self):
         for i in range(9):
-            button = buttons.MenuButton()
+            button = buttons.DefaultButton()
+            button.set_x_expand(True)
             button.set_y_expand(True)
-            button.set_model(self.MODEL["items"][i])
+            button.set_model(self.BUTTONS[i])
             self.add_child(button)
 
 
@@ -83,12 +139,16 @@ class Menu(Clutter.Actor):
     """
     Widget of functional menu buttons.
     """
-    MODEL = {
-        "items": [{
-            "label": "Przycisk %d" % i
-        } for i in range(9)
-        ]
-    }
+    BUTTONS = [{
+        "label": "%s" % i,
+        "icon_path": "%s" % j,
+        "handler": k
+        } for i,j,k in [
+            ["KLAWIATURA", None, None], ["PREDYKCJA", None, None], ["PRZECZYTAJ", None, None],
+            ["ZAPISZ", None, None], ["WCZYTAJ", None, None], ["WYŚLIJ", None, None],
+            ["DRUKUJ", None, None], ["NOWY DOKUMENT", None, None], ["PANEL STARTOWY", None, None]
+            ]
+    ]
     def __init__(self):
         super().__init__()
         self._init_layout()
@@ -104,9 +164,10 @@ class Menu(Clutter.Actor):
 
     def _init_buttons(self):
         for i in range(9):
-            button = buttons.MenuButton()
+            button = buttons.DefaultButton()
+            button.set_x_expand(True)
             button.set_y_expand(True)
-            button.set_model(self.MODEL["items"][i])
+            button.set_model(self.BUTTONS[i])
             self.add_child(button)
 
 
