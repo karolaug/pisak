@@ -1,8 +1,6 @@
-#coding:utf-8
-
 import memory
 import sys
-import time
+#
 from gi.repository import Clutter, Mx
 
 class TimerCycle(object):
@@ -10,7 +8,7 @@ class TimerCycle(object):
 		super(TimerCycle, self).__init__()
 		self.tiles_table=contents.tiles_table
 		self.tiles_table.set_reactive(True)
-		self.tiles_table.connect('button_release_event',lambda x,y:self.when_clicked() )
+		self.tiles_table.connect('button_release_event',lambda x,y:self.when_clicked())
 		self._init_params()
 		self._init_timer()
 	
@@ -63,24 +61,6 @@ class TimerCycle(object):
 			self.col=0
 		self.start_cycle()
 
-class MemoryGame(object):
-	def __init__(self):
-		self.game = memory.Memory_game((4,6))
-		self.game.create_infofield()
-
-class LetterTile(Clutter.Actor):
-	def __init__(self):
-		super(LetterTile,self).__init__()
-		self.layout = Clutter.BinLayout()
-		self.set_layout_manager(self.layout)
-		self._init_letter_label()
-
-	def _init_letter_label(self):
-		self.letter_label=Mx.Label()
-		self.add_actor(self.letter_label)
-		
-	def set_letter_label(self,letter):
-		self.letter_label.set_text(letter)
 	
 class ActionTile(Clutter.Actor):
 	def __init__(self):
@@ -108,47 +88,17 @@ class ActionTile(Clutter.Actor):
 	def set_icon_from_file(self,path):
 		self.icon.set_from_file(path)
 
-class PictureTile(Clutter.Actor):
-	def __init__(self):
-		super(ActionTile,self).__init__()
-		self.layout = Clutter.BoxLayout()
-		self.set_layout_manager(self.layout)
-		self.layout.set_vertical(True)
-
-		self._init_elements()
-
-	def _init_elements(self):
-		self._init_icon()
-		self._init_label()
-
-	def _init_icon(self):
-		self.icon=Mx.Image()
-		self.add_actor(self.icon)
-
-	def _init_label(self):		
-		self.label=Mx.Label()
-		self.add_actor(self.label)
-
-	def set_label(self,text):
-		self.label.set_text(text)
-
-	def set_icon_from_file(self,path):
-		self.icon.set_from_file(path)
-
-		
 
 class ExecuteAction(object):
 	def __init__(self,action_tile,contents):
-		super(ExecuteAction, self).__init__()
+		super().__init__()
 		self.tile_label=action_tile.label.get_text()
-		self.row,self.collumn = None,None
+		self.row,self.column = None,None
 		if self.tile_label != 'zamknij' and self.tile_label != 'reset': 
-			self.row,self.collumn = int(self.tile_label.split()[0]),int(self.tile_label.split()[1])
-		#else:
-		#	self.row,self.collumn = 5,0
+			self.row,self.column = int(self.tile_label.split()[0]),int(self.tile_label.split()[1]) #zmienic?
+
 		self.contents=contents
 
-			#self.text_field=contents.text_field
 		self.tiles=contents.tiles
 		self.action_chosen()
 
@@ -158,46 +108,29 @@ class ExecuteAction(object):
 			self.reset_game()
 		elif self.tile_label=='zamknij':
 			self.exit_app()
-		elif self.tile_label[1] == ' ' and self.contents.game.game.displayfield[self.row,self.collumn] == -1:
+		elif self.tile_label[1] == ' ' and self.contents.game.display_field[self.row,self.column] == -1:
 			self.flip_picture()
 		else:
 			self.other()
-
-	def insert_space(self):
-		space=' '
-		cursor_position = len(self.text_buffer.get_text())
-		self.text_buffer.insert_text(cursor_position ,space, 1)
-
-	def delete_character(self):
-		cursor_position = len(self.text_buffer.get_text())-1
-		if cursor_position>=0:
-			self.text_buffer.delete_text(cursor_position, 1)
-
-	def clear_all(self):
-		text_len=len(self.text_buffer.get_text())
-		self.text_buffer.delete_text(0, text_len)
 
 	def exit_app(self):
 		self.contents.exit_app()
 
 	def flip_picture(self):
-		self.move_info = self.contents.game.game.check_field(self.collumn,self.row)
-		self.tiles[6*self.row + self.collumn].set_icon_from_file('./'+str(int(self.contents.game.game.infofield[self.row,self.collumn]))+'.png')	
+		self.move_info = self.contents.game.check_field(self.column,self.row)
+		self.tiles[6*self.row + self.column].set_icon_from_file('./'+str(int(self.contents.game.info_field[self.row,self.column]))+'.png')	
 
 		if self.move_info == 'second-miss':
-				self.contents.revert = 3
-				self.contents.row, self.contents.col = self.row, self.collumn
-				#self.contents.game.game.revert()
-				#self.tiles[6*self.row + self.collumn].set_icon_from_file('./empty.png')
-				#self.tiles[6*self.contents.old_row + self.contents.old_col].set_icon_from_file('./empty.png')
+				self.contents.revert = 3 #za 3 cykle timera nastapi revert
+				self.contents.row, self.contents.col = self.row, self.column
 
 		if self.move_info == 'first':
 				
-				self.contents.old_row, self.contents.old_col = self.row, self.collumn
+				self.contents.old_row, self.contents.old_col = self.row, self.column
 	
 	def reset_game(self):
 		self.contents.revert = 0
-		self.contents.game = MemoryGame()
+		self.contents.game = memory.MemoryGame((4,6))
 
 		self.row_count=5
 		self.col_count=6
@@ -207,7 +140,7 @@ class ExecuteAction(object):
 			tile.set_icon_from_file('./empty.png')		
 
 	def other(self):
-		print('Executing action: '+self.tile_label)
+		return 0
 
 		
 
@@ -227,7 +160,7 @@ class TilesTable(Clutter.Actor):
 	def __init__(self,contents):
 		super(TilesTable,self).__init__()
 		letters=['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w', 'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b', 'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź' ]
-		actions=['reset' , 'zamknij']
+		actions=['reset', 'zamknij']
 		self.contents=contents
 		self.tiles=[]
 		layout=Clutter.GridLayout()
@@ -259,7 +192,7 @@ class TilesTable(Clutter.Actor):
 	def update_tiles(self,indices,toggle):
 		if self.contents.revert:
 			if self.contents.revert == 1:
-				self.contents.game.game.revert()
+				self.contents.game.revert()
 				self.tiles[6*self.contents.row + self.contents.col].set_icon_from_file('./empty.png')
 				self.tiles[6*self.contents.old_row + self.contents.old_col].set_icon_from_file('./empty.png')
 		
@@ -276,46 +209,6 @@ class TilesTable(Clutter.Actor):
 		except AttributeError:
 			ExecuteAction(self.tiles[index],self.contents)
 			
-		#current_txt_coord =self.text_field.text_field.position_to_coords(len(self.text_buffer.get_text()))[3]		   
-		#if current_txt_coord >= self.text_field.get_height():
-		#	self.text_field.scroll_field()
-
-
-class TextBuffer(Clutter.TextBuffer):
-	def __init__(self):
-		super(TextBuffer,self).__init__()
-
-class TextField(Clutter.ScrollActor):
-	def __init__(self,text_buffer):
-		super(TextField,self).__init__()
-		self.set_scroll_mode(Clutter.ScrollMode.VERTICALLY)
-		self.text_buffer=text_buffer
-		self.layout = Clutter.BinLayout()
-		self.set_layout_manager(self.layout)
-		white_color=Clutter.Color.new(255,255,255,255)
-		self.set_background_color(white_color)
-		self.font='Sans 100px'
-		self._init_field()
-	
-	def _init_field(self):		
-		self.text_field=Clutter.Text.new_with_buffer(self.text_buffer)
-		self.text_field.set_line_wrap(True)
-		self.text_field.set_height(1000)
-		self.text_field.set_x_expand(True)
-		self.text_field.set_editable(True)
-		self.text_field.set_y_expand(True)
-		self.text_field.set_font_name(self.font)
-		self.add_actor(self.text_field)
-
-	def scroll_field(self):
-		vertical_distance=100
-		animation_time=500
-		point=Clutter.Point.alloc()
-		Clutter.Point.init(point,0,vertical_distance)
-		self.set_easing_mode(Clutter.AnimationMode.LINEAR)
-		self.set_easing_duration(animation_time)
-		self.scroll_to_point(point)
-			
 
 class PisakSpellerContainer(Clutter.Actor):
 	def __init__(self,stage):
@@ -330,7 +223,9 @@ class PisakSpellerContainer(Clutter.Actor):
 	def _init_elements(self):
 		
 		self.revert = 0
-		self.game = MemoryGame()
+		self.game = memory.MemoryGame((4,6))
+		self.game.create_info_field()
+
 		self.tiles_table=TilesTable(self)
 		self.tiles = self.tiles_table.tiles
 		self.tiles_table.set_height(750)
