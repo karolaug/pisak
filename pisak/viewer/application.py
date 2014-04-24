@@ -59,7 +59,7 @@ class LibraryView(widgets.ScrollingView):
     
     def __init__(self, context):
         super().__init__(context)
-        self.content_scroll.tile_handler = self.show_category
+        #self.content_scroll.tile_handler = self.show_category
 
     def _tile_selected(self, scroll, category):
         self.emit('category-selected', category)
@@ -78,28 +78,15 @@ class PisakViewerContainer(view.BasicViewContainer):
         self._init_elements()
         
     def _init_main(self):
-        #elf.library_view = LibraryView(self.context)
-        #elf.library_view.connect('category-selected', self.enter_category)
-        #elf.main = view.BasicViewContainer(self.context)
-        #self.main.push_view(self.library_view)
         self.set_x_expand(True)
         self.set_y_expand(True)
 
     def _init_elements(self):
         self._init_main()
-        #self.buttons = PisakViewerButtons(self)
-        
-        #self.buttons.set_y_expand(True)
-        #self.buttons.set_x_expand(False)
-        #self.buttons.set_width(unit.mm(25))
-        #self.buttons.set_depth(-1.0)
         
         layout = Clutter.BoxLayout()
         layout.set_orientation(Clutter.Orientation.HORIZONTAL)
         self.set_layout_manager(layout)
-        layout.set_spacing(unit.mm(4))
-        #self.add_child(self.main)
-        #self.add_child(self.buttons)
 
     def enter_category(self, library, category):
         self.category_view = CategoryView()
@@ -120,19 +107,6 @@ class PisakViewerContainer(view.BasicViewContainer):
         Force select current page in the library view.
         """
         self.main.select()
-    
-    #def create_cycle(self):
-        #"""
-        #Create new page-switching cycle in the library view
-        #"""
-        #return self.library_view.create_cycle()
-    
-    #def push_view(self, new_view):
-        #"""
-        #Add new view to the container
-        #"""
-        #self.main.push_view(new_view)
-        #self.context.switcher.push_cycle(new_view.create_cycle())
 
 
 class PisakViewerStage(Clutter.Stage):
@@ -233,15 +207,26 @@ class PhotoView(Clutter.Actor):
     def __init__(self, context):
         super().__init__()
         self.context = context
-        self.set_layout_manager(Clutter.BoxLayout())
-        self.set_x_expand(True)
-        self.set_y_expand(True)
-        self.photo_actor = Mx.Image()
-        self.photo_actor.set_from_file(os.path.join(res.PATH, "krolikarnia.jpg"))
-        self.add_child(self.photo_actor)
         self.model = None
         self.photos = []
         self.current_photo = None
+        self._init_layout()
+        self._init_elements()
+
+    def _init_layout(self):
+        self.set_layout_manager(Clutter.BoxLayout())
+        self.set_x_expand(True)
+        self.set_y_expand(True)
+
+    def _init_menu(self):
+        self.menu = widgets.ButtonsMenu(self.context)
+        self.add_child(self.menu)    
+    
+    def _init_elements(self):
+        self._init_menu()
+        self.photo_actor = Mx.Image()
+        self.photo_actor.set_from_file(os.path.join(res.PATH, "krolikarnia.jpg"))
+        self.add_child(self.photo_actor)
 
     def _update_photo(self, index):
         self.current_photo = index
@@ -262,7 +247,7 @@ class PhotoView(Clutter.Actor):
     def create_idle_cycle(self):
         return PhotoViewIdleCycle(self)
     
-    def create_cycle(self):
+    def create_initial_cycle(self):
         return self.create_idle_cycle()
     
 
