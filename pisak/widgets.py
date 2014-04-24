@@ -1,8 +1,67 @@
 from gi.repository import Clutter, Mx, GObject
-from pisak import unit, switcher_app, buttons
+from pisak import switcher_app, buttons
 import collections
 from pisak.res import colors, dims
+import cairo
 
+
+class Aperture(Clutter.Actor):
+    __gproperties__ = {
+        'cover': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
+    }
+    
+    def __init__(self):
+        super().__init__()
+        self.set_x_expand(True)
+        self.set_y_expand(True)
+        self.properties = {}
+        self.color = colors.HILITE_1
+        self._init_content()
+        self.connect("notify::cover", self._update_cover)
+        self.set_property("cover", 0)
+    
+    def _update_cover(self, source, prop):
+        self.canvas.invalidate()
+    
+    def set_cover(self, value):
+        self.remove_transition("cover")
+        transition = Clutter.PropertyTransition.new("cover")
+        transition.set_from(self.properties["cover"])
+        transition.set_to(value)
+        transition.set_duration(166)
+        self.add_transition("cover", transition)
+    
+    def do_set_property(self, p, value):
+        self.properties[p.name] = value
+        
+    def do_get_property(self, p):
+        if p.name in self.properties:
+            return self.properties[p.name]
+        else:
+            raise AttributeError("Unknown property", p.name)
+    
+    def draw(self, canvas, context, w, h):
+        #context.scale(w / 2, h)
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        context.paint()
+        context.set_operator(cairo.OPERATOR_OVER)
+        context.rectangle(0, 0, w, h)
+        context.set_source_rgba(0, 0.894, 0.765, 0.66)
+        context.fill()
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        a = 1 - (self.properties["cover"])
+        x, y = (0.5 - a / 2) * w, (0.5 - a / 2) * h
+        rw, rh = a * w, a * h
+        context.rectangle(x, y, rw, rh)
+        context.fill()
+        return True
+    
+    def _init_content(self):
+        self.canvas = Clutter.Canvas()
+        self.canvas.set_size(140, 140)
+        self.canvas.connect("draw", self.draw)
+        self.set_content(self.canvas)
+        
 
 class Tile(Clutter.Actor):
     __gsignals__ = {
@@ -15,9 +74,14 @@ class Tile(Clutter.Actor):
         self._init_elements()
         self.hilite = 0.0
 
+    def _init_aperture(self):
+        self.aperture = Aperture()
+        self.add_child(self.aperture)
+    
     def _init_elements(self):
         self._init_preview()
         self._init_label()
+        self._init_aperture()
         self._init_layout()
 
     def _init_preview(self):
@@ -46,9 +110,11 @@ class Tile(Clutter.Actor):
             self.set_preview_from_file(model["image_path"])
 
     def hilite_off(self):
+        self.aperture.set_cover(0)
         self.set_hilite(0.0)
     
     def hilite_on(self):
+        self.aperture.set_cover(0.5)
         self.set_hilite(1.0)
     
     def set_hilite(self, hilite):
