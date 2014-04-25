@@ -10,16 +10,17 @@ from pisak import widgets
 from pisak import switcher_app
 from pisak import res
 
+
 class CategoryView(widgets.ScrollingView):
     """
     Actor widget which presents photos in the selected category.
     """
     MODEL = {
         "items": [{
-              "label": "Zdjęcie %d" % i,
-              "image_path": os.path.join(
-                        res.PATH,
-                        random.choice(["krolikarnia.jpg", "kolejka.jpg"]))
+            "label": "Zdjęcie %d" % i,
+            "image_path": os.path.join(
+                res.PATH,
+                random.choice(["krolikarnia.jpg", "kolejka.jpg"]))
             } for i in range(20)
         ],
         "page_interval": 6000
@@ -27,28 +28,28 @@ class CategoryView(widgets.ScrollingView):
     __gsignals__ = {
         "photo-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
     }
-    
+
     def __init__(self, context):
         super().__init__(context)
         self.content_scroll.tile_handler = self.show_photo
 
     def _tile_selected(self, scroll, photo):
         self.emit('photo-selected', photo)
-    
+
     def show_photo(self, tile):
         self.context.application.push_view(PhotoView(self.context))
 
-    
+
 class LibraryView(widgets.ScrollingView):
     """
     Actor widget which presents categories in the photo library.
     """
     MODEL = {
         "items": [{
-              "label": "Kategoria %d" % i,
-              "image_path": os.path.join(
-                        res.PATH,
-                        random.choice(["krolikarnia.jpg", "kolejka.jpg"]))
+            "label": "Kategoria %d" % i,
+            "image_path": os.path.join(
+                res.PATH,
+                random.choice(["krolikarnia.jpg", "kolejka.jpg"]))
             } for i in range(20)
         ],
         "page_interval": 6000
@@ -56,7 +57,7 @@ class LibraryView(widgets.ScrollingView):
     __gsignals__ = {
         "category-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
     }
-    
+
     def __init__(self, context):
         super().__init__(context)
         #self.content_scroll.tile_handler = self.show_category
@@ -76,14 +77,14 @@ class PisakViewerContainer(view.BasicViewContainer):
         """
         super().__init__(context)
         self._init_elements()
-        
+
     def _init_main(self):
         self.set_x_expand(True)
         self.set_y_expand(True)
 
     def _init_elements(self):
         self._init_main()
-        
+
         layout = Clutter.BoxLayout()
         layout.set_orientation(Clutter.Orientation.HORIZONTAL)
         self.set_layout_manager(layout)
@@ -92,16 +93,16 @@ class PisakViewerContainer(view.BasicViewContainer):
         self.category_view = CategoryView()
         self.category_view.connect('photo-selected', self.enter_photo)
         self.push_view(self.category_view)
-        
+
     def enter_photo(self, category, photo):
         print('photo nr', photo, 'selected')
-     
+
     def next_page(self):
         """
         Force next page in the library view.
         """
         self.main.next_page()
-    
+
     def select(self):
         """
         Force select current page in the library view.
@@ -125,7 +126,7 @@ class PisakViewerStage(Clutter.Stage):
         self._init_layout()
         self._init_background()
         self._init_content()
-    
+
     def _init_content(self):
         self.content = PisakViewerContainer(self.context)
         self.add_child(self.content)
@@ -150,7 +151,7 @@ class PisakViewerStage(Clutter.Stage):
         self.set_content(background_image)
         self.set_content_repeat(Clutter.ContentRepeat.BOTH)
         self.set_content_scaling_filters(Clutter.ScalingFilter.TRILINEAR, Clutter.ScalingFilter.TRILINEAR)
-    
+
     def push_view(self, new_view):
         self.content.push_view(new_view)
 
@@ -166,7 +167,7 @@ class PisakViewerStage(Clutter.Stage):
 class PisakViewApp(switcher_app.Application):
     """
     Pisak viewer app with pisak viewer stage.
-    """    
+    """
     def create_stage(self, argv):
         stage = PisakViewerStage(self.context)
         stage.set_fullscreen(True)
@@ -177,28 +178,29 @@ class SlideshowCycle(switcher_app.Cycle):
     def __init__(self, view_actor):
         self.view_actor = view_actor
         self.remaining = len(self.view_actor.photos)
-    
+
     def has_next(self):
         return self.remaining > 0
-    
+
     def expose_next(self):
         self.view_actor.next_photo()
-    
+
     def select(self):
         raise NotImplementedError()
 
 
 class PhotoViewIdleCycle(switcher_app.Cycle):
     interval = 3600
+
     def __init__(self, view_actor):
         self.view_actor = view_actor
-    
+
     def has_next(self):
         return True
-    
+
     def expose_next(self):
         pass
-    
+
     def select(self):
         return self.view_actor.create_slideshow_cycle()
 
@@ -220,8 +222,8 @@ class PhotoView(Clutter.Actor):
 
     def _init_menu(self):
         self.menu = widgets.ButtonsMenu(self.context)
-        self.add_child(self.menu)    
-    
+        self.add_child(self.menu)
+
     def _init_elements(self):
         self._init_menu()
         self.photo_actor = Mx.Image()
@@ -234,7 +236,7 @@ class PhotoView(Clutter.Actor):
         self.photo_actor = widgets.PhotoSlide()
         self.photo_actor.set_model(self.photos[index])
         self.add_child(self.photo_actor)
-    
+
     def set_model(self, model):
         self.model = model
         self.photos = self.model["items"]
@@ -246,10 +248,10 @@ class PhotoView(Clutter.Actor):
 
     def create_idle_cycle(self):
         return PhotoViewIdleCycle(self)
-    
+
     def create_initial_cycle(self):
         return self.create_idle_cycle()
-    
+
 
 class PhotoEditionMenu(Clutter.Actor):
     """
@@ -257,13 +259,14 @@ class PhotoEditionMenu(Clutter.Actor):
     @param view an instance of PhotoView.
     """
     SPACING = unit.mm(4)
+
     def __init__(self, view):
         super().__init__()
         self.view = view
         self.buffer = view.buffer
         self._init_layout()
         self._init_buttons()
-        
+
     def _init_layout(self):
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation.VERTICAL)
@@ -281,9 +284,9 @@ class PhotoEditionMenu(Clutter.Actor):
             button = buttons.MenuButton()
             button.set_model({'label': self.buttons[b][0]})
             button.connect('activate', self.buttons[b][1])
-            self.add_child(button) 
+            self.add_child(button)
 
-    
+
 class PhotoBuffer(object):
     """
     Buffer containing a currently edited photo.

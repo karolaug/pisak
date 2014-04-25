@@ -9,7 +9,7 @@ class Aperture(Clutter.Actor):
     __gproperties__ = {
         'cover': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
     }
-    
+
     def __init__(self):
         super().__init__()
         self.set_x_expand(True)
@@ -19,10 +19,10 @@ class Aperture(Clutter.Actor):
         self._init_content()
         self.connect("notify::cover", self._update_cover)
         self.set_property("cover", 0)
-    
+
     def _update_cover(self, source, prop):
         self.canvas.invalidate()
-    
+
     def set_cover(self, value):
         self.remove_transition("cover")
         transition = Clutter.PropertyTransition.new("cover")
@@ -30,16 +30,16 @@ class Aperture(Clutter.Actor):
         transition.set_to(value)
         transition.set_duration(166)
         self.add_transition("cover", transition)
-    
+
     def do_set_property(self, p, value):
         self.properties[p.name] = value
-        
+
     def do_get_property(self, p):
         if p.name in self.properties:
             return self.properties[p.name]
         else:
             raise AttributeError("Unknown property", p.name)
-    
+
     def draw(self, canvas, context, w, h):
         #context.scale(w / 2, h)
         context.set_operator(cairo.OPERATOR_CLEAR)
@@ -55,13 +55,13 @@ class Aperture(Clutter.Actor):
         context.rectangle(x, y, rw, rh)
         context.fill()
         return True
-    
+
     def _init_content(self):
         self.canvas = Clutter.Canvas()
         self.canvas.set_size(140, 140)
         self.canvas.connect("draw", self.draw)
         self.set_content(self.canvas)
-        
+
 
 class Tile(Clutter.Actor):
     __gsignals__ = {
@@ -77,7 +77,7 @@ class Tile(Clutter.Actor):
     def _init_aperture(self):
         self.aperture = Aperture()
         self.add_child(self.aperture)
-    
+
     def _init_elements(self):
         self._init_preview()
         self._init_label()
@@ -112,11 +112,11 @@ class Tile(Clutter.Actor):
     def hilite_off(self):
         self.aperture.set_cover(0)
         self.set_hilite(0.0)
-    
+
     def hilite_on(self):
         self.aperture.set_cover(0.5)
         self.set_hilite(1.0)
-    
+
     def set_hilite(self, hilite):
         self.hilite = hilite
         if self.hilite < 0.5:
@@ -131,7 +131,7 @@ class PagedViewLayout(Clutter.BinLayout):
         super(PagedViewLayout, self).__init__()
         self.pages_new = set()
         self.pages_old = set()
-    
+
     def do_allocate(self, container, allocation, flags):
         for child in container.get_children():
             if child in self.pages_new:
@@ -156,24 +156,24 @@ class _TilePageCycle(switcher_app.Cycle):
         self.index = None
         self.interval = 1000
         self.remaining = len(self.actor.tiles)
-    
+
     def expose_next(self):
-        if self.index != None:
+        if self.index is not None:
             self.actor.tiles[self.index].hilite_off()
             self.index = (self.index + 1) % len(self.actor.tiles)
         else:
             self.index = 0
         self.actor.tiles[self.index].hilite_on()
         self.remaining -= 1
-    
+
     def has_next(self):
         return self.remaining > 0
-    
+
     def stop(self):
-        if self.index != None:
+        if self.index is not None:
             self.actor.tiles[self.index].hilite_off()
             self.index = None
-    
+
     def select(self):
         activated_actor = self.actor.tiles[self.index]
         return switcher_app.selection_activate_actor(activated_actor)
@@ -183,7 +183,7 @@ class TilePage(Clutter.Actor):
     __gsignals__ = {
         "tile-selected": (GObject.SIGNAL_RUN_FIRST, None, (int,))
     }
-    
+
     def __init__(self, tiles):
         """
         Create a page of tiles aligned in grid.
@@ -205,27 +205,29 @@ class TilePage(Clutter.Actor):
 
     def select(self, tile):
         self.emit("tile-selected", tile)
-    
+
     def create_cycle(self):
         return _TilePageCycle(self)
+
 
 class _PagedTileViewCycle(switcher_app.Cycle):
     def __init__(self, actor):
         self.actor = actor
         self.interval = 3000
-    
+
     def expose_next(self):
         self.actor.next_page()
-    
+
     def has_next(self):
         return True
-    
+
     def stop(self):
         pass
-    
+
     def select(self):
-        cycle =  self.actor.page_actor.create_cycle()
+        cycle = self.actor.page_actor.create_cycle()
         return switcher_app.selection_add_cycle(cycle)
+
 
 class PagedTileView(Clutter.Actor):
     __gsignals__ = {
@@ -244,25 +246,25 @@ class PagedTileView(Clutter.Actor):
         self.tile_handler = None
         self._init_tiles()
         self._paginate_items()
-    
+
     @property
     def tile_handler(self):
         return self._tile_handler
-    
+
     @tile_handler.setter
     def tile_handler(self, value):
-        if value == None or isinstance(value, collections.Callable):
+        if value is None or isinstance(value, collections.Callable):
             self._tile_handler = value
         else:
             raise ValueError("Handler is not callable")
-    
+
     def _init_tiles(self):
         self.layout = PagedViewLayout()
         self.set_layout_manager(self.layout)
-    
+
     def generate_page(self, page):
         tiles = []
-        
+
         for i in range(12):
             index = int(page * 12 + i)
             if index < len(self.items):
@@ -271,26 +273,26 @@ class PagedTileView(Clutter.Actor):
                 tile.set_model(self.items[index])
                 tiles.append(tile)
         return TilePage(tiles)
-    
+
     def activate_tile(self, source):
         if self.tile_handler:
             self.tile_handler(source)
-    
+
     def timeout_page(self, source):
         if self.cycle_active:
             self.next_page()
             return True
         else:
             return False
-    
+
     def next_page(self):
-        if self.page == None:
+        if self.page is None:
             self.page = 0
         else:
             self.page = (self.page + 1) % self.page_count
         self.update_page_actor()
         self.slide()
-    
+
     def slide(self):
         # remove old
         for page in self.pages_old:
@@ -301,64 +303,64 @@ class PagedTileView(Clutter.Actor):
         # mark unmarked as current
         self.pages_current = set(self.get_children()) - self.pages_current
         self.layout.slide(self.pages_current, self.pages_old)
-    
+
     def update_page_actor(self):
-        if self.page != None:
+        if self.page is not None:
             self.page_actor = self.generate_page(self.page)
             self.page_actor.connect("tile-selected", self._tile_selected)
             self.add_child(self.page_actor)
             self.emit("page-changed", self.page)
         else:
             self.emit("page-changed", -1)
-    
+
     def set_model(self, model):
         self.model = model
         self.items = self.model["items"]
         self.page_interval = self.model["page_interval"]
         self._paginate_items()
-    
+
     def _paginate_items(self):
         self.page_count = int((len(self.items) + (12 - 1)) // 12)
         self.page = 0 if self.page_count else None
         self.update_page_actor()
         self.slide()
-    
+
     def _tile_selected(self, page, tile):
         self.emit("tile-selected", tile)
-    
+
     def create_cycle(self):
         return _PagedTileViewCycle(self)
 
 
-
 class ScrollingViewCycle(switcher_app.Cycle):
     interval = 1000
+
     def __init__(self, actor):
         super().__init__()
         self.actor = actor
         self.index = 0
-    
+
     def expose_next(self):
         self.STEPS[self.index](self)
         self.index = (self.index + 1) % len(self.STEPS)
-    
+
     def stop(self):
         self.actor.menu.hilite_off()
-    
+
     def has_next(self):
         return True
-    
+
     def show_menu(self):
         self.actor.menu.hilite_on()
-    
+
     def show_page(self):
         self.actor.select_page()
-    
+
     def next_page(self):
         pass
         self.actor.next_page()
-    
-    
+
+
 ScrollingViewCycle.STEPS = [
     ScrollingViewCycle.show_menu, ScrollingViewCycle.show_page,
     ScrollingViewCycle.next_page]
@@ -388,10 +390,10 @@ class ButtonsMenu(Clutter.Actor):
 
     def hilite_off(self):
         self.set_hilite(0.0)
-    
+
     def hilite_on(self):
         self.set_hilite(1.0)
-    
+
     def set_hilite(self, hilite):
         self.hilite = hilite
         if self.hilite < 0.5:
@@ -415,11 +417,11 @@ class ScrollingView(Clutter.Actor):
         super().__init__()
         self.context = context
         self._init_elements()
-    
+
     def _init_elements(self):
         self._init_layout()
         self._init_content()
-    
+
     def _init_layout(self):
         margin = Clutter.Margin()
         margin.top = margin.bottom = dims.H_SPACING_PX
@@ -428,7 +430,7 @@ class ScrollingView(Clutter.Actor):
         self.layout.set_row_spacing(dims.H_SPACING_PX)
         self.layout.set_column_spacing(dims.W_SPACING_PX)
         self.set_layout_manager(self.layout)
-        
+
     def _init_content(self):
         self._init_menu()
         self._init_content_header()
@@ -436,7 +438,7 @@ class ScrollingView(Clutter.Actor):
         self._init_content_scroll()
 
     def _init_menu(self):
-        self.menu = ButtonsMenu(self.context) 
+        self.menu = ButtonsMenu(self.context)
         self.menu.set_y_expand(False)
         self.layout.attach(self.menu, 0, 0, 1, 2)
 
@@ -453,25 +455,25 @@ class ScrollingView(Clutter.Actor):
         self.content_scrollbar.set_height(dims.MENU_BUTTON_H_PX)
         self.content_scrollbar.set_x_expand(True)
         self.layout.attach(self.content_scrollbar, 0, 2, 2, 1)
-    
+
     def _init_content_scroll(self):
         self.content_scroll = PagedTileView()
         self.content_scroll.connect("page-changed", self._update_scrollbar)
         self.content_scroll.set_model(self.MODEL)
         self.layout.attach(self.content_scroll, 1, 1, 1, 1)
-        
+
     def _init_content_layout(self):
         self.content_layout = Clutter.BoxLayout()
         self.content_layout.set_spacing(dims.H_SPACING_PX)
         self.content.set_layout_manager(self.content_layout)
         self.content_layout.set_orientation(Clutter.Orientation.VERTICAL)
-    
+
     def next_page(self):
         """
         Force next page in view.
         """
         self.content_scroll.next_page()
-    
+
     def select_page(self):
         """
         Push cycle of the current page
@@ -479,7 +481,7 @@ class ScrollingView(Clutter.Actor):
         page_actor = self.content_scroll.page_actor
         page_cycle = page_actor.create_cycle()
         self.context.switcher.push_cycle(page_cycle)
-        
+
     def _update_scrollbar(self, scroll, page):
         if page == -1:
             progress = 0.0
@@ -488,7 +490,7 @@ class ScrollingView(Clutter.Actor):
         else:
             progress = page / (scroll.page_count - 1.0)
         self.content_scrollbar.update(progress, page, scroll.page_count)
-    
+
     def create_initial_cycle(self):
         """
         Create a new cycle which is used by switcher to show consecutive pages from the model.
@@ -500,7 +502,7 @@ class ProgressBar(Clutter.Actor):
     __gproperties__ = {
         'progress': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
     }
-    
+
     def __init__(self):
         super(ProgressBar, self).__init__()
         self._init_bar()
@@ -524,7 +526,7 @@ class ProgressBar(Clutter.Actor):
 
     def do_set_property(self, prop, value):
         self.progress = value
-        
+
     def do_get_property(self, prop):
         return self.progress
 
@@ -552,25 +554,24 @@ class SignedProgressBar(ProgressBar):
     def __init__(self, page_count='?', page=0):
         self.where = ''.join([str(page + 1), '/', str(page_count)])
         super().__init__()
-        
+
     def update_bar(self, canvas, context, width, height):
         super().update_bar(canvas, context, width, height)
         context.set_font_size(1)
         context.set_source_rgb(255, 255, 255)
         context.select_font_face('Monospace', 0, 0)
         context.move_to(0.85, 0.9)
-        context.scale(0.03, 1) #text not stretched onto the whole bar
+        context.scale(0.03, 1)  # text not stretched onto the whole bar
         context.show_text(self.where)
         return True
 
-        
+
 class PhotoSlide(Clutter.Actor):
     def __init__(self):
         super().__init__()
         self.image_actor = Mx.Image()
         self.add_child(self.image_actor)
-    
+
     def set_model(self, model):
         self.model = model
         self.image_actor.set_from_file(self.model["photo_path"])
-
