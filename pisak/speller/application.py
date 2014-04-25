@@ -1,4 +1,4 @@
-from gi.repository import Clutter, GObject
+from gi.repository import Clutter
 from pisak import unit, buttons, view, switcher_app
 
 
@@ -44,7 +44,7 @@ class KeyboardMenu(Clutter.Actor):
 
     def _init_buttons(self):
         for i in range(7):
-            button = buttons.DefaultButton()
+            button = buttons.FramedButtonType1()
             button.set_x_expand(True)
             button.set_y_expand(True)
             button.set_model(self.BUTTONS[i])
@@ -97,7 +97,7 @@ class Keyboard(Clutter.Actor):
 
     def _init_buttons(self):
         for i in range(30):
-            button = buttons.DefaultButton()
+            button = buttons.FramedButtonType1()
             button.set_x_expand(True)
             button.set_y_expand(True)
             button.set_model(self.BUTTONS[i])
@@ -128,7 +128,7 @@ class Extra(Clutter.Actor):
 
     def _init_buttons(self):
         for i in range(9):
-            button = buttons.DefaultButton()
+            button = buttons.FramedButtonType1()
             button.set_x_expand(True)
             button.set_y_expand(True)
             button.set_model(self.BUTTONS[i])
@@ -164,7 +164,7 @@ class Menu(Clutter.Actor):
 
     def _init_buttons(self):
         for i in range(9):
-            button = buttons.DefaultButton()
+            button = buttons.FramedButtonType1()
             button.set_x_expand(True)
             button.set_y_expand(True)
             button.set_model(self.BUTTONS[i])
