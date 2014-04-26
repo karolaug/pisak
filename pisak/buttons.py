@@ -106,8 +106,16 @@ class FramedButton(Clutter.Actor):
         self.connect("enter-event", lambda *_: self.hilite_on())
         self.connect("leave-event", lambda *_: self.hilite_off())
         self.set_reactive(True)
-        self._init_canvas()
         self.selection_time = 1000
+
+    def set_size(self, width, height):
+        self.set_width(width)
+        self.set_height(height)
+        self._init_canvas()
+        self._init_elements()
+
+    def _init_elements(self):
+        raise NotImplementedError()
 
     def _resize_canvas(self):
         self.canvas.set_size(self.get_width(), self.get_height())
@@ -128,11 +136,14 @@ class FramedButton(Clutter.Actor):
     def update_canvas(self, canvas, context, width, height):
         if self.frame_on:
             context.scale(width, height)
-            context.move_to(0, 0)
-            context.set_line_width(0.1)
-            context.line_to(1, 0)
-            context.line_to(1, 1)
-            context.line_to(0, 1)
+            line_width = 0.05
+            y = line_width/2  # initial vertical offset
+            x = y * height/width  # compensate for button being rectangle-shaped
+            context.set_line_width(line_width)
+            context.move_to(x, y)
+            context.line_to(1-x, y)
+            context.line_to(1-x, 1-y)
+            context.line_to(x, 1-y)
             context.close_path()
             r, g, b, a = self.get_color_vals(self.background_color)
             context.set_source_rgba(r, g, b, a)
@@ -186,18 +197,20 @@ class FramedButtonType1(FramedButton):
     """
     Framed button widget with nothing but a label.
     """
+    
     def __init__(self):
         super().__init__()
+        
+    def _init_elements(self):
         self._init_layout()
         self._init_label()
         self.hilite_off()
         self._resize_canvas()
-
+        
     def _init_layout(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        self.set_size(unit.mm(10), unit.mm(10))  # quite a temporary solution to prevent things from getting messed up
-    
+
     def _init_label(self):
         self.label = Clutter.Text()
         self.label.set_line_alignment(Pango.Alignment.CENTER)
@@ -210,8 +223,8 @@ class FramedButtonType1(FramedButton):
         self.label.set_text(label)
 
     def update_button(self):
-        self.label.set_color(self.foreground_color)
         self.canvas.invalidate()
+        self.label.set_color(self.foreground_color)
 
     def set_model(self, model):
         self.set_label(model["label"])
@@ -227,6 +240,8 @@ class FramedButtonType2(FramedButton):
     
     def __init__(self):
         super().__init__()
+
+    def _init_elements(self):
         self._init_layout()
         self._init_icon()
         self.hilite_off()
@@ -239,6 +254,8 @@ class FramedButtonType2(FramedButton):
     def _init_icon(self):
         self.icon = Mx.Image()
         self.icon.set_scale_mode(Mx.ImageScaleMode.FIT)
+        width, height = 0.9*self.get_width(), 0.9*self.get_height()
+        self.icon.set_size(width, height)
         self.add_child(self.icon)
 
     def set_icon(self, icon_path):
@@ -264,6 +281,8 @@ class FramedButtonType3(FramedButton):
 
     def __init__(self):
         super().__init__()
+
+    def _init_elements(self):
         self._init_layout()
         self._init_label()
         self._init_icon()
@@ -273,6 +292,8 @@ class FramedButtonType3(FramedButton):
     def _init_layout(self):
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+        spacing = 0.02 * self.get_width()
+        self.layout.set_spacing(spacing)
         self.set_layout_manager(self.layout)
 
     def _init_label(self):
@@ -281,11 +302,15 @@ class FramedButtonType3(FramedButton):
         self.label.set_line_wrap(True)
         self.label.set_font_name('normal italic 18')
         self.label.set_background_color(colors.TRANSPARENT)
+        width = 0.65 * self.get_width()
+        self.label.set_width(width)
         self.add_child(self.label)
 
     def _init_icon(self):
         self.icon = Mx.Image()
         self.icon.set_scale_mode(Mx.ImageScaleMode.FIT)
+        width = 0.20 * self.get_width()
+        self.icon.set_width(width)
         self.add_child(self.icon)
             
     def set_label(self, label):
@@ -324,7 +349,7 @@ class DefaultButton(Mx.Button):
         self.set_label(self.model["label"])
      
     def click_activate(self):
-        self.emit("activated")
+        self.emit("activate")
 
 
 class LetterButton(Clutter.Actor):

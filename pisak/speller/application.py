@@ -1,25 +1,62 @@
-from gi.repository import Clutter
+from gi.repository import Clutter, Pango
 from pisak import unit, buttons, view, switcher_app
+from pisak.res import colors
 
 
-class TextView(Clutter.Text):
+class TextView(Clutter.Actor):
     """
     Widget for displaying text.
     """
+    TXT_F_WIDTH = unit.mm(218)
+    TXT_F_HEIGHT = unit.mm(108)
+    MODEL = """
+        Nierówny dostęp do najnowszych zdobyczy medycyny
+        zaczyna dominować motywy współczesnych dystopii. W
+        dziecinnie komiksowym wydaniu widać to w filmie "Elysium",
+        który proponuje klasyczne dla gatunku rozwiązanie: wystarczy
+        dokopać Niedobrym i Bogatym, żeby dobrodziejstwa rozlały się
+        na całą ludzkość. Ale jest też prawdziwa i realna droga,
+        trudniejsza i mniej widowiskowa. Prowadzi przez świat
+        oprogramowania wolnego jak w słowie "wolność".
+        """
+    
     def __init__(self):
         super().__init__()
-        self.set_x_expand(True)
-        self.set_y_expand(True)
-        color = Clutter.Color.new(245, 245, 245, 255)
+        color = Clutter.Color.new(250, 250, 250, 255)
         self.set_background_color(color)
-        self.set_font_name('monospace normal 20')
-        self.set_text("Nierówny dostęp...")
+        self._init_layout()
+        self._init_text_field()
+        self.set_model()
 
+    def _init_layout(self):
+        self.set_x_expand(True)
+        self.set_x_align(Clutter.ActorAlign.CENTER)
+        self.set_y_expand(True)
+        self.set_y_align(Clutter.ActorAlign.END)
+    
+    def _init_text_field(self):
+        self.text_field = Clutter.Text()
+        self.text_field.set_size(self.TXT_F_WIDTH, self.TXT_F_HEIGHT)
+        self.text_field.set_background_color(colors.TRANSPARENT)
+        self.add_child(self.text_field)
 
+    def set_model(self):
+        self.text_field.set_line_wrap(True)
+        self.text_field.set_line_alignment(Pango.Alignment.LEFT)
+        self.text_field.set_font_name('normal italic 20')
+        self.text_field.set_text(self.MODEL)
+
+            
 class KeyboardMenu(Clutter.Actor):
     """
     Widget of functional buttons closely related to Keyboard.
     """
+    BT_WIDTH = {
+        1: unit.mm(20),
+        2: unit.mm(42)
+        }
+    BT_HEIGHT = unit.mm(20)
+    SPACING = unit.mm(2)
     BUTTONS = [{
         "label": "%s" % i,
         "icon_path": "%s" % j,
@@ -29,6 +66,7 @@ class KeyboardMenu(Clutter.Actor):
             ["a->A", None, None], ["A->Ą", None, None], [":-)", None, None], ["01", None, None]
             ]
     ]
+    
     def __init__(self):
         super().__init__()
         self._init_layout()
@@ -38,32 +76,50 @@ class KeyboardMenu(Clutter.Actor):
         self.set_x_expand(True)
         self.set_y_expand(True)
         self.layout = Clutter.GridLayout()
-        self.layout.set_column_spacing(unit.mm(2))
+        self.layout.set_column_spacing(self.SPACING)
         self.layout.set_column_homogeneous(True)
+        self.layout.set_row_homogeneous(True)
         self.set_layout_manager(self.layout)
 
     def _init_buttons(self):
         for i in range(7):
             button = buttons.FramedButtonType1()
-            button.set_x_expand(True)
-            button.set_y_expand(True)
-            button.set_model(self.BUTTONS[i])
             if i < 2:
-                self.layout.attach(button, i, 0, 1, 1)
+                span = 1
+                self.layout.attach(button, i, 0, span, 1)
             elif i == 2:
-                self.layout.attach(button, i, 0, 2, 1)
+                span = 2
+                self.layout.attach(button, i, 0, span, 1)
             elif i == 3:
-                self.layout.attach(button, i+1, 0, 2, 1)
+                span = 2
+                self.layout.attach(button, i+1, 0, span, 1)
             elif i == 4:
-                self.layout.attach(button, i+2, 0, 2, 1)
+                span = 2
+                self.layout.attach(button, i+2, 0, span, 1)
             elif i > 4:
-                self.layout.attach(button, i+3, 0, 1, 1)
-                
+                span = 1
+                self.layout.attach(button, i+3, 0, span, 1)
+            button.set_size(self.BT_WIDTH[span], self.BT_HEIGHT)
+            button.set_model(self.BUTTONS[i])
+
+    def hilite_on(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.hilite_on()
+
+    def hilite_off(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.hilite_off()
+            
     
 class Keyboard(Clutter.Actor):
     """
     Widget of buttons necessary for entering text.
     """
+    BT_WIDTH = unit.mm(20)
+    BT_HEIGHT = unit.mm(20)
+    SPACING = unit.mm(2)
     BUTTONS = [{
         "label": "%s" % i
         } for i in [
@@ -72,6 +128,7 @@ class Keyboard(Clutter.Actor):
             "Z", "X", "C", "V", "B", "N", "M", "CZ", "SZ", "RZ"
             ]
     ]
+    
     def __init__(self):
         super().__init__()
         self._init_layout()
@@ -79,10 +136,12 @@ class Keyboard(Clutter.Actor):
 
     def _init_layout(self):
         self.set_x_expand(True)
+        self.set_x_align(Clutter.ActorAlign.CENTER)
         self.set_y_expand(True)
+        self.set_y_align(Clutter.ActorAlign.END)
         self.layout = Clutter.GridLayout()
-        self.layout.set_column_spacing(unit.mm(2))
-        self.layout.set_row_spacing(unit.mm(2))
+        self.layout.set_column_spacing(self.SPACING)
+        self.layout.set_row_spacing(self.SPACING)
         self.layout.set_row_homogeneous(True)
         self.layout.set_column_homogeneous(True)
         self.set_layout_manager(self.layout)
@@ -98,21 +157,49 @@ class Keyboard(Clutter.Actor):
     def _init_buttons(self):
         for i in range(30):
             button = buttons.FramedButtonType1()
-            button.set_x_expand(True)
-            button.set_y_expand(True)
-            button.set_model(self.BUTTONS[i])
+            button.set_size(self.BT_WIDTH, self.BT_HEIGHT)
             x0, y0 = i%10, i/10 + 1
             self.layout.attach(button, x0, y0, 1, 1)
-        
+            button.set_model(self.BUTTONS[i])
+
+    def hilite_on(self):
+        children = self.get_children()
+        for child in children:
+            child.hilite_on()
+
+    def hilite_off(self):
+        children = self.get_children()
+        for child in buttons:
+            child.hilite_off()
+
+
+class KeyboardCycle(switcher_app.Cycle):
+    interval = 1000
+    def __init__(self, actor):
+        super().__init__()
+        self.actor = actor
+        self.STEPS = actor.get_children()
+        self.index = 0
+    
+    def expose_next(self):
+        pass
+    
+    def has_next(self):
+        return True
+
         
 class Extra(Clutter.Actor):
     """
     Widget of buttons containing suggested words or other extra features.
     """
+    BT_WIDTH = unit.mm(42)
+    BT_HEIGHT = unit.mm(20)
+    SPACING = unit.mm(2)
     BUTTONS = [{
         "label": "PREDYKCJA %d" % i
         } for i in reversed(range(1, 10))
     ]
+    
     def __init__(self):
         super().__init__()
         self._init_layout()
@@ -120,25 +207,56 @@ class Extra(Clutter.Actor):
 
     def _init_layout(self):
         self.set_x_expand(True)
+        self.set_x_align(Clutter.ActorAlign.CENTER)
         self.set_y_expand(True)
+        self.set_y_align(Clutter.ActorAlign.END)
         layout = Clutter.BoxLayout()
         layout.set_orientation(Clutter.Orientation.VERTICAL)
-        layout.set_spacing(unit.mm(2))
+        layout.set_spacing(self.SPACING)
         self.set_layout_manager(layout)
 
     def _init_buttons(self):
         for i in range(9):
             button = buttons.FramedButtonType1()
-            button.set_x_expand(True)
-            button.set_y_expand(True)
-            button.set_model(self.BUTTONS[i])
+            button.set_size(self.BT_WIDTH, self.BT_HEIGHT)
             self.add_child(button)
+            button.set_model(self.BUTTONS[i])
 
+    def hilite_on(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.hilite_on()
+
+    def hilite_off(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.hilite_off()
+
+
+class ExtraCycle(switcher_app.Cycle):
+    interval = 1000
+    def __init__(self, actor):
+        super().__init__()
+        self.actor = actor
+        self.STEPS = actor.get_children()
+        self.index = 0
+    
+    def expose_next(self):
+        self.STEPS[self.index-1].hilite_off()
+        self.STEPS[self.index].hilite_on()
+        self.index = (self.index + 1) % len(self.STEPS)
+    
+    def has_next(self):
+        return True
+    
 
 class Menu(Clutter.Actor):
     """
     Widget of functional menu buttons.
     """
+    BT_WIDTH = unit.mm(64)
+    BT_HEIGHT = unit.mm(20)
+    SPACING = unit.mm(2)
     BUTTONS = [{
         "label": "%s" % i,
         "icon_path": "%s" % j,
@@ -149,6 +267,7 @@ class Menu(Clutter.Actor):
             ["DRUKUJ", None, None], ["NOWY DOKUMENT", None, None], ["PANEL STARTOWY", None, None]
             ]
     ]
+    
     def __init__(self):
         super().__init__()
         self._init_layout()
@@ -156,26 +275,62 @@ class Menu(Clutter.Actor):
 
     def _init_layout(self):
         self.set_x_expand(True)
+        self.set_x_align(Clutter.ActorAlign.CENTER)
         self.set_y_expand(True)
+        self.set_y_align(Clutter.ActorAlign.END)
         layout = Clutter.BoxLayout()
         layout.set_orientation(Clutter.Orientation.VERTICAL)
-        layout.set_spacing(unit.mm(2))
+        layout.set_spacing(self.SPACING)
         self.set_layout_manager(layout)
 
     def _init_buttons(self):
         for i in range(9):
-            button = buttons.FramedButtonType1()
-            button.set_x_expand(True)
-            button.set_y_expand(True)
-            button.set_model(self.BUTTONS[i])
+            button = buttons.FramedButtonType3()
+            button.set_size(self.BT_WIDTH, self.BT_HEIGHT)
             self.add_child(button)
+            button.set_model(self.BUTTONS[i])
 
+    def hilite_on(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.hilite_on()
+
+    def hilite_off(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.hilite_off()
+
+
+class MenuCycle(switcher_app.Cycle):
+    interval = 1000
+    def __init__(self, actor):
+        super().__init__()
+        self.actor = actor
+        self.STEPS = actor.get_children()
+        self.index = 0
+    
+    def expose_next(self):
+        self.STEPS[self.index-1].hilite_off()
+        self.STEPS[self.index].hilite_on()
+        self.index = (self.index + 1) % len(self.STEPS)
+
+    def select(self):
+        self.STEPS[self.index-1].select_on()
+        return None
+    
+    def has_next(self):
+        return True
+        
 
 class MainView(Clutter.Actor):
     """
     Speller main view containing all the elements.
     @param context switcher application context passed from application
     """
+    ROW_SPACING = unit.mm(2)
+    COL_SPACING = unit.mm(4)
+    MARGIN = unit.mm(5)
+    
     def __init__(self, context):
         super().__init__()
         self._init_layout()
@@ -185,11 +340,11 @@ class MainView(Clutter.Actor):
         self.set_x_expand(True)
         self.set_y_expand(True)
         margin = Clutter.Margin()
-        margin.top = margin.bottom = margin.left = margin.right = unit.mm(5)
+        margin.top = margin.bottom = margin.left = margin.right = self.MARGIN
         self.set_margin(margin)
         self.layout = Clutter.GridLayout()
-        self.layout.set_column_spacing(unit.mm(4))
-        self.layout.set_row_spacing(unit.mm(4))
+        self.layout.set_column_spacing(self.COL_SPACING)
+        self.layout.set_row_spacing(self.ROW_SPACING)
         self.layout.set_row_homogeneous(True)
         self.layout.set_column_homogeneous(True)
         self.set_layout_manager(self.layout)
@@ -208,7 +363,7 @@ class MainView(Clutter.Actor):
         self.layout.attach(self.keyboard, 5, 5, 10, 4)
 
     def create_initial_cycle(self):
-        return MainViewCycle(self)
+        return MenuCycle(self.menu)
 
 
 class MainViewCycle(switcher_app.Cycle):
@@ -216,26 +371,19 @@ class MainViewCycle(switcher_app.Cycle):
     def __init__(self, actor):
         super().__init__()
         self.actor = actor
+        self.STEPS = [
+            actor.menu, actor.extra, actor.keyboard
+            ]
         self.index = 0
     
     def expose_next(self):
-        pass
-    
-    def stop(self):
-        pass
+        self.STEPS[self.index-1].hilite_off()
+        self.STEPS[self.index].hilite_on()
+        self.index = (self.index + 1) % 3
     
     def has_next(self):
         return True
     
-    def show_menu(self):
-        pass
-    
-    def show_page(self):
-        pass
-    
-    def next_page(self):
-        pass
-
 
 class PisakSpellerContainer(view.BasicViewContainer):
     def __init__(self, context):
