@@ -115,7 +115,7 @@ class KeyboardMenu(ButtonBlock):
                 span = 2
             else:
                 span = 1
-            button.set_size(self.BT_WIDTH[span], self.BT_HEIGHT)
+            button.set_up_with_size(self.BT_WIDTH[span], self.BT_HEIGHT)
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
 
@@ -164,7 +164,7 @@ class Keyboard(Clutter.Actor):
             if i in (0, 10, 20):
                 row = self.generate_row()
             button = buttons.FramedButtonType1()
-            button.set_size(self.BT_WIDTH, self.BT_HEIGHT)
+            button.set_up_with_size(self.BT_WIDTH, self.BT_HEIGHT)
             row.add_child(button)
             button.set_model(self.BUTTONS[i])
             if i in (9, 19, 29):
@@ -253,7 +253,7 @@ class Extra(ButtonBlock):
     def _init_buttons(self):
         for i in range(9):
             button = buttons.FramedButtonType1()
-            button.set_size(self.BT_WIDTH, self.BT_HEIGHT)
+            button.set_up_with_size(self.BT_WIDTH, self.BT_HEIGHT)
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
 
@@ -310,7 +310,7 @@ class Menu(ButtonBlock):
     def _init_buttons(self):
         for i in range(9):
             button = buttons.FramedButtonType3()
-            button.set_size(self.BT_WIDTH, self.BT_HEIGHT)
+            button.set_up_with_size(self.BT_WIDTH, self.BT_HEIGHT)
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
 

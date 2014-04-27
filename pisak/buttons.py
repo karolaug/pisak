@@ -108,9 +108,8 @@ class FramedButton(Clutter.Actor):
         self.set_reactive(True)
         self.selection_time = 1000
 
-    def set_size(self, width, height):
-        self.set_width(width)
-        self.set_height(height)
+    def set_up_with_size(self, width, height):
+        self.set_size(width, height)
         self._init_canvas()
         self._init_elements()
 
