@@ -46,8 +46,40 @@ class TextView(Clutter.Actor):
         self.text_field.set_font_name('normal italic 20')
         self.text_field.set_text(self.MODEL)
 
+
+class ButtonBlock(Clutter.Actor):
+    """
+    Base class for widgets containing blocks of buttons.
+    """
+    
+    def __init__(self):
+        super().__init__()
+        self._init_layout()
+        self._init_buttons()
+
+    def _init_layout(self):
+        raise NotImplementedError()
+
+    def _init_buttons(self):
+        raise NotImplementedError()
+    
+    def hilite_on(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.hilite_on()
+
+    def hilite_off(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.hilite_off()
+
+    def select_on(self):
+        buttons = self.get_children()
+        for b in buttons:
+            b.select_on()
+
             
-class KeyboardMenu(Clutter.Actor):
+class KeyboardMenu(ButtonBlock):
     """
     Widget of functional buttons closely related to Keyboard.
     """
@@ -69,49 +101,24 @@ class KeyboardMenu(Clutter.Actor):
     
     def __init__(self):
         super().__init__()
-        self._init_layout()
-        self._init_buttons()
         
     def _init_layout(self):
-        self.set_x_expand(True)
-        self.set_y_expand(True)
-        self.layout = Clutter.GridLayout()
-        self.layout.set_column_spacing(self.SPACING)
-        self.layout.set_column_homogeneous(True)
-        self.layout.set_row_homogeneous(True)
-        self.set_layout_manager(self.layout)
+        layout = Clutter.BoxLayout()
+        layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+        layout.set_spacing(self.SPACING)
+        self.set_layout_manager(layout)
 
     def _init_buttons(self):
         for i in range(7):
             button = buttons.FramedButtonType1()
-            if i < 2:
+            if i in (2, 3, 4):
+                span = 2
+            else:
                 span = 1
-                self.layout.attach(button, i, 0, span, 1)
-            elif i == 2:
-                span = 2
-                self.layout.attach(button, i, 0, span, 1)
-            elif i == 3:
-                span = 2
-                self.layout.attach(button, i+1, 0, span, 1)
-            elif i == 4:
-                span = 2
-                self.layout.attach(button, i+2, 0, span, 1)
-            elif i > 4:
-                span = 1
-                self.layout.attach(button, i+3, 0, span, 1)
             button.set_size(self.BT_WIDTH[span], self.BT_HEIGHT)
+            self.add_child(button)
             button.set_model(self.BUTTONS[i])
 
-    def hilite_on(self):
-        buttons = self.get_children()
-        for b in buttons:
-            b.hilite_on()
-
-    def hilite_off(self):
-        buttons = self.get_children()
-        for b in buttons:
-            b.hilite_off()
-            
     
 class Keyboard(Clutter.Actor):
     """
@@ -139,12 +146,10 @@ class Keyboard(Clutter.Actor):
         self.set_x_align(Clutter.ActorAlign.CENTER)
         self.set_y_expand(True)
         self.set_y_align(Clutter.ActorAlign.END)
-        self.layout = Clutter.GridLayout()
-        self.layout.set_column_spacing(self.SPACING)
-        self.layout.set_row_spacing(self.SPACING)
-        self.layout.set_row_homogeneous(True)
-        self.layout.set_column_homogeneous(True)
-        self.set_layout_manager(self.layout)
+        layout = Clutter.BoxLayout()
+        layout.set_orientation(Clutter.Orientation.VERTICAL)
+        layout.set_spacing(self.SPACING)
+        self.set_layout_manager(layout)
 
     def _init_elements(self):
         self._init_menu()
@@ -152,29 +157,53 @@ class Keyboard(Clutter.Actor):
 
     def _init_menu(self):
         menu = KeyboardMenu()
-        self.layout.attach(menu, 0, 0, 10, 1)
+        self.add_child(menu)
 
     def _init_buttons(self):
         for i in range(30):
+            if i in (0, 10, 20):
+                row = Keyboard.SingleRow()
             button = buttons.FramedButtonType1()
             button.set_size(self.BT_WIDTH, self.BT_HEIGHT)
-            x0, y0 = i%10, i/10 + 1
-            self.layout.attach(button, x0, y0, 1, 1)
+            row.add_child(button)
             button.set_model(self.BUTTONS[i])
+            if i in (9, 19, 29):
+                self.add_child(row)
+
+    class SingleRow(ButtonBlock):
+        SPACING =  unit.mm(2)
+            
+        def __init__(self):
+            super().__init__()
+
+        def _init_layout(self):
+            layout = Clutter.BoxLayout()
+            layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+            layout.set_spacing(self.SPACING)
+            self.set_layout_manager(layout)
+
+        def _init_buttons(self):
+            pass
 
     def hilite_on(self):
-        children = self.get_children()
-        for child in children:
-            child.hilite_on()
+        rows = self.get_children()
+        for r in rows:
+            r.hilite_on()
 
     def hilite_off(self):
-        children = self.get_children()
-        for child in buttons:
-            child.hilite_off()
+        rows = self.get_children()
+        for r in rows:
+            r.hilite_off()
+
+    def select_on(self):
+        rows = self.get_children()
+        for r in rows:
+            r.select_on()
 
 
 class KeyboardCycle(switcher_app.Cycle):
     interval = 1000
+    
     def __init__(self, actor):
         super().__init__()
         self.actor = actor
@@ -182,13 +211,19 @@ class KeyboardCycle(switcher_app.Cycle):
         self.index = 0
     
     def expose_next(self):
-        pass
+        self.STEPS[self.index-1].hilite_off()
+        self.STEPS[self.index].hilite_on()
+        self.index = (self.index + 1) % len(self.STEPS)
+
+    def select(self):
+        self.STEPS[self.index-1].select_on()
+        return None
     
     def has_next(self):
         return True
 
         
-class Extra(Clutter.Actor):
+class Extra(ButtonBlock):
     """
     Widget of buttons containing suggested words or other extra features.
     """
@@ -202,8 +237,6 @@ class Extra(Clutter.Actor):
     
     def __init__(self):
         super().__init__()
-        self._init_layout()
-        self._init_buttons()
 
     def _init_layout(self):
         self.set_x_expand(True)
@@ -222,19 +255,10 @@ class Extra(Clutter.Actor):
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
 
-    def hilite_on(self):
-        buttons = self.get_children()
-        for b in buttons:
-            b.hilite_on()
-
-    def hilite_off(self):
-        buttons = self.get_children()
-        for b in buttons:
-            b.hilite_off()
-
 
 class ExtraCycle(switcher_app.Cycle):
     interval = 1000
+    
     def __init__(self, actor):
         super().__init__()
         self.actor = actor
@@ -250,7 +274,7 @@ class ExtraCycle(switcher_app.Cycle):
         return True
     
 
-class Menu(Clutter.Actor):
+class Menu(ButtonBlock):
     """
     Widget of functional menu buttons.
     """
@@ -270,8 +294,6 @@ class Menu(Clutter.Actor):
     
     def __init__(self):
         super().__init__()
-        self._init_layout()
-        self._init_buttons()
 
     def _init_layout(self):
         self.set_x_expand(True)
@@ -290,19 +312,10 @@ class Menu(Clutter.Actor):
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
 
-    def hilite_on(self):
-        buttons = self.get_children()
-        for b in buttons:
-            b.hilite_on()
-
-    def hilite_off(self):
-        buttons = self.get_children()
-        for b in buttons:
-            b.hilite_off()
-
 
 class MenuCycle(switcher_app.Cycle):
     interval = 1000
+    
     def __init__(self, actor):
         super().__init__()
         self.actor = actor
@@ -329,7 +342,7 @@ class MainView(Clutter.Actor):
     """
     ROW_SPACING = unit.mm(2)
     COL_SPACING = unit.mm(4)
-    MARGIN = unit.mm(5)
+    MARGIN = unit.mm(2)
     
     def __init__(self, context):
         super().__init__()
@@ -363,11 +376,12 @@ class MainView(Clutter.Actor):
         self.layout.attach(self.keyboard, 5, 5, 10, 4)
 
     def create_initial_cycle(self):
-        return MenuCycle(self.menu)
+        return KeyboardCycle(self.keyboard)
 
 
 class MainViewCycle(switcher_app.Cycle):
     interval = 1000
+    
     def __init__(self, actor):
         super().__init__()
         self.actor = actor
