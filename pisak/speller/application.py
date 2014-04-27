@@ -49,7 +49,7 @@ class TextView(Clutter.Actor):
 
 class ButtonBlock(Clutter.Actor):
     """
-    Base class for widgets containing blocks of buttons.
+    Base class for widgets containing block of buttons.
     """
     
     def __init__(self):
@@ -162,7 +162,7 @@ class Keyboard(Clutter.Actor):
     def _init_buttons(self):
         for i in range(30):
             if i in (0, 10, 20):
-                row = Keyboard.SingleRow()
+                row = self.generate_row()
             button = buttons.FramedButtonType1()
             button.set_size(self.BT_WIDTH, self.BT_HEIGHT)
             row.add_child(button)
@@ -170,20 +170,22 @@ class Keyboard(Clutter.Actor):
             if i in (9, 19, 29):
                 self.add_child(row)
 
-    class SingleRow(ButtonBlock):
-        SPACING =  unit.mm(2)
+    def generate_row(self):
+        class EmptyRow(ButtonBlock):
+            SPACING =  unit.mm(2)
             
-        def __init__(self):
-            super().__init__()
+            def __init__(self):
+                super().__init__()
 
-        def _init_layout(self):
-            layout = Clutter.BoxLayout()
-            layout.set_orientation(Clutter.Orientation.HORIZONTAL)
-            layout.set_spacing(self.SPACING)
-            self.set_layout_manager(layout)
+            def _init_layout(self):
+                layout = Clutter.BoxLayout()
+                layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+                layout.set_spacing(self.SPACING)
+                self.set_layout_manager(layout)
 
-        def _init_buttons(self):
-            pass
+            def _init_buttons(self):
+                pass
+        return EmptyRow()
 
     def hilite_on(self):
         rows = self.get_children()
