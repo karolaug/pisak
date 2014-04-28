@@ -164,7 +164,7 @@ class TilePageTest(unittest.TestCase):
     
     def test_expire(self):
         """
-        Cycle expiration after 2 rounds.
+        Cycle expiration after 1 round.
         """
         items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
         tiles = []
@@ -174,7 +174,7 @@ class TilePageTest(unittest.TestCase):
             tiles.append(tile)
         page = widgets.TilePage(tiles)
         cycle = page.create_cycle()
-        for _ in range(len(items) * 2):
+        for _ in range(len(items)):
             self.assertTrue(cycle.has_next())
             cycle.expose_next()
         self.assertFalse(cycle.has_next())
