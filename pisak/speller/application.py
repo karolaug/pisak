@@ -9,16 +9,6 @@ class TextView(Clutter.Actor):
     """
     TXT_F_WIDTH = unit.mm(218)
     TXT_F_HEIGHT = unit.mm(108)
-    MODEL = """
-        Nierówny dostęp do najnowszych zdobyczy medycyny
-        zaczyna dominować motywy współczesnych dystopii. W
-        dziecinnie komiksowym wydaniu widać to w filmie "Elysium",
-        który proponuje klasyczne dla gatunku rozwiązanie: wystarczy
-        dokopać Niedobrym i Bogatym, żeby dobrodziejstwa rozlały się
-        na całą ludzkość. Ale jest też prawdziwa i realna droga,
-        trudniejsza i mniej widowiskowa. Prowadzi przez świat
-        oprogramowania wolnego jak w słowie "wolność".
-        """
     
     def __init__(self):
         super().__init__()
@@ -26,7 +16,6 @@ class TextView(Clutter.Actor):
         self.set_background_color(color)
         self._init_layout()
         self._init_text_field()
-        self.set_model()
 
     def _init_layout(self):
         self.set_x_expand(True)
@@ -38,13 +27,13 @@ class TextView(Clutter.Actor):
         self.text_field = Clutter.Text()
         self.text_field.set_size(self.TXT_F_WIDTH, self.TXT_F_HEIGHT)
         self.text_field.set_background_color(colors.TRANSPARENT)
-        self.add_child(self.text_field)
-
-    def set_model(self):
         self.text_field.set_line_wrap(True)
         self.text_field.set_line_alignment(Pango.Alignment.LEFT)
         self.text_field.set_font_name('normal italic 20')
-        self.text_field.set_text(self.MODEL)
+        self.add_child(self.text_field)
+
+    def insert_letter(self, letter):
+        self.text_field.insert_text(letter, -1)
 
 
 class ButtonBlock(Clutter.Actor):
@@ -78,6 +67,39 @@ class ButtonBlock(Clutter.Actor):
         for b in buttons:
             b.select_on()
 
+    def create_cycle(self):
+        return ButtonBlockCycle(self)
+
+
+class ButtonBlockCycle(switcher_app.Cycle):
+    interval = 1000
+    
+    def __init__(self, actor):
+        self.actor = actor
+        self.STEPS = actor.get_children()
+        self.index = 0
+        self.next = True
+    
+    def expose_next(self):
+        previous_button = self.STEPS[self.index-1]
+        previous_button.hilite_off()
+        current_button = self.STEPS[self.index]
+        current_button.hilite_on()
+        self.index = (self.index + 1) % len(self.STEPS)
+
+    def select(self):
+        button = self.STEPS[self.index-1]
+        button.select_on()
+        self.next = False
+        return switcher_app.selection_activate_actor(button)
+    
+    def has_next(self):
+        return self.next
+
+    def stop(self):
+        final_button = self.STEPS[self.index-1]
+        final_button.hilite_off()
+    
             
 class KeyboardMenu(ButtonBlock):
     """
@@ -165,10 +187,15 @@ class Keyboard(Clutter.Actor):
                 row = self.generate_row()
             button = buttons.FramedButtonType1()
             button.set_up_with_size(self.BT_WIDTH, self.BT_HEIGHT)
+            button.connect("activate", self.on_button_activate)
             row.add_child(button)
             button.set_model(self.BUTTONS[i])
             if i in (9, 19, 29):
                 self.add_child(row)
+
+    def on_button_activate(self, button):
+        letter = button.get_label()
+        dispatcher.insert_letter(letter)
 
     def generate_row(self):
         class EmptyRow(ButtonBlock):
@@ -202,24 +229,35 @@ class Keyboard(Clutter.Actor):
         for r in rows:
             r.select_on()
 
+    def create_cycle(self):
+        return KeyboardCycle(self)
+
 
 class KeyboardCycle(switcher_app.Cycle):
     interval = 1000
     
     def __init__(self, actor):
-        super().__init__()
         self.actor = actor
         self.STEPS = actor.get_children()
         self.index = 0
     
     def expose_next(self):
-        self.STEPS[self.index-1].hilite_off()
-        self.STEPS[self.index].hilite_on()
+        previous_row = self.STEPS[self.index-1]
+        previous_row.hilite_off()
+        current_row = self.STEPS[self.index]
+        current_row.hilite_on()
         self.index = (self.index + 1) % len(self.STEPS)
 
     def select(self):
-        self.STEPS[self.index-1].select_on()
-        return None
+        row = self.STEPS[self.index-1]
+        row.select_on()
+        cycle = row.create_cycle()
+        return switcher_app.selection_add_cycle(cycle)
+
+    def stop(self):
+        final_row = self.STEPS[self.index-1]
+        final_row.hilite_off()
+        self.index = 0
     
     def has_next(self):
         return True
@@ -256,24 +294,6 @@ class Extra(ButtonBlock):
             button.set_up_with_size(self.BT_WIDTH, self.BT_HEIGHT)
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
-
-
-class ExtraCycle(switcher_app.Cycle):
-    interval = 1000
-    
-    def __init__(self, actor):
-        super().__init__()
-        self.actor = actor
-        self.STEPS = actor.get_children()
-        self.index = 0
-    
-    def expose_next(self):
-        self.STEPS[self.index-1].hilite_off()
-        self.STEPS[self.index].hilite_on()
-        self.index = (self.index + 1) % len(self.STEPS)
-    
-    def has_next(self):
-        return True
     
 
 class Menu(ButtonBlock):
@@ -313,28 +333,22 @@ class Menu(ButtonBlock):
             button.set_up_with_size(self.BT_WIDTH, self.BT_HEIGHT)
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
+            
 
+class Dispatcher(object):
+    """
+    Object whose role is to receive, gather, and distribute commands and informations throughout
+    all the speller app elements.
+    """
+    
+    def __init__(self, menu, extra, keyboard, text_view):
+        self.menu = menu
+        self.extra = extra
+        self.keyboard = keyboard
+        self.text_view = text_view
 
-class MenuCycle(switcher_app.Cycle):
-    interval = 1000
-    
-    def __init__(self, actor):
-        super().__init__()
-        self.actor = actor
-        self.STEPS = actor.get_children()
-        self.index = 0
-    
-    def expose_next(self):
-        self.STEPS[self.index-1].hilite_off()
-        self.STEPS[self.index].hilite_on()
-        self.index = (self.index + 1) % len(self.STEPS)
-
-    def select(self):
-        self.STEPS[self.index-1].select_on()
-        return None
-    
-    def has_next(self):
-        return True
+    def insert_letter(self, letter):
+        self.text_view.insert_letter(letter)
         
 
 class MainView(Clutter.Actor):
@@ -350,6 +364,7 @@ class MainView(Clutter.Actor):
         super().__init__()
         self._init_layout()
         self._init_elements()
+        self._init_dispatcher()
 
     def _init_layout(self):
         self.set_x_expand(True)
@@ -367,25 +382,32 @@ class MainView(Clutter.Actor):
     def _init_elements(self):
         self.menu = Menu()
         self.extra = Extra()
-        self.keyboard = Keyboard()
         self.text_view = TextView()
+        self.keyboard = Keyboard()
         self._arrange_elements()
-
+        
     def _arrange_elements(self):
         self.layout.attach(self.menu, 0, 0, 3, 9)
         self.layout.attach(self.extra, 3, 0, 2, 9)
         self.layout.attach(self.text_view, 5, 0, 10, 5)
         self.layout.attach(self.keyboard, 5, 5, 10, 4)
 
+    def _init_dispatcher(self):
+        global dispatcher
+        dispatcher = Dispatcher(self.menu, self.extra, self.keyboard, self.text_view)
+
+    def create_cycle(self):
+        return MainViewCycle(self)
+
     def create_initial_cycle(self):
-        return KeyboardCycle(self.keyboard)
+        cycle = self.create_cycle()
+        return cycle
 
 
 class MainViewCycle(switcher_app.Cycle):
     interval = 1000
     
     def __init__(self, actor):
-        super().__init__()
         self.actor = actor
         self.STEPS = [
             actor.menu, actor.extra, actor.keyboard
@@ -393,9 +415,25 @@ class MainViewCycle(switcher_app.Cycle):
         self.index = 0
     
     def expose_next(self):
-        self.STEPS[self.index-1].hilite_off()
-        self.STEPS[self.index].hilite_on()
+        previous_block = self.STEPS[self.index-1]
+        previous_block.hilite_off()
+        current_block = self.STEPS[self.index]
+        current_block.hilite_on()
         self.index = (self.index + 1) % 3
+    
+    def has_next(self):
+        return True
+
+    def select(self):
+        block = self.STEPS[self.index-1]
+        block.select_on()
+        cycle = block.create_cycle()
+        return switcher_app.selection_add_cycle(cycle)
+
+    def stop(self):
+        final_block = self.STEPS[self.index-1]
+        final_block.hilite_off()
+        self.index = 0
     
     def has_next(self):
         return True

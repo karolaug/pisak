@@ -221,6 +221,9 @@ class FramedButtonType1(FramedButton):
     def set_label(self, label):
         self.label.set_text(label)
 
+    def get_label(self):
+        return self.label.get_text()
+
     def update_button(self):
         self.canvas.invalidate()
         self.label.set_color(self.foreground_color)
