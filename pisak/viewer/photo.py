@@ -35,6 +35,15 @@ class PhotoViewIdleCycle(switcher_app.Cycle):
         return self.view_actor.create_slideshow_cycle()
 
 
+class PhotoViewMenu(widgets.SideMenu):
+    @staticmethod
+    def foo():
+        pass
+    
+    MODEL = {
+        "foo": foo}
+
+
 class PhotoView(Clutter.Actor):
     def __init__(self, context):
         super().__init__()
@@ -68,7 +77,7 @@ class PhotoView(Clutter.Actor):
     def create_idle_cycle(self):
         return PhotoViewIdleCycle(self)
     
-    def create_cycle(self):
+    def create_initial_cycle(self):
         return self.create_idle_cycle()
     
 
