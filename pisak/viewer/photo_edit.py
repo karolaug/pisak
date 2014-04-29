@@ -1,5 +1,5 @@
 from gi.repository import Clutter, Mx, Cogl
-from PIL import ImageOps as ImO, Image as Im
+from PIL import ImageFilter as ImF, Image as Im
 import sys
 from pisak import unit, res
 import random
@@ -21,6 +21,7 @@ class Image(Clutter.Actor):
         self.add_child(self.image)
         self.original_photo = self.buffer = Im.open(self.MODEL)
         self.zoom_timer = None
+        self.noise_timer = None
 
     def set_image_from_data(self):
         data = self.buffer.tostring()
@@ -31,7 +32,7 @@ class Image(Clutter.Actor):
         
     def mirror(self, button, event):
         axis = [Im.FLIP_LEFT_RIGHT, Im.FLIP_TOP_BOTTOM]
-        self.buffer = self.buffer.transpose(axis[random.randint(0,1)])
+        self.buffer = self.buffer.transpose(axis[random.randint(0, 1)])
         self.set_image_from_data()
 
     def grayscale(self, button, event):
@@ -40,6 +41,28 @@ class Image(Clutter.Actor):
         
     def rotate(self, button, event):     
         self.buffer = self.buffer.rotate(90, resample=Im.AFFINE)
+        self.set_image_from_data()
+
+    def noise(self, button, event):
+        if not self.noise_timer:
+            self.noise_timer = Clutter.Timeline.new(200)
+            self.noise_timer.set_repeat_count(50)
+            self.noise_timer.connect('completed', self._noise_update)
+            self.noise_timer.start()
+        else:
+            self.noise_timer.stop()
+            self.noise_timer = None
+
+    def _noise_update(self, event):
+        level = 40
+        bands = self.buffer.getbands()
+        source = self.buffer.split()
+        for idx in range(len(source)):
+            if bands[idx] != 'A':
+                out = source[idx].point(lambda i: i + random.uniform(-level, level))
+                source[idx].paste(out, None)
+        mode = self.buffer.mode
+        self.buffer = Im.merge(mode, source)
         self.set_image_from_data()
 
     def _zoom_cycle(self, button, event):
@@ -58,14 +81,41 @@ class Image(Clutter.Actor):
         x1, y1 = width-x0, height-y0
         self.buffer = self.buffer.transform((width, height), Im.EXTENT, (x0, y0, x1, y1))
         self.set_image_from_data()
+
+    def edges(self, button, event):
+        self.buffer = self.buffer.filter(ImF.FIND_EDGES)
+        self.set_image_from_data()
+
+    def sepia(self, button, event):
+        level = 50
+        grayscale = self.buffer.convert('L')
+        red = grayscale.point(lambda i: i + level*1.5)
+        green = grayscale.point(lambda i: i + level)
+        blue = grayscale.point(lambda i: i - level*0.5)
+        source = self.buffer.split()
+        source[0].paste(red, None)
+        source[1].paste(green, None)
+        source[2].paste(blue, None)
+        mode = self.buffer.mode
+        self.buffer = Im.merge(mode, source)
+        self.set_image_from_data()
+
+    def contour(self, button, event):
+        self.buffer = self.buffer.filter(ImF.CONTOUR)
+        self.set_image_from_data()
         
     def invert(self, button, event):
-        self.buffer = ImO.invert(self.buffer)
+        self.buffer = self.buffer.point(lambda i: 255-i)
         self.set_image_from_data()
 
     def solarize(self, button, event):
         threshold = 80
-        self.buffer = ImO.solarize(self.buffer, threshold)
+        buffer = self.buffer.copy()
+        grayscale = buffer.convert('L')
+        out = buffer.point(lambda i: i>threshold and 255-i)
+        mask = grayscale.point(lambda i: i>threshold and 255)
+        buffer.paste(out, None, mask)
+        self.buffer = buffer
         self.set_image_from_data()
 
     def original(self, button, event):
@@ -88,7 +138,9 @@ class Buttons(Clutter.Actor):
         buttons = {'rotate': ['obróć', self.image.rotate], 'mirror': ['lustro', self.image.mirror],
                    'invert': ['negatyw', self.image.invert], 'zoom': ['powiększenie', self.image._zoom_cycle],
                    'solarize': ['prześwietlenie', self.image.solarize], 'grayscale': ['skala szarości', self.image.grayscale],
-                   'original': ['oryginał', self.image.original], 'exit': ['wyjście', self.exit_app]}
+                   'original': ['oryginał', self.image.original], 'exit': ['wyjście', self.exit_app],
+                   'noise': ['szum', self.image.noise], 'edges': ['krawędzie', self.image.edges],
+                   'contour': ['szkic', self.image.contour], 'sepia': ['sepia', self.image.sepia]}
         for b in reversed(sorted(buttons)):
             button = Mx.Button()
             button.set_label(buttons[b][0])

@@ -3,12 +3,12 @@ Module defines classes specific to Viewer application.
 """
 import os.path
 import random
-from gi.repository import Clutter, Mx, GObject
-from PIL import Image
-from pisak import unit, view, buttons
+from gi.repository import Clutter, GObject
+from pisak import unit, view
 from pisak import widgets
 from pisak import switcher_app
 from pisak import res
+from pisak.viewer import photo
 
 
 class CategoryView(widgets.ScrollingView):
@@ -63,7 +63,7 @@ class LibraryView(widgets.ScrollingView):
 
     def __init__(self, context):
         super().__init__(context)
-        #self.content_scroll.tile_handler = self.show_category
+        self.content_scroll.tile_handler = self.show_category
 
     def _tile_selected(self, scroll, category):
         self.emit('category-selected', category)
@@ -178,151 +178,3 @@ class PisakViewApp(switcher_app.Application):
         stage = PisakViewerStage(self.context)
         stage.set_fullscreen(True)
         return stage
-
-
-class SlideshowCycle(switcher_app.Cycle):
-    def __init__(self, view_actor):
-        self.view_actor = view_actor
-        self.remaining = len(self.view_actor.photos)
-
-    def has_next(self):
-        return self.remaining > 0
-
-    def expose_next(self):
-        self.view_actor.next_photo()
-
-    def select(self):
-        raise NotImplementedError()
-
-
-class PhotoViewIdleCycle(switcher_app.Cycle):
-    interval = 3600
-
-    def __init__(self, view_actor):
-        self.view_actor = view_actor
-
-    def has_next(self):
-        return True
-
-    def expose_next(self):
-        pass
-
-    def select(self):
-        return self.view_actor.create_slideshow_cycle()
-
-
-class PhotoView(Clutter.Actor):
-    def __init__(self, context):
-        super().__init__()
-        self.context = context
-        self.model = None
-        self.photos = []
-        self.current_photo = None
-        self._init_layout()
-        self._init_elements()
-
-    def _init_layout(self):
-        self.set_layout_manager(Clutter.BoxLayout())
-        self.set_x_expand(True)
-        self.set_y_expand(True)
-
-    def _init_menu(self):
-        self.menu = widgets.ButtonsMenu(self.context)
-        self.add_child(self.menu)
-
-    def _init_elements(self):
-        self._init_menu()
-        self.photo_actor = Mx.Image()
-        self.photo_actor.set_from_file(os.path.join(res.PATH, "krolikarnia.jpg"))
-        self.add_child(self.photo_actor)
-
-    def _update_photo(self, index):
-        self.current_photo = index
-        self.remove_child(self.photo_actor)
-        self.photo_actor = widgets.PhotoSlide()
-        self.photo_actor.set_model(self.photos[index])
-        self.add_child(self.photo_actor)
-
-    def set_model(self, model):
-        self.model = model
-        self.photos = self.model["items"]
-        self.current_photo = self.model["initial_photo"]
-        self._update_photo(self.current_photo)
-
-    def create_slideshow_cycle(self):
-        return SlideshowCycle(self)
-
-    def create_idle_cycle(self):
-        return PhotoViewIdleCycle(self)
-
-    def create_initial_cycle(self):
-        return self.create_idle_cycle()
-
-
-class PhotoEditionMenu(Clutter.Actor):
-    """
-    Widget of buttons associated with a PhotoView being in the edition mode.
-    @param view an instance of PhotoView.
-    """
-    SPACING = unit.mm(4)
-
-    def __init__(self, view):
-        super().__init__()
-        self.view = view
-        self.buffer = view.buffer
-        self._init_layout()
-        self._init_buttons()
-
-    def _init_layout(self):
-        self.layout = Clutter.BoxLayout()
-        self.layout.set_orientation(Clutter.Orientation.VERTICAL)
-        self.layout.set_spacing(self.SPACING)
-        self.set_layout_manager(self.layout)
-        margin = Clutter.Margin()
-        margin.top = margin.bottom = self.SPACING
-        self.set_margin(margin)
-
-    def _init_buttons(self):
-        self.buttons = {'grayscale': ['skala szarości', self.buffer.grayscale], 'save': ['zapisz', self.buffer.save],
-                        'original': ['oryginał', self.buffer.original], 'mirror': ['lustro', self.buffer.mirror],
-                        'rotate': ['obróć', self.buffer.rotate], 'zoom': ['powiększenie', self.buffer.zoom]}
-        for b in self.buttons:
-            button = buttons.MenuButton()
-            button.set_model({'label': self.buttons[b][0]})
-            button.connect('activate', self.buttons[b][1])
-            self.add_child(button)
-
-
-class PhotoBuffer(object):
-    """
-    Buffer containing a currently edited photo.
-    """
-    def __init__(self, view, photo):
-        self.view = view
-        self.photo = photo
-        self.path = photo.path
-        self.buffer = self.original_photo = Image.open(path)
-
-    def mirror(self, source, event):
-        self.buffer = self.buffer.transpose(Image.FLIP_LEFT_RIGHT)
-
-    def grayscale(self, source, event):
-        self.buffer = self.buffer.convert('L')
-
-    def rotate(self, source, event):
-        self.buffer = self.buffer.transpose(Image.ROTATE_90)
-
-    def zoom(self, source, event):
-        width, height = self.buffer.size[0], self.buffer.size[1]
-        x0, y0 = width/30, height/30
-        x1, y1 = width-x0, height-y0
-        self.buffer = self.buffer.transform((width, height), Image.EXTENT, (x0, y0, x1, y1))
-
-    def original(self, source, event):
-        self.buffer = self.original_photo
-
-    def save(self, source, event):
-        raise NotImplementedError()
-
-    def buffer_to_data(self):
-        self.data = self.buffer.tostring()
