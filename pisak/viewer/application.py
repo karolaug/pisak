@@ -38,6 +38,9 @@ class CategoryView(widgets.ScrollingView):
 
     def show_photo(self, tile):
         self.context.application.push_view(PhotoView(self.context))
+    
+    def create_menu(self):
+        return widgets.CategoryViewMenu(self.context)
 
 
 class LibraryView(widgets.ScrollingView):
@@ -67,6 +70,9 @@ class LibraryView(widgets.ScrollingView):
 
     def show_category(self, tile):
         self.context.application.push_view(CategoryView(self.context))
+    
+    def create_menu(self):
+        return widgets.LibraryViewMenu(self.context)
 
 
 class PisakViewerContainer(view.BasicViewContainer):

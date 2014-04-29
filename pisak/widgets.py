@@ -366,27 +366,38 @@ ScrollingViewCycle.STEPS = [
     ScrollingViewCycle.next_page]
 
 
-class ButtonsMenu(Clutter.Actor):
+class SideMenu(Clutter.Actor):
+    '''
+    Display vertical menu on the side of a view. Abstract class,
+    generates buttons from BUTTONS class variable.
+    '''
     def __init__(self, context):
         """
-        Widget of buttons associated with a LibraryView.
-        @param viewer an instance of LibraryView
+        Create menu
+        @param context Switcher application context
         """
         super().__init__()
         self.context = context
+        
+        self._init_layout()
+        self._init_buttons()
+
+    def _init_buttons(self):
+        menu_model = self.__class__.BUTTONS
+        for button_model in menu_model:
+            button = buttons.MenuButton()
+            button.set_model(button_model)
+            self.add_child(button)
+
+    def _init_layout(self):
+        # set up layout manager
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation.VERTICAL)
         self.layout.set_spacing(dims.H_SPACING_PX)
         self.set_layout_manager(self.layout)
+        # set dimensions
         self.set_y_expand(True)
         self.set_width(dims.MENU_BUTTON_W_PX)
-        self.button = buttons.MenuButton()
-        self.button.set_model({"label": "Koniec"})
-        self.add_child(self.button)
-        for index in range(4):
-            button = buttons.MenuButton()
-            button.set_model({"label": "Przycisk %d" % index})
-            self.add_child(button)
 
     def hilite_off(self):
         self.set_hilite(0.0)
@@ -402,11 +413,33 @@ class ButtonsMenu(Clutter.Actor):
             color = colors.HILITE_1
         self.set_background_color(color)
 
-    def _next_page(self):
-        """
-        Signal handler.
-        """
-        self.viewer.next_page()
+
+class LibraryViewMenu(SideMenu):
+    BUTTONS = [
+        {
+            "label": "Whatevs",
+            "icon": None,
+            "handler": None},
+        {
+            "label": "Wyjście",
+            "icon": None,
+            "handler": None}]
+
+
+class CategoryViewMenu(SideMenu):
+    BUTTONS = [
+        {
+            "label": "Whatevs",
+            "icon": None,
+            "handler": None},
+        {
+            "label": "Powrót",
+            "icon": None,
+            "handler": None},
+        {
+            "label": "Wyjście",
+            "icon": None,
+            "handler": None}]
 
 
 class ScrollingView(Clutter.Actor):
@@ -437,8 +470,14 @@ class ScrollingView(Clutter.Actor):
         self._init_content_scrollbar()
         self._init_content_scroll()
 
+    def create_menu(self):
+        '''
+        Abstract method which should create and return a menu actor.
+        '''
+        raise NotImplementedError("Menu creation not implemented")
+    
     def _init_menu(self):
-        self.menu = ButtonsMenu(self.context)
+        self.menu = self.create_menu()
         self.menu.set_y_expand(False)
         self.layout.attach(self.menu, 0, 0, 1, 2)
 
