@@ -19,7 +19,6 @@ class ButtonStage(Clutter.Stage):
         self.button.set_style(self.style)
         self.button.set_label("Don't click")
         print(self.button.list_properties())
-        print(self.button.get_property("border_image"))
         self.add_child(self.button)
         #self.layout = Clutter.BinLayout()
         #self.set_layout_manager(self.layout)
