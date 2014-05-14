@@ -1,0 +1,34 @@
+[
+    {
+	    "id": "speller_view",
+	    "type": "PisakWidget",
+	
+	    "scanning": "children",
+	    "children": [
+	        "speller_menu",
+	        "speller_keyboard",
+	        "speller_text"
+	    ]
+    },
+    {
+        "id": "speller_menu",
+        "type": "PisakMenu",
+        "buttons": [
+            "text-to-speech",
+            ["save", "load", "new"],
+            ["send", "print"],
+            "back"
+        ]
+    },
+    {
+        "id": "speller_keyboard",
+        "type": "RowKeyboard",
+        
+        "scanning": "row-column",
+        "buttons": [["A", "B"], ["C", "D"]]
+    },
+    {
+        "id": "speller_text",
+        "type": "SpellerEdit"
+    }
+]
