@@ -2,5 +2,5 @@
 from pisak.speller import application
 import sys
 
-application.PisakSpellerApp(sys.argv).main()
-
+if __name__ == "__main__":
+    application.PisakSpellerApp(sys.argv).main()
