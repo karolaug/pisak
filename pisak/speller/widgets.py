@@ -11,11 +11,10 @@ class Button(pisak.widgets.Button):
         "speller_function": (
             GObject.TYPE_STRING,
             "speller function",
-            "name button's function"
+            "speller function",
             "noop",
             GObject.PARAM_READWRITE)
     }
-    pass
 
 
 class Key(Mx.Button):
