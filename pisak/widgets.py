@@ -1,8 +1,97 @@
 from gi.repository import Clutter, Mx, GObject
-from pisak import switcher_app, buttons
+from pisak import switcher_app, unit, res
 import collections
 from pisak.res import colors, dims
 import cairo
+import os.path
+
+
+class Button(Clutter.Actor):
+    """
+    Generic Pisak button widget with label and icon.
+    """
+    HEIGHT = unit.mm(15)
+    WIDTH = unit.mm(65)
+    MODEL = {
+        "icon_path": os.path.join(res.PATH, "icon.png")
+    }
+    __gsignals__ = {
+        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+    
+    def __init__(self):
+        super().__init__()
+        self.connect("button-release-event", self.click_activate)
+        self.connect("enter-event", lambda *_: self.hilite_on())
+        self.connect("leave-event", lambda *_: self.hilite_off())
+        self.set_reactive(True)
+        self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
+        self.layout = Clutter.BoxLayout()
+        self.layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+        self.layout.set_spacing(Button.WIDTH/30.)
+        self.set_layout_manager(self.layout)
+        self._init_label()
+        self._init_icon()
+        self.hilite_off()
+        self.selection_time = 1000
+    
+    def _init_label(self):
+        self.label = Clutter.Text()
+        self.label.set_width(Button.WIDTH/1.5)
+        self.label.set_line_wrap(True)
+        self.label.set_font_name('monospace bold 20')
+        self.label.set_background_color(colors.TRANSPARENT)
+        self.add_child(self.label)
+
+    def _init_icon(self):
+        self.icon = Mx.Image()
+        self.icon.set_size(Button.WIDTH/4.2, Button.HEIGHT/1.2)
+        self.icon.set_scale_mode(Mx.ImageScaleMode.FIT)
+        self.add_child(self.icon)
+            
+    def set_label(self, label):
+        self.label.set_text(label)
+
+    def set_icon(self, icon_path):
+        self.icon.set_from_file(icon_path)
+
+    def hilite_off(self):
+        self.set_hilite(0.0)
+    
+    def hilite_on(self):
+        self.set_hilite(1.0)
+
+    def select_on(self):
+        self.set_hilite(1.5)
+
+    def set_hilite(self, hilite):
+        self.hilite = hilite
+        if self.hilite < 0.5:
+            self.background_color = colors.BLACK
+            self.foreground_color = colors.WHITE
+        elif self.hilite < 1.5:
+            self.background_color = colors.HILITE_1
+            self.foreground_color = colors.BLACK
+        else:
+            self.background_color = colors.WHITE
+            self.foreground_color = colors.BLACK
+        self.update_button()
+
+    def update_button(self):
+        self.set_background_color(self.background_color)
+        self.label.set_color(self.foreground_color)
+        icon_color = Clutter.ColorizeEffect.new(self.foreground_color)
+        self.icon.clear_effects()
+        self.icon.add_effect(icon_color)
+
+    def set_model(self, model):
+        self.set_label(model["label"])
+        self.set_icon(self.MODEL["icon_path"])
+    
+    def click_activate(self, source, event):
+        self.select_on()
+        Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
+        self.emit("activate")
 
 
 class Aperture(Clutter.Actor):
@@ -385,7 +474,7 @@ class SideMenu(Clutter.Actor):
     def _init_buttons(self):
         menu_model = self.__class__.BUTTONS
         for button_model in menu_model:
-            button = buttons.MenuButton()
+            button = Button()
             button.set_model(button_model)
             self.add_child(button)
 
