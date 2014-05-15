@@ -1,0 +1,88 @@
+[
+    {
+        "id": "columns",
+        "type": "MxBoxLayout",
+        "children": [
+            {
+                "id": "speller_menu",
+                "type": "MxBoxLayout",
+                "children": [
+                    {
+                        "id": "button_1",
+                        "type": "PisakSpellerButton"
+                    }
+                ]
+            },
+            {
+                "id": "prediction_menu",
+                "type": "MxBoxLayout",
+                "children": [
+                    {
+                        "id": "prediction_1",
+                        "type": "PisakSpellerPrediction"
+                    },
+                    {
+                        "id": "prediction_2",
+                        "type": "PisakSpellerPrediction"
+                    },
+                    {
+                        "id": "prediction_3",
+                        "type": "PisakSpellerPrediction"
+                    }
+                ]
+            },
+            {
+                "id": "main_panel",
+                "type": "MxBoxLayout",
+                "children": [
+                    {
+                        "id": "text_box",
+                        "type": "PisakSpellerText"
+                    },
+                    {
+                        "id": "keyboard_panel",
+                        "type": "MxBoxLayout",
+                        "children": [
+                            {
+                                "id": "keyboard_row_1",
+                                "type": "MxBoxLayout",
+                                "children": [
+                                    {
+                                        "id": "key_1_1",
+                                        "type": "PisakSpellerKey"
+                                    },
+                                    {
+                                        "id": "key_1_2",
+                                        "type": "PisakSpellerKey"
+                                    },
+                                    {
+                                        "id": "key_1_3",
+                                        "type": "PisakSpellerKey"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "keyboard_row_2",
+                                "type": "MxBoxLayout",
+                                "children": [
+                                    {
+                                        "id": "key_2_1",
+                                        "type": "PisakSpellerKey"
+                                    },
+                                    {
+                                        "id": "key_2_2",
+                                        "type": "PisakSpellerKey"
+                                    },
+                                    {
+                                        "id": "key_2_3",
+                                        "type": "PisakSpellerKey"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
