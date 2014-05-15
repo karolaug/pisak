@@ -1,0 +1,153 @@
+[
+    {
+        "id": "speller_view",
+        "type": "MxBoxLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "margin-top": 10,
+        "margin-bottom": 10,
+        "margin-left": 10,
+        "margin-right": 10,
+        "children": [
+            {
+                "id": "speller_menu",
+                "type": "MxBoxLayout",
+                "x-align": "center",
+                "y-align": "end",
+                "x-expand": true,
+                "y-expand": true,
+                "orientation": "vertical",
+                "spacing": 10,
+                "children": [
+                    {
+                        "id": "text-to-speech",
+                        "type": "PisakSpellerButton",
+                        "speller_function": "text-to-speech"
+                    },
+                    {
+                        "id": "save",
+                        "type": "PisakSpellerButton",
+                        "speller_function": "save"
+                    },
+                    {
+                        "id": "load",
+                        "type": "PisakSpellerButton",
+                        "speller_function": "load"
+                    },
+                    {
+                        "id": "new",
+                        "type": "PisakSpellerButton",
+                        "speller_function": "new"
+                    },
+                    {
+                        "id": "send",
+                        "type": "PisakSpellerButton",
+                        "speller_function": "send"
+                    },
+                    {
+                        "id": "print",
+                        "type": "PisakSpellerButton",
+                        "speller_function": "print"
+                    },
+                    {
+                        "id": "back",
+                        "type": "PisakSpellerButton",
+                        "speller_function": "back"
+                    }
+                ]
+            },
+            {
+                "id": "speller_keyboard",
+                "type": "MxBoxLayout",
+                "x-expand": true,
+                "y-expand": true,
+                "children": [
+                    {
+                        "id": "first_column",
+                        "type": "MxBoxLayout",
+                        "orientation": "vertical",
+                        "spacing": 10,
+                        "children": [
+                            {
+                                "id": "A",
+                                "type": "PisakSpellerKey",
+                                "text": "A",
+                                "alt_text": "Ą"
+                            },
+                            {
+                                "id": "B",
+                                "type": "PisakSpellerKey",
+                                "text": "B",
+                                "alt_text": "B"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "second_column",
+                        "type": "MxBoxLayout",
+                        "orientation": "vertical",
+                        "spacing": 10,
+                        "children": [
+                            {
+                                "id": "C",
+                                "type": "PisakSpellerKey",
+                                "text": "C",
+                                "alt_text": "Ć"
+                            },
+                            {
+                                "id": "D",
+                                "type": "PisakSpellerKey",
+                                "text": "D",
+                                "alt_text": "D"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "third_column",
+                        "type": "MxBoxLayout",
+                        "orientation": "vertical",
+                        "spacing": 10,
+                        "children": [
+                            {
+                                "id": "Ę",
+                                "type": "PisakSpellerKey",
+                                "text": "E",
+                                "alt_text": "Ę"
+                            },
+                            {
+                                "id": "F",
+                                "type": "PisakSpellerKey",
+                                "text": "F",
+                                "alt_text": "F"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "speller_prediction",
+                "type": "MxBoxLayout",
+                "x-align": "center",
+                "y-align": "end",
+                "x-expand": true,
+                "y-expand": true,
+                "orientation": "vertical",
+                "spacing": 10,
+                "children": [
+                    {
+                        "id": "predition1",
+                        "type": "PisakSpellerPrediction"
+                    },
+                    {
+                        "id": "prediction2",
+                        "type": "PisakSpellerPrediction"
+                    }
+                ]
+            },
+            {
+                "id": "speller_text",
+                "type": "PisakSpellerText"
+            }
+        ]
+    }
+]
