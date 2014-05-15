@@ -17,7 +17,7 @@ class Button(pisak.widgets.Button):
     }
 
 
-class Key(Mx.Button):
+class Key(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerKey"
     __gproperties__ = {
         "text": (
@@ -35,7 +35,7 @@ class Key(Mx.Button):
     }
 
 
-class Text(Mx.Widget):
+class Text(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerText"
     
 
