@@ -37,7 +37,7 @@ class CategoryView(widgets.ScrollingView):
         self.emit('photo-selected', photo)
 
     def show_photo(self, tile):
-        self.context.application.push_view(PhotoView(self.context))
+        self.context.application.push_view(photo.PhotoView(self.context))
     
     def create_menu(self):
         return widgets.CategoryViewMenu(self.context)

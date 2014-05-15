@@ -1,7 +1,7 @@
 '''
 Viewing and operations on photos (images with metadata)
 '''
-from pisak import buttons, unit, widgets, res, switcher_app
+from pisak import unit, widgets, res, switcher_app
 from gi.repository import Clutter, Mx
 import os.path
 
@@ -111,7 +111,7 @@ class PhotoEditionMenu(Clutter.Actor):
                         'contour': ['szkic', self.buffer.contour], 'noise': ['szum', self.buffer.noise],
                         'sepia': ['sepia', self.buffer.sepia], 'solarize': ['prześwietlenie', self.buffer.solarize]}
         for b in self.buttons:
-            button = buttons.MenuButton()
+            button = widgets.Button()
             button.set_model({'label': self.buttons[b][0]})
             button.connect('activate', self.buttons[b][1])
             self.add_child(button) 

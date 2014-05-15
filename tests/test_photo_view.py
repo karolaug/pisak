@@ -4,7 +4,7 @@ Test for single photo view
 import unittest
 from gi.repository import Clutter, GObject, Mx
 import tests.clutter
-from pisak.viewer import application
+from pisak.viewer import application, photo
 from pisak import widgets, res, switcher_app
 import os.path
 
@@ -18,7 +18,7 @@ class PhotoViewTest(unittest.TestCase):
         Create and empty photo view
         """
         dummy_context = object()
-        view_actor = application.PhotoView(dummy_context)
+        view_actor = photo.PhotoView(dummy_context)
         stage.add_child(view_actor)
     
     def test_model(self):
@@ -26,7 +26,7 @@ class PhotoViewTest(unittest.TestCase):
         Set model in photo view
         """
         dummy_context = object()
-        view_actor = application.PhotoView(dummy_context)
+        view_actor = photo.PhotoView(dummy_context)
         model = {
             "items": [
                 {"photo_path": os.path.join(res.PATH, "krolikarnia.jpg")},
@@ -65,7 +65,7 @@ class PhotoViewTest(unittest.TestCase):
     
     def test_photo_cycle(self):
         dummy_context = object()
-        view_actor = application.PhotoView(dummy_context)
+        view_actor = photo.PhotoView(dummy_context)
         
         cycle_1 = view_actor.create_idle_cycle()
         self.assertIsInstance(cycle_1, switcher_app.Cycle)
