@@ -1,14 +1,29 @@
 [
     {
-        "id": "columns",
+        "id": "main",
         "type": "MxBoxLayout",
+        "x_expand": true,
+        "y_expand": true,
         "children": [
             {
                 "id": "speller_menu",
                 "type": "MxBoxLayout",
+                "orientation": "MX_ORIENTATION_VERTICAL",
                 "children": [
                     {
                         "id": "button_1",
+                        "type": "PisakSpellerButton"
+                    },
+                    {
+                        "id": "button_2",
+                        "type": "PisakSpellerButton"
+                    },
+                    {
+                        "id": "button_3",
+                        "type": "PisakSpellerButton"
+                    },
+                    {
+                        "id": "button_4",
                         "type": "PisakSpellerButton"
                     }
                 ]
@@ -16,6 +31,7 @@
             {
                 "id": "prediction_menu",
                 "type": "MxBoxLayout",
+                "orientation": "MX_ORIENTATION_VERTICAL",
                 "children": [
                     {
                         "id": "prediction_1",
