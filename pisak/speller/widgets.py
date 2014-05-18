@@ -15,8 +15,10 @@ class Button(pisak.widgets.Button):
             "noop",
             GObject.PARAM_READWRITE)
     }
-
-
+    def __init__(self):
+        super().__init__()
+        
+        
 class Key(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerKey"
     __gproperties__ = {
@@ -33,11 +35,14 @@ class Key(pisak.widgets.Button):
             "?",
             GObject.PARAM_READWRITE)
     }
+    def __init__(self):
+        super().__init__()
 
 
-class Text(pisak.widgets.Button):
+class Text(Mx.Widget):
     __gtype_name__ = "PisakSpellerText"
-    
+    def __init__(self):
+        super().__init__()
 
 class Prediction(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerPrediction"
@@ -48,3 +53,5 @@ class Prediction(pisak.widgets.Button):
             "path to source of prediction words",
             "",
             GObject.PARAM_READWRITE)}
+    def __init__(self):
+        super().__init__()
