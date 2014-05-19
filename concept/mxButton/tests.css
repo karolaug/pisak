@@ -11,16 +11,18 @@ MxSlider *#trough
 MxButton
 {
   -mx-icon-size: 16;
+  background-color: blue;
 }
 
 MxButton#left
 {
-  -mx-icon-name: "go-previous";
+  -mx-icon-name: "inkscape";
+  label: 'dupa';
 }
 
 MxButton#top
 {
-  -mx-icon-name: "go-top";
+  -mx-icon-name: "iceweasel";
 }
 
 MxButton#bottom
