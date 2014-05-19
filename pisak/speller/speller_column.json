@@ -23,52 +23,74 @@
                     {
                         "id": "delete",
                         "type": "PisakSpellerButton",
-                        "speller_function": "delete"
+                        "speller_function": "delete",
+                        "label": "skasuj",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     },
                     {
                         "id": "polish_chars",
                         "type": "PisakSpellerButton",
-                        "speller_function": "polish_chars"
+                        "speller_function": "polish_chars",
+                        "label": "polskie znaki",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     },
                     {
                         "id": "caps_lock",
                         "type": "PisakSpellerButton",
-                        "speller_function": "caps_lock"
+                        "speller_function": "caps_lock",
+                        "label": "caps lock",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     },
                     {
                         "id": "special_chars",
                         "type": "PisakSpellerButton",
-                        "speller_function": "special_chars"
+                        "speller_function": "special_chars",
+                        "label": "znaki specjalne",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     },
                     {
                         "id": "save",
                         "type": "PisakSpellerButton",
-                        "speller_function": "save"
+                        "speller_function": "save",
+                        "label": "zapisz",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     },
                     {
                         "id": "load",
                         "type": "PisakSpellerButton",
-                        "speller_function": "load"
+                        "speller_function": "load",
+                        "label": "wczytaj",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     },
                     {
                         "id": "send",
                         "type": "PisakSpellerButton",
-                        "speller_function": "send"
+                        "speller_function": "send",
+                        "label": "wyślij",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     },
                     {
                         "id": "print",
                         "type": "PisakSpellerButton",
-                        "speller_function": "print"
-                    },
-                    {
-                        "id": "return",
-                        "type": "PisakSpellerButton",
-                        "speller_function": "return"
+                        "speller_function": "print",
+                        "label": "wyślij",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     },
                     {
                         "id": "back_to_main",
                         "type": "PisakSpellerButton",
-                        "speller_function": "back_to_main"
+                        "speller_function": "back_to_main",
+                        "label": "panel główny",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09
                     }
                 ]
             },
@@ -89,55 +111,73 @@
                                 "id": "A",
                                 "type": "PisakSpellerKey",
                                 "text": "A",
-                                "alt_text": "Ą"
+                                "alt_text": "Ą",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "B",
                                 "type": "PisakSpellerKey",
                                 "text": "B",
-                                "alt_text": "B"
+                                "alt_text": "B",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "C",
                                 "type": "PisakSpellerKey",
                                 "text": "C",
-                                "alt_text": "Ć"
+                                "alt_text": "Ć",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "D",
                                 "type": "PisakSpellerKey",
                                 "text": "D",
-                                "alt_text": "D"
+                                "alt_text": "D",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "E",
                                 "type": "PisakSpellerKey",
                                 "text": "E",
-                                "alt_text": "Ę"
+                                "alt_text": "Ę",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "F",
                                 "type": "PisakSpellerKey",
                                 "text": "F",
-                                "alt_text": "F"
+                                "alt_text": "F",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "G",
                                 "type": "PisakSpellerKey",
                                 "text": "G",
-                                "alt_text": "G"
+                                "alt_text": "G",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "H",
                                 "type": "PisakSpellerKey",
                                 "text": "H",
-                                "alt_text": "H"
+                                "alt_text": "H",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "I",
                                 "type": "PisakSpellerKey",
                                 "text": "I",
-                                "alt_text": "I"
+                                "alt_text": "I",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             }
                         ]
                     },
@@ -151,55 +191,73 @@
                                 "id": "J",
                                 "type": "PisakSpellerKey",
                                 "text": "J",
-                                "alt_text": "J"
+                                "alt_text": "J",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "K",
                                 "type": "PisakSpellerKey",
                                 "text": "K",
-                                "alt_text": "K"
+                                "alt_text": "K",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "L",
                                 "type": "PisakSpellerKey",
                                 "text": "L",
-                                "alt_text": "Ł"
+                                "alt_text": "Ł",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "M",
                                 "type": "PisakSpellerKey",
                                 "text": "M",
-                                "alt_text": "M"
+                                "alt_text": "M",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "N",
                                 "type": "PisakSpellerKey",
                                 "text": "N",
-                                "alt_text": "Ń"
+                                "alt_text": "Ń",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "O",
                                 "type": "PisakSpellerKey",
                                 "text": "O",
-                                "alt_text": "Ó"
+                                "alt_text": "Ó",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "P",
                                 "type": "PisakSpellerKey",
                                 "text": "P",
-                                "alt_text": "P"
+                                "alt_text": "P",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "R",
                                 "type": "PisakSpellerKey",
                                 "text": "R",
-                                "alt_text": "R"
+                                "alt_text": "R",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "S",
                                 "type": "PisakSpellerKey",
                                 "text": "S",
-                                "alt_text": "Ś"
+                                "alt_text": "Ś",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             }
                         ]
                     },
@@ -213,55 +271,73 @@
                                 "id": "T",
                                 "type": "PisakSpellerKey",
                                 "text": "T",
-                                "alt_text": "T"
+                                "alt_text": "T",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "U",
                                 "type": "PisakSpellerKey",
                                 "text": "U",
-                                "alt_text": "U"
+                                "alt_text": "U",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "W",
                                 "type": "PisakSpellerKey",
                                 "text": "W",
-                                "alt_text": "W"
+                                "alt_text": "W",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "X",
                                 "type": "PisakSpellerKey",
                                 "text": "X",
-                                "alt_text": "Ź"
+                                "alt_text": "Ź",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "Y",
                                 "type": "PisakSpellerKey",
                                 "text": "Y",
-                                "alt_text": "Y"
+                                "alt_text": "Y",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "Z",
                                 "type": "PisakSpellerKey",
                                 "text": "Z",
-                                "alt_text": "Ż"
+                                "alt_text": "Ż",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "RZ",
                                 "type": "PisakSpellerKey",
                                 "text": "SZ",
-                                "alt_text": "SZ"
+                                "alt_text": "SZ",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             },
                             {
                                 "id": "SZ",
                                 "type": "PisakSpellerKey",
                                 "text": "SZ",
-                                "alt_text": "SZ"
+                                "alt_text": "SZ",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             }
                             {
                                 "id": "CZ",
                                 "type": "PisakSpellerKey",
                                 "text": "CZ",
-                                "alt_text": "CZ"
+                                "alt_text": "CZ",
+                                "ratio_width": 0.08,
+                                "ratio_height": 0.09
                             }
                         ]
                     }
@@ -279,15 +355,24 @@
                 "children": [
                     {
                         "id": "prediction1",
-                        "type": "PisakSpellerPrediction"
+                        "type": "PisakSpellerPrediction",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09,
+                        "label": "predykcja 1"
                     },
                     {
                         "id": "prediction2",
-                        "type": "PisakSpellerPrediction"
+                        "type": "PisakSpellerPrediction",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09,
+                        "label": "predykcja 2"
                     },
                     {
                         "id": "prediction3",
-                        "type": "PisakSpellerPrediction"
+                        "type": "PisakSpellerPrediction",
+                        "ratio_width": 0.16,
+                        "ratio_height": 0.09,
+                        "label": "predykcja 3"
                     }
                 ]
             },
