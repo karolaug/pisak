@@ -1,0 +1,9 @@
+MxButton
+{
+    -mx-icon-size: 50;
+}
+
+MxButton#left
+{
+    -mx-icon-name: "proba"
+}

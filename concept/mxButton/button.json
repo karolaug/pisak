@@ -1,0 +1,24 @@
+[
+    {
+	"id" : "action-1",
+	"type" : "MxAction"
+    },
+    {
+	"id" : "button",
+	"type" : "MxButton",
+	"is-toggle" : true,
+	"toggled" : true,
+	"name" : "left",
+	"label" : "tekst",
+	"icon-position" : "left",
+	"child::x-expand" : false
+    },
+    {
+    "id" : "button2",
+	"type" : "MxButton",
+	"name" : "down",
+	"label" : "tekst2",
+	"icon-position" : "top",
+	"child::x-expand" : false
+    }
+]
