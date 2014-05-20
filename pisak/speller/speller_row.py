@@ -1,5 +1,5 @@
 from pisak import switcher_app
-from gi.repository import Clutter, Mx
+from gi.repository import Clutter, Mx, Pango
 import sys
 import pisak.speller.widgets
 
@@ -15,7 +15,12 @@ class PisakSpellerStage(Clutter.Stage):
         self.script = Clutter.Script()
         self.script.load_from_file(self.SCRIPT_PATH)
         view_actor = self.script.get_object("speller_view")
-        self.set_layout_manager(Clutter.BinLayout())
+        for i in view_actor.get_children():
+            if type(i) == Mx.Entry: entry = i
+        text = entry.get_property("clutter-text")
+        text.set_size(94, 200)
+        text.set_line_wrap(True)
+        text.set_max_length(200)
         self.add_child(view_actor)
 
 

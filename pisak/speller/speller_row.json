@@ -14,17 +14,11 @@
             {
                 "id": "speller_text",
                 "type": "MxEntry",
-		"x-expand": true,
-		"y-expand": true,
-		"height": 250
+		"hint-text": "Wpisz tekst"
             },
 	    {
                 "id": "speller_prediction",
                 "type": "MxBoxLayout",
-                "x-align": "start",
-                "y-align": "center",
-                "x-expand": true,
-                "y-expand": true,
                 "orientation": "horizontal",
                 "spacing": 10,
                 "children": [
@@ -96,20 +90,12 @@
 	    {
 		"id": "BoxMenuSpeller",
 		"type": "MxBoxLayout",
-		"x-align": "start",
-		"y-align": "start",
-                "x-expand": true,
-                "y-expand": true,
                 "orientation": "horizontal",
                 "spacing": 10,
                 "children": [
 		    {
 			"id": "speller_menu",
 			"type": "MxBoxLayout",
-			"x-align": "center",
-			"y-align": "start",
-			"x-expand": true,
-			"y-expand": true,
 			"orientation": "horizontal",
 			"spacing": 10,
 			"children": [
@@ -214,8 +200,6 @@
 		    {
 			"id": "speller_keyboard",
 			"type": "MxBoxLayout",
-			"x-expand": true,
-			"y-expand": true,
 			"spacing": 10,
 			"orientation": "vertical",
 			"children": [
