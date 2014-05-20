@@ -2,8 +2,9 @@
     {
         "id": "main",
         "type": "MxBoxLayout",
-        "x_expand": true,
-        "y_expand": true,
+        "x-expand": true,
+        "y-expand": true,
+        "orientation": "MX_ORIENTATION_HORIZONTAL",
         "children": [
             {
                 "id": "speller_menu",
@@ -50,6 +51,8 @@
             {
                 "id": "main_panel",
                 "type": "MxBoxLayout",
+                "orientation": "MX_ORIENTATION_VERTICAL",
+                "background-color": "yellow",
                 "children": [
                     {
                         "id": "text_box",
@@ -58,6 +61,10 @@
                     {
                         "id": "keyboard_panel",
                         "type": "MxBoxLayout",
+                        "orientation": "MX_ORIENTATION_VERTICAL",
+                        "y-expand": true,
+                        "x-expand": true,
+                        "background-color": "blue",
                         "children": [
                             {
                                 "id": "keyboard_row_1",
@@ -65,15 +72,18 @@
                                 "children": [
                                     {
                                         "id": "key_1_1",
-                                        "type": "PisakSpellerKey"
+                                        "type": "PisakSpellerKey",
+                                        "text": "Q"
                                     },
                                     {
                                         "id": "key_1_2",
-                                        "type": "PisakSpellerKey"
+                                        "type": "PisakSpellerKey",
+                                        "text": "W"
                                     },
                                     {
                                         "id": "key_1_3",
-                                        "type": "PisakSpellerKey"
+                                        "type": "PisakSpellerKey",
+                                        "text": "E"
                                     }
                                 ]
                             },
