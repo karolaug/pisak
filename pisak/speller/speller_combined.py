@@ -6,6 +6,7 @@ import pisak.speller.widgets  # @UnusedImport
 
 class PisakSpellerStage(Clutter.Stage):
     SCRIPT_PATH = "speller_combined.json"
+
     def __init__(self, context):
         super().__init__()
         self.context = context
@@ -15,9 +16,9 @@ class PisakSpellerStage(Clutter.Stage):
         Mx.Button() # workaround for GI loader
         self.script = Clutter.Script()
         self.script.load_from_file(self.SCRIPT_PATH)
-        view_actor = self.script.get_object("main")
-        self.set_layout_manager(Clutter.BinLayout())
-        self.add_child(view_actor)
+        self.view_actor = self.script.get_object("main")
+        self.set_layout_manager(Clutter.BoxLayout())
+        self.add_child(self.view_actor)
 
 
 class PisakSpellerApp(switcher_app.Application):
