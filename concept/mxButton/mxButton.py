@@ -26,8 +26,6 @@ class ButtonStage(Clutter.Stage):
 
         handle = Rsvg.Handle()
         svg = handle.new_from_file('concept/mxButton/edytuj.svg')
-        
-        svg.set_size()
 
         pixbuf = svg.get_pixbuf()
 
