@@ -52,12 +52,10 @@
                 "id": "main_panel",
                 "type": "MxBoxLayout",
                 "orientation": "MX_ORIENTATION_VERTICAL",
-                "background-color": "yellow",
                 "children": [
                     {
                         "id": "text_box",
                         "type": "PisakSpellerText",
-                        "background-color": "green",
                         "x-align": "middle"
                     },
                     {
@@ -65,7 +63,6 @@
                         "type": "MxBoxLayout",
                         "orientation": "MX_ORIENTATION_VERTICAL",
                         "y-align": "end",
-                        "background-color": "blue",
                         "children": [
                             {
                                 "id": "keyboard_row_1",
