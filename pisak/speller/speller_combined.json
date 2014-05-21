@@ -56,14 +56,15 @@
                 "children": [
                     {
                         "id": "text_box",
-                        "type": "PisakSpellerText"
+                        "type": "PisakSpellerText",
+                        "background-color": "green",
+                        "x-align": "middle"
                     },
                     {
                         "id": "keyboard_panel",
                         "type": "MxBoxLayout",
                         "orientation": "MX_ORIENTATION_VERTICAL",
-                        "y-expand": true,
-                        "x-expand": true,
+                        "y-align": "end",
                         "background-color": "blue",
                         "children": [
                             {
@@ -84,6 +85,41 @@
                                         "id": "key_1_3",
                                         "type": "PisakSpellerKey",
                                         "text": "E"
+                                    },
+                                    {
+                                        "id": "key_1_4",
+                                        "type": "PisakSpellerKey",
+                                        "text": "R"
+                                    },
+                                    {
+                                        "id": "key_1_5",
+                                        "type": "PisakSpellerKey",
+                                        "text": "T"
+                                    },
+                                    {
+                                        "id": "key_1_6",
+                                        "type": "PisakSpellerKey",
+                                        "text": "Y"
+                                    },
+                                    {
+                                        "id": "key_1_7",
+                                        "type": "PisakSpellerKey",
+                                        "text": "U"
+                                    },
+                                    {
+                                        "id": "key_1_8",
+                                        "type": "PisakSpellerKey",
+                                        "text": "I"
+                                    },
+                                    {
+                                        "id": "key_1_9",
+                                        "type": "PisakSpellerKey",
+                                        "text": "O"
+                                    },
+                                    {
+                                        "id": "key_1_10",
+                                        "type": "PisakSpellerKey",
+                                        "text": "P"
                                     }
                                 ]
                             },
@@ -93,15 +129,109 @@
                                 "children": [
                                     {
                                         "id": "key_2_1",
-                                        "type": "PisakSpellerKey"
+                                        "type": "PisakSpellerKey",
+                                        "text": "A"
                                     },
                                     {
                                         "id": "key_2_2",
-                                        "type": "PisakSpellerKey"
+                                        "type": "PisakSpellerKey",
+                                        "text": "S"
                                     },
                                     {
                                         "id": "key_2_3",
-                                        "type": "PisakSpellerKey"
+                                        "type": "PisakSpellerKey",
+                                        "text": "D"
+                                    },
+                                    {
+                                        "id": "key_2_4",
+                                        "type": "PisakSpellerKey",
+                                        "text": "F"
+                                    },
+                                    {
+                                        "id": "key_2_5",
+                                        "type": "PisakSpellerKey",
+                                        "text": "G"
+                                    },
+                                    {
+                                        "id": "key_2_6",
+                                        "type": "PisakSpellerKey",
+                                        "text": "H"
+                                    },
+                                    {
+                                        "id": "key_2_7",
+                                        "type": "PisakSpellerKey",
+                                        "text": "J"
+                                    },
+                                    {
+                                        "id": "key_2_8",
+                                        "type": "PisakSpellerKey",
+                                        "text": "K"
+                                    },
+                                    {
+                                        "id": "key_2_9",
+                                        "type": "PisakSpellerKey",
+                                        "text": "L"
+                                    },
+                                    {
+                                        "id": "key_2_10",
+                                        "type": "PisakSpellerKey",
+                                        "text": "CH"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "keyboard_row_3",
+                                "type": "MxBoxLayout",
+                                "children": [
+                                    {
+                                        "id": "key_3_1",
+                                        "type": "PisakSpellerKey",
+                                        "text": "Z"
+                                    },
+                                    {
+                                        "id": "key_3_2",
+                                        "type": "PisakSpellerKey",
+                                        "text": "X"
+                                    },
+                                    {
+                                        "id": "key_3_3",
+                                        "type": "PisakSpellerKey",
+                                        "text": "C"
+                                    },
+                                    {
+                                        "id": "key_3_4",
+                                        "type": "PisakSpellerKey",
+                                        "text": "V"
+                                    },
+                                    {
+                                        "id": "key_3_5",
+                                        "type": "PisakSpellerKey",
+                                        "text": "B"
+                                    },
+                                    {
+                                        "id": "key_3_6",
+                                        "type": "PisakSpellerKey",
+                                        "text": "N"
+                                    },
+                                    {
+                                        "id": "key_3_7",
+                                        "type": "PisakSpellerKey",
+                                        "text": "M"
+                                    },
+                                    {
+                                        "id": "key_3_8",
+                                        "type": "PisakSpellerKey",
+                                        "text": "CZ"
+                                    },
+                                    {
+                                        "id": "key_3_9",
+                                        "type": "PisakSpellerKey",
+                                        "text": "SZ"
+                                    },
+                                    {
+                                        "id": "key_3_10",
+                                        "type": "PisakSpellerKey",
+                                        "text": "RZ"
                                     }
                                 ]
                             }
