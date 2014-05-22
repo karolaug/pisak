@@ -3,6 +3,7 @@ Definitions of widgets specific to speller applet
 '''
 from gi.repository import Mx, GObject, Clutter
 import pisak.widgets
+from pisak.res import dims
 
 
 class Button(pisak.widgets.Button):
@@ -131,7 +132,7 @@ class Key(pisak.widgets.Button):
         if attribute is not None and isinstance(attribute, property):
             return attribute.fget(self)
         else:
-            super().do_get_property(self, spec)
+            super().do_get_property(spec)
 
 class Text(Mx.Label):
     __gtype_name__ = "PisakSpellerText"
