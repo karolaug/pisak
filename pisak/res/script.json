@@ -1,0 +1,15 @@
+[
+  {
+    "type": "ClutterStage",
+    "id": "stage",
+    "children": [
+      {
+        "type": "MxBoxLayout",
+        "children": [
+          { "type": "MxSlider", "id": "slider", "width": 200 },
+          { "type": "__main__+DummyButton", "label": "Reset", "id":"reset" }
+        ]
+      }
+    ]
+  }
+]
