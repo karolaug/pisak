@@ -1,14 +1,21 @@
 from pisak import switcher_app
-from gi.repository import Clutter
+from gi.repository import Clutter, Mx
 import sys
+import pisak.speller.widgets
 
 
 class PisakSpellerStage(Clutter.Stage):
+    SCRIPT_PATH = 'pisak/speller/speller_column.json'
     def __init__(self, context):
+        super().__init__()
         self.context = context
+        self._load_script()
+
+    def _load_script(self):
         self.script = Clutter.Script()
-        self.script.load_from_file("speller_view.json")
-        view_actor = self.script.list_objects()[0]
+        self.script.load_from_file(self.SCRIPT_PATH)
+        view_actor = self.script.get_object("speller_view")
+        self.set_layout_manager(Clutter.BinLayout())
         self.add_child(view_actor)
 
 
@@ -22,5 +29,5 @@ class PisakSpellerApp(switcher_app.Application):
         return stage
 
 
-if __name__ == "__main__":
+if __name__== "__main__":
     PisakSpellerApp(sys.argv).main()
