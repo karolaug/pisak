@@ -1,0 +1,41 @@
+MxSlider *#fill
+{
+  background-color: yellow;
+}
+
+MxSlider *#trough
+{
+  background-color: black;
+}
+
+MxButton
+{
+  -mx-icon-size: 16;
+  background-color: blue;
+}
+
+MxButton#left
+{
+  -mx-icon-name: "inkscape";
+  label: 'dupa';
+}
+
+MxButton#top
+{
+  -mx-icon-name: "iceweasel";
+}
+
+MxButton#bottom
+{
+  -mx-icon-name: "go-bottom";
+}
+
+MxButton#right
+{
+  -mx-icon-name: "menu";
+}
+
+MxImage
+{
+  background-color: blue;
+}
