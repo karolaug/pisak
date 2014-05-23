@@ -3,8 +3,6 @@ Definitions of classes built-in with layout managers . These actors can
 be used to describe whole application view in ClutterScript. Relevant
 layout parameters are proxied to internal layout manager.
 '''
-import sys
-
 from gi.repository import Clutter, GObject
 
 
@@ -16,14 +14,14 @@ class Box(Clutter.Actor):
     
     __gproperties__ = {
         "orientation": (
-            GObject.TYPE_ENUM,
+            Clutter.Orientation.__gtype__,
             "", "",
-            Clutter.Orientation.HORIZONTAL,
+            "horizontal",
             GObject.PARAM_READWRITE),
         "spacing": (
-            GObject.TYPE_INT,
+            GObject.TYPE_UINT,
             "", "",
-            0, sys.maxsize, 0,
+            0, GObject.G_MAXUINT, 0,
             GObject.PARAM_READWRITE),
     }
     
