@@ -1,7 +1,11 @@
-from pisak import switcher_app
-from gi.repository import Clutter, Mx
 import sys
+
+from gi.repository import Clutter, Mx
+
+from pisak import switcher_app
+
 import pisak.speller.widgets  # @UnusedImport
+import pisak.layout  # @UnusedImport
 
 
 class PisakSpellerStage(Clutter.Stage):

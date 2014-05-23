@@ -1,15 +1,17 @@
 [
     {
         "id": "main",
-        "type": "MxBoxLayout",
+        "type": "PisakBoxLayout",
         "x-expand": true,
         "y-expand": true,
-        "orientation": "MX_ORIENTATION_HORIZONTAL",
+        "orientation": "horizontal",
         "children": [
             {
                 "id": "speller_menu",
-                "type": "MxBoxLayout",
-                "orientation": "MX_ORIENTATION_VERTICAL",
+                "type": "PisakBoxLayout",
+                "orientation": "vertical",
+                "y-align": "start",
+                "y-expand": true,
                 "children": [
                     {
                         "id": "button_1",
@@ -31,8 +33,10 @@
             },
             {
                 "id": "prediction_menu",
-                "type": "MxBoxLayout",
-                "orientation": "MX_ORIENTATION_VERTICAL",
+                "type": "PisakBoxLayout",
+                "orientation": "vertical",
+                "y-align": "start",
+                "y-expand": true,
                 "children": [
                     {
                         "id": "prediction_1",
@@ -50,18 +54,21 @@
             },
             {
                 "id": "main_panel",
-                "type": "MxBoxLayout",
-                "orientation": "MX_ORIENTATION_VERTICAL",
+                "type": "PisakBoxLayout",
+                "orientation": "vertical",
                 "children": [
                     {
                         "id": "text_box",
                         "type": "PisakSpellerText",
-                        "x-align": "middle"
+                        "x-align": "start",
+                        "x-expand": true,
+                        "y-expand": true,
+                        "background-color": "lightgray"
                     },
                     {
                         "id": "keyboard_panel",
-                        "type": "MxBoxLayout",
-                        "orientation": "MX_ORIENTATION_VERTICAL",
+                        "type": "PisakBoxLayout",
+                        "orientation": "vertical",
                         "y-align": "end",
                         "children": [
                             {
@@ -122,7 +129,7 @@
                             },
                             {
                                 "id": "keyboard_row_2",
-                                "type": "MxBoxLayout",
+                                "type": "PisakBoxLayout",
                                 "children": [
                                     {
                                         "id": "key_2_1",
@@ -178,7 +185,7 @@
                             },
                             {
                                 "id": "keyboard_row_3",
-                                "type": "MxBoxLayout",
+                                "type": "PisakBoxLayout",
                                 "children": [
                                     {
                                         "id": "key_3_1",
