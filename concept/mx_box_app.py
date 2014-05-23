@@ -2,6 +2,17 @@
 from gi.repository import Clutter, Mx
 
 
+class MyBoxLayout(Clutter.Actor):
+    """
+    Initial concept of custom BoxLayout widget
+    """
+    def __init__(self):
+        super().__init__()
+        self.set_layout_manager(Clutter.BoxLayout())
+        self.set_background_color(Clutter.Color(255, 255, 255, 255))
+        self.set_size(1, 1)
+
+
 class ButtonStage(Clutter.Stage):
     def create_box_mx(self):
         return Mx.BoxLayout()
@@ -10,6 +21,9 @@ class ButtonStage(Clutter.Stage):
         box = Clutter.Actor()
         box.set_layout_manager(Clutter.BoxLayout())
         return box
+    
+    def create_box_custom(self):
+        return MyBoxLayout()
 
     def __init__(self):
         super().__init__()
@@ -19,7 +33,8 @@ class ButtonStage(Clutter.Stage):
         
         # Uncomment one of these lines
         #self.box = self.create_box_actor()
-        self.box = self.create_box_mx()
+        #self.box = self.create_box_mx()
+        self.box = self.create_box_custom()
         
         self.box.set_x_expand(True)
         self.box.set_y_expand(True)
