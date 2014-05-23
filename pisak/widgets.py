@@ -11,9 +11,7 @@ class Button(Mx.Button):
     Generic Pisak button widget with label and icon.
     """
     __gsignals__ = {
-        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
-    }
-    __gsignals__ = {
+        "activate": (GObject.SIGNAL_RUN_FIRST, None, ()),
         "inactivate": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
     __gproperties__ = {
@@ -464,14 +462,18 @@ ScrollingViewCycle.STEPS = [
 
 
 class SideMenu(Clutter.Actor):
-    '''
+    """
     Display vertical menu on the side of a view. Abstract class,
     generates buttons from BUTTONS class variable.
-    '''
+
+    deprecated::
+    """
+
     def __init__(self, context):
         """
         Create menu
-        @param context Switcher application context
+
+        :param context: Switcher application context
         """
         super().__init__()
         self.context = context
@@ -483,7 +485,7 @@ class SideMenu(Clutter.Actor):
         menu_model = self.__class__.BUTTONS
         for button_model in menu_model:
             button = Button()
-            button.set_model(button_model)
+            #button.set_model(button_model)
             self.add_child(button)
 
     def _init_layout(self):
