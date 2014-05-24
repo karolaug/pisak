@@ -207,4 +207,5 @@ class PisakViewApp(object):
     def main(self):
         Clutter.main()
 
-PisakViewApp(sys.argv).main()
+if __name__ == "__main__":
+    PisakViewApp(sys.argv).main()
