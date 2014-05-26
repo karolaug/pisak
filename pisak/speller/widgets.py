@@ -20,7 +20,15 @@ class Button(pisak.widgets.Button):
     def __init__(self):
         super().__init__()
         self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("notify::speller-function", lambda *_: self.assign_function())
+
+    @property
+    def speller_function(self):
+        return self._speller_function
+
+    @speller_function.setter
+    def speller_function(self, value):
+        self._speller_function = value
+        self.assign_function(value)
 
     def assign_function(self):
         raise NotImplementedError()
@@ -113,26 +121,7 @@ class Key(pisak.widgets.Button):
     @alt_text.setter
     def alt_text(self, value):
         self._alt_text = str(value)
-    
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            super().do_set_property(spec, value)
-    
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            super().do_get_property(spec)
+
 
 class Text(Mx.Label):
     __gtype_name__ = "PisakSpellerText"
