@@ -50,40 +50,22 @@ class Button(Mx.Button):
         self.set_height(unit.h(value))
     
     def hilite_off(self):
-        self.set_hilite(0)
+        self.background_color = colors.offBACK
+        self.foreground_color = colors.offFORE
     
     def hilite_on(self):
-        self.set_hilite(1)
+        self.background_color = colors.onBACK
+        self.foreground_color = colors.onFORE
 
     def select_on(self):
-        self.set_hilite(2)
+        self.background_color = colors.selBACK
+        self.foreground_color = colors.selFORE
 
     def inactivate(self):
-        self.set_hilite(3)
-
-    def set_hilite(self, hilite):
-        if hilite == 0:
-            #self.set_opacity(0)
-            self.background_color = colors.offBACK
-            self.foreground_color = colors.offFORE
-        if hilite == 1:
-            #self.set_opacity(1)
-            self.background_color = colors.onBACK
-            self.foreground_color = colors.onFORE
-        if hilite == 2:
-            #self.set_opacity(1)
-            self.background_color = colors.selBACK
-            self.foreground_color = colors.selFORE
-        if hilite == 3:
-            #self.set_opacity(0.5)
-            self.background_color = colors.offBACK
-            self.foreground_color = colors.offFORE
-        self.update_button()
-
-    def update_button(self):
-        raise NotImplementedError()
+        self.background_color = colors.offBACK
+        self.foreground_color = colors.offFORE
     
-    def click_activate(self, source, event):
+    def click_activate(self, source):
         self.select_on()
         Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
@@ -96,7 +78,7 @@ class Button(Mx.Button):
         if attribute is not None and isinstance(attribute, property):
             attribute.fset(self, value)
         else:
-            super().do_set_property(spec, value)
+            raise ValueError("No such property", spec.name)
 
     def do_get_property(self, spec):
         """
@@ -106,7 +88,7 @@ class Button(Mx.Button):
         if attribute is not None and isinstance(attribute, property):
             return attribute.fget(self)
         else:
-            super().do_get_property(spec)
+            raise ValueError("No such property", spec.name)
 
 
 class Aperture(Clutter.Actor):
