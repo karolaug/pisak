@@ -25,8 +25,9 @@ class PisakSpellerStage(Clutter.Stage):
         self.script.load_from_file(self.SCRIPT_PATH)
         self.view_actor = self.script.get_object("main")
         self.text_box = self.script.get_object("text_box")
-        self.text_box.get_children()[0].set_property('line-wrap', True)
-        print(self.text_box.get_children()[0].get_property('line-wrap'))
+        self.clutter_text = self.text_box.get_clutter_text()
+        self.clutter_text.set_line_wrap_mode(1)
+        self.clutter_text.set_line_wrap(True)
         self.set_layout_manager(Clutter.BoxLayout())
         self.add_child(self.view_actor)
 
