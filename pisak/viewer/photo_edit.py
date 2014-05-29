@@ -4,9 +4,10 @@ import sys
 from pisak import unit, res
 import random
 import os.path
+import subprocess
 
 class Image(Clutter.Actor):
-    MODEL = os.path.join(res.PATH, 'krolikarnia.jpg')
+    MODEL = os.path.join(res.PATH, 'zdjecie.jpg')
     PIXEL_FORMATS = {'RGB': Cogl.PixelFormat.RGB_888, 'L': Cogl.PixelFormat.A_8}
     def __init__(self):
         super(Image, self).__init__()
@@ -121,6 +122,11 @@ class Image(Clutter.Actor):
     def original(self, button, event):
         self.buffer = self.original_photo
         self.set_image_from_data()
+
+    def take_photo(self, button, event):
+        subprocess.call(['python', os.path.join(res.PATH, 'take_photo.py')])
+        self.original_photo = self.buffer = Im.open(self.MODEL)
+        self.set_image_from_data()
         
         
 class Buttons(Clutter.Actor):
@@ -135,7 +141,8 @@ class Buttons(Clutter.Actor):
         self._init_elements()
 
     def _init_elements(self):
-        buttons = {'rotate': ['obróć', self.image.rotate], 'mirror': ['lustro', self.image.mirror],
+        buttons = {'snapshot' : ['zdjęcie', self.image.take_photo],
+                   'rotate': ['obróć', self.image.rotate], 'mirror': ['lustro', self.image.mirror],
                    'invert': ['negatyw', self.image.invert], 'zoom': ['powiększenie', self.image._zoom_cycle],
                    'solarize': ['prześwietlenie', self.image.solarize], 'grayscale': ['skala szarości', self.image.grayscale],
                    'original': ['oryginał', self.image.original], 'exit': ['wyjście', self.exit_app],
