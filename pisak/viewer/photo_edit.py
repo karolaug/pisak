@@ -6,6 +6,8 @@ import random
 import os.path
 import subprocess
 
+
+
 class Image(Clutter.Actor):
     MODEL = os.path.join(res.PATH, 'zdjecie.jpg')
     PIXEL_FORMATS = {'RGB': Cogl.PixelFormat.RGB_888, 'L': Cogl.PixelFormat.A_8}
@@ -130,6 +132,9 @@ class Image(Clutter.Actor):
         
         
 class Buttons(Clutter.Actor):
+    STYLE = Mx.Style()
+    STYLE.load_from_file(os.path.join(res.PATH, 'photo_edit.css'))
+
     def __init__(self, container, image):
         super(Buttons, self).__init__()
         self.container = container
@@ -150,6 +155,7 @@ class Buttons(Clutter.Actor):
                    'contour': ['szkic', self.image.contour], 'sepia': ['sepia', self.image.sepia]}
         for b in reversed(sorted(buttons)):
             button = Mx.Button()
+            button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
             button.set_size(unit.mm(50), unit.mm(12))
             self.add_actor(button)
