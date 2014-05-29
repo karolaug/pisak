@@ -29,5 +29,5 @@ class PisakSpellerApp(switcher_app.Application):
         return stage
 
 
-if __name__== "__main__":
+if __name__ == "__main__":
     PisakSpellerApp(sys.argv).main()

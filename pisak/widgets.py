@@ -1,26 +1,21 @@
 from gi.repository import Clutter, Mx, GObject
-from pisak import switcher_app, unit, res
+from pisak import switcher_app, unit
 import collections
 from pisak.res import colors, dims
 import cairo
-import os.path
-
 
 class Button(Mx.Button):
     """
     Generic Pisak button widget with label and icon.
     """
     __gsignals__ = {
-        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
-    }
-    __gsignals__ = {
+        "activate": (GObject.SIGNAL_RUN_FIRST, None, ()),
         "inactivate": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
+    
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "mm_width": (GObject.TYPE_INT, None, None, 0, int(unit.w(1)/unit.SCREEN_DPMM), 0, GObject.PARAM_READWRITE),
-        "mm_height": (GObject.TYPE_INT, None, None, 0, int(unit.h(1)/unit.SCREEN_DPMM), 0, GObject.PARAM_READWRITE)
+        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
@@ -30,76 +25,70 @@ class Button(Mx.Button):
         self._connect_signals()
 
     def _connect_signals(self):
-        self.connect("button-release-event", self.click_activate)
+        self.connect("clicked", self.click_activate)
         self.connect("enter-event", lambda *_: self.hilite_on())
         self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
-        self.connect("notify::ratio-width", lambda *_: self.set_ratio_width())
-        self.connect("notify::ratio-height", lambda *_: self.set_ratio_height())
-        self.connect("notify::mm-width", lambda *_: self.set_mm_width())
-        self.connect("notify::mm-height", lambda *_: self.set_mm_height())
         self.set_reactive(True)
 
-    def do_set_property(self, prop, value):
-        self.properties[prop.name] = value
-    
-    def do_get_property(self, prop):
-        return self.properties[prop.name]
+    @property
+    def ratio_width(self):
+        return self._ratio_width
 
-    def set_ratio_width(self):
-        ratio = self.get_property("ratio_width")
-        self.set_width(unit.w(ratio))
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
 
-    def set_ratio_height(self):
-        ratio = self.get_property("ratio_height")
-        self.set_height(unit.h(ratio))
+    @property
+    def ratio_height(self):
+        return self._ratio_height
 
-    def set_mm_width(self):
-        mm = self.get_property("mm_width")
-        self.set_width(unit.mm(mm))
-
-    def set_mm_height(self):
-        mm = self.get_property("mm_height")
-        self.set_height(unit.mm(mm))
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self,_ratio_height = value
+        self.set_height(unit.h(value))
     
     def hilite_off(self):
-        self.set_hilite(0)
+        self.background_color = colors.offBACK
+        self.foreground_color = colors.offFORE
     
     def hilite_on(self):
-        self.set_hilite(1)
+        self.background_color = colors.onBACK
+        self.foreground_color = colors.onFORE
 
     def select_on(self):
-        self.set_hilite(2)
+        self.background_color = colors.selBACK
+        self.foreground_color = colors.selFORE
 
     def inactivate(self):
-        self.set_hilite(3)
-
-    def set_hilite(self, hilite):
-        if hilite == 0:
-            #self.set_opacity(0)
-            self.background_color = colors.offBACK
-            self.foreground_color = colors.offFORE
-        if hilite == 1:
-            #self.set_opacity(1)
-            self.background_color = colors.onBACK
-            self.foreground_color = colors.onFORE
-        if hilite == 2:
-            #self.set_opacity(1)
-            self.background_color = colors.selBACK
-            self.foreground_color = colors.selFORE
-        if hilite == 3:
-            #self.set_opacity(0.5)
-            self.background_color = colors.offBACK
-            self.foreground_color = colors.offFORE
-        self.update_button()
-
-    def update_button(self):
-        raise NotImplementedError()
+        self.background_color = colors.offBACK
+        self.foreground_color = colors.offFORE
     
-    def click_activate(self, source, event):
+    def click_activate(self, source):
         self.select_on()
         Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
+
+    def do_set_property(self, spec, value):
+        """
+        Introspect object properties and set the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            attribute.fset(self, value)
+        else:
+            raise ValueError("No such property", spec.name)
+
+    def do_get_property(self, spec):
+        """
+        Introspect object properties and get the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            return attribute.fget(self)
+        else:
+            raise ValueError("No such property", spec.name)
 
 
 class Aperture(Clutter.Actor):
@@ -464,14 +453,18 @@ ScrollingViewCycle.STEPS = [
 
 
 class SideMenu(Clutter.Actor):
-    '''
+    """
     Display vertical menu on the side of a view. Abstract class,
     generates buttons from BUTTONS class variable.
-    '''
+
+    deprecated::
+    """
+
     def __init__(self, context):
         """
         Create menu
-        @param context Switcher application context
+
+        :param context: Switcher application context
         """
         super().__init__()
         self.context = context
@@ -483,7 +476,7 @@ class SideMenu(Clutter.Actor):
         menu_model = self.__class__.BUTTONS
         for button_model in menu_model:
             button = Button()
-            button.set_model(button_model)
+            #button.set_model(button_model)
             self.add_child(button)
 
     def _init_layout(self):
