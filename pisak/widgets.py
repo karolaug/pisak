@@ -46,7 +46,7 @@ class Button(Mx.Button):
 
     @ratio_height.setter
     def ratio_height(self, value):
-        self,_ratio_height = value
+        self._ratio_height = value
         self.set_height(unit.h(value))
     
     def hilite_off(self):
