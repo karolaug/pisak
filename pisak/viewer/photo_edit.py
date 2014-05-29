@@ -144,7 +144,7 @@ class Buttons(Clutter.Actor):
         for b in reversed(sorted(buttons)):
             button = Mx.Button()
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(50), unit.mm(15))
+            button.set_size(unit.mm(50), unit.mm(12))
             self.add_actor(button)
             button.connect("button_release_event", buttons[b][1])
 
@@ -173,8 +173,8 @@ class PisakViewerContainer(Clutter.Actor):
         self.image.set_y_expand(True)
         self.buttons = Buttons(self, self.image)
         self.buttons.set_y_expand(True)
-        self.add_actor(self.image)
         self.add_actor(self.buttons)
+        self.add_actor(self.image)
 
     def exit_app(self):
         self.stage.exit_app()
