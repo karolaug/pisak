@@ -7,52 +7,6 @@
         "orientation": "horizontal",
         "children": [
             {
-                "id": "speller_menu",
-                "type": "PisakBoxLayout",
-                "orientation": "vertical",
-                "y-align": "start",
-                "y-expand": true,
-                "children": [
-                    {
-                        "id": "button_1",
-                        "type": "PisakSpellerButton"
-                    },
-                    {
-                        "id": "button_2",
-                        "type": "PisakSpellerButton"
-                    },
-                    {
-                        "id": "button_3",
-                        "type": "PisakSpellerButton"
-                    },
-                    {
-                        "id": "button_4",
-                        "type": "PisakSpellerButton"
-                    }
-                ]
-            },
-            {
-                "id": "prediction_menu",
-                "type": "PisakBoxLayout",
-                "orientation": "vertical",
-                "y-align": "start",
-                "y-expand": true,
-                "children": [
-                    {
-                        "id": "prediction_1",
-                        "type": "PisakSpellerPrediction"
-                    },
-                    {
-                        "id": "prediction_2",
-                        "type": "PisakSpellerPrediction"
-                    },
-                    {
-                        "id": "prediction_3",
-                        "type": "PisakSpellerPrediction"
-                    }
-                ]
-            },
-            {
                 "id": "main_panel",
                 "type": "PisakBoxLayout",
                 "orientation": "vertical",
@@ -62,14 +16,17 @@
                         "type": "PisakSpellerText",
                         "x-align": "start",
                         "x-expand": true,
-                        "y-expand": true,
-                        "background-color": "lightgray"
+                        "y-expand": false,
+                        "background-color": "lightgray",
+			"height": "9cm"
                     },
                     {
                         "id": "keyboard_panel",
                         "type": "PisakBoxLayout",
                         "orientation": "vertical",
                         "y-align": "end",
+			"height": "10cm",
+			"x-expand": true,
                         "children": [
                             {
                                 "id": "keyboard_row_1",
@@ -79,59 +36,79 @@
                                         "id": "key_1_1",
                                         "type": "PisakSpellerKey",
                                         "text": "Q",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_1_2",
                                         "type": "PisakSpellerKey",
                                         "text": "W",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_1_3",
                                         "type": "PisakSpellerKey",
                                         "text": "E",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_1_4",
                                         "type": "PisakSpellerKey",
                                         "text": "R",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true		
                                     },
                                     {
                                         "id": "key_1_5",
                                         "type": "PisakSpellerKey",
-                                        "text": "T"
+                                        "text": "T",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_1_6",
                                         "type": "PisakSpellerKey",
                                         "text": "Y",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_1_7",
                                         "type": "PisakSpellerKey",
-                                        "text": "U"
+                                        "text": "U",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_1_8",
                                         "type": "PisakSpellerKey",
                                         "text": "I",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_1_9",
                                         "type": "PisakSpellerKey",
                                         "text": "O",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_1_10",
                                         "type": "PisakSpellerKey",
                                         "text": "P",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     }
                                 ]
                             },
@@ -143,61 +120,81 @@
                                         "id": "key_2_1",
                                         "type": "PisakSpellerKey",
                                         "text": "A",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_2",
                                         "type": "PisakSpellerKey",
                                         "text": "S",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_3",
                                         "type": "PisakSpellerKey",
                                         "text": "D",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_4",
                                         "type": "PisakSpellerKey",
                                         "text": "F",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_5",
                                         "type": "PisakSpellerKey",
                                         "text": "G",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_6",
                                         "type": "PisakSpellerKey",
                                         "text": "H",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_7",
                                         "type": "PisakSpellerKey",
                                         "text": "J",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_8",
                                         "type": "PisakSpellerKey",
                                         "text": "K",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_9",
                                         "type": "PisakSpellerKey",
                                         "text": "L",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_2_10",
                                         "type": "PisakSpellerKey",
                                         "text": "CH",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     }
                                 ]
                             },
@@ -209,61 +206,81 @@
                                         "id": "key_3_1",
                                         "type": "PisakSpellerKey",
                                         "text": "Z",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_2",
                                         "type": "PisakSpellerKey",
                                         "text": "X",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_3",
                                         "type": "PisakSpellerKey",
                                         "text": "C",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_4",
                                         "type": "PisakSpellerKey",
                                         "text": "V",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_5",
                                         "type": "PisakSpellerKey",
                                         "text": "B",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_6",
                                         "type": "PisakSpellerKey",
                                         "text": "N",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_7",
                                         "type": "PisakSpellerKey",
                                         "text": "M",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_8",
                                         "type": "PisakSpellerKey",
                                         "text": "CZ",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_9",
                                         "type": "PisakSpellerKey",
                                         "text": "SZ",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_10",
                                         "type": "PisakSpellerKey",
                                         "text": "RZ",
-                                        "target": "text_box"
+                                        "target": "text_box",
+					"y-expand": true,
+					"x-expand": true
                                     }
                                 ]
                             }
