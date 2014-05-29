@@ -27,10 +27,12 @@
                         "y-align": "end",
 			"height": "10cm",
 			"x-expand": true,
+			"spacing": 10,
                         "children": [
                             {
                                 "id": "keyboard_row_1",
                                 "type": "PisakBoxLayout",
+				"spacing": 10,
                                 "children": [
                                     {
                                         "id": "key_1_1",
@@ -115,6 +117,7 @@
                             {
                                 "id": "keyboard_row_2",
                                 "type": "PisakBoxLayout",
+				"spacing": 10,
                                 "children": [
                                     {
                                         "id": "key_2_1",
@@ -201,6 +204,7 @@
                             {
                                 "id": "keyboard_row_3",
                                 "type": "PisakBoxLayout",
+				"spacing": 10,
                                 "children": [
                                     {
                                         "id": "key_3_1",

@@ -2,3 +2,14 @@ MxButton
 {
     font-size: 30;
 }
+
+PisakSpellerKey
+{
+    font-size: 65;
+}
+
+PisakSpellerText
+{
+    font-size: 80;
+    text-wrap: true;
+}
