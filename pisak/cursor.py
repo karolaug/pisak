@@ -31,6 +31,8 @@ class Group(Clutter.Actor):
         self.locked = False
         self._init_sprite()
         self.buttons = None
+        self.hover_start = None
+        self.hover_actor = None
         self.worker = threading.Thread(target=self.work, daemon=True)
         self.worker.start()
 
@@ -99,7 +101,9 @@ class Group(Clutter.Actor):
             if actor is not None:
                 if actor == self.hover_actor:
                     if time.time() - self.hover_start > self._timeout:
-                        actor.activate()
+                        actor.emit("clicked")
+                        self.hover_start = time.time() + 1.0 # dead time
                 else:
                     # reset timeout
+                    self.hover_actor = actor
                     self.hover_start = time.time() 
