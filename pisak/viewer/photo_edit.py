@@ -1,7 +1,7 @@
 from gi.repository import Clutter, Mx, Cogl
 from PIL import ImageFilter as ImF, Image as Im
 import sys
-from pisak import unit, res
+from pisak import unit, res, cursor
 import random
 import os.path
 import subprocess
@@ -234,9 +234,8 @@ class PisakViewerStage(Clutter.Stage):
         self._init_elements()
     
     def _init_elements(self):
-        self.layout = Clutter.BinLayout()
-        self.set_layout_manager(self.layout)
-        self.contents = PisakViewerContainer(self)
+        self.contents = cursor.Group()
+        self.contents.add_actor(PisakViewerContainer(self))
         self.add_actor(self.contents)
 
     def exit_app(self):
