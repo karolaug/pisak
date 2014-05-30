@@ -1,5 +1,6 @@
-import camera, cv2, time, os.path
+import cv2, time, os.path
 from pisak import res
+from pisak.viewer import camera
 
 cams = camera.lookForCameras()
 cam = camera.Camera(cams['Camera_1'])
