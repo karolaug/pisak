@@ -9,12 +9,11 @@ import pisak.layout  # @UnusedImport
 
 
 class PisakSpellerStage(Clutter.Stage):
-    SCRIPT_PATH = "speller_combined.json"
+    SCRIPT_PATH = os.path.join(res.PATH, "speller_combined.json")
     STYLE_PATH = os.path.join(res.PATH, "photo_edit.css")
 
-    def __init__(self, context):
+    def __init__(self):
         super().__init__()
-        self.context = context
         self.style = Mx.Style.get_default()
         self.style.load_from_file(self.STYLE_PATH)
         self._load_script()
