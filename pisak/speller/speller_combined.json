@@ -18,14 +18,14 @@
                         "x-expand": true,
                         "y-expand": false,
                         "background-color": "lightgray",
-			"height": "9cm"
+			"height": "5cm"
                     },
                     {
                         "id": "keyboard_panel",
                         "type": "PisakBoxLayout",
                         "orientation": "vertical",
                         "y-align": "end",
-			"height": "10cm",
+			"height": "15cm",
 			"x-expand": true,
 			"spacing": 10,
                         "children": [

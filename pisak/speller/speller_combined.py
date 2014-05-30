@@ -28,6 +28,8 @@ class PisakSpellerStage(Clutter.Stage):
         self.clutter_text = self.text_box.get_clutter_text()
         self.clutter_text.set_line_wrap_mode(1)
         self.clutter_text.set_line_wrap(True)
+        self.clutter_text.set_max_length(28)
+        self.clutter_text.set_size(60, 300)
         self.set_layout_manager(Clutter.BoxLayout())
         self.add_child(self.view_actor)
 
