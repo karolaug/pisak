@@ -1,15 +1,19 @@
 '''
 Module handles cursor-style (stream of coordinates) input in JSON layout.
 '''
-from gi.repository import GObject, Clutter
-from time import time
+import threading
+import time
+
+from gi.repository import GObject, Clutter, Mx
+import sys
+
 
 class Group(Clutter.Actor):
     __gtype_name__ = "PisakCursorGroup"
     
     __gproperties__ = {
         "timeout": (
-            GObject.TYPE_INT,
+            GObject.TYPE_UINT,
             "", "",
             0, GObject.G_MAXUINT, 1600,
             GObject.PARAM_READWRITE),
@@ -22,15 +26,19 @@ class Group(Clutter.Actor):
     
     def __init__(self):
         super().__init__()
+        self.set_layout_manager(Clutter.BinLayout())
         self.timeout = 1600
         self.locked = False
         self._init_sprite()
-        GObject.idle_add(self.work)
+        self.buttons = None
+        self.worker = threading.Thread(target=self.work, daemon=True)
+        self.worker.start()
 
     def _init_sprite(self):
         self.sprite = Clutter.Actor()
         self.sprite.set_size(20, 20)
         self.sprite.set_background_color(Clutter.Color.new(255, 255, 0, 255))
+        self.add_actor(self.sprite)
 
     @property
     def timeout(self):
@@ -49,26 +57,50 @@ class Group(Clutter.Actor):
         self._locked = value
     
     def read_coords(self):
-        # TODO: read coords from stream
-        return (256, 256)
+        return (255, 255)
+        line = sys.stdin.readline()
+        fields = line.split(" ")
+        coords = int(fields[0]), int(fields[1])
+        print(coords)
+        return coords
     
     def update_sprite(self, coords):
         self.sprite.set_position(coords[0], coords[1])
     
-    def find_actor(self, coords):
-        # TODO: search
-        return None
+    def _scan_buttons(self):
+        to_scan = self.get_children()
+        print(to_scan)
+        buttons = []
+        while len(to_scan) > 0:
+            current = to_scan.pop()
+            if isinstance(current, Mx.Button):
+                buttons.append(current)
+            to_scan = to_scan + current.get_children()
+        self.buttons = buttons
+        print(buttons)
     
+    def find_actor(self, coords):
+        if self.buttons == None:
+            self._scan_buttons()
+        for button in self.buttons:
+            (x, y), (w, h) = button.get_position(), button.get_size()
+            if (x <= coords[0]) and (coords[0] <= x + w) \
+                    and (y <= coords[1]) and (coords[1] <= y + h):
+                return button
+        return None 
+
     def work(self):
-        coords = self.read_coords()
-        self.update_sprite(coords)
-        actor = self.find_actor(coords)
-        if actor is not None:
-            if actor == self.hover_actor:
-                if time.time() - self.hover_start > self._timeout:
-                    actor.activate()
-            else:
-                # reset timeout
-                self.hover_start = time.time()
-        return True
-                    
+        time.sleep(1)
+        while True:
+            coords = self.read_coords()
+            Clutter.threads_enter()
+            self.update_sprite(coords)
+            Clutter.threads_leave()
+            actor = self.find_actor(coords)
+            if actor is not None:
+                if actor == self.hover_actor:
+                    if time.time() - self.hover_start > self._timeout:
+                        actor.activate()
+                else:
+                    # reset timeout
+                    self.hover_start = time.time() 

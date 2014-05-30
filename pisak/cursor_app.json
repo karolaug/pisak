@@ -1,0 +1,28 @@
+[
+	{
+		"id": "main",
+		"type": "PisakBoxLayout",
+		"x-expand": true,
+		"y-expand": true,
+		"orientation": "horizontal",
+		"children": [
+			{
+				"id": "cursor_group",
+				"type": "PisakCursorGroup",
+				"background-color": "lightgray",
+				"x-expand": true,
+				"y-expand": true,
+				"children": [
+				    {
+						"id": "button",
+						"type": "MxButton",
+						"x": 500,
+						"y": 500,
+						"width": 100,
+						"height": 100
+                    }
+				]
+			}
+		]
+	}
+]
