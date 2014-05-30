@@ -3,6 +3,11 @@ MxButton
     font-size: 30;
 }
 
+MxLabel
+{
+    font-size: 60;
+}
+
 PisakSpellerKey
 {
     font-size: 65;

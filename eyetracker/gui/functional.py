@@ -655,7 +655,7 @@ class MyForm(QtGui.QMainWindow):
             
             if self.get_algorithm() == 'After cal':
                 # spawn subprocess
-                app_args = ['python3' , '-m', 'pisak.cursor_app']
+                app_args = ['python3' , '-m', 'pisak.viewer.photo_edit']
                 self.procHandler = subprocess.Popen(app_args , stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
         else:
             self.startFlag = 0
@@ -709,14 +709,14 @@ class MyForm(QtGui.QMainWindow):
 
         if self.spellerFlag == 0 and self.startFlag == 1 and self.spellerCalibrationFlag==1 and self.afterFlag==1:
             #print self.position()
-            print 'dupa!'
+            
             data2send = self.position()
             
             ### TO TUTAJ
             self.procHandler.stdin.write(data2send)
             
-            #print self.procHandler.stdout.read()
-            print data2send 
+            
+            
             
             
             
