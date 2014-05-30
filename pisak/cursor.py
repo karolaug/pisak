@@ -109,4 +109,8 @@ class Group(Clutter.Actor):
                 else:
                     # reset timeout
                     self.hover_actor = actor
+                    self.hover_actor.set_style_pseudo_class("hover")
                     self.hover_start = time.time() 
+            else:
+                self.hover_actor.set_style_pseudo_class("")
+                self.hover_actor = None
