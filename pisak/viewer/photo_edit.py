@@ -260,9 +260,19 @@ class PisakMainWindow(Clutter.Actor):
         self.PisakLogo = Mx.Image()
         self.PisakLogo.set_scale_mode(1)
         self.PisakLogo.set_from_file(os.path.join(res.PATH, 'logo_pisak.png'))
+        
+        self.NCBiRActor = Clutter.Actor()
+        layout = Clutter.BoxLayout()
+        layout.set_orientation(Clutter.Orientation.VERTICAL)
+        self.NCBiRActor.set_layout_manager(layout)
+        self.NCBiRLabel = Mx.Label()
+        self.NCBiRLabel.set_text('Dofinansowane ze środków:')
         self.NCBiRLogo = Mx.Image()
         self.NCBiRLogo.set_scale_mode(1)
         self.NCBiRLogo.set_from_file(os.path.join(res.PATH, 'logo_ncbir.png'))
+        self.NCBiRActor.add_actor(self.NCBiRLabel)
+        self.NCBiRActor.add_actor(self.NCBiRLogo)
+
 
         self.Stow = Mx.Label()
         self.Stow.set_text("Stowarzyszenia: Ożarowska i Mówić Bez Słów")
@@ -274,7 +284,9 @@ class PisakMainWindow(Clutter.Actor):
         self.FuwLogo.set_scale_mode(1)
         self.FuwLogo.set_from_file(os.path.join(res.PATH, 'logowfuworyg.jpg'))
 
-        self.layout.attach(self.NCBiRLogo, 1, 1, 1, 1)
+        self.BTLogo = Mx.Image()
+
+        self.layout.attach(self.NCBiRActor, 1, 1, 1, 1)
         self.layout.attach(self.PisakLogo, 0, 3, 2, 1)
         self.layout.attach(self.FuwLogo, 0, 1, 1, 1)
         self.layout.attach(self.EditButton, 1, 0, 1, 1)
