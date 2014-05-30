@@ -656,7 +656,7 @@ class MyForm(QtGui.QMainWindow):
             if self.get_algorithm() == 'After cal':
                 # spawn subprocess
                 app_args = ['python3' , '-m', 'pisak.cursor_app']
-                self.procHandler = subprocess.Popen(app_args , stdin=subprocess.PIPE)
+                self.procHandler = subprocess.Popen(app_args , stdin=subprocess.PIPE , stdout=subprocess.PIPE , stderr=subprocess.PIPE)
         else:
             self.startFlag = 0
             #self.pupilPositionsStack = []
@@ -709,14 +709,14 @@ class MyForm(QtGui.QMainWindow):
 
         if self.spellerFlag == 0 and self.startFlag == 1 and self.spellerCalibrationFlag==1 and self.afterFlag==1:
             #print self.position()
-            
+            print 'dupa!'
             data2send = self.position()
             
             ### TO TUTAJ
             self.procHandler.stdin.write(data2send)
             
-            
-            
+            #print self.procHandler.stdout.read()
+            print data2send 
             
             
             
@@ -816,7 +816,7 @@ class MyForm(QtGui.QMainWindow):
     def module_calibration_rectangle(self):
         if self.spellerFlag == 0 and self.startFlag == 1:
             
-            self.calibr_length = 30
+            self.calibr_length = 20
             self.resize(0,0)
 
             scr_x = self.ui.trueScreen.width()
@@ -908,7 +908,7 @@ class MyForm(QtGui.QMainWindow):
             #pygame.draw.circle(self.screen, cRED, (int(self.w-mx),my), 1)
             
 
-            if time.time()- self.t0>1:
+            if time.time()- self.t0>0.1:
                 self.cal_buffer.append((mx,my))
             
             if time.time() - self.t_arr>0.1:
@@ -983,7 +983,7 @@ class MyForm(QtGui.QMainWindow):
         
         
         #result_string = str(screen_x) + ' ' + str(screen_y)
-        result_string = str(self.mean_x) + ' ' + str(self.mean_y)
+        result_string = str(int(self.mean_x)) + ' ' + str(int(self.mean_y)) + '\n'
         
         #print result_string
         #return int(screen_x), int(screen_y)
