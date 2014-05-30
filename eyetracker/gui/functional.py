@@ -140,7 +140,7 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['DecisionStackDeph'] = 10.
 
 
-        self.procHandler = subprocess.Popen(['python3' , 'cursor_app.py'] , stdin = subprocess.PIPE)
+        #t self.procHandler = subprocess.Popen(['python3' , 'cursor_app.py'] , stdin = subprocess.PIPE)
 
         self.N_b = 10
         self.buf_pup = np.zeros((self.N_b,2))      
@@ -151,7 +151,8 @@ class MyForm(QtGui.QMainWindow):
         
         self.screen_x_list = []
         self.screen_y_list = []
-        
+        self.mean_x = 0
+        self.mean_y = 0
         
         
         #pygame.init()
@@ -706,27 +707,30 @@ class MyForm(QtGui.QMainWindow):
             data2send = self.position()
             
             ### TO TUTAJ
-            self.procHandler.stdin.write(data2send)
+            #self.procHandler.stdin.write(data2send)
             
             
             
             
             
             
-#             pygame.init()
-#             keys=pygame.key.get_pressed()
-#             for event in pygame.event.get():
-#                 if event.type == pygame.QUIT:
-#                     pygame.quit()
-#                     break
-#                 if keys[ord('q')]:
-#                     pygame.quit()
-#                     break
-#                 if keys[ord('z')]:
-#                     self.screen.fill(cBLACK)
-#             mx,my =  self.position()
-#             pygame.draw.circle(self.screen, cRED, (mx,my), 3)
-#             pygame.display.flip()
+            pygame.init()
+            keys=pygame.key.get_pressed()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    break
+                if keys[ord('q')]:
+                    pygame.quit()
+                    break
+                if keys[ord('z')]:
+                    self.screen.fill(cBLACK)
+            #mx,my =  self.position()
+            mx = data2send[0]
+            my = data2send[1]
+            
+            pygame.draw.circle(self.screen, cRED, (mx,my), 3)
+            pygame.display.flip()
 
     def module_calibration(self):
         if self.spellerFlag == 0 and self.startFlag == 1:
@@ -959,16 +963,19 @@ class MyForm(QtGui.QMainWindow):
         self.screen_x_list.append(screen_x)
         self.screen_y_list.append(screen_y)
         
-        if len(self.screen_x_list) == 5:
-            screen_x = np.mean(self.screen_x_list)
-            self.screen_x_list.pop(0)
-            screen_y = np.mean(self.screen_y_list)
-            self.screen_y_list.pop(0)
+        if len(self.screen_x_list) == 2:
+            self.screen_x_list.append(self.mean_x)
+            self.mean_x = np.mean(self.screen_x_list)
+            self.screen_x_list = []
+            self.screen_y_list.append(self.mean_y)
+            self.mean_y = np.mean(self.screen_y_list)
+            self.screen_y_list = []
         
         
         
-        result_string = str(screen_x) + ' ' + str(screen_y)
+        #result_string = str(screen_x) + ' ' + str(screen_y)
+        result_string = str(self.mean_x) + ' ' + str(self.mean_y)
         
         #print result_string
-        #return int(screen_x), int(screen_y)
+        return [int(self.mean_x), int(self.mean_y)]
         return result_string
