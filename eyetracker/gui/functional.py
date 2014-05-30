@@ -139,9 +139,6 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['PupilStackDeph']  = 100.
         self.defaults['DecisionStackDeph'] = 10.
 
-
-        self.procHandler = subprocess.Popen(['python3' , 'cursor_app.py'] , stdin = subprocess.PIPE)
-
         self.N_b = 10
         self.buf_pup = np.zeros((self.N_b,2))      
         self.initializeFlags()
@@ -654,19 +651,28 @@ class MyForm(QtGui.QMainWindow):
         if self.startFlag == 0:
             self.startFlag = 1
             self.ui.btn_start.setText('Stop')
+            
+            if self.get_algorithm() == 'After cal':
+                # spawn subprocess
+                app_args = ['python3' , '-m', 'pisak.cursor_app']
+                self.procHandler = subprocess.Popen(app_args , stdin=subprocess.PIPE)
         else:
             self.startFlag = 0
             #self.pupilPositionsStack = []
             self.ui.btn_start.setText('Start')
-            
-            
-            
+            if self.get_algorithm() == 'After cal':
+                # stop subprocess
+                self.procHandler.terminate()
+
+    def get_algorithm(self):
+        return str(self.ui.cmb_setAlgorithm.currentText())
+
     def runEyetracker(self):
         ''' Starts eyetracker with parameters picked from gui.
         '''
         if self.startFlag == 1:
             self.ui.btn_start.setText('Start')
-            self.algorithms[ str(self.ui.cmb_setAlgorithm.currentText()) ]()
+            self.algorithms[self.get_algorithm()]()
         else:
             pass
 
@@ -704,7 +710,7 @@ class MyForm(QtGui.QMainWindow):
             #print self.position()
             
             data2send = self.position()
-            
+            print(data2send)
             ### TO TUTAJ
             self.procHandler.stdin.write(data2send)
             
