@@ -57,7 +57,6 @@ class Group(Clutter.Actor):
         self._locked = value
     
     def read_coords(self):
-        return (255, 255)
         line = sys.stdin.readline()
         fields = line.split(" ")
         coords = int(fields[0]), int(fields[1])
