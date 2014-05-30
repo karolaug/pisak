@@ -148,13 +148,13 @@ class Buttons1(Clutter.Actor):
         self._init_elements()
 
     def _init_elements(self):
-        buttons = {'snapshot' : ['zdjęcie', self.image.take_photo],
+        buttons = {'menu': ['menu', self.menu],
+                   'snapshot' : ['zdjęcie', self.image.take_photo],
                    'rotate': ['obróć', self.image.rotate], 
                    'mirror': ['lustro', self.image.mirror],
                    'invert': ['negatyw', self.image.invert], 
                    'zoom': ['powiększenie', self.image._zoom_cycle],
-                   'solarize': ['prześwietlenie', self.image.solarize], 
-                   'grayscale': ['skala szarości', self.image.grayscale]}
+                   'solarize': ['prześwietlenie', self.image.solarize]}
         for b in reversed(sorted(buttons)):
             button = Mx.Button()
             button.set_style(self.STYLE)
@@ -162,6 +162,9 @@ class Buttons1(Clutter.Actor):
             button.set_size(unit.mm(50), unit.mm(22))
             self.add_actor(button)
             button.connect("button_release_event", buttons[b][1])
+
+    def menu(self, a, b):
+        self.get_parent().get_parent().get_parent().change_view('a', 'b', 'menu')
 
     def exit_app(self, button, event):
         self.container.exit_app()
@@ -187,7 +190,8 @@ class Buttons2(Clutter.Actor):
                    'edges': ['krawędzie', self.image.edges],
                    'contour': ['szkic', self.image.contour], 
                    'sepia': ['sepia', self.image.sepia],
-                   'menu': ['menu', self.menu]}
+                   'grayscale': ['skala szarości', self.image.grayscale]}
+
         for b in reversed(sorted(buttons)):
             button = Mx.Button()
             button.set_style(self.STYLE)
@@ -196,15 +200,12 @@ class Buttons2(Clutter.Actor):
             self.add_actor(button)
             button.connect("button_release_event", buttons[b][1])
 
-    def menu(self):
-        self.get_parent().get_parent().get_parent().change_view('a', 'b', 'menu')
-
     def exit_app(self, button, event):
         self.container.exit_app()
 
 
 class PisakViewerContainer(Clutter.Actor):
-    def __init__(self,stage):
+    def __init__(self, stage):
         super(PisakViewerContainer, self).__init__()
         self.stage = stage
         self.set_x_expand(True)
@@ -252,6 +253,10 @@ class PisakMainWindow(Clutter.Actor):
         self.EditButton.set_label('Edycja Zdjęcia')
         self.EditButton.set_size(400, 400)
         self.add_actor(self.EditButton)
+
+        self.image = Mx.Image()
+        self.image.set_from_file(os.path.join(res.PATH, 'logo_pisak.png'))
+        self.add_actor(self.image)
             
     def exit_app(self):
         self.stage.exit_app()
@@ -297,9 +302,9 @@ class PisakViewerStage(Clutter.Stage):
         self.add_actor(self.contents)
 
     def change_view(self, source, event, view):
-        print('test')
         dic = {"speller" : self.PisakSpeller, "photo-edit" : self.PisakImageEdit,
                "menu" : self.PisakMainWindow}
+        self.contents.remove_all_children()
         self.contents = cursor.Group()
         self.remove_all_children()
         self.contents.add_actor(dic[view])
