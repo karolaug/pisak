@@ -98,6 +98,7 @@ class Group(Clutter.Actor):
         return None 
 
     def work(self):
+        time.sleep(1)
         while True:
             coords = self.read_coords()
             Clutter.threads_enter()
@@ -107,7 +108,9 @@ class Group(Clutter.Actor):
             if actor is not None:
                 if actor == self.hover_actor:
                     if time.time() - self.hover_start > self._timeout:
+                        Clutter.threads_enter()
                         actor.emit("clicked")
+                        Clutter.threads_leave()
                         self.hover_start = time.time() + 1.0 # dead time
                 else:
                     # reset timeout
