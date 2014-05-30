@@ -245,6 +245,8 @@ class MyForm(QtGui.QMainWindow):
         self.pupilUpdate(self.im)
         self.glintUpdate(self.im)
         
+        #print type(self.where_pupil)
+        
         #self.where_pupil
         #########
         
@@ -638,18 +640,33 @@ class MyForm(QtGui.QMainWindow):
         '''
         tmp_pupil = []
         
+        #self.meanPupilRadius
         self.pupil , self.where_pupil , self.pupils_stack = drawPupil(image , self.config['PupilBar'] , self.pupils_stack , self.config['NumberOfPupils'])
+        
+        
         if self.afterCalibration7 == 1:
-            for pupil in self.where_pupil:
-                if pupil[2] < self.meanPupilRadius:
-                    tmp_pupil.append(pupil)
-                else:
-                    pass
             
-            if len(tmp_pupil) == 0:
-                tmp.pupil.append(None)
+#             if self.where_pupil == None:
+#                 #try:
+#                     #self.last_pupil
+#                 #    self.where_pupil = self.last_pupil
+#                 #except: 
+#                 #self.where_pupil = np.array([0,0,25])
+#                 pass
+            if self.where_pupil != None:
+                for pupil in self.where_pupil:
+                    print pupil , self.meanPupilRadius
+                    
+                    if pupil[2] < self.meanPupilRadius * 1.2 and pupil[2] > self.meanPupilRadius * 0.8:
+                        tmp_pupil.append(pupil)
+                    else:
+                        pass
             
-            self.where_pupil = tmp_pupil
+                if len(tmp_pupil) == 0:
+                    tmp_pupil.append(None)
+            
+                self.where_pupil = tmp_pupil
+                self.last_pupil = self.where_pupil
         
 
     def glintUpdate(self, image):
@@ -925,7 +942,11 @@ class MyForm(QtGui.QMainWindow):
             self.y_opt, y_pcov = curve_fit(f_for_fitting , (self.x_esti , self.y_esti) , y_true)
             
             
-            self.meanPupilRadius = np.array(self.pupilsFromCalibration).mean()
+            self.meanPupilRadius = np.mean([i[0][2] for i in self.pupilsFromCalibration])
+            
+            
+            print 'AAAA:{}'.format(self.meanPupilRadius)#self.pupilsFromCalibration)
+            #print self.meanPupilRadius
             self.afterCalibration7 = 1
             
             #print self.x_opt
@@ -954,7 +975,8 @@ class MyForm(QtGui.QMainWindow):
 
             mx,my =  self.mean_pupfinder()
             
-            self.pupilsFromCalibration.append(self.pupilRadius)
+            if self.where_pupil != None:
+                self.pupilsFromCalibration.append(self.where_pupil)
             
             #print mx , my
             #pygame.draw.circle(self.screen, cRED, (int(self.w-mx),my), 1)
