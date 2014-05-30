@@ -1,10 +1,12 @@
-from gi.repository import Clutter, Mx, Cogl
+from gi.repository import Clutter, Mx, Cogl, GObject
 from PIL import ImageFilter as ImF, Image as Im
 import sys
-from pisak import unit, res, cursor
+from pisak import unit, res, cursor, widgets
+from pisak.speller import widgets
 import random
 import os.path
 import subprocess
+import pisak.layout
 
 
 
@@ -157,7 +159,7 @@ class Buttons1(Clutter.Actor):
             button = Mx.Button()
             button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(64), unit.mm(22))
+            button.set_size(unit.mm(50), unit.mm(22))
             self.add_actor(button)
             button.connect("button_release_event", buttons[b][1])
 
@@ -184,14 +186,18 @@ class Buttons2(Clutter.Actor):
                    'noise': ['szum', self.image.noise], 
                    'edges': ['krawędzie', self.image.edges],
                    'contour': ['szkic', self.image.contour], 
-                   'sepia': ['sepia', self.image.sepia]}
+                   'sepia': ['sepia', self.image.sepia],
+                   'menu': ['menu', self.menu]}
         for b in reversed(sorted(buttons)):
             button = Mx.Button()
             button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(64), unit.mm(25))
+            button.set_size(unit.mm(50), unit.mm(25))
             self.add_actor(button)
             button.connect("button_release_event", buttons[b][1])
+
+    def menu(self):
+        self.get_parent().get_parent().get_parent().change_view('a', 'b', 'menu')
 
     def exit_app(self, button, event):
         self.container.exit_app()
@@ -227,18 +233,76 @@ class PisakViewerContainer(Clutter.Actor):
     def exit_app(self):
         self.stage.exit_app()
 
+class PisakMainWindow(Clutter.Actor):
+    
+    def __init__(self):
+        super(PisakMainWindow, self).__init__()
+        layout = Clutter.BoxLayout()
+        layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+        self.set_layout_manager(layout)
+        self.init_buttons()
+        
+    def init_buttons(self):
+        self.SpellerButton = Mx.Button()
+        self.SpellerButton.set_label('Speller')
+        self.SpellerButton.set_size(400, 400)
+        self.add_actor(self.SpellerButton)
+        
+        self.EditButton = Mx.Button()
+        self.EditButton.set_label('Edycja Zdjęcia')
+        self.EditButton.set_size(400, 400)
+        self.add_actor(self.EditButton)
+            
+    def exit_app(self):
+        self.stage.exit_app()
+
+class PisakSpeller(object):
+    def __init__(self):
+        self.style = Mx.Style.get_default()
+        self.style.load_from_file(os.path.join(res.PATH, "photo_edit.css"))
+
+        Mx.Button()
+        self.script = Clutter.Script()
+        self.script.load_from_file(os.path.join(res.PATH, "speller_combined.json"))
+        print(os.path.join(res.PATH, "speller_combined.json"))
+        print(self.script.list_objects())
+        self.actor = self.script.get_object("main")
+        self.text_box = self.script.get_object("text_box")
+        self.clutter_text = self.text_box.get_clutter_text()
+        self.clutter_text.set_line_wrap_mode(1)
+        self.clutter_text.set_line_wrap(True)
+        self.clutter_text.set_max_length(28)
+        self.clutter_text.set_size(60, 300)
 
 class PisakViewerStage(Clutter.Stage):
+
     def __init__(self):
         super(PisakViewerStage, self).__init__()
         self._init_elements()
+        self.set_layout_manager(Clutter.BinLayout())
     
     def _init_elements(self):
         self.contents = cursor.Group()
-        self.set_layout_manager(Clutter.BinLayout())
-        self.contents.set_x_expand(True)
-        self.contents.set_y_expand(True)
-        self.contents.add_actor(PisakViewerContainer(self))
+        self.PisakImageEdit = PisakViewerContainer(self)
+        pisakspeller = PisakSpeller()
+        self.PisakSpeller = pisakspeller.actor
+        self.PisakMainWindow = PisakMainWindow()
+        self.PisakMainWindow.SpellerButton.connect("button_release_event", 
+                                                   self.change_view, 
+                                                   "speller")
+        self.PisakMainWindow.EditButton.connect("button_release_event", 
+                                                self.change_view, 
+                                                "photo-edit")
+        self.contents.add_actor(self.PisakMainWindow)
+        self.add_actor(self.contents)
+
+    def change_view(self, source, event, view):
+        print('test')
+        dic = {"speller" : self.PisakSpeller, "photo-edit" : self.PisakImageEdit,
+               "menu" : self.PisakMainWindow}
+        self.contents = cursor.Group()
+        self.remove_all_children()
+        self.contents.add_actor(dic[view])
         self.add_actor(self.contents)
 
     def exit_app(self):
