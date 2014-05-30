@@ -115,8 +115,8 @@ def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
         where = np.array([where[i][0] for i in xrange(where.shape[0])])
     return where
 
-def pupil(image, dp=1, minDist=100, param1=50, param2=10, minRadius=20,
-          maxRadius=70):
+def pupil(image, dp=1, minDist=600, param1=50, param2=10, minRadius=20,
+          maxRadius=30):
     ''' Function detects pupil on the image of an eye.
     
     Based on the funccv2.HoughCircles. for more info on
