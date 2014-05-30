@@ -655,7 +655,7 @@ class MyForm(QtGui.QMainWindow):
             
             if self.get_algorithm() == 'After cal':
                 # spawn subprocess
-                app_args = ['python3' , '-m', 'pisak.cursor_app']
+                app_args = ['python3' , '-m', 'pisak.viewer.photo_edit']
                 self.procHandler = subprocess.Popen(app_args , stdin=subprocess.PIPE)
         else:
             self.startFlag = 0

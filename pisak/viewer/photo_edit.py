@@ -58,7 +58,7 @@ class Image(Clutter.Actor):
             self.noise_timer.stop()
             self.noise_timer = None
 
-    def _noise_update(self, source):
+    def _noise_update(self, signal_source):
         level = 40
         bands = self.buffer.getbands()
         source = self.buffer.split()
@@ -80,7 +80,7 @@ class Image(Clutter.Actor):
             self.zoom_timer.stop()
             self.zoom_timer = None
 
-    def zoom(self, source):
+    def zoom(self, signal_source):
         width, height = self.buffer.size[0], self.buffer.size[1]
         x0, y0 = width/50, height/50
         x1, y1 = width-x0, height-y0
