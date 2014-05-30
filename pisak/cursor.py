@@ -40,6 +40,7 @@ class Group(Clutter.Actor):
         self.sprite = Clutter.Actor()
         self.sprite.set_size(20, 20)
         self.sprite.set_background_color(Clutter.Color.new(255, 255, 0, 255))
+        self.sprite.set_depth(10.0)
         self.add_actor(self.sprite)
 
     @property
@@ -70,7 +71,8 @@ class Group(Clutter.Actor):
     def update_sprite(self, coords):
         self.sprite.set_position(coords[0], coords[1])
     
-    def _scan_buttons(self):
+    def scan_buttons(self):
+        print("scanning")
         to_scan = self.get_children()
         buttons = []
         while len(to_scan) > 0:
@@ -79,10 +81,11 @@ class Group(Clutter.Actor):
                 buttons.append(current)
             to_scan = to_scan + current.get_children()
         self.buttons = buttons
+        print(self.buttons)
     
     def find_actor(self, coords):
         if self.buttons == None:
-            self._scan_buttons()
+            self.scan_buttons()
         for button in self.buttons:
             (x, y), (w, h) = button.get_position(), button.get_size()
             if (x <= coords[0]) and (coords[0] <= x + w) \

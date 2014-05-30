@@ -35,20 +35,20 @@ class Image(Clutter.Actor):
         row_stride = len(data) / height
         self.image.set_from_data(data, mode, width, height, row_stride)
         
-    def mirror(self, button, event):
+    def mirror(self, button):
         axis = [Im.FLIP_LEFT_RIGHT, Im.FLIP_TOP_BOTTOM]
         self.buffer = self.buffer.transpose(axis[random.randint(0, 1)])
         self.set_image_from_data()
 
-    def grayscale(self, button, event):
+    def grayscale(self, button):
         self.buffer = self.buffer.convert('L')
         self.set_image_from_data()
         
-    def rotate(self, button, event):     
+    def rotate(self, button):     
         self.buffer = self.buffer.rotate(90, resample=Im.AFFINE)
         self.set_image_from_data()
 
-    def noise(self, button, event):
+    def noise(self, button):
         if not self.noise_timer:
             self.noise_timer = Clutter.Timeline.new(200)
             self.noise_timer.set_repeat_count(50)
@@ -58,7 +58,7 @@ class Image(Clutter.Actor):
             self.noise_timer.stop()
             self.noise_timer = None
 
-    def _noise_update(self, event):
+    def _noise_update(self, source):
         level = 40
         bands = self.buffer.getbands()
         source = self.buffer.split()
@@ -70,7 +70,7 @@ class Image(Clutter.Actor):
         self.buffer = Im.merge(mode, source)
         self.set_image_from_data()
 
-    def _zoom_cycle(self, button, event):
+    def _zoom_cycle(self, button):
         if not self.zoom_timer:
             self.zoom_timer = Clutter.Timeline.new(200)
             self.zoom_timer.set_repeat_count(35)
@@ -80,18 +80,18 @@ class Image(Clutter.Actor):
             self.zoom_timer.stop()
             self.zoom_timer = None
 
-    def zoom(self, event):
+    def zoom(self, source):
         width, height = self.buffer.size[0], self.buffer.size[1]
         x0, y0 = width/50, height/50
         x1, y1 = width-x0, height-y0
         self.buffer = self.buffer.transform((width, height), Im.EXTENT, (x0, y0, x1, y1))
         self.set_image_from_data()
 
-    def edges(self, button, event):
+    def edges(self, button):
         self.buffer = self.buffer.filter(ImF.FIND_EDGES)
         self.set_image_from_data()
 
-    def sepia(self, button, event):
+    def sepia(self, button):
         level = 50
         grayscale = self.buffer.convert('L')
         red = grayscale.point(lambda i: i + level*1.5)
@@ -105,7 +105,7 @@ class Image(Clutter.Actor):
         self.buffer = Im.merge(mode, source)
         self.set_image_from_data()
 
-    def contour(self, button, event):
+    def contour(self, button):
         self.buffer = self.buffer.filter(ImF.CONTOUR)
         self.set_image_from_data()
         
@@ -113,7 +113,7 @@ class Image(Clutter.Actor):
         self.buffer = self.buffer.point(lambda i: 255-i)
         self.set_image_from_data()
 
-    def solarize(self, button, event):
+    def solarize(self, button):
         threshold = 80
         buffer = self.buffer.copy()
         grayscale = buffer.convert('L')
@@ -123,11 +123,11 @@ class Image(Clutter.Actor):
         self.buffer = buffer
         self.set_image_from_data()
 
-    def original(self, button, event):
+    def original(self, button):
         self.buffer = self.original_photo
         self.set_image_from_data()
 
-    def take_photo(self, button, event):
+    def take_photo(self, button):
         subprocess.call(['python', os.path.join(res.PATH, 'take_photo.py')])
         self.original_photo = self.buffer = Im.open(self.MODEL)
         self.set_image_from_data()
@@ -161,7 +161,7 @@ class Buttons1(Clutter.Actor):
             button.set_label(buttons[b][0])
             button.set_size(unit.mm(50), unit.mm(22))
             self.add_actor(button)
-            button.connect("button_release_event", buttons[b][1])
+            button.connect("clicked", buttons[b][1])
 
     def menu(self, a, b):
         self.get_parent().get_parent().get_parent().change_view('a', 'b', 'menu')
@@ -198,9 +198,9 @@ class Buttons2(Clutter.Actor):
             button.set_label(buttons[b][0])
             button.set_size(unit.mm(50), unit.mm(25))
             self.add_actor(button)
-            button.connect("button_release_event", buttons[b][1])
+            button.connect("clicked", buttons[b][1])
 
-    def exit_app(self, button, event):
+    def exit_app(self, button):
         self.container.exit_app()
 
 
@@ -291,8 +291,6 @@ class PisakSpeller(object):
         Mx.Button()
         self.script = Clutter.Script()
         self.script.load_from_file(os.path.join(res.PATH, "speller_combined.json"))
-        print(os.path.join(res.PATH, "speller_combined.json"))
-        print(self.script.list_objects())
         self.actor = self.script.get_object("main")
         self.text_box = self.script.get_object("text_box")
         self.clutter_text = self.text_box.get_clutter_text()
@@ -314,23 +312,26 @@ class PisakViewerStage(Clutter.Stage):
         pisakspeller = PisakSpeller()
         self.PisakSpeller = pisakspeller.actor
         self.PisakMainWindow = PisakMainWindow()
-        self.PisakMainWindow.SpellerButton.connect("button_release_event", 
+        self.PisakMainWindow.SpellerButton.connect("clicked", 
                                                    self.change_view, 
                                                    "speller")
-        self.PisakMainWindow.EditButton.connect("button_release_event", 
+        self.PisakMainWindow.EditButton.connect("clicked", 
                                                 self.change_view, 
                                                 "photo-edit")
         self.contents.add_actor(self.PisakMainWindow)
+        self.current_view = self.PisakMainWindow
         self.add_actor(self.contents)
 
-    def change_view(self, source, event, view):
+    def change_view(self, source, view):
         dic = {"speller" : self.PisakSpeller, "photo-edit" : self.PisakImageEdit,
                "menu" : self.PisakMainWindow}
-        self.contents.remove_all_children()
-        self.contents = cursor.Group()
-        self.remove_all_children()
+        self.contents.remove_child(self.current_view)
+        #self.contents = cursor.Group()
+        #self.remove_all_children()
+        self.current_view = dic[view]
         self.contents.add_actor(dic[view])
-        self.add_actor(self.contents)
+        self.contents.scan_buttons()
+        #self.add_actor(self.contents)
 
     def exit_app(self):
         self.destroy()
