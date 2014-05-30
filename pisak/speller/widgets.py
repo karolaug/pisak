@@ -1,7 +1,8 @@
 '''
 Definitions of widgets specific to speller applet
 '''
-from gi.repository import Mx, GObject
+from gi.repository import Mx, GObject, Pango
+from pisak import unit
 import pisak.widgets
 from pisak.res import dims
 
@@ -9,7 +10,7 @@ from pisak.res import dims
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
     __gproperties__ = {
-        "function": (
+        "speller_function": (
             GObject.TYPE_STRING,
             "speller function",
             "speller function",
@@ -21,7 +22,7 @@ class Button(pisak.widgets.Button):
             "text displayed on the button",
             "noop",
             GObject.PARAM_READWRITE),
-        "alter": (
+        "alternative_text": (
             GObject.TYPE_STRING,
             "alternative label text",
             "alternative text displayed on the button",
@@ -30,26 +31,22 @@ class Button(pisak.widgets.Button):
     }
     
     def __init__(self):
-        self.function = None
-        self.text = ""
-        self.alter = ""
         super().__init__()
-        self.set_size((10./7)*dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
-        self.function = None
+        #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
 
-    def set_alter_label(self):
-        self.set_label(self.alter)
+    def set_alternative_label(self):
+        self.set_label(self.alternative_text)
 
     def set_default_label(self):
         self.set_label(self.text)
 
     @property
-    def function(self):
-        return self._function
+    def speller_function(self):
+        return self._speller_function
 
-    @function.setter
-    def function(self, value):
-        self._function = str(value)
+    @speller_function.setter
+    def speller_function(self, value):
+        self._speller_function = str(value)
 
     @property
     def text(self):
@@ -61,20 +58,30 @@ class Button(pisak.widgets.Button):
         self.set_label(self.text)
 
     @property
-    def alter(self):
-        return self._alter
+    def alternative_text(self):
+        return self._alternative_text
 
-    @alter.setter
-    def alter(self, value):
-        self._alter = str(value)
+    @alternative_text.setter
+    def alternative_text(self, value):
+        self._alternative_text = str(value)
         
 
 class Text(Mx.Label):
     __gtype_name__ = "PisakSpellerText"
+    __gproperties__ = {
+        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE)
+    }
+    
     def __init__(self):
         super().__init__()
         self.clutter_text = self.get_clutter_text()
+        self._set_text_params()
 
+    def _set_text_params(self):
+        self.clutter_text.set_line_wrap(True)
+        self.clutter_text.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        
     def get_text(self):
         return self.clutter_text.get_text()
 
@@ -108,6 +115,44 @@ class Text(Mx.Label):
         end_pos = self.get_text_length()
         self.delete_text(start_pos, end_pos)
         self.type_text(text)
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
+
+    def do_set_property(self, spec, value):
+        """
+        Introspect object properties and set the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            attribute.fset(self, value)
+        else:
+            raise ValueError("No such property", spec.name)
+
+    def do_get_property(self, spec):
+        """
+        Introspect object properties and get the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            return attribute.fget(self)
+        else:
+            raise ValueError("No such property", spec.name)
         
 
 class Key(pisak.widgets.Button):
@@ -119,13 +164,13 @@ class Key(pisak.widgets.Button):
             "string appended to a text",
             " ",
             GObject.PARAM_READWRITE),
-        "altgr": (
+        "altgr_text": (
             GObject.TYPE_STRING,
             "altgr text",
             "altgr string appended to a text",
             "?",
             GObject.PARAM_READWRITE),
-        "special": (
+        "special_text": (
             GObject.TYPE_STRING,
             "special text",
             "special string appended to a text",
@@ -139,12 +184,8 @@ class Key(pisak.widgets.Button):
     }
 
     def __init__(self):
-        self.text = ""
-        self.altgr = ""
-        self.special = ""
-        self.target = None
         super().__init__()
-        self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
+        #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self.type_text)
 
     def set_default_label(self):
@@ -152,24 +193,28 @@ class Key(pisak.widgets.Button):
         
     def set_swap_altgr_label(self):
         label = self.get_label()
-        if self.altgr.lower() == label.lower():
+        if self.altgr_text.lower() == label.lower():
             if label.islower():
+                # from lowercase altgr to lowercase default
                 self.set_label(self.text.lower())
             else:
+                # from uppercase altgr to (uppercase) default
                 self.set_label(self.text)
         else:     
-            if label.isalpha() and self.altgr:
+            if label.isalpha() and self.altgr_text:
                 if self.get_label().islower():
-                    self.set_label(self.altgr.swapcase())
+                    # from lowercase default to lowercase altgr
+                    self.set_label(self.altgr_text.swapcase())
                 else:
-                    self.set_label(self.altgr)
+                    # from (uppercase) default to uppercase altgr
+                    self.set_label(self.altgr_text)
 
     def set_swap_caps_label(self):
         label = self.get_label()
         self.set_label(label.swapcase())
 
     def set_special_label(self):
-        self.set_label(self.special)
+        self.set_label(self.special_text)
 
     def type_text(self, source):
         text = self.get_label()
@@ -186,20 +231,20 @@ class Key(pisak.widgets.Button):
         self.set_label(self.text)
 
     @property
-    def altgr(self):
-        return self._altgr
+    def altgr_text(self):
+        return self._altgr_text
 
-    @altgr.setter
-    def altgr(self, value):
-        self._altgr = str(value)
+    @altgr_text.setter
+    def altgr_text(self, value):
+        self._altgr_text = str(value)
 
     @property
-    def special(self):
-        return self._special
+    def special_text(self):
+        return self._special_text
 
-    @special.setter
-    def special(self, value):
-        self._special = str(value)
+    @special_text.setter
+    def special_text(self, value):
+        self._special_text = str(value)
 
     @property
     def target(self):
@@ -219,7 +264,7 @@ class Prediction(pisak.widgets.Button):
             "path to source of prediction words",
             "",
             GObject.PARAM_READWRITE),
-        "order": (
+        "order_num": (
             GObject.TYPE_INT,
             "order number",
             "position in a line for the new words",
@@ -235,11 +280,8 @@ class Prediction(pisak.widgets.Button):
     }
 
     def __init__(self):
-        self.dictionary = None
-        self.order = None
-        self.target = None
         super().__init__()
-        self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
+        #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self.replace_string)
 
     def follow_target(self):
@@ -272,9 +314,9 @@ class Prediction(pisak.widgets.Button):
         self.follow_target()
 
     @property
-    def order(self):
-        return self._order
+    def order_num(self):
+        return self._order_num
 
-    @order.setter
-    def order(self, value):
-        self._order = value
+    @order_num.setter
+    def order_num(self, value):
+        self._order_num = value

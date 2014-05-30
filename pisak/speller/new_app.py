@@ -5,10 +5,9 @@ import pisak.speller.widgets  # @UnusedImport
 import pisak.layout  # @UnusedImport
 
 
-SCRIPT_PATH = "pisak/speller/speller_combined.json"
-
 script = None
 dispatcher = None
+
 
 class Dispatcher(object):
     MODEL = {
@@ -22,7 +21,7 @@ class Dispatcher(object):
 
     def _init_elements(self):
         self.text_field = script.get_object("text_box")
-        self.prediction_panel = script.get_object("prediction_menu")
+        self.prediction_panel = script.get_object("prediction_panel")
         self.keyboard_panel = script.get_object("keyboard_panel")
 
     def _init_func_dict(self):
@@ -47,14 +46,18 @@ class Dispatcher(object):
 
     def _connect_menu(self):
         main_menu = script.get_object("speller_menu")
-        for button in main_menu.get_children():
-            value = button.get_property("function")
-            button.connect("activate", self.MENU_FUNCS[value])
+        self._connect_buttons(main_menu)
         keyboard_menu = script.get_object("keyboard_menu")
         if keyboard_menu:
-            for button in keyboard_menu.get_children():
-                value = button.get_property("function")
-                button.connect("activate", self.MENU_FUNCS[value])
+            self._connect_buttons(keyboard_menu)
+        
+    def _connect_buttons(self, group):
+        for child in group.get_children():
+            if child.__gtype_name__ == "PisakSpellerButton":
+                value = child.get_property("speller-function")
+                child.connect("activate", self.MENU_FUNCS[value])
+            else:
+                self._connect_buttons(child)
 
     def go_to_keyboard(self, source):
         raise NotImplementedError
@@ -95,11 +98,10 @@ class Dispatcher(object):
         for group in self.keyboard_panel.get_children():
             for key in group.get_children():
                 key.set_default_label()
-        if source.get_property("text") == ":-)":
-            func = "special_chars"
-            source.set_property("function", func)
-            source.connect("activate", self.MENU_FUNCS[func])
-            source.set_default_label()
+        func = "special_chars"
+        source.set_property("speller-function", func)
+        source.connect("activate", self.MENU_FUNCS[func])
+        source.set_default_label()
 
     def swap_altgr_chars(self, source):
         for group in self.keyboard_panel.get_children():
@@ -116,7 +118,7 @@ class Dispatcher(object):
             for key in group.get_children():
                 key.set_special_label()
         func = "default_chars"
-        source.set_property("function", func)
+        source.set_property("speller-function", func)
         source.connect("activate", self.MENU_FUNCS[func])
         source.set_alter_label()
 
@@ -162,4 +164,9 @@ class PisakSpellerApp(switcher_app.Application):
     
 
 if __name__ == "__main__":
+    SCRIPT_PATH = {
+        "row": "pisak/speller/speller_row.json",
+        "column": "pisak/speller/speller_column.json",
+        "combined": "pisak/speller/speller_combined.json"
+        }[sys.argv[1]]
     PisakSpellerApp(sys.argv).main()
