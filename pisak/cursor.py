@@ -112,5 +112,6 @@ class Group(Clutter.Actor):
                     self.hover_actor.set_style_pseudo_class("hover")
                     self.hover_start = time.time() 
             else:
-                self.hover_actor.set_style_pseudo_class("")
-                self.hover_actor = None
+                if self.hover_actor is not None:
+                    self.hover_actor.set_style_pseudo_class("")
+                    self.hover_actor = None
