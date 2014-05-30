@@ -816,7 +816,7 @@ class MyForm(QtGui.QMainWindow):
     def module_calibration_rectangle(self):
         if self.spellerFlag == 0 and self.startFlag == 1:
             
-            self.calibr_length = 18
+            self.calibr_length = 30
             self.resize(0,0)
 
             scr_x = self.ui.trueScreen.width()
@@ -828,14 +828,16 @@ class MyForm(QtGui.QMainWindow):
             self.cal_positions = []
             self.t0 = time.time()
             self.t_arr = time.time()
-            C,D = 350,160#marginesy
-            rect_big = 100 # wielkosc prostokata
+            C,D = scr_x/5,scr_y/5#marginesy
+            rect_big = 30 # wielkosc prostokata
             
             self.rectangle = []
             self.cal_buffer = []
             for i in range(1,5):
                 for j in range(1,5):
-                    self.rectangle.append((self.screen, cRED, (i*C,j*D,rect_big,rect_big)))
+                    for rect_big in range(100, 0, -10):
+                        #print rect_big
+                        self.rectangle.append((self.screen, cRED, (i*C+(100-rect_big)/2.,j*D+(100-rect_big)/2.,rect_big,rect_big)))
             self.rl = 0
             
             self.spellerFlag = 1
@@ -909,7 +911,7 @@ class MyForm(QtGui.QMainWindow):
             if time.time()- self.t0>1:
                 self.cal_buffer.append((mx,my))
             
-            if time.time() - self.t_arr>1:
+            if time.time() - self.t_arr>0.1:
                 
                 if self.rl>0:
                     #print np.mean(np.array(self.cal_buffer),axis=0)
@@ -919,7 +921,11 @@ class MyForm(QtGui.QMainWindow):
                     except IndexError:
                         pass 
                 self.screen.fill(cBLACK)
+                
+                #print self.rl , len(self.rectangle)
+                
                 pygame.draw.rect(*self.rectangle[self.rl])
+                
                 self.t_arr = time.time()
                 self.rl+=1
                 self.cal_buffer = []
