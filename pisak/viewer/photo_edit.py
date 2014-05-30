@@ -330,7 +330,8 @@ class PisakViewerStage(Clutter.Stage):
         #self.remove_all_children()
         self.current_view = dic[view]
         self.contents.add_actor(dic[view])
-        self.contents.scan_buttons()
+        self.contents.buttons = None
+        #self.contents.scan_buttons()
         #self.add_actor(self.contents)
 
     def exit_app(self):

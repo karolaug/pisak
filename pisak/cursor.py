@@ -78,6 +78,7 @@ class Group(Clutter.Actor):
         while len(to_scan) > 0:
             current = to_scan.pop()
             if isinstance(current, Mx.Button):
+                print(current.get_transformed_position())
                 buttons.append(current)
             to_scan = to_scan + current.get_children()
         self.buttons = buttons
