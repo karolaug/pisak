@@ -58,10 +58,12 @@ class Group(Clutter.Actor):
     
     def read_coords(self):
         line = sys.stdin.readline()
-        fields = line.split(" ")
-        coords = int(fields[0]), int(fields[1])
-        print(coords)
-        return coords
+        try:
+            fields = line.split(" ")
+            coords = int(fields[0]), int(fields[1])
+            return coords
+        except:
+            return None
     
     def update_sprite(self, coords):
         self.sprite.set_position(coords[0], coords[1])
