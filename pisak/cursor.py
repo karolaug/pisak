@@ -87,7 +87,7 @@ class Group(Clutter.Actor):
         if self.buttons == None:
             self.scan_buttons()
         for button in self.buttons:
-            (x, y), (w, h) = button.get_position(), button.get_size()
+            (x, y), (w, h) = button.get_transformed_position(), button.get_size()
             if (x <= coords[0]) and (coords[0] <= x + w) \
                     and (y <= coords[1]) and (coords[1] <= y + h):
                 return button
