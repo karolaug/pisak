@@ -204,7 +204,7 @@ class Buttons2(Clutter.Actor):
 
 
 class PisakViewerContainer(Clutter.Actor):
-    def __init__(self, stage):
+    def __init__(self,stage):
         super(PisakViewerContainer, self).__init__()
         self.stage = stage
         self.set_x_expand(True)

@@ -139,12 +139,18 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['PupilStackDeph']  = 100.
         self.defaults['DecisionStackDeph'] = 10.
 
-
-        self.procHandler = subprocess.Popen(['python3' , 'cursor_app.py'] , stdin = subprocess.PIPE)
-
         self.N_b = 10
         self.buf_pup = np.zeros((self.N_b,2))      
         self.initializeFlags()
+        
+        
+        
+        
+        self.screen_x_list = []
+        self.screen_y_list = []
+        self.mean_x = 0
+        self.mean_y = 0
+        
         
         #pygame.init()
         
@@ -646,19 +652,28 @@ class MyForm(QtGui.QMainWindow):
         if self.startFlag == 0:
             self.startFlag = 1
             self.ui.btn_start.setText('Stop')
+            
+            if self.get_algorithm() == 'After cal':
+                # spawn subprocess
+                app_args = ['python3' , '-m', 'pisak.cursor_app']
+                self.procHandler = subprocess.Popen(app_args , stdin=subprocess.PIPE)
         else:
             self.startFlag = 0
             #self.pupilPositionsStack = []
             self.ui.btn_start.setText('Start')
-            
-            
-            
+            if self.get_algorithm() == 'After cal':
+                # stop subprocess
+                self.procHandler.terminate()
+
+    def get_algorithm(self):
+        return str(self.ui.cmb_setAlgorithm.currentText())
+
     def runEyetracker(self):
         ''' Starts eyetracker with parameters picked from gui.
         '''
         if self.startFlag == 1:
             self.ui.btn_start.setText('Start')
-            self.algorithms[ str(self.ui.cmb_setAlgorithm.currentText()) ]()
+            self.algorithms[self.get_algorithm()]()
         else:
             pass
 
@@ -699,6 +714,10 @@ class MyForm(QtGui.QMainWindow):
             
             ### TO TUTAJ
             self.procHandler.stdin.write(data2send)
+            
+            
+            
+            
             
             
 #             pygame.init()
@@ -944,7 +963,22 @@ class MyForm(QtGui.QMainWindow):
         screen_x = f_for_fitting((mx,my) , a1,b1,c1,d1,e1,f1)
         screen_y = f_for_fitting((mx,my) , a2,b2,c2,d2,e2,f2)
         
-        result_string = 'screen_x screen_y'
+        self.screen_x_list.append(screen_x)
+        self.screen_y_list.append(screen_y)
         
+        if len(self.screen_x_list) == 2:
+            self.screen_x_list.append(self.mean_x)
+            self.mean_x = np.mean(self.screen_x_list)
+            self.screen_x_list = []
+            self.screen_y_list.append(self.mean_y)
+            self.mean_y = np.mean(self.screen_y_list)
+            self.screen_y_list = []
+        
+        
+        
+        #result_string = str(screen_x) + ' ' + str(screen_y)
+        result_string = str(self.mean_x) + ' ' + str(self.mean_y)
+        
+        #print result_string
         #return int(screen_x), int(screen_y)
         return result_string
