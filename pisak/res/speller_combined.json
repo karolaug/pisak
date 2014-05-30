@@ -264,25 +264,22 @@
                                     },
                                     {
                                         "id": "key_3_8",
-                                        "type": "PisakSpellerKey",
-                                        "text": "CZ",
-                                        "target": "text_box",
+                                        "type": "MxButton",
+                                        "label": "<-",
 					"y-expand": true,
 					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_9",
-                                        "type": "PisakSpellerKey",
-                                        "text": "SZ",
-                                        "target": "text_box",
+                                        "type": "MxButton",
+                                        "label": "[ ]",
 					"y-expand": true,
 					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_10",
-                                        "type": "PisakSpellerKey",
-                                        "text": "RZ",
-                                        "target": "text_box",
+                                        "type": "MxButton",
+                                        "label": "[^]",
 					"y-expand": true,
 					"x-expand": true
                                     }

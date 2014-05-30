@@ -100,7 +100,7 @@ class Key(pisak.widgets.Button):
         self.set_label_text(self.caps_text)
 
     def set_special_label(self):
-        special_text = self.get_property("spec_text")
+        special_text = self.get_property("special_text")
         self.set_label_text(special_text)
 
     def type_text(self, source):

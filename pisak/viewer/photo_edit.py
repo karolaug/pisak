@@ -324,6 +324,20 @@ class PisakSpeller(object):
         self.clutter_text.set_max_length(28)
         self.clutter_text.set_size(60, 300)
 
+        self.space = self.script.get_object("key_3_9")
+        self.space.connect("clicked", self.gap)
+
+        self.backspace = self.script.get_object("key_3_8")
+        self.backspace.connect("clicked", self.back)
+
+    def gap(self, source):
+        text = self.text_box.get_text()
+        self.text_box.set_text(text + " ")
+
+    def back(self, source):
+        text = self.text_box.get_text()
+        self.text_box.set_text(text[:-1])
+        
 class PisakViewerStage(Clutter.Stage):
 
     def __init__(self):
@@ -347,8 +361,12 @@ class PisakViewerStage(Clutter.Stage):
         self.current_view = self.PisakMainWindow
         self.add_actor(self.contents)
 
+        self.mainWindow = pisakspeller.script.get_object("key_3_10")
+        self.mainWindow.connect("clicked", self.change_view, "menu")
+
     def change_view(self, source, view):
-        dic = {"speller" : self.PisakSpeller, "photo-edit" : self.PisakImageEdit,
+        dic = {"speller" : self.PisakSpeller, 
+               "photo-edit" : self.PisakImageEdit,
                "menu" : self.PisakMainWindow}
         self.contents.remove_child(self.current_view)
         #self.contents = cursor.Group()
