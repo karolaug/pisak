@@ -68,7 +68,7 @@ def find_pup(where_glint,where_pupil):
             ls.append([r,wsp[0],wsp[1]])
     except TypeError:
         return np.array([np.NaN,np.NaN])
-    return np.array(min(ls)[1:])
+    return np.array(min(ls)[1:]) , min(ls)[0]
 
 def eye_calibr_params(points):
     """Returns parameters needed to scale eyetracker cursor.
@@ -143,7 +143,8 @@ class MyForm(QtGui.QMainWindow):
         self.buf_pup = np.zeros((self.N_b,2))      
         self.initializeFlags()
         
-        
+        self.pupilsFromCalibration = []
+        self.meanPupilRadius       = 0
         
         
         self.screen_x_list = []
@@ -244,10 +245,39 @@ class MyForm(QtGui.QMainWindow):
         self.pupilUpdate(self.im)
         self.glintUpdate(self.im)
         
+        #self.where_pupil
+        #########
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        #########
+        
+        
         try:
             mx,my =  self.mean_pupfinder()
             #mark(self.pupil, np.array([mx,my]),radius=20, color='green')
             mark(self.glint, np.array([mx,my]),radius=20, color='green')
+            mark(self.pupil, np.array([mx,my]),radius=20, color='green')
         except TypeError:
             mx,my = [0,0]
         #print mx, my
@@ -267,6 +297,8 @@ class MyForm(QtGui.QMainWindow):
         #self.spellerLvl     = 0
         self.spellerCalibrationFlag = 0
         self.afterFlag = 0
+        
+        self.afterCalibration7 = 0
 
     def setDefaultSettings(self):
         ''' Set GUI defaul configuration.
@@ -604,7 +636,20 @@ class MyForm(QtGui.QMainWindow):
             image on which pupil should be find and marked.
 
         '''
+        tmp_pupil = []
+        
         self.pupil , self.where_pupil , self.pupils_stack = drawPupil(image , self.config['PupilBar'] , self.pupils_stack , self.config['NumberOfPupils'])
+        if self.afterCalibration7 == 1:
+            for pupil in self.where_pupil:
+                if pupil[2] < self.meanPupilRadius:
+                    tmp_pupil.append(pupil)
+                else:
+                    pass
+            
+            if len(tmp_pupil) == 0:
+                tmp.pupil.append(None)
+            
+            self.where_pupil = tmp_pupil
         
 
     def glintUpdate(self, image):
@@ -679,7 +724,8 @@ class MyForm(QtGui.QMainWindow):
 
     def mean_pupfinder(self):
         """It averages *N_b* positions of the best finded pupil"""
-        fp=find_pup(self.where_glint,self.where_pupil)
+        fp , self.pupilRadius = find_pup(self.where_glint,self.where_pupil)
+
         if not np.any(np.isnan(fp)):
             self.buf_pup[:self.N_b-1,:] = self.buf_pup[1:,:]
             self.buf_pup[self.N_b-1,:] = fp
@@ -878,6 +924,10 @@ class MyForm(QtGui.QMainWindow):
             self.x_opt, x_pcov = curve_fit(f_for_fitting , (self.x_esti , self.y_esti) , x_true)
             self.y_opt, y_pcov = curve_fit(f_for_fitting , (self.x_esti , self.y_esti) , y_true)
             
+            
+            self.meanPupilRadius = np.array(self.pupilsFromCalibration).mean()
+            self.afterCalibration7 = 1
+            
             #print self.x_opt
             #print self.y_opt
             
@@ -903,6 +953,8 @@ class MyForm(QtGui.QMainWindow):
                     self.screen.fill(cBLACK)
 
             mx,my =  self.mean_pupfinder()
+            
+            self.pupilsFromCalibration.append(self.pupilRadius)
             
             #print mx , my
             #pygame.draw.circle(self.screen, cRED, (int(self.w-mx),my), 1)
