@@ -63,14 +63,13 @@ class Group(Clutter.Actor):
             coords = int(fields[0]), int(fields[1])
             return coords
         except:
-            return None
+            raise Exception("Protocol error")
     
     def update_sprite(self, coords):
         self.sprite.set_position(coords[0], coords[1])
     
     def _scan_buttons(self):
         to_scan = self.get_children()
-        print(to_scan)
         buttons = []
         while len(to_scan) > 0:
             current = to_scan.pop()
@@ -78,7 +77,6 @@ class Group(Clutter.Actor):
                 buttons.append(current)
             to_scan = to_scan + current.get_children()
         self.buttons = buttons
-        print(buttons)
     
     def find_actor(self, coords):
         if self.buttons == None:
