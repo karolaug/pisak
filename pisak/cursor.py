@@ -113,11 +113,11 @@ class Group(Clutter.Actor):
                     self.hover_actor = actor
                     Clutter.threads_enter()
                     self.hover_actor.set_style_pseudo_class("hover")
-     			    Clutter.threads_leave()
+                     Clutter.threads_leave()
                     self.hover_start = time.time() 
             else:
                 if self.hover_actor is not None:
-            		Clutter.threads_enter()
+                    Clutter.threads_enter()
                     self.hover_actor.set_style_pseudo_class("")
-        			Clutter.threads_leave()
+                    Clutter.threads_leave()
                     self.hover_actor = None
