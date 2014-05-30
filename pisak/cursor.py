@@ -1,15 +1,20 @@
 '''
 Module handles cursor-style (stream of coordinates) input in JSON layout.
 '''
+import math
+import threading
+import time
+
 from gi.repository import GObject, Clutter
-from time import time
+import sys
+
 
 class Group(Clutter.Actor):
     __gtype_name__ = "PisakCursorGroup"
     
     __gproperties__ = {
         "timeout": (
-            GObject.TYPE_INT,
+            GObject.TYPE_UINT,
             "", "",
             0, GObject.G_MAXUINT, 1600,
             GObject.PARAM_READWRITE),
@@ -25,12 +30,14 @@ class Group(Clutter.Actor):
         self.timeout = 1600
         self.locked = False
         self._init_sprite()
-        GObject.idle_add(self.work)
+        self.worker = threading.Thread(target=self.work, daemon=True)
+        self.worker.start()
 
     def _init_sprite(self):
         self.sprite = Clutter.Actor()
         self.sprite.set_size(20, 20)
         self.sprite.set_background_color(Clutter.Color.new(255, 255, 0, 255))
+        self.add_actor(self.sprite)
 
     @property
     def timeout(self):
@@ -49,8 +56,11 @@ class Group(Clutter.Actor):
         self._locked = value
     
     def read_coords(self):
-        # TODO: read coords from stream
-        return (256, 256)
+        line = sys.stdin.readline()
+        fields = line.split(" ")
+        coords = int(fields[0]), int(fields[1])
+        print(coords)
+        return coords
     
     def update_sprite(self, coords):
         self.sprite.set_position(coords[0], coords[1])
@@ -60,15 +70,16 @@ class Group(Clutter.Actor):
         return None
     
     def work(self):
-        coords = self.read_coords()
-        self.update_sprite(coords)
-        actor = self.find_actor(coords)
-        if actor is not None:
-            if actor == self.hover_actor:
-                if time.time() - self.hover_start > self._timeout:
-                    actor.activate()
-            else:
-                # reset timeout
-                self.hover_start = time.time()
-        return True
-                    
+        while True:
+            coords = self.read_coords()
+            Clutter.threads_enter()
+            self.update_sprite(coords)
+            Clutter.threads_leave()
+            #actor = self.find_actor(coords)
+            #if actor is not None:
+            #    if actor == self.hover_actor:
+            #        if time.time() - self.hover_start > self._timeout:
+            #            actor.activate()
+            #    else:
+            #        # reset timeout
+            #        self.hover_start = time.time() 
