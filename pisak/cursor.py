@@ -98,10 +98,10 @@ class Group(Clutter.Actor):
         time.sleep(1)
         while True:
             coords = self.read_coords()
-            Clutter.threads_enter()
+
             self.update_sprite(coords)
-            Clutter.threads_leave()
             actor = self.find_actor(coords)
+            Clutter.threads_leave()
             if actor is not None:
                 if actor == self.hover_actor:
                     if time.time() - self.hover_start > self._timeout:
@@ -110,9 +110,13 @@ class Group(Clutter.Actor):
                 else:
                     # reset timeout
                     self.hover_actor = actor
+                    Clutter.threads_enter()
                     self.hover_actor.set_style_pseudo_class("hover")
+     			    Clutter.threads_leave()
                     self.hover_start = time.time() 
             else:
                 if self.hover_actor is not None:
+            		Clutter.threads_enter()
                     self.hover_actor.set_style_pseudo_class("")
+        			Clutter.threads_leave()
                     self.hover_actor = None
