@@ -139,9 +139,6 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['PupilStackDeph']  = 100.
         self.defaults['DecisionStackDeph'] = 10.
 
-
-        #t self.procHandler = subprocess.Popen(['python3' , 'cursor_app.py'] , stdin = subprocess.PIPE)
-
         self.N_b = 10
         self.buf_pup = np.zeros((self.N_b,2))      
         self.initializeFlags()
@@ -655,19 +652,28 @@ class MyForm(QtGui.QMainWindow):
         if self.startFlag == 0:
             self.startFlag = 1
             self.ui.btn_start.setText('Stop')
+            
+            if self.get_algorithm() == 'After cal':
+                # spawn subprocess
+                app_args = ['python3' , '-m', 'pisak.cursor_app']
+                self.procHandler = subprocess.Popen(app_args , stdin=subprocess.PIPE)
         else:
             self.startFlag = 0
             #self.pupilPositionsStack = []
             self.ui.btn_start.setText('Start')
-            
-            
-            
+            if self.get_algorithm() == 'After cal':
+                # stop subprocess
+                self.procHandler.terminate()
+
+    def get_algorithm(self):
+        return str(self.ui.cmb_setAlgorithm.currentText())
+
     def runEyetracker(self):
         ''' Starts eyetracker with parameters picked from gui.
         '''
         if self.startFlag == 1:
             self.ui.btn_start.setText('Start')
-            self.algorithms[ str(self.ui.cmb_setAlgorithm.currentText()) ]()
+            self.algorithms[self.get_algorithm()]()
         else:
             pass
 
@@ -707,30 +713,27 @@ class MyForm(QtGui.QMainWindow):
             data2send = self.position()
             
             ### TO TUTAJ
-            #self.procHandler.stdin.write(data2send)
+            self.procHandler.stdin.write(data2send)
             
             
             
             
             
             
-            pygame.init()
-            keys=pygame.key.get_pressed()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    break
-                if keys[ord('q')]:
-                    pygame.quit()
-                    break
-                if keys[ord('z')]:
-                    self.screen.fill(cBLACK)
-            #mx,my =  self.position()
-            mx = data2send[0]
-            my = data2send[1]
-            
-            pygame.draw.circle(self.screen, cRED, (mx,my), 3)
-            pygame.display.flip()
+#             pygame.init()
+#             keys=pygame.key.get_pressed()
+#             for event in pygame.event.get():
+#                 if event.type == pygame.QUIT:
+#                     pygame.quit()
+#                     break
+#                 if keys[ord('q')]:
+#                     pygame.quit()
+#                     break
+#                 if keys[ord('z')]:
+#                     self.screen.fill(cBLACK)
+#             mx,my =  self.position()
+#             pygame.draw.circle(self.screen, cRED, (mx,my), 3)
+#             pygame.display.flip()
 
     def module_calibration(self):
         if self.spellerFlag == 0 and self.startFlag == 1:
@@ -977,5 +980,5 @@ class MyForm(QtGui.QMainWindow):
         result_string = str(self.mean_x) + ' ' + str(self.mean_y)
         
         #print result_string
-        return [int(self.mean_x), int(self.mean_y)]
+        #return int(screen_x), int(screen_y)
         return result_string

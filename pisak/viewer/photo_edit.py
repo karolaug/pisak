@@ -157,7 +157,7 @@ class Buttons1(Clutter.Actor):
             button = Mx.Button()
             button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(50), unit.mm(22))
+            button.set_size(unit.mm(64), unit.mm(22))
             self.add_actor(button)
             button.connect("button_release_event", buttons[b][1])
 
@@ -189,7 +189,7 @@ class Buttons2(Clutter.Actor):
             button = Mx.Button()
             button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(50), unit.mm(25))
+            button.set_size(unit.mm(64), unit.mm(25))
             self.add_actor(button)
             button.connect("button_release_event", buttons[b][1])
 
@@ -235,6 +235,9 @@ class PisakViewerStage(Clutter.Stage):
     
     def _init_elements(self):
         self.contents = cursor.Group()
+        self.set_layout_manager(Clutter.BinLayout())
+        self.contents.set_x_expand(True)
+        self.contents.set_y_expand(True)
         self.contents.add_actor(PisakViewerContainer(self))
         self.add_actor(self.contents)
 
