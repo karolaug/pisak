@@ -31,12 +31,53 @@ from ..analysis.processing import imageFlipMirror, runningAverage
 from ..camera.display import drawPupil, drawGlint
 from ..camera.camera import lookForCameras
 from ..camera.camera import Camera
-
+from eyetracker.analysis.processing import gray2bgr, bgr2gray, mark, threshold, thresholds
 from .graphical import Ui_StartingWindow
 
 import os
-from functools import partial
+#from functools import partial
+from scipy.optimize import curve_fit
 
+import subprocess
+
+import pygame,time
+from PIL import Image
+
+cRED = pygame.Color(255,0,0)
+cBLUE = pygame.Color(0,0,255)
+cGREEN = pygame.Color(0, 255, 0)
+cYELLOW = pygame.Color(255, 255, 0)
+cBLACK = pygame.Color(0,0,0)
+cWHITE = pygame.Color(255,255,255)
+
+
+
+def f_for_fitting((x,y) , a , b , c , d , e , f):
+    return a*x**2 + b*x + c*y**2 + d*y + e*x*y + f
+
+
+
+def find_pup(where_glint,where_pupil):
+    """It finds right pupil values from glint *where_glint* 
+    and pupils positions *where_pupil*"""
+    xsr,ysr=np.mean(where_glint,axis=0)
+    ls=[]
+    try:
+        for wsp in where_pupil:
+            r=np.sqrt((xsr-wsp[0])**2+(ysr-wsp[1])**2)
+            ls.append([r,wsp[0],wsp[1]])
+    except TypeError:
+        return np.array([np.NaN,np.NaN])
+    return np.array(min(ls)[1:])
+
+def eye_calibr_params(points):
+    """Returns parameters needed to scale eyetracker cursor.
+    *points* is a vector of data points from callibration session"""
+    points = np.asarray(points)
+    xmax,ymax = np.max(points,axis=0)
+    xmean,ymean = np.mean(points,axis=0)
+    xmin,ymin = np.min(points,axis=0)
+    return xmin, xmax-xmin, ymin, ymax-ymin, xmean, ymean
 
 class MyTextViewer(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -97,8 +138,15 @@ class MyForm(QtGui.QMainWindow):
         self.defaults['AlgorithmIndex']  = 0
         self.defaults['PupilStackDeph']  = 100.
         self.defaults['DecisionStackDeph'] = 10.
-        
+
+
+        self.procHandler = subprocess.Popen(['python3' , 'cursor_app.py'] , stdin = subprocess.PIPE)
+
+        self.N_b = 10
+        self.buf_pup = np.zeros((self.N_b,2))      
         self.initializeFlags()
+        
+        #pygame.init()
         
         self.cameras = lookForCameras()
         for i in self.cameras.iterkeys():
@@ -106,8 +154,10 @@ class MyForm(QtGui.QMainWindow):
             
         self.algorithms = {}
         self.algorithms['Raw output']   = self.module_raw
-        self.algorithms['Keyboard']  = self.module_speller
-        self.algorithms['Picture viewer']  = self.module_picture
+        #self.algorithms['Calibration']  = self.module_calibration
+        #self.algorithms['Picture viewer']  = self.module_picture
+        self.algorithms['After cal']  = self.module_after_cal
+        self.algorithms['New Calibr Test'] = self.module_calibration_rectangle
         
         #self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
         
@@ -118,16 +168,16 @@ class MyForm(QtGui.QMainWindow):
             self.ui.cmb_setAlgorithm.addItem(algorithm)
             
         
-        self.resolutions_w = [160,320,640,1280]
-        self.resolutions_h = [120,240,480,720]
-        for w, h in izip(self.resolutions_w, self.resolutions_h):
+        self.resolutions = [(160,120),(320,240),(640,480),(1280,720)]
+        for w,h in self.resolutions:
             self.ui.cmb_setResolution.addItem(''.join([str(w), 'x', str(h)]))
             
         self.loadSettings()
         self.setWidgetsState()
-
-        self.w = 320
-        self.h = 240
+        
+        self.to_calibr_rect = []
+        self.w = 640#320
+        self.h = 480#240
 
         self.selectedCamera = str(self.ui.cmb_setCamera.currentText())
 
@@ -188,6 +238,14 @@ class MyForm(QtGui.QMainWindow):
         self.pupilUpdate(self.im)
         self.glintUpdate(self.im)
         
+        try:
+            mx,my =  self.mean_pupfinder()
+            #mark(self.pupil, np.array([mx,my]),radius=20, color='green')
+            mark(self.glint, np.array([mx,my]),radius=20, color='green')
+        except TypeError:
+            mx,my = [0,0]
+        #print mx, my
+        
         self.runEyetracker()
         
         self.update()
@@ -201,6 +259,8 @@ class MyForm(QtGui.QMainWindow):
     
         self.spellerFlag    = 0
         #self.spellerLvl     = 0
+        self.spellerCalibrationFlag = 0
+        self.afterFlag = 0
 
     def setDefaultSettings(self):
         ''' Set GUI defaul configuration.
@@ -539,6 +599,7 @@ class MyForm(QtGui.QMainWindow):
 
         '''
         self.pupil , self.where_pupil , self.pupils_stack = drawPupil(image , self.config['PupilBar'] , self.pupils_stack , self.config['NumberOfPupils'])
+        
 
     def glintUpdate(self, image):
         '''
@@ -565,8 +626,8 @@ class MyForm(QtGui.QMainWindow):
             result_pupil = QtGui.QImage(self.pupil, self.w, self.h, QtGui.QImage.Format_RGB888).rgbSwapped()
             result_glint = QtGui.QImage(self.glint, self.w, self.h, QtGui.QImage.Format_RGB888).rgbSwapped()
 
-            painter.drawImage(QtCore.QPoint(5, 35), result_pupil)
-            painter.drawImage(QtCore.QPoint(5, 300), result_glint)
+            painter.drawImage(QtCore.QPoint(40, 40), result_pupil)
+            painter.drawImage(QtCore.QPoint(720, 40), result_glint)
 
 #    def closeEvent(self, event):
 #        '''
@@ -596,11 +657,22 @@ class MyForm(QtGui.QMainWindow):
         ''' Starts eyetracker with parameters picked from gui.
         '''
         if self.startFlag == 1:
+            self.ui.btn_start.setText('Start')
             self.algorithms[ str(self.ui.cmb_setAlgorithm.currentText()) ]()
         else:
             pass
-       
-       
+
+    def mean_pupfinder(self):
+        """It averages *N_b* positions of the best finded pupil"""
+        fp=find_pup(self.where_glint,self.where_pupil)
+        if not np.any(np.isnan(fp)):
+            self.buf_pup[:self.N_b-1,:] = self.buf_pup[1:,:]
+            self.buf_pup[self.N_b-1,:] = fp
+        else:
+            fp = None 
+        return np.mean(self.buf_pup,axis=0).astype(np.uint)
+        #return fp
+
        
     def module_raw(self):
         #if self.startFlag == 1:
@@ -610,12 +682,269 @@ class MyForm(QtGui.QMainWindow):
     def module_picture(self):
         pass
     
-    def module_speller(self):
+    def module_after_cal(self):
+        if self.afterFlag == 0 :
+            self.resize(0,0)
+            scr_x = self.ui.trueScreen.width()
+            scr_y = self.ui.trueScreen.height()
+            
+            pygame.init()
+            self.screen = pygame.display.set_mode((scr_x,scr_y))
+            self.afterFlag=1
+
+        if self.spellerFlag == 0 and self.startFlag == 1 and self.spellerCalibrationFlag==1 and self.afterFlag==1:
+            #print self.position()
+            
+            data2send = self.position()
+            
+            ### TO TUTAJ
+            self.procHandler.stdin.write(data2send)
+            
+            
+#             pygame.init()
+#             keys=pygame.key.get_pressed()
+#             for event in pygame.event.get():
+#                 if event.type == pygame.QUIT:
+#                     pygame.quit()
+#                     break
+#                 if keys[ord('q')]:
+#                     pygame.quit()
+#                     break
+#                 if keys[ord('z')]:
+#                     self.screen.fill(cBLACK)
+#             mx,my =  self.position()
+#             pygame.draw.circle(self.screen, cRED, (mx,my), 3)
+#             pygame.display.flip()
+
+    def module_calibration(self):
         if self.spellerFlag == 0 and self.startFlag == 1:
+            
+            self.calibr_length = 12
+            self.resize(0,0)
+            
+            pygame.init()
+            self.screen = pygame.display.set_mode((self.w,self.h),pygame.FULLSCREEN)
+            pygame.display.set_caption('calibration')
+            self.cal_positions = []
+            self.t0 = time.time()
+            self.t_arr = time.time()
+            
+            self.rectangle = [(self.screen, cRED, (0,0,40,self.w)),
+                    (self.screen, cRED, (0,0,self.w,40)),
+                    (self.screen, cRED, (self.w-40,0,40,self.h)),
+                    (self.screen, cRED, (0,self.h-40,self.w,40))]
+            self.rl = 0
+            self.blacktangle = [(self.screen, cBLACK, (0,0,40,self.w)),
+                    (self.screen, cBLACK, (0,0,self.w,40)),
+                    (self.screen, cBLACK, (self.w-40,0,40,self.h)),
+                    (self.screen, cBLACK, (0,self.h-40,self.w,40))]
+            pygame.draw.circle(self.screen, cWHITE, (self.w/2,self.h/2), 10)
+            
             self.spellerFlag = 1
-        elif self.spellerFlag == 1 and self.startFlag == 0:
+        elif self.spellerFlag == 1 and self.spellerCalibrationFlag == 1:
+            print 'Calibration time!'
+            if len(self.cal_positions)>0:
+                self.x0, self.Ax, self.y0, self.By, self.meanx, self.meany = eye_calibr_params(self.cal_positions)
+            self.resize(1280,1000)
             self.spellerFlag = 0
+            self.startFlag = 0
         
         elif self.spellerFlag == 1 and self.startFlag == 1:
-            print 'działam!'
+            print 'działam!', self.spellerFlag, self.startFlag
+            pygame.init()
+            keys=pygame.key.get_pressed()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    break
+                if keys[ord('q')]:
+                    pygame.quit()
+                    break
+                if keys[ord('z')]:
+                    self.screen.fill(cBLACK)
+# 
+#             frame = self.cam.frame()
+#             frame_gray = bgr2gray(frame)
+#             frame_thresh = threshold(frame_gray, self.thresh_v, 
+#                                      thresh_type=self.threshold_types[self.thresh_t])
+# 
+#             self.where_glint = glint(frame_gray,maxCorners=2)
+#             self.where_pupil = pupil(frame_thresh)
+                    
+            mx,my =  self.mean_pupfinder()
+            pygame.draw.circle(self.screen, cRED, (int(self.w-mx),my), 1)
+            pygame.display.flip()
+
+            if time.time()- self.t0>1:
+                self.cal_positions.append((mx,my))
             
+            if time.time() - self.t_arr>2:
+                if self.rl>0:
+                    pygame.draw.rect(*self.blacktangle[self.rl-1])
+                elif self.rl==0:
+                    pygame.draw.rect(*self.blacktangle[3])
+                pygame.draw.rect(*self.rectangle[self.rl])
+                self.rl+=1
+                self.t_arr = time.time()
+                if self.rl>=4:
+                    self.rl=0
+
+            if time.time() - self.t0>self.calibr_length:
+                self.spellerCalibrationFlag =1
+                #print 'aaaaaaaaaa'
+                pygame.quit()
+
+    def module_calibration_rectangle(self):
+        if self.spellerFlag == 0 and self.startFlag == 1:
+            
+            self.calibr_length = 18
+            self.resize(0,0)
+
+            scr_x = self.ui.trueScreen.width()
+            scr_y = self.ui.trueScreen.height()
+            
+            pygame.init()
+            self.screen = pygame.display.set_mode((scr_x,scr_y))
+            pygame.display.set_caption('calibration')
+            self.cal_positions = []
+            self.t0 = time.time()
+            self.t_arr = time.time()
+            C,D = 350,160#marginesy
+            rect_big = 100 # wielkosc prostokata
+            
+            self.rectangle = []
+            self.cal_buffer = []
+            for i in range(1,5):
+                for j in range(1,5):
+                    self.rectangle.append((self.screen, cRED, (i*C,j*D,rect_big,rect_big)))
+            self.rl = 0
+            
+            self.spellerFlag = 1
+        elif self.spellerFlag == 1 and self.spellerCalibrationFlag == 1:
+            print 'Calibration time!'
+            if len(self.cal_positions)>0:
+                self.x0, self.Ax, self.y0, self.By, self.meanx, self.meany = eye_calibr_params(self.cal_positions)
+            self.resize(1280,1000)
+            self.spellerFlag = 0
+            self.startFlag = 0
+            
+            x_true = []
+            y_true = []
+            x_esti = []
+            y_esti = []
+            
+            for ind in self.to_calibr_rect:
+                x_true.append(ind[0][0])
+                y_true.append(ind[0][1])
+                x_esti.append(ind[1])
+                y_esti.append(ind[2])
+                
+            self.x_true = np.array(x_true)
+            self.y_true = np.array(y_true)
+            self.x_esti = np.array(x_esti)
+            self.y_esti = np.array(y_esti)
+            
+            #print self.to_calibr_rect
+            #print self.x_true
+            #print self.y_true
+            #print self.x_esti
+            #print self.y_esti
+            
+            # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+            # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+            # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+            
+            self.x_opt, x_pcov = curve_fit(f_for_fitting , (self.x_esti , self.y_esti) , x_true)
+            self.y_opt, y_pcov = curve_fit(f_for_fitting , (self.x_esti , self.y_esti) , y_true)
+            
+            #print self.x_opt
+            #print self.y_opt
+            
+            # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+            # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+            # $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+            
+            #self.config_parameters_x = np.polyfit(np.vstack([self.x_esti,self.y_esti]), np.vstack([self.x_true,self.y_true]), 12)
+            #self.config_parameters_y = np.polyfit(np.vstack([self.x_esti,self.y_esti]), self.y_true, 12)
+        
+        elif self.spellerFlag == 1 and self.startFlag == 1:
+            #print 'działam!', self.spellerFlag, self.startFlag
+            pygame.init()
+            keys=pygame.key.get_pressed()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    break
+                if keys[ord('q')]:
+                    pygame.quit()
+                    break
+                if keys[ord('z')]:
+                    self.screen.fill(cBLACK)
+
+            mx,my =  self.mean_pupfinder()
+            
+            #print mx , my
+            #pygame.draw.circle(self.screen, cRED, (int(self.w-mx),my), 1)
+            
+
+            if time.time()- self.t0>1:
+                self.cal_buffer.append((mx,my))
+            
+            if time.time() - self.t_arr>1:
+                
+                if self.rl>0:
+                    #print np.mean(np.array(self.cal_buffer),axis=0)
+                    mn_x, mn_y = np.mean(np.array(self.cal_buffer),axis=0)
+                    try:
+                        self.to_calibr_rect.append([self.rectangle[self.rl-1][-1],mn_x, mn_y])
+                    except IndexError:
+                        pass 
+                self.screen.fill(cBLACK)
+                pygame.draw.rect(*self.rectangle[self.rl])
+                self.t_arr = time.time()
+                self.rl+=1
+                self.cal_buffer = []
+                if self.rl>=len(self.rectangle):
+                    self.rl = 0
+                
+            pygame.display.flip()
+            if time.time() - self.t0>self.calibr_length:
+                self.spellerCalibrationFlag =1
+                pygame.quit()
+
+                
+    def position(self):
+        mx,my =  self.mean_pupfinder()
+        
+        #print '> x_0 ={}, A_x={}, y_0={}, B_y={}'.format( self.x0,self.Ax,self.y0,self.By )
+        
+        #meanx = 0.5*(2*self.x0+self.Ax)
+        #meany = 0.5*(2*self.y0+self.By)
+        #meanx = self.meanx
+        #meany = self.meany
+        #C = 1.
+        #scr_x = self.ui.trueScreen.width()
+        #scr_y = self.ui.trueScreen.height()
+
+        #xp, yp = mx - meanx, my - meany
+        #zx = (scr_x*C/self.Ax)*xp + scr_x/2.
+        #zy = (scr_y*C/self.By)*yp + scr_y/2.
+        #print int(zx), int(zy)
+        
+#        zx = mx * (scr_x / self.Ax)
+#        zy = my * (scr_y / self.By)
+  #      kx = scr_x*1./self.Ax *mx
+ #       ky = scr_y*1./self.By *my
+ 
+        #return int(kx), int(ky)
+        
+        [a1,b1,c1,d1,e1,f1] = self.x_opt
+        [a2,b2,c2,d2,e2,f2] = self.y_opt
+        
+        screen_x = f_for_fitting((mx,my) , a1,b1,c1,d1,e1,f1)
+        screen_y = f_for_fitting((mx,my) , a2,b2,c2,d2,e2,f2)
+        
+        result_string = 'screen_x screen_y'
+        
+        #return int(screen_x), int(screen_y)
+        return result_string
