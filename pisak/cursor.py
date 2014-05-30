@@ -33,6 +33,7 @@ class Group(Clutter.Actor):
         self.buttons = None
         self.hover_start = None
         self.hover_actor = None
+        self.connect("allocation-changed", self._rescan)
         self.worker = threading.Thread(target=self.work, daemon=True)
         self.worker.start()
 
@@ -72,6 +73,9 @@ class Group(Clutter.Actor):
         x, y = (coords[0] - self.sprite.get_width() / 2), (coords[1] - self.sprite.get_height() / 2)
         self.sprite.set_position(x, y)
     
+    def _rescan(self, source, *args):
+        self.scan_buttons()    
+
     def scan_buttons(self):
         print("scanning")
         to_scan = self.get_children()
@@ -86,8 +90,6 @@ class Group(Clutter.Actor):
         print(self.buttons)
     
     def find_actor(self, coords):
-        if self.buttons == None:
-            self.scan_buttons()
         for button in self.buttons:
             (x, y), (w, h) = button.get_transformed_position(), button.get_size()
             if (x <= coords[0]) and (coords[0] <= x + w) \
@@ -96,10 +98,9 @@ class Group(Clutter.Actor):
         return None 
 
     def work(self):
-        time.sleep(1)
         while True:
             coords = self.read_coords()
-
+            Clutter.threads_enter()
             self.update_sprite(coords)
             actor = self.find_actor(coords)
             Clutter.threads_leave()
