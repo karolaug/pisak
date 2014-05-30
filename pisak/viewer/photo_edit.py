@@ -237,27 +237,49 @@ class PisakViewerContainer(Clutter.Actor):
 class PisakMainWindow(Clutter.Actor):
     
     def __init__(self):
+        self.style = Mx.Style.get_default()
+        self.style.load_from_file(os.path.join(res.PATH, "photo_edit.css"))
         super(PisakMainWindow, self).__init__()
-        layout = Clutter.BoxLayout()
-        layout.set_orientation(Clutter.Orientation.HORIZONTAL)
-        self.set_layout_manager(layout)
+        self.layout = Clutter.GridLayout()
+        self.layout.set_column_spacing(10)
+        self.layout.set_row_spacing(10)
+        #layout.set_orientation(Clutter.Orientation.HORIZONTAL)
+        self.set_layout_manager(self.layout)
         self.init_buttons()
         
     def init_buttons(self):
         self.SpellerButton = Mx.Button()
         self.SpellerButton.set_label('Speller')
-        self.SpellerButton.set_size(400, 400)
-        self.add_actor(self.SpellerButton)
+        self.SpellerButton.set_size(100, 200)
+        self.layout.attach(self.SpellerButton, 0, 0, 1, 1)
         
         self.EditButton = Mx.Button()
         self.EditButton.set_label('Edycja Zdjęcia')
-        self.EditButton.set_size(400, 400)
-        self.add_actor(self.EditButton)
+        self.EditButton.set_size(100, 200)
 
-        self.image = Mx.Image()
-        self.image.set_from_file(os.path.join(res.PATH, 'logo_pisak.png'))
-        self.add_actor(self.image)
+        self.PisakLogo = Mx.Image()
+        self.PisakLogo.set_scale_mode(1)
+        self.PisakLogo.set_from_file(os.path.join(res.PATH, 'logo_pisak.png'))
+        self.NCBiRLogo = Mx.Image()
+        self.NCBiRLogo.set_scale_mode(1)
+        self.NCBiRLogo.set_from_file(os.path.join(res.PATH, 'logo_ncbir.png'))
+
+        self.Stow = Mx.Label()
+        self.Stow.set_text("Stowarzyszenia: Ożarowska i Mówić Bez Słów")
+
+        #self.Ozar = Mx.Label()
+        #self.Ozar.set_text("Stow. Ożarowska")
             
+        self.FuwLogo = Mx.Image()
+        self.FuwLogo.set_scale_mode(1)
+        self.FuwLogo.set_from_file(os.path.join(res.PATH, 'logowfuworyg.jpg'))
+
+        self.layout.attach(self.NCBiRLogo, 1, 1, 1, 1)
+        self.layout.attach(self.PisakLogo, 0, 3, 2, 1)
+        self.layout.attach(self.FuwLogo, 0, 1, 1, 1)
+        self.layout.attach(self.EditButton, 1, 0, 1, 1)
+        self.layout.attach(self.Stow, 0, 2, 2, 1)
+
     def exit_app(self):
         self.stage.exit_app()
 
