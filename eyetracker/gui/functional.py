@@ -146,6 +146,14 @@ class MyForm(QtGui.QMainWindow):
         self.buf_pup = np.zeros((self.N_b,2))      
         self.initializeFlags()
         
+        
+        
+        
+        self.screen_x_list = []
+        self.screen_y_list = []
+        
+        
+        
         #pygame.init()
         
         self.cameras = lookForCameras()
@@ -701,6 +709,10 @@ class MyForm(QtGui.QMainWindow):
             self.procHandler.stdin.write(data2send)
             
             
+            
+            
+            
+            
 #             pygame.init()
 #             keys=pygame.key.get_pressed()
 #             for event in pygame.event.get():
@@ -944,7 +956,19 @@ class MyForm(QtGui.QMainWindow):
         screen_x = f_for_fitting((mx,my) , a1,b1,c1,d1,e1,f1)
         screen_y = f_for_fitting((mx,my) , a2,b2,c2,d2,e2,f2)
         
-        result_string = 'screen_x screen_y'
+        self.screen_x_list.append(screen_x)
+        self.screen_y_list.append(screen_y)
         
+        if len(self.screen_x_list) == 5:
+            screen_x = np.mean(self.screen_x_list)
+            self.screen_x_list.pop(0)
+            screen_y = np.mean(self.screen_y_list)
+            self.screen_y_list.pop(0)
+        
+        
+        
+        result_string = str(screen_x) + ' ' + str(screen_y)
+        
+        #print result_string
         #return int(screen_x), int(screen_y)
         return result_string
