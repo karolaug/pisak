@@ -37,11 +37,11 @@ class Button(pisak.widgets.Button):
         raise NotImplementedError()
 
 
-class Text(Mx.Label):
+class Text(Mx.Entry):
     __gtype_name__ = "PisakSpellerText"
     def __init__(self):
         super().__init__()
-        self.set_text("Foobar")
+        #self.set_text("Foobar")
 
     def write(self, event, key): # i tu bez event - dogadac
         self.text_field.insert_text(text, -1) # i tu wtedy jakby Key.key
