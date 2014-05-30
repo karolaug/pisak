@@ -131,12 +131,12 @@ class Image(Clutter.Actor):
         self.set_image_from_data()
         
         
-class Buttons(Clutter.Actor):
+class Buttons1(Clutter.Actor):
     STYLE = Mx.Style()
     STYLE.load_from_file(os.path.join(res.PATH, 'photo_edit.css'))
 
     def __init__(self, container, image):
-        super(Buttons, self).__init__()
+        super(Buttons1, self).__init__()
         self.container = container
         self.image = image
         self.layout = Clutter.BoxLayout()
@@ -147,17 +147,49 @@ class Buttons(Clutter.Actor):
 
     def _init_elements(self):
         buttons = {'snapshot' : ['zdjęcie', self.image.take_photo],
-                   'rotate': ['obróć', self.image.rotate], 'mirror': ['lustro', self.image.mirror],
-                   'invert': ['negatyw', self.image.invert], 'zoom': ['powiększenie', self.image._zoom_cycle],
-                   'solarize': ['prześwietlenie', self.image.solarize], 'grayscale': ['skala szarości', self.image.grayscale],
-                   'original': ['oryginał', self.image.original], 'exit': ['wyjście', self.exit_app],
-                   'noise': ['szum', self.image.noise], 'edges': ['krawędzie', self.image.edges],
-                   'contour': ['szkic', self.image.contour], 'sepia': ['sepia', self.image.sepia]}
+                   'rotate': ['obróć', self.image.rotate], 
+                   'mirror': ['lustro', self.image.mirror],
+                   'invert': ['negatyw', self.image.invert], 
+                   'zoom': ['powiększenie', self.image._zoom_cycle],
+                   'solarize': ['prześwietlenie', self.image.solarize], 
+                   'grayscale': ['skala szarości', self.image.grayscale]}
         for b in reversed(sorted(buttons)):
             button = Mx.Button()
             button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(50), unit.mm(12))
+            button.set_size(unit.mm(50), unit.mm(22))
+            self.add_actor(button)
+            button.connect("button_release_event", buttons[b][1])
+
+    def exit_app(self, button, event):
+        self.container.exit_app()
+
+class Buttons2(Clutter.Actor):
+    STYLE = Mx.Style()
+    STYLE.load_from_file(os.path.join(res.PATH, 'photo_edit.css'))
+
+    def __init__(self, container, image):
+        super(Buttons2, self).__init__()
+        self.container = container
+        self.image = image
+        self.layout = Clutter.BoxLayout()
+        self.layout.set_vertical(True)
+        self.set_layout_manager(self.layout)
+        self.set_y_align(Clutter.ActorAlign.CENTER)
+        self._init_elements()
+
+    def _init_elements(self):
+        buttons = {'original': ['oryginał', self.image.original], 
+                   'exit': ['wyjście', self.exit_app],
+                   'noise': ['szum', self.image.noise], 
+                   'edges': ['krawędzie', self.image.edges],
+                   'contour': ['szkic', self.image.contour], 
+                   'sepia': ['sepia', self.image.sepia]}
+        for b in reversed(sorted(buttons)):
+            button = Mx.Button()
+            button.set_style(self.STYLE)
+            button.set_label(buttons[b][0])
+            button.set_size(unit.mm(50), unit.mm(25))
             self.add_actor(button)
             button.connect("button_release_event", buttons[b][1])
 
@@ -184,10 +216,13 @@ class PisakViewerContainer(Clutter.Actor):
         self.image = Image()
         self.image.set_x_expand(True)
         self.image.set_y_expand(True)
-        self.buttons = Buttons(self, self.image)
-        self.buttons.set_y_expand(True)
-        self.add_actor(self.buttons)
+        self.buttons1 = Buttons1(self, self.image)
+        self.buttons2 = Buttons2(self, self.image)
+        self.buttons1.set_y_expand(True)
+        self.buttons2.set_y_expand(True)
+        self.add_actor(self.buttons1)
         self.add_actor(self.image)
+        self.add_actor(self.buttons2)
 
     def exit_app(self):
         self.stage.exit_app()
