@@ -374,7 +374,8 @@ class PisakViewerStage(Clutter.Stage):
         #self.contents = cursor.Group()
         #self.remove_all_children()
         self.current_view = dic[view]
-        self.contents.add_actor(dic[view])
+        self.contents.add_child(dic[view])
+        self.contents.buttons = None
         #self.contents.buttons = None
         #self.contents.scan_buttons()
         #self.add_actor(self.contents)
