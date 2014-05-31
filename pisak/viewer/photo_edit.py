@@ -268,6 +268,7 @@ class PisakMainWindow(Clutter.Actor):
         layout = Clutter.BoxLayout()
         layout.set_orientation(Clutter.Orientation.VERTICAL)
         self.NCBiRActor.set_layout_manager(layout)
+        
         self.NCBiRLabel = Mx.Label()
         self.NCBiRLabel.set_text('Dofinansowane ze środków:')
         self.NCBiRLogo = Mx.Image()
