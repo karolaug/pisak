@@ -12,6 +12,7 @@
                 "orientation": "vertical",
                 "y-align": "start",
                 "y-expand": true,
+                "spacing": 10,
                 "children": [
                     {
                         "id": "button_1",
@@ -93,6 +94,7 @@
                 "orientation": "vertical",
                 "y-align": "start",
                 "y-expand": true,
+                "spacing": 10,
                 "children": [
                     {
                         "id": "prediction_1",
@@ -127,6 +129,7 @@
                 "id": "main_panel",
                 "type": "PisakBoxLayout",
                 "orientation": "vertical",
+                "spacing": 10,
                 "children": [
                     {
                         "id": "text_box",
@@ -139,6 +142,7 @@
 		    {
 			"id": "keyboard_menu",
 			"type": "PisakBoxLayout",
+                        "spacing": 10,
 			"children": [
 			    {
 				"id": "keyboard_menu_button_1",
@@ -208,6 +212,7 @@
                             {
                                 "id": "keyboard_row_1",
                                 "type": "PisakBoxLayout",
+                                "spacing": 10,
                                 "children": [
                                     {
                                         "id": "key_1_1",
@@ -306,6 +311,7 @@
                             {
                                 "id": "keyboard_row_2",
                                 "type": "PisakBoxLayout",
+                                "spacing": 10,
                                 "children": [
                                     {
                                         "id": "key_2_1",
@@ -405,6 +411,7 @@
                             {
                                 "id": "keyboard_row_3",
                                 "type": "PisakBoxLayout",
+                                "spacing": 10,
                                 "children": [
                                     {
                                         "id": "key_3_1",

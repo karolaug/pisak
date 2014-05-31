@@ -4,6 +4,7 @@ from pisak import switcher_app
 from pisak.speller import widgets  # # @UnusedImport
 import pisak.layout  # @UnusedImport
 
+STYLESHEET_PATH = "pisak/speller/speller_stylesheet.css"
 
 script = None
 dispatcher = None
@@ -140,6 +141,7 @@ class PisakSpellerStage(Clutter.Stage):
         super().__init__()
         self.context = context
         self._load_script()
+        self._load_stylesheet()
         self._init_dispatcher()
 
     def _load_script(self):
@@ -154,6 +156,9 @@ class PisakSpellerStage(Clutter.Stage):
     def _init_dispatcher(self):
         global dispatcher
         dispatcher = Dispatcher()
+
+    def _load_stylesheet(self):
+        Mx.Style.get_default().load_from_file(STYLESHEET_PATH)
 
 
 class PisakSpellerApp(switcher_app.Application):
