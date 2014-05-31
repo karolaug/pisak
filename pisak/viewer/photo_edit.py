@@ -163,8 +163,8 @@ class Buttons1(Clutter.Actor):
             self.add_actor(button)
             button.connect("clicked", buttons[b][1])
 
-    def menu(self, a, b):
-        self.get_parent().get_parent().get_parent().change_view('a', 'b', 'menu')
+    def menu(self, button):
+        self.get_parent().get_parent().get_parent().change_view('a', 'menu')
 
     def exit_app(self, button, event):
         self.container.exit_app()
