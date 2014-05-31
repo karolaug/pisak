@@ -70,6 +70,7 @@
                                         "id": "key_1_5",
                                         "type": "PisakSpellerKey",
                                         "text": "T",
+					"target": "text_box",
 					"y-expand": true,
 					"x-expand": true
                                     },
@@ -85,6 +86,7 @@
                                         "id": "key_1_7",
                                         "type": "PisakSpellerKey",
                                         "text": "U",
+					"target": "text_box",
 					"y-expand": true,
 					"x-expand": true
                                     },
