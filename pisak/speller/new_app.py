@@ -11,13 +11,13 @@ dispatcher = None
 
 class Dispatcher(object):
     MODEL = {
-            "document": "concept/sample.txt"
+        "document": "concept/sample.txt"
     }
     
     def __init__(self):
         self._init_elements()
         self._init_func_dict()
-        self._connect_menu()
+        self._connect_menu_buttons(script.list_objects())
 
     def _init_elements(self):
         self.text_field = script.get_object("text_box")
@@ -43,21 +43,12 @@ class Dispatcher(object):
             "backspace": self.backspace,
             "space": self.space
         }
-
-    def _connect_menu(self):
-        main_menu = script.get_object("speller_menu")
-        self._connect_buttons(main_menu)
-        keyboard_menu = script.get_object("keyboard_menu")
-        if keyboard_menu:
-            self._connect_buttons(keyboard_menu)
         
-    def _connect_buttons(self, group):
-        for child in group.get_children():
-            if child.__gtype_name__ == "PisakSpellerButton":
-                value = child.get_property("speller-function")
-                child.connect("activate", self.MENU_FUNCS[value])
-            else:
-                self._connect_buttons(child)
+    def _connect_menu_buttons(self, objects):
+        for item in objects:
+            if item.__gtype_name__ == "PisakSpellerButton":
+                value = item.get_property("speller-function")
+                item.connect("activate", self.MENU_FUNCS[value])
 
     def go_to_keyboard(self, source):
         raise NotImplementedError
@@ -74,14 +65,12 @@ class Dispatcher(object):
     def save(self, source):
         text = self.text_field.get_text()
         if text:
-            file = open(self.MODEL["document"], "w")
-            file.write(text)
-            file.close()
+            with open(self.MODEL["document"], "w") as file:
+                file.write(text)
 
     def load(self, source):
-        file = open(self.MODEL["document"], "r")
-        text = file.read()
-        file.close()
+        with open(self.MODEL["document"], "r") as file:
+            text = file.read()
         self.text_field.clear_all()
         self.text_field.type_text(text)
 
@@ -95,28 +84,40 @@ class Dispatcher(object):
         self.text_field.clear_all()
 
     def default_chars(self, source):
-        for group in self.keyboard_panel.get_children():
-            for key in group.get_children():
-                key.set_default_label()
+        for item in self.keyboard_panel.get_children():
+            if item.__gtype_name__ == "PisakSpellerKey":
+                item.set_default_label()
+            else:
+                for sub_item in item.get_children():
+                    sub_item.set_default_label()
         func = "special_chars"
         source.set_property("speller-function", func)
         source.connect("activate", self.MENU_FUNCS[func])
         source.set_default_label()
 
     def swap_altgr_chars(self, source):
-        for group in self.keyboard_panel.get_children():
-            for key in group.get_children():
-                key.set_swap_altgr_label()
+        for item in self.keyboard_panel.get_children():
+            if item.__gtype_name__ == "PisakSpellerKey":
+                item.set_swap_altgr_label()
+            else:
+                for sub_item in item.get_children():
+                    sub_item.set_swap_altgr_label()
 
     def swap_caps_chars(self, source):
-        for group in self.keyboard_panel.get_children():
-            for key in group.get_children():
-                key.set_swap_caps_label()
+        for item in self.keyboard_panel.get_children():
+            if item.__gtype_name__ == "PisakSpellerKey":
+                item.set_swap_caps_label()
+            else:
+                for sub_item in item.get_children():
+                    sub_item.set_swap_caps_label()
 
     def special_chars(self, source):
-        for group in self.keyboard_panel.get_children():
-            for key in group.get_children():
-                key.set_special_label()
+        for item in self.keyboard_panel.get_children():
+            if item.__gtype_name__ == "PisakSpellerKey":
+                item.set_special_label()
+            else:
+                for sub_item in item.get_children():
+                    sub_item.set_special_label()
         func = "default_chars"
         source.set_property("speller-function", func)
         source.connect("activate", self.MENU_FUNCS[func])
