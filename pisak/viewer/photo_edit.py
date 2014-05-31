@@ -251,7 +251,7 @@ class PisakMainWindow(Clutter.Actor):
         self.SpellerButton = Mx.Button()
         self.SpellerButton.set_label('Speller')
         self.SpellerButton.set_size(100, 200)
-        self.layout.attach(self.SpellerButton, 0, 0, 1, 1)
+        self.layout.attach(self.SpellerButton, 0, 0, 2, 1)
         
         self.EditButton = Mx.Button()
         self.EditButton.set_label('Edycja Zdjęcia')
@@ -301,7 +301,7 @@ class PisakMainWindow(Clutter.Actor):
         self.layout.attach(self.PisakLogo, 0, 3, 1, 1)
         self.layout.attach(self.BTLogo, 1, 1, 1, 1)
         self.layout.attach(self.FuwLogo, 0, 1, 1, 1)
-        self.layout.attach(self.EditButton, 1, 0, 1, 1)
+        #self.layout.attach(self.EditButton, 1, 0, 1, 1)
         self.layout.attach(self.OzarLogo, 0, 2, 1, 1)
         self.layout.attach(self.BezSlowLogo, 1, 2, 1, 1)
 
