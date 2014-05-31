@@ -64,6 +64,24 @@ class Button(pisak.widgets.Button):
     @alternative_text.setter
     def alternative_text(self, value):
         self._alternative_text = str(value)
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
         
 
 class Text(Mx.Label):
@@ -138,21 +156,21 @@ class Text(Mx.Label):
         """
         Introspect object properties and set the value.
         """
-        attribute = self.__class__.__dict__.get(spec.name)
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
         if attribute is not None and isinstance(attribute, property):
             attribute.fset(self, value)
         else:
-            raise ValueError("No such property", spec.name)
+            raise ValueError("No such property", spec.name.replace("-", "_"))
 
     def do_get_property(self, spec):
         """
         Introspect object properties and get the value.
         """
-        attribute = self.__class__.__dict__.get(spec.name)
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
         if attribute is not None and isinstance(attribute, property):
             return attribute.fget(self)
         else:
-            raise ValueError("No such property", spec.name)
+            raise ValueError("No such property", spec.name.replace("-", "_"))
         
 
 class Key(pisak.widgets.Button):
@@ -193,21 +211,24 @@ class Key(pisak.widgets.Button):
         
     def set_swap_altgr_label(self):
         label = self.get_label()
-        if self.altgr_text.lower() == label.lower():
-            if label.islower():
-                # from lowercase altgr to lowercase default
-                self.set_label(self.text.lower())
-            else:
-                # from uppercase altgr to (uppercase) default
-                self.set_label(self.text)
-        else:     
-            if label.isalpha() and self.altgr_text:
-                if self.get_label().islower():
-                    # from lowercase default to lowercase altgr
-                    self.set_label(self.altgr_text.swapcase())
+        try:
+            if self.altgr_text.lower() == label.lower():
+                if label.islower():
+                    # from lowercase altgr to lowercase default
+                    self.set_label(self.text.lower())
                 else:
-                    # from (uppercase) default to uppercase altgr
-                    self.set_label(self.altgr_text)
+                    # from uppercase altgr to (uppercase) default
+                    self.set_label(self.text)
+            else:     
+                if label.isalpha() and self.altgr_text:
+                    if self.get_label().islower():
+                        # from lowercase default to lowercase altgr
+                        self.set_label(self.altgr_text.swapcase())
+                    else:
+                        # from (uppercase) default to uppercase altgr
+                        self.set_label(self.altgr_text)
+        except AttributeError:
+            pass
 
     def set_swap_caps_label(self):
         label = self.get_label()
@@ -253,6 +274,24 @@ class Key(pisak.widgets.Button):
     @target.setter
     def target(self, value):
         self._target = value
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
 
 class Prediction(pisak.widgets.Button):
@@ -320,3 +359,21 @@ class Prediction(pisak.widgets.Button):
     @order_num.setter
     def order_num(self, value):
         self._order_num = value
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))

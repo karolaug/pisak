@@ -120,7 +120,7 @@ class Dispatcher(object):
         func = "default_chars"
         source.set_property("speller-function", func)
         source.connect("activate", self.MENU_FUNCS[func])
-        source.set_alter_label()
+        source.set_alternative_label()
 
     def text_to_speech(self, source):
         raise NotImplementedError

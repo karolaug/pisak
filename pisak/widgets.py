@@ -74,21 +74,21 @@ class Button(Mx.Button):
         """
         Introspect object properties and set the value.
         """
-        attribute = self.__class__.__dict__.get(spec.name)
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
         if attribute is not None and isinstance(attribute, property):
             attribute.fset(self, value)
         else:
-            raise ValueError("No such property", spec.name)
+            raise ValueError("No such property", spec.name.replace("-", "_"))
 
     def do_get_property(self, spec):
         """
         Introspect object properties and get the value.
         """
-        attribute = self.__class__.__dict__.get(spec.name)
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
         if attribute is not None and isinstance(attribute, property):
             return attribute.fget(self)
         else:
-            raise ValueError("No such property", spec.name)
+            raise ValueError("No such property", spec.name.replace("-", "_"))
 
 
 class Aperture(Clutter.Actor):
