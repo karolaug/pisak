@@ -1,7 +1,7 @@
 import sys
 from gi.repository import Clutter, Mx
 from pisak import switcher_app
-import pisak.speller.widgets  # @UnusedImport
+from pisak.speller import widgets  # # @UnusedImport
 import pisak.layout  # @UnusedImport
 
 
@@ -17,7 +17,7 @@ class Dispatcher(object):
     def __init__(self):
         self._init_elements()
         self._init_func_dict()
-        self._connect_menu_buttons(script.list_objects())
+        self._connect_menu_buttons()
 
     def _init_elements(self):
         self.text_field = script.get_object("text_box")
@@ -44,9 +44,9 @@ class Dispatcher(object):
             "space": self.space
         }
         
-    def _connect_menu_buttons(self, objects):
-        for item in objects:
-            if item.__gtype_name__ == "PisakSpellerButton":
+    def _connect_menu_buttons(self):
+        for item in script.list_objects():
+            if isinstance(item, widgets.Button):
                 value = item.get_property("speller-function")
                 item.connect("activate", self.MENU_FUNCS[value])
 
@@ -81,15 +81,15 @@ class Dispatcher(object):
         raise NotImplementedError
 
     def new_document(self, source):
-        self.text_field.clear_all()
-
+        self.text_field.clear_all()        
+        
     def default_chars(self, source):
         for item in self.keyboard_panel.get_children():
-            if item.__gtype_name__ == "PisakSpellerKey":
-                item.set_default_label()
-            else:
+            if not isinstance(item, widgets.Key):
                 for sub_item in item.get_children():
                     sub_item.set_default_label()
+            else:
+                item.set_default_label()
         func = "special_chars"
         source.set_property("speller-function", func)
         source.connect("activate", self.MENU_FUNCS[func])
@@ -97,27 +97,27 @@ class Dispatcher(object):
 
     def swap_altgr_chars(self, source):
         for item in self.keyboard_panel.get_children():
-            if item.__gtype_name__ == "PisakSpellerKey":
-                item.set_swap_altgr_label()
-            else:
+            if not isinstance(item, widgets.Key):
                 for sub_item in item.get_children():
                     sub_item.set_swap_altgr_label()
-
+            else:
+                item.set_swap_altgr_label()
+                
     def swap_caps_chars(self, source):
         for item in self.keyboard_panel.get_children():
-            if item.__gtype_name__ == "PisakSpellerKey":
-                item.set_swap_caps_label()
-            else:
+            if not isinstance(item, widgets.Key):
                 for sub_item in item.get_children():
                     sub_item.set_swap_caps_label()
+            else:
+                item.set_swap_caps_label()
 
     def special_chars(self, source):
         for item in self.keyboard_panel.get_children():
-            if item.__gtype_name__ == "PisakSpellerKey":
-                item.set_special_label()
-            else:
+            if not isinstance(item, widgets.Key):
                 for sub_item in item.get_children():
                     sub_item.set_special_label()
+            else:
+                item.set_special_label()
         func = "default_chars"
         source.set_property("speller-function", func)
         source.connect("activate", self.MENU_FUNCS[func])
