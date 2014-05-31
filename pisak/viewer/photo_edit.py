@@ -252,6 +252,7 @@ class PisakMainWindow(Clutter.Actor):
         self.SpellerButton.set_label('Speller')
         self.SpellerButton.set_size(300, 200)
         self.SpellerButton.set_name("speller")
+        self.layout.attach(self.SpellerButton, 0, 0, 2, 1)
         
         self.EditButton = Mx.Button()
         self.EditButton.set_label('Edycja Zdjęcia')
@@ -375,9 +376,10 @@ class PisakViewerStage(Clutter.Stage):
         #self.contents = cursor.Group()
         #self.remove_all_children()
         self.current_view = dic[view]
-        self.contents.add_actor(dic[view])
+        self.contents.add_child(dic[view])
         self.contents.buttons = None
-        self.contents.scan_buttons()
+        #self.contents.buttons = None
+        #self.contents.scan_buttons()
         #self.add_actor(self.contents)
 
     def exit_app(self):
