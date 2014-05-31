@@ -165,8 +165,8 @@ class MyForm(QtGui.QMainWindow):
         self.algorithms['Raw output']   = self.module_raw
         #self.algorithms['Calibration']  = self.module_calibration
         #self.algorithms['Picture viewer']  = self.module_picture
-        self.algorithms['After cal']  = self.module_after_cal
-        self.algorithms['New Calibr Test'] = self.module_calibration_rectangle
+        self.algorithms['Speller']  = self.module_after_cal
+        self.algorithms['Calibration'] = self.module_calibration_rectangle
         
         #self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
         
