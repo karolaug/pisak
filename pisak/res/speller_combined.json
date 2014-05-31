@@ -266,21 +266,21 @@
                                     },
                                     {
                                         "id": "key_3_8",
-                                        "type": "MxButton",
+                                        "type": "PisakSpellerKey",
                                         "label": "<-",
 					"y-expand": true,
 					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_9",
-                                        "type": "MxButton",
+                                        "type": "PisakSpellerKey",
                                         "label": "[ ]",
 					"y-expand": true,
 					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_10",
-                                        "type": "MxButton",
+                                        "type": "PisakSpellerKey",
                                         "label": "[^]",
 					"y-expand": true,
 					"x-expand": true
