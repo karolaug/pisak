@@ -115,7 +115,8 @@ class Group(Clutter.Actor):
                 else:
                     # reset timeout
                     Clutter.threads_enter()
-                    self.hover_actor.set_style_pseudo_class("")
+                    if self.hover_actor is not None:
+                        self.hover_actor.set_style_pseudo_class("")
                     self.hover_actor = actor
                     self.hover_actor.set_style_pseudo_class("hover")
                     Clutter.threads_leave()
