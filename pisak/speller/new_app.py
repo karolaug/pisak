@@ -90,9 +90,10 @@ class Dispatcher(object):
                     sub_item.set_default_label()
             else:
                 item.set_default_label()
-        func = "special_chars"
-        source.set_property("speller-function", func)
-        source.connect("activate", self.MENU_FUNCS[func])
+        source.disconnect_by_func(self.default_chars)
+        new_func = "special_chars"
+        source.set_property("speller-function", new_func)
+        source.connect("activate", self.MENU_FUNCS[new_func])
         source.set_default_label()
 
     def swap_altgr_chars(self, source):
@@ -118,9 +119,10 @@ class Dispatcher(object):
                     sub_item.set_special_label()
             else:
                 item.set_special_label()
-        func = "default_chars"
-        source.set_property("speller-function", func)
-        source.connect("activate", self.MENU_FUNCS[func])
+        source.disconnect_by_func(self.special_chars)
+        new_func = "default_chars"
+        source.set_property("speller-function", new_func)
+        source.connect("activate", self.MENU_FUNCS[new_func])
         source.set_alternative_label()
 
     def text_to_speech(self, source):
