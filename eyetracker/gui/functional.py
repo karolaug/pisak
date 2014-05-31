@@ -60,6 +60,7 @@ def f_for_fitting((x,y) , a , b , c , d , e , f):
 def find_pup(where_glint,where_pupil):
     """It finds right pupil values from glint *where_glint* 
     and pupils positions *where_pupil*"""
+    
     xsr,ysr=np.mean(where_glint,axis=0)
     ls=[]
     try:
@@ -69,6 +70,7 @@ def find_pup(where_glint,where_pupil):
     except TypeError:
         return np.array([np.NaN,np.NaN])
     return np.array(min(ls)[1:]) , min(ls)[0]
+    #return np.array(ls[1:]) , min(ls)[0]
 
 def eye_calibr_params(points):
     """Returns parameters needed to scale eyetracker cursor.
@@ -168,10 +170,9 @@ class MyForm(QtGui.QMainWindow):
         
         #self.ui.cmb_setAlgorithm.setCurrentIndex(self.config['AlgorithmIndex'] )
         
-        print self.algorithms.keys()
+        #print self.algorithms.keys()
         
         for algorithm in self.algorithms.keys():
-            print algorithm
             self.ui.cmb_setAlgorithm.addItem(algorithm)
             
         
@@ -301,6 +302,7 @@ class MyForm(QtGui.QMainWindow):
         self.afterFlag = 0
         
         self.afterCalibration7 = 0
+        self.afterCalibration8 = 0
 
     def setDefaultSettings(self):
         ''' Set GUI defaul configuration.
@@ -644,7 +646,7 @@ class MyForm(QtGui.QMainWindow):
         self.pupil , self.where_pupil , self.pupils_stack = drawPupil(image , self.config['PupilBar'] , self.pupils_stack , self.config['NumberOfPupils'])
         
         
-        if self.afterCalibration7 == 1:
+        if self.afterCalibration7 == 2:
             
 #             if self.where_pupil == None:
 #                 #try:
@@ -655,7 +657,7 @@ class MyForm(QtGui.QMainWindow):
 #                 pass
             if self.where_pupil != None:
                 for pupil in self.where_pupil:
-                    print pupil , self.meanPupilRadius
+                    #print pupil , self.meanPupilRadius
                     
                     if pupil[2] < self.meanPupilRadius * 1.2 and pupil[2] > self.meanPupilRadius * 0.8:
                         tmp_pupil.append(pupil)
@@ -677,7 +679,15 @@ class MyForm(QtGui.QMainWindow):
         image : np.array
             image on which glints should be find and marked.
         '''
-        self.glint , self.where_glint , self.glints_stack = drawGlint(image , self.where_pupil , self.config['NumberOfGlints'] , self.glints_stack)
+        if self.afterCalibration8 == 0:
+            self.glint , self.where_glint , self.glints_stack = drawGlint(image , self.where_pupil , self.config['NumberOfGlints'] , self.glints_stack , 0 )
+            self.afterCalibration8 = 1
+        else:
+            #print self.ddd
+            self.glint , self.where_glint , self.glints_stack = drawGlint(image , self.ddd , self.config['NumberOfGlints'] , self.glints_stack , 1 )
+
+
+
 
     def paintEvent(self, event):
         '''
@@ -748,6 +758,8 @@ class MyForm(QtGui.QMainWindow):
             self.buf_pup[self.N_b-1,:] = fp
         else:
             fp = None 
+            
+        self.ddd = np.mean(self.buf_pup,axis=0).astype(np.uint)
         return np.mean(self.buf_pup,axis=0).astype(np.uint)
         #return fp
 
@@ -824,7 +836,7 @@ class MyForm(QtGui.QMainWindow):
             
             self.spellerFlag = 1
         elif self.spellerFlag == 1 and self.spellerCalibrationFlag == 1:
-            print 'Calibration time!'
+            #print 'Calibration time!'
             if len(self.cal_positions)>0:
                 self.x0, self.Ax, self.y0, self.By, self.meanx, self.meany = eye_calibr_params(self.cal_positions)
             self.resize(1280,1000)
@@ -832,7 +844,7 @@ class MyForm(QtGui.QMainWindow):
             self.startFlag = 0
         
         elif self.spellerFlag == 1 and self.startFlag == 1:
-            print 'działam!', self.spellerFlag, self.startFlag
+            #print 'działam!', self.spellerFlag, self.startFlag
             pygame.init()
             keys=pygame.key.get_pressed()
             for event in pygame.event.get():
@@ -886,7 +898,9 @@ class MyForm(QtGui.QMainWindow):
             scr_y = self.ui.trueScreen.height()
             
             pygame.init()
-            self.screen = pygame.display.set_mode((scr_x,scr_y))
+            self.screen = pygame.display.set_mode((scr_x,scr_y),pygame.FULLSCREEN)
+            
+            #self.screen = pygame.display.set_mode((self.w,self.h),pygame.FULLSCREEN)
             pygame.display.set_caption('calibration')
             self.cal_positions = []
             self.t0 = time.time()
@@ -905,7 +919,7 @@ class MyForm(QtGui.QMainWindow):
             
             self.spellerFlag = 1
         elif self.spellerFlag == 1 and self.spellerCalibrationFlag == 1:
-            print 'Calibration time!'
+            #print 'Calibration time!'
             if len(self.cal_positions)>0:
                 self.x0, self.Ax, self.y0, self.By, self.meanx, self.meany = eye_calibr_params(self.cal_positions)
             self.resize(1280,1000)
@@ -945,7 +959,7 @@ class MyForm(QtGui.QMainWindow):
             self.meanPupilRadius = np.mean([i[0][2] for i in self.pupilsFromCalibration])
             
             
-            print 'AAAA:{}'.format(self.meanPupilRadius)#self.pupilsFromCalibration)
+            #print 'AAAA:{}'.format(self.meanPupilRadius)#self.pupilsFromCalibration)
             #print self.meanPupilRadius
             self.afterCalibration7 = 1
             
@@ -1058,6 +1072,7 @@ class MyForm(QtGui.QMainWindow):
         
         #result_string = str(screen_x) + ' ' + str(screen_y)
         result_string = str(int(self.mean_x)) + ' ' + str(int(self.mean_y)) + '\n'
+        print result_string
         
         #print result_string
         #return int(screen_x), int(screen_y)

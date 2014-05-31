@@ -30,7 +30,7 @@ def blink():
     #should return bin
     pass
 
-def findBestGlints(shape , where_glint , where_pupil , algorithm = 'pupil'):
+def findBestGlints(shape , where_glint , where_pupil , flag , algorithm = 'pupil'):
     try:
         if len(where_glint) < 3:
             return where_glint
@@ -63,17 +63,31 @@ def findBestGlints(shape , where_glint , where_pupil , algorithm = 'pupil'):
             if where_pupil == None:
                 return where_glint
             else:
+                
                 result = np.zeros(len(where_glint))
                 
-                for ind , value in enumerate(where_glint):
-                    result[ind] = np.sqrt( (value[0] - where_pupil[0][0])**2 + (value[1] - where_pupil[0][1])**2 )
+                if flag == 0:
+                    for ind , value in enumerate(where_glint):
+                        result[ind] = np.sqrt( (value[0] - where_pupil[0][0])**2 + (value[1] - where_pupil[0][1])**2 )
                 
-                ind_1 = np.argmin(result)
-                result[ind_1] = shape[1]
-                ind_2 = np.argmin(result)
+                    ind_1 = np.argmin(result)
+                    result[ind_1] = shape[1]
+                    ind_2 = np.argmin(result)
                 
-                return np.array( [where_glint[ind_1] , where_glint[ind_2]] )
+                    return np.array( [where_glint[ind_1] , where_glint[ind_2]] )
                 
+                
+                elif flag == 1:
+                    for ind , value in enumerate(where_glint):
+                        result[ind] = np.sqrt( (value[0] - where_pupil[0])**2 + (value[1] - where_pupil[1])**2 )
+                        
+                    ind_1 = np.argmin(result)
+                    result[ind_1] = shape[1]
+                    ind_2 = np.argmin(result)
+                
+                    return np.array( [where_glint[ind_1] , where_glint[ind_2]] )
+                        
+                    
     except TypeError:       # means that there is less than 1 glint detected (possibly 0)
         return where_glint
             
@@ -115,7 +129,7 @@ def glint(image, maxCorners=2, quality=0.0001, minDist=20, mask=None,
         where = np.array([where[i][0] for i in xrange(where.shape[0])])
     return where
 
-def pupil(image, dp=1, minDist=600, param1=50, param2=10, minRadius=20,
+def pupil(image, dp=1, minDist=1200, param1=50, param2=10, minRadius=10,
           maxRadius=30):
     ''' Function detects pupil on the image of an eye.
     
