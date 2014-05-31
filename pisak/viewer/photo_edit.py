@@ -152,14 +152,14 @@ class Buttons1(Clutter.Actor):
                    'snapshot' : ['zdjęcie', self.image.take_photo],
                    'rotate': ['obróć', self.image.rotate], 
                    'mirror': ['lustro', self.image.mirror],
-                   'invert': ['negatyw', self.image.invert], 
-                   'zoom': ['powiększenie', self.image._zoom_cycle],
+                   #'invert': ['negatyw', self.image.invert], 
+                   #'zoom': ['powiększenie', self.image._zoom_cycle],
                    'solarize': ['prześwietlenie', self.image.solarize]}
         for b in reversed(sorted(buttons)):
             button = Mx.Button()
             button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(100), unit.mm(22))
+            button.set_size(unit.mm(100), unit.mm(50))
             self.add_actor(button)
             button.connect("clicked", buttons[b][1])
 
@@ -186,8 +186,8 @@ class Buttons2(Clutter.Actor):
     def _init_elements(self):
         buttons = {'original': ['oryginał', self.image.original], 
                    'exit': ['wyjście', self.exit_app],
-                   'noise': ['szum', self.image.noise], 
-                   'edges': ['krawędzie', self.image.edges],
+                   #'noise': ['szum', self.image.noise], 
+                   #'edges': ['krawędzie', self.image.edges],
                    'contour': ['szkic', self.image.contour], 
                    'sepia': ['sepia', self.image.sepia],
                    'grayscale': ['skala szarości', self.image.grayscale]}
@@ -196,7 +196,7 @@ class Buttons2(Clutter.Actor):
             button = Mx.Button()
             button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(50), unit.mm(25))
+            button.set_size(unit.mm(100), unit.mm(50))
             self.add_actor(button)
             button.connect("clicked", buttons[b][1])
 
@@ -252,7 +252,6 @@ class PisakMainWindow(Clutter.Actor):
         self.SpellerButton.set_label('Speller')
         self.SpellerButton.set_size(300, 200)
         self.SpellerButton.set_name("speller")
-        self.layout.attach(self.SpellerButton, 0, 0, 2, 1)
         
         self.EditButton = Mx.Button()
         self.EditButton.set_label('Edycja Zdjęcia')
@@ -299,7 +298,9 @@ class PisakMainWindow(Clutter.Actor):
         self.BTLogo.set_from_file(os.path.join(res.PATH, 
                                                'bt_logo.png'))
 
-        #self.layout.attach(self.EditButton, 1, 0, 1, 1)
+        self.layout.attach(self.SpellerButton, 0, 0, 2, 1) #comment for edit
+        #self.layout.attach(self.SpellerButton, 0, 0, 1, 1) #uncomment for edit
+        #self.layout.attach(self.EditButton, 1, 0, 1, 1) #uncomment for edit
         self.layout.attach(self.NCBiRActor, 1, 3, 1, 1)
         self.layout.attach(self.PisakLogo, 0, 3, 1, 1)
         self.layout.attach(self.BTLogo, 1, 1, 1, 1)
@@ -375,8 +376,8 @@ class PisakViewerStage(Clutter.Stage):
         #self.remove_all_children()
         self.current_view = dic[view]
         self.contents.add_actor(dic[view])
-        #self.contents.buttons = None
-        #self.contents.scan_buttons()
+        self.contents.buttons = None
+        self.contents.scan_buttons()
         #self.add_actor(self.contents)
 
     def exit_app(self):
