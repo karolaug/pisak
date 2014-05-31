@@ -3,9 +3,19 @@ MxButton
     font-size: 30;
 }
 
+MxButton#speller
+{
+    font-size: 100;
+}
+
+MxButton#edit
+{
+    font-size: 100;
+}
+
 MxLabel
 {
-    font-size: 40;
+    font-size: 600;
 }
 
 PisakSpellerKey

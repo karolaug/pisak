@@ -159,7 +159,7 @@ class Buttons1(Clutter.Actor):
             button = Mx.Button()
             button.set_style(self.STYLE)
             button.set_label(buttons[b][0])
-            button.set_size(unit.mm(50), unit.mm(22))
+            button.set_size(unit.mm(100), unit.mm(22))
             self.add_actor(button)
             button.connect("clicked", buttons[b][1])
 
@@ -250,12 +250,14 @@ class PisakMainWindow(Clutter.Actor):
     def init_buttons(self):
         self.SpellerButton = Mx.Button()
         self.SpellerButton.set_label('Speller')
-        self.SpellerButton.set_size(100, 200)
+        self.SpellerButton.set_size(300, 200)
+        self.SpellerButton.set_name("speller")
         self.layout.attach(self.SpellerButton, 0, 0, 2, 1)
         
         self.EditButton = Mx.Button()
         self.EditButton.set_label('Edycja Zdjęcia')
-        self.EditButton.set_size(100, 200)
+        self.EditButton.set_name("edit")
+        self.EditButton.set_size(300, 200)
 
         self.PisakLogo = Mx.Image()
         self.PisakLogo.set_scale_mode(1)
@@ -296,12 +298,11 @@ class PisakMainWindow(Clutter.Actor):
         self.BTLogo.set_from_file(os.path.join(res.PATH, 
                                                'bt_logo.png'))
 
-        
+        #self.layout.attach(self.EditButton, 1, 0, 1, 1)
         self.layout.attach(self.NCBiRActor, 1, 3, 1, 1)
         self.layout.attach(self.PisakLogo, 0, 3, 1, 1)
         self.layout.attach(self.BTLogo, 1, 1, 1, 1)
         self.layout.attach(self.FuwLogo, 0, 1, 1, 1)
-        #self.layout.attach(self.EditButton, 1, 0, 1, 1)
         self.layout.attach(self.OzarLogo, 0, 2, 1, 1)
         self.layout.attach(self.BezSlowLogo, 1, 2, 1, 1)
 
