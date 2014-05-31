@@ -27,7 +27,7 @@ class Group(Clutter.Actor):
     def __init__(self):
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
-        self.timeout = 1600
+        self.timeout = 800
         self.locked = False
         self._init_sprite()
         self.buttons = None
@@ -70,7 +70,7 @@ class Group(Clutter.Actor):
             raise Exception("Protocol error")
     
     def update_sprite(self, coords):
-        x, y = (coords[0] - self.sprite.get_width() / 2), (coords[1] - self.sprite.get_height() / 2)
+        x, y = (coords[0] - self.sprite.get_width() / 2 - 50), (coords[1] - self.sprite.get_height() / 2 - 160)
         self.sprite.set_position(x, y)
     
     def _rescan(self, source, *args):
