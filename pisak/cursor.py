@@ -70,7 +70,7 @@ class Group(Clutter.Actor):
             raise Exception("Protocol error")
     
     def update_sprite(self, coords):
-        x, y = (coords[0] - self.sprite.get_width() / 2 - 50), (coords[1] - self.sprite.get_height() / 2 - 160)
+        x, y = (coords[0] - self.sprite.get_width() / 2), (coords[1] - self.sprite.get_height() / 2)
         self.sprite.set_position(x, y)
     
     def _rescan(self, source, *args):

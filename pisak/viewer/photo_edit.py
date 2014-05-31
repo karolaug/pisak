@@ -185,9 +185,9 @@ class Buttons2(Clutter.Actor):
 
     def _init_elements(self):
         buttons = {'original': ['oryginał', self.image.original], 
-                   'exit': ['wyjście', self.exit_app],
+                   #'exit': ['wyjście', self.exit_app],
                    #'noise': ['szum', self.image.noise], 
-                   #'edges': ['krawędzie', self.image.edges],
+                   'edges': ['krawędzie', self.image.edges],
                    'contour': ['szkic', self.image.contour], 
                    'sepia': ['sepia', self.image.sepia],
                    'grayscale': ['skala szarości', self.image.grayscale]}
@@ -299,9 +299,9 @@ class PisakMainWindow(Clutter.Actor):
         self.BTLogo.set_from_file(os.path.join(res.PATH, 
                                                'bt_logo.png'))
 
-        self.layout.attach(self.SpellerButton, 0, 0, 2, 1) #comment for edit
-        #self.layout.attach(self.SpellerButton, 0, 0, 1, 1) #uncomment for edit
-        #self.layout.attach(self.EditButton, 1, 0, 1, 1) #uncomment for edit
+        #self.layout.attach(self.SpellerButton, 0, 0, 2, 1) #comment for edit
+        self.layout.attach(self.SpellerButton, 0, 0, 1, 1) #uncomment for edit
+        self.layout.attach(self.EditButton, 1, 0, 1, 1) #uncomment for edit
         self.layout.attach(self.NCBiRActor, 1, 3, 1, 1)
         self.layout.attach(self.PisakLogo, 0, 3, 1, 1)
         self.layout.attach(self.BTLogo, 1, 1, 1, 1)
@@ -351,6 +351,9 @@ class PisakViewerStage(Clutter.Stage):
     
     def _init_elements(self):
         self.contents = cursor.Group()
+        self.contents.set_x_expand(True)
+        self.contents.set_y_expand(True)
+        #self.contents.set_background_color(Clutter.Color.new(255, 0, 0, 255))
         self.PisakImageEdit = PisakViewerContainer(self)
         pisakspeller = PisakSpeller()
         self.PisakSpeller = pisakspeller.actor
@@ -365,8 +368,8 @@ class PisakViewerStage(Clutter.Stage):
         self.current_view = self.PisakMainWindow
         self.add_actor(self.contents)
 
-        self.mainWindow = pisakspeller.script.get_object("key_3_10")
-        self.mainWindow.connect("clicked", self.change_view, "menu")
+        self.mainWindowButton = pisakspeller.script.get_object("key_3_10")
+        self.mainWindowButton.connect("clicked", self.change_view, "menu")
 
     def change_view(self, source, view):
         dic = {"speller" : self.PisakSpeller, 
