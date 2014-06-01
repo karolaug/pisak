@@ -2,53 +2,62 @@ PisakSpellerButton{
     color: black;
     font-size: 20;
     border-image: url("rest_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
 PisakSpellerButton:hover{
     color: white;
     font-size: 20;
     border-image: url("hover_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
 PisakSpellerButton:active{
-    color: black;
+    color: white;
     font-size: 20;
     border-image: url("active_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
 PisakSpellerKey{
     color: black;
     font-size: 20;
     border-image: url("rest_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
 PisakSpellerKey:hover{
     color: white;
     font-size: 20;
     border-image: url("hover_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
 PisakSpellerKey:active{
-    color: black;
+    color: white;
     font-size: 20;
     border-image: url("active_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
 PisakSpellerPrediction{
     color: black;
     font-size: 20;
     border-image: url("rest_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
 PisakSpellerPrediction:hover{
     color: white;
     font-size: 20;
     border-image: url("hover_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
 PisakSpellerPrediction:active{
-    color: black;
+    color: white;
     font-size: 20;
     border-image: url("active_button.jpg");
+    -mx-border-image-transition-duration: 300;
 }
 
