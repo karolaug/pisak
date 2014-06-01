@@ -26,8 +26,6 @@ class Button(Mx.Button):
 
     def _connect_signals(self):
         self.connect("clicked", self.click_activate)
-        self.connect("enter-event", lambda *_: self.hilite_on())
-        self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
         self.set_reactive(True)
 
@@ -50,24 +48,18 @@ class Button(Mx.Button):
         self.set_height(unit.h(value))
     
     def hilite_off(self):
-        self.background_color = colors.offBACK
-        self.foreground_color = colors.offFORE
+        self.style_pseudo_class_remove("hover")
     
     def hilite_on(self):
-        self.background_color = colors.onBACK
-        self.foreground_color = colors.onFORE
+        self.style_pseudo_class_add("hover")
 
     def select_on(self):
-        self.background_color = colors.selBACK
-        self.foreground_color = colors.selFORE
+        self.style_pseudo_class_add("active")
 
     def inactivate(self):
-        self.background_color = colors.offBACK
-        self.foreground_color = colors.offFORE
+        self.style_pseudo_class_remove("active")
     
     def click_activate(self, source):
-        self.select_on()
-        Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
 
     def do_set_property(self, spec, value):
