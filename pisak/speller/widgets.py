@@ -2,6 +2,7 @@
 Definitions of widgets specific to speller applet
 '''
 from gi.repository import Mx, GObject, Pango
+
 from pisak import unit
 import pisak.widgets
 from pisak.res import dims
@@ -101,35 +102,63 @@ class Text(Mx.Label):
         self.clutter_text.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
         
     def get_text(self):
+        """
+        Return the entire text from the text buffer
+        """
         return self.clutter_text.get_text()
 
     def get_text_length(self):
+        """
+        Return the number of characters in the text buffer
+        """
         return len(self.clutter_text.get_text())
 
     def type_text(self, text):
-        pos = self.get_text_length()
-        self.clutter_text.insert_text(text, pos)
+        """
+        Append the given text to the text buffer
+        @param text string passed after a user's actions
+        """
+        self.clutter_text.insert_text(text, -1)
 
     def delete_char(self):
+        """
+        Delete the endmost single character
+        """
         pos = self.get_text_length() - 1
-        self.delete_text(pos, pos+1)
+        self.clutter_text.delete_text(pos, pos+1)
 
     def delete_text(self, start_pos, end_pos):
+        """
+        Delete all characters from positions from the given range
+        @param start_pos start position given in characters
+        @param end_pos end position given in characters
+        """
         self.clutter_text.delete_text(start_pos, end_pos)
 
     def clear_all(self):
-        end_pos = self.get_text_length()
-        self.delete_text(0, end_pos)
+        """
+        Clear the entire text buffer
+        """
+        self.clutter_text.set_text(None)
 
-    def get_string(self):
+    def get_endmost_string(self):
+        """
+        Look for and return the first string of characters with no whitespaces
+        starting from the end of the text buffer
+        """
         text = self.get_text()
-        start_pos = text.strip().rfind(' ') + 1
-        end_pos = self.get_text_length()
+        start_pos = text.rstrip().rfind(' ') + 1
+        end_pos = len(text.rstrip())
         return text[start_pos : end_pos]
 
-    def replace_string(self, text):
+    def replace_endmost_string(self, text):
+        """
+        Look for the first string of characters with no whitespaces starting
+        from the end of the text buffer and replace it with the given text
+        @param text string passed after a user's action
+        """
         current_text = self.get_text()
-        start_pos = current_text.strip().rfind(' ') + 1
+        start_pos = current_text.rstrip().rfind(' ') + 1
         end_pos = self.get_text_length()
         self.delete_text(start_pos, end_pos)
         self.type_text(text)
@@ -320,17 +349,26 @@ class Prediction(pisak.widgets.Button):
 
     def __init__(self):
         super().__init__()
+        self.target = None
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("activate", self.replace_string)
+        self.connect("activate", self.target_push_text)
 
     def follow_target(self):
         if self.target:
             text_field = self.target.clutter_text
             text_field.connect("text-changed", self.update_button)
 
-    def replace_string(self, source):
+    def stop_following_target(self):
+        try:
+            if self.target:
+                text_field = self.target.clutter_text
+                text_field.disconnect_by_func("text-changed", self.update_button)
+        except AttributeError:
+            return None
+            
+    def target_push_text(self, source):
         if self.target:
-            self.target.replace_string(self.get_label())
+            self.target.replace_endmost_string(self.get_label())
 
     def update_button(self, source):
         raise NotImplementedError
@@ -349,6 +387,7 @@ class Prediction(pisak.widgets.Button):
 
     @target.setter
     def target(self, value):
+        self.stop_following_target()
         self._target = value
         self.follow_target()
 

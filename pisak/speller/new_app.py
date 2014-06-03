@@ -1,13 +1,10 @@
 import sys
+
 from gi.repository import Clutter, Mx
+
 from pisak import switcher_app
 from pisak.speller import widgets  # # @UnusedImport
 import pisak.layout  # @UnusedImport
-
-STYLESHEET_PATH = "pisak/speller/speller_stylesheet.css"
-
-script = None
-dispatcher = None
 
 
 class Dispatcher(object):
@@ -15,15 +12,16 @@ class Dispatcher(object):
         "document": "concept/sample.txt"
     }
     
-    def __init__(self):
+    def __init__(self, script):
+        self.script = script
         self._init_elements()
         self._init_func_dict()
         self._connect_menu_buttons()
 
     def _init_elements(self):
-        self.text_field = script.get_object("text_box")
-        self.prediction_panel = script.get_object("prediction_panel")
-        self.keyboard_panel = script.get_object("keyboard_panel")
+        self.text_field = self.script.get_object("text_box")
+        self.prediction_panel = self.script.get_object("prediction_panel")
+        self.keyboard_panel = self.script.get_object("keyboard_panel")
 
     def _init_func_dict(self):
         self.MENU_FUNCS = {
@@ -46,7 +44,7 @@ class Dispatcher(object):
         }
         
     def _connect_menu_buttons(self):
-        for item in script.list_objects():
+        for item in self.script.list_objects():
             if isinstance(item, widgets.Button):
                 value = item.get_property("speller-function")
                 item.connect("activate", self.MENU_FUNCS[value])
@@ -137,6 +135,8 @@ class Dispatcher(object):
         
 
 class PisakSpellerStage(Clutter.Stage):
+    STYLESHEET_PATH = "pisak/speller/speller_stylesheet.css"
+    
     def __init__(self, context):
         super().__init__()
         self.context = context
@@ -146,19 +146,17 @@ class PisakSpellerStage(Clutter.Stage):
 
     def _load_script(self):
         Mx.Button() # workaround for GI loader
-        global script
-        script = Clutter.Script()
-        script.load_from_file(SCRIPT_PATH)
-        self.view_actor = script.get_object("main")
+        self.script = Clutter.Script()
+        self.script.load_from_file(SCRIPT_PATH)
+        self.view_actor = self.script.get_object("main")
         self.set_layout_manager(Clutter.BoxLayout())
         self.add_child(self.view_actor)
 
     def _init_dispatcher(self):
-        global dispatcher
-        dispatcher = Dispatcher()
+        self.dispatcher = Dispatcher(self.script)
 
     def _load_stylesheet(self):
-        Mx.Style.get_default().load_from_file(STYLESHEET_PATH)
+        Mx.Style.get_default().load_from_file(self.STYLESHEET_PATH)
 
 
 class PisakSpellerApp(switcher_app.Application):
