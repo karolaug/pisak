@@ -152,11 +152,11 @@ class PisakSpellerStage(Clutter.Stage):
         self.set_layout_manager(Clutter.BoxLayout())
         self.add_child(self.view_actor)
 
-    def _init_dispatcher(self):
-        self.dispatcher = Dispatcher(self.script)
-
     def _load_stylesheet(self):
         Mx.Style.get_default().load_from_file(self.STYLESHEET_PATH)
+
+    def _init_dispatcher(self):
+        self.dispatcher = Dispatcher(self.script)
 
 
 class PisakSpellerApp(switcher_app.Application):

@@ -34,12 +34,17 @@ class Button(pisak.widgets.Button):
     def __init__(self):
         super().__init__()
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
+        self.connect("notify::text", self._set_initial_label)
 
-    def set_alternative_label(self):
-        self.set_label(self.alternative_text)
+    def _set_initial_label(self, source, spec):
+        self.set_default_label()
+        self.disconnect_by_func(self._set_initial_label)
 
     def set_default_label(self):
         self.set_label(self.text)
+
+    def set_alternative_label(self):
+        self.set_label(self.alternative_text)
 
     @property
     def speller_function(self):
@@ -56,7 +61,6 @@ class Button(pisak.widgets.Button):
     @text.setter
     def text(self, value):
         self._text = str(value)
-        self.set_label(self.text)
 
     @property
     def alternative_text(self):
@@ -233,7 +237,12 @@ class Key(pisak.widgets.Button):
     def __init__(self):
         super().__init__()
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("activate", self.type_text)
+        self.connect("activate", self.on_activate)
+        self.connect("notify::text", self._set_initial_label)
+
+    def _set_initial_label(self, source, spec):
+        self.set_default_label()
+        self.disconnect_by_func(self._set_initial_label)
 
     def set_default_label(self):
         self.set_label(self.text)
@@ -257,19 +266,17 @@ class Key(pisak.widgets.Button):
                         # from (uppercase) default to uppercase altgr
                         self.set_label(self.altgr_text)
         except AttributeError:
-            pass
+            return None
 
     def set_swap_caps_label(self):
-        label = self.get_label()
-        self.set_label(label.swapcase())
+        self.set_label(self.get_label().swapcase())
 
     def set_special_label(self):
         self.set_label(self.special_text)
 
-    def type_text(self, source):
-        text = self.get_label()
+    def on_activate(self, source):
         if self.target:
-            self.target.type_text(text)
+            self.target.type_text(self.get_label())
 
     @property
     def text(self):
@@ -278,7 +285,6 @@ class Key(pisak.widgets.Button):
     @text.setter
     def text(self, value):
         self._text = str(value)
-        self.set_label(self.text)
 
     @property
     def altgr_text(self):
@@ -351,7 +357,7 @@ class Prediction(pisak.widgets.Button):
         super().__init__()
         self.target = None
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("activate", self.target_push_text)
+        self.connect("activate", self.on_activate)
 
     def follow_target(self):
         if self.target:
@@ -366,7 +372,7 @@ class Prediction(pisak.widgets.Button):
         except AttributeError:
             return None
             
-    def target_push_text(self, source):
+    def on_activate(self, source):
         if self.target:
             self.target.replace_endmost_string(self.get_label())
 
