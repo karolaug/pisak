@@ -1,5 +1,6 @@
-from gi.repository import Clutter, Mx, GObject
-from pisak import switcher_app, unit
+from gi.repository import Clutter, Mx, GObject, Rsvg
+import os.path
+from pisak import switcher_app, unit, res
 import collections
 from pisak.res import colors, dims
 import cairo
@@ -15,7 +16,9 @@ class Button(Mx.Button):
     
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE)
+        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
+        "icon_name": (GObject.TYPE_STRING, None, None, "blank", GObject.PARAM_READWRITE),
+        "icon_size": (GObject.TYPE_)
     }
     
     def __init__(self):
@@ -46,9 +49,27 @@ class Button(Mx.Button):
 
     @ratio_height.setter
     def ratio_height(self, value):
-        self,_ratio_height = value
+        self._ratio_height = value
         self.set_height(unit.h(value))
     
+    @property
+    def icon_name(self):
+        return self._icon_name
+
+    @icon_name.setter
+    def icon_name(self, value):
+        self._icon_name = value
+        self.set_icon_name(str(value))
+
+    def read_svg(self):
+        try:
+            handle = Rsvg.Handle()
+            self.svg = handle.new_from_file(os.path.join(res.PATH, 
+                                                         self.icon_name))
+        except GError as error:
+            print('No such {} svg found in directory "res" or it was not a svg.'.format(''.join([self.icon_name, '.svg']))
+            self.svg = False
+
     def hilite_off(self):
         self.background_color = colors.offBACK
         self.foreground_color = colors.offFORE
