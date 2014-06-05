@@ -18,9 +18,8 @@ class Button(Mx.Button):
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
         "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
         "icon_name": (GObject.TYPE_STRING, "blank", "name of the icon displayed on the button", "blank", GObject.PARAM_READWRITE),
-        "icon_width": (GObject.TYPE_INT, "icon width", "width of the icon displayed on the button", 0, 1000, 30, GObject.PARAM_READWRITE),
-        "icon_height": (GObject.TYPE_INT, "icon height", "height of the icon displayed on the button", 0, 1000, 30, GObject.PARAM_READWRITE),
-        "icon_position": (GObject.TYPE_STRING, "icon position", "position of the icon displayed on the button", "left", GObject.PARAM_READWRITE)
+        #"icon_width": (GObject.TYPE_INT, "icon width", "width of the icon displayed on the button", 0, 1000, 30, GObject.PARAM_READWRITE),
+        #"icon_height": (GObject.TYPE_INT, "icon height", "height of the icon displayed on the button", 0, 1000, 30, GObject.PARAM_READWRITE),
     }
     
     def __init__(self):
@@ -57,46 +56,91 @@ class Button(Mx.Button):
     @property
     def icon_name(self):
         return self._icon_name
-
+    
     @icon_name.setter
     def icon_name(self, value):
         self._icon_name = value
-        if value not "blank" or value not None:
+        if not Mx.IconTheme.get_default().has_icon(value):
             self.set_icon(self._icon_name)
 
-    @property
-    def icon_width(self):
-        return self._icon_width
-
-    @icon_width.setter
-    def icon_width(self):
-        self._icon_width = value
-
-    @property
-    def icon_height(self):
-        return self._icon_height
-
-    @icon_height.setter
-    def icon_height(self):
-        self._icon_height = value
+    #@property
+    #def icon_width(self):
+    #    return self._icon_width
+    #
+    #@icon_width.setter
+    #def icon_width(self):
+    #    self._icon_width = value
+    #
+    #@property
+    #def icon_height(self):
+    #    return self._icon_height
+    #
+    #@icon_height.setter
+    #def icon_height(self):
+    #    self._icon_height = value
 
     def read_svg(self):
         try:
             handle = Rsvg.Handle()
             svg_path = ''.join([os.path.join(res.PATH, 
-                                             self.icon_name), '.svg'])
+                                             self.icon_name, 
+                                             'icons'), '.svg'])
             self.svg = handle.new_from_file(svg_path)
         except GError as error:
-            print('No such {} svg found in directory "res" or it was not a svg.'.format(''.join([self.icon_name, '.svg'])))
+            print('No such {} file found in directory "res".'.format(''.join([self.icon_name, '.svg'])))
             self.svg = False
 
     def set_icon(self):
         self.custom_content()
         self.read_svg()
+        self.icon = Mx.Image()
+        self.icon_path = os.path.join(res.PATH, "icons", self.icon_name)
+        self.icon_user_size = self.get_icon_size()
         if self.svg:
-            
+            pixbuf = self.svg.get_pixbuf().scale_simple(self.icon_size, 
+                                                        self.icon_size, 3)
+            self.icon.set_form_data(pixbuf.get_pixels(),
+                                    Cogl.PixelFormat.RGBA_8888, 
+                                    pixbuf.get_width(), 
+                                    pixbuf.get_height(), 
+                                    pixbuf.get_rowstride())
         else:
-            
+            try:
+                self.icon.set_from_file(''.join([self.icon_path, '.png']))
+            except GError as error:
+                print("No PNG or SVG icon, trying JPG")
+                try:
+                    self.icon.set_from_file(''.join([self.icon_path, '.jpg']))
+                except GError as error:
+                    text = "No PNG, SVG or JPG icon found of name {}." 
+                    print(text.format(self.icon_name))
+                    pass
+            self.icon.set_scale_mode(1) #1 is FIT, 0 is None, 2 is CROP
+            self.icon.set_scale(self.icon.get_size()[0] / self.icon_user_size,
+                                self.icon.get_size()[1] / self.icon_user_size)
+        self.label = Mx.Label()
+        self.label.set_text(self.get_label())
+
+#           ikona    label   
+#          _________________
+#  left    0 0 1 2 | 1 0 1 2
+#  right   1 0 1 2 | 0 0 1 2
+#  top     0 0 2 1 | 0 1 2 1
+#  bottom  0 1 2 1 | 0 0 2 1
+
+
+        horizontal = [(0, 0, 1, 2), (1, 0, 1, 2)]
+        vertical = [(0, 0, 2, 1), (0, 1, 2, 1)]
+
+        grid_position = {"left" : horizontal,
+                         "right" : horizontal[::-1],
+                         "top" : vertical,
+                         "bottom" : vertical[::-1]}
+        
+        self.icon_pos = self.get_icon_position().value_nick
+        for element, pos in zip([self.icon, self.label], 
+                                grid_position[self.icon_pos]):
+            self.attach(element, *pos)
 
     def custom_content(self):
         self.remove_all_children()
