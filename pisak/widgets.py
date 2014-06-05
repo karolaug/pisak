@@ -17,8 +17,10 @@ class Button(Mx.Button):
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
         "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "icon_name": (GObject.TYPE_STRING, None, None, "blank", GObject.PARAM_READWRITE),
-        "icon_size": (GObject.TYPE_)
+        "icon_name": (GObject.TYPE_STRING, "blank", "name of the icon displayed on the button", "blank", GObject.PARAM_READWRITE),
+        "icon_width": (GObject.TYPE_INT, "icon width", "width of the icon displayed on the button", 0, 1000, 30, GObject.PARAM_READWRITE),
+        "icon_height": (GObject.TYPE_INT, "icon height", "height of the icon displayed on the button", 0, 1000, 30, GObject.PARAM_READWRITE),
+        "icon_position": (GObject.TYPE_STRING, "icon position", "position of the icon displayed on the button", "left", GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
@@ -59,16 +61,47 @@ class Button(Mx.Button):
     @icon_name.setter
     def icon_name(self, value):
         self._icon_name = value
-        self.set_icon_name(str(value))
+        if value not "blank" or value not None:
+            self.set_icon(self._icon_name)
+
+    @property
+    def icon_width(self):
+        return self._icon_width
+
+    @icon_width.setter
+    def icon_width(self):
+        self._icon_width = value
+
+    @property
+    def icon_height(self):
+        return self._icon_height
+
+    @icon_height.setter
+    def icon_height(self):
+        self._icon_height = value
 
     def read_svg(self):
         try:
             handle = Rsvg.Handle()
-            self.svg = handle.new_from_file(os.path.join(res.PATH, 
-                                                         self.icon_name))
+            svg_path = ''.join([os.path.join(res.PATH, 
+                                             self.icon_name), '.svg'])
+            self.svg = handle.new_from_file(svg_path)
         except GError as error:
-            print('No such {} svg found in directory "res" or it was not a svg.'.format(''.join([self.icon_name, '.svg']))
+            print('No such {} svg found in directory "res" or it was not a svg.'.format(''.join([self.icon_name, '.svg'])))
             self.svg = False
+
+    def set_icon(self):
+        self.custom_content()
+        self.read_svg()
+        if self.svg:
+            
+        else:
+            
+
+    def custom_content(self):
+        self.remove_all_children()
+        self.layout = Clutter.GridLayout()
+        self.set_layout_manager(self.layout)
 
     def hilite_off(self):
         self.background_color = colors.offBACK
