@@ -1,6 +1,3 @@
-'''
-Does button work?
-'''
 import sys
 from pisak import switcher_app
 from gi.repository import Clutter, Mx, GObject
