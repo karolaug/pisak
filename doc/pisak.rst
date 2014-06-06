@@ -11,12 +11,20 @@ Subpackages
     pisak.viewer
 
 Submodules
-----------
 
-pisak.buttons module
+----------
+pisak.handlers module
 --------------------
 
-.. automodule:: pisak.buttons
+.. automodule:: pisak.handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.layout module
+--------------------
+
+.. automodule:: pisak.layout
     :members:
     :undoc-members:
     :show-inheritance:
@@ -37,6 +45,22 @@ pisak.pisak_view module
     :undoc-members:
     :show-inheritance:
 
+pisak.scanning module
+--------------------
+
+.. automodule:: pisak.scanning
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.signals module
+--------------------
+
+.. automodule:: pisak.signals
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pisak.switcher_app module
 -------------------------
 
@@ -44,6 +68,7 @@ pisak.switcher_app module
     :members:
     :undoc-members:
     :show-inheritance:
+
 
 pisak.unit module
 -----------------
