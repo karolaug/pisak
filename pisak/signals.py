@@ -4,6 +4,7 @@ Implementation of signal connecting strategy for ClutterScript.
 import sys
 
 import pisak.handlers  # @UnusedImport
+from gi.repository import GObject
 
 
 """
@@ -40,4 +41,13 @@ def python_connect(script, gobject, signal, handler, target, flags):
     ClutterScript.connect_signals_full
     """
     function = resolve_handler(handler)
-    gobject.connect_object(signal, function, target, flags)
+    if target is not None:
+        if GObject.ConnectFlags.AFTER == flags:
+            gobject.connect_object_after(signal, function, target)
+        else:
+            gobject.connect_object(signal, function, target)
+    else:
+        if GObject.ConnectFlags.AFTER == flags:
+            gobject.connect_after(signal, function)
+        else:
+            gobject.connect(signal, function)
