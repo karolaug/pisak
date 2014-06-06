@@ -1,0 +1,62 @@
+[
+  {
+    "id": "main",
+    "type": "PisakScanningGroup",
+    "x-expand": true,
+    "y-expand": true,
+    "background-color": "gray",
+    "strategy": {
+       "id": "main_group_strategy",
+       "type": "PisakRowStrategy",
+       "interval": 1200
+    },
+    "signals": [
+      {
+        "name": "show",
+        "handler": "pisak.handlers.start_group",
+        "after": true
+      }
+    ],
+    "children": [
+      {
+	    "id": "main_box",
+	    "type": "PisakBoxLayout",
+	    "x-expand": true,
+	    "y-expand": true,
+	    "orientation": "vertical",
+	    "children": [
+	      {
+	        "id": "b_1_1",
+		    "type": "MxButton",
+	        "y-expand": true,
+		    "label": "Nothing"
+		  },
+		  {
+	        "id": "b_1_2",
+	        "type": "MxButton",
+	        "y-expand": true,
+	        "label": "Hello",
+	        "signals": [
+	          {
+	            "name": "clicked",
+	            "handler": "pisak.handlers.say_hello"
+	          }
+	        ]
+	      },
+	      {
+	        "id": "b_1_3",
+	        "type": "MxButton",
+	        "x-expand": true,
+	        "label": "Exit",
+	        "signals": [
+	          {
+	            "name": "clicked",
+	            "handler": "pisak.handlers.exit_app"
+	          }
+	        ]
+	      }
+	    ]
+	  } 
+	]   
+  }
+]

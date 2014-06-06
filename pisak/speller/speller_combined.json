@@ -5,6 +5,10 @@
         "x-expand": true,
         "y-expand": true,
         "orientation": "horizontal",
+        "scanning": {
+            "id": "main_scanning",
+            "type": "GObject"
+        },
         "children": [
             {
                 "id": "speller_menu",
