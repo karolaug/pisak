@@ -15,7 +15,10 @@
                 "children": [
                     {
                         "id": "button_1",
-                        "type": "PisakSpellerButton"
+                        "type": "PisakSpellerButton",
+			"ratio_width": 0.5,
+			"icon_name": "edytuj",
+			"icon-size": 30
                     },
                     {
                         "id": "button_2",

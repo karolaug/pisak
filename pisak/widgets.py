@@ -1,11 +1,47 @@
 from gi.repository import Clutter, Mx, GObject, Rsvg
+#import gi._glib.GError as GError
 import os.path
 from pisak import switcher_app, unit, res
 import collections
 from pisak.res import colors, dims
 import cairo
 
-class Button(Mx.Button):
+class PropertyAdapter(object):
+
+    def find_attribute(self, name):
+        if '-' in name:
+            name = name.replace('-', '_')
+        print(name)
+        for relative in self.__class__.mro():
+            attribute = relative.__dict__.get(name)
+            print(relative)
+            if attribute:
+                print('broke')
+                break
+        return attribute
+
+    def do_set_property(self, spec, value):
+        """
+        Introspect object properties and set the value.
+        """
+        attribute = self.find_attribute(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            attribute.fset(self, value)
+        else:
+            raise ValueError("No such property", spec.name)
+
+    def do_get_property(self, spec):
+        """
+        Introspect object properties and get the value.
+        """
+        attribute = self.find_attribute(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            return attribute.fget(self)
+        else:
+            raise ValueError("No such property", spec.name)
+
+
+class Button(Mx.Button, PropertyAdapter):
     """
     Generic Pisak button widget with label and icon.
     """
@@ -61,7 +97,7 @@ class Button(Mx.Button):
     def icon_name(self, value):
         self._icon_name = value
         if not Mx.IconTheme.get_default().has_icon(value):
-            self.set_icon(self._icon_name)
+            self.set_icon()
 
     #@property
     #def icon_width(self):
@@ -86,7 +122,7 @@ class Button(Mx.Button):
                                              self.icon_name, 
                                              'icons'), '.svg'])
             self.svg = handle.new_from_file(svg_path)
-        except GError as error:
+        except: #GError as error:
             print('No such {} file found in directory "res".'.format(''.join([self.icon_name, '.svg'])))
             self.svg = False
 
@@ -95,6 +131,7 @@ class Button(Mx.Button):
         self.read_svg()
         self.icon = Mx.Image()
         self.icon_path = os.path.join(res.PATH, "icons", self.icon_name)
+        print(self.get_icon_size())
         self.icon_user_size = self.get_icon_size()
         if self.svg:
             pixbuf = self.svg.get_pixbuf().scale_simple(self.icon_size, 
@@ -107,11 +144,11 @@ class Button(Mx.Button):
         else:
             try:
                 self.icon.set_from_file(''.join([self.icon_path, '.png']))
-            except GError as error:
+            except: # GError as error:
                 print("No PNG or SVG icon, trying JPG")
                 try:
                     self.icon.set_from_file(''.join([self.icon_path, '.jpg']))
-                except GError as error:
+                except: # GError as error:
                     text = "No PNG, SVG or JPG icon found of name {}." 
                     print(text.format(self.icon_name))
                     pass
@@ -128,7 +165,7 @@ class Button(Mx.Button):
 #  top     0 0 2 1 | 0 1 2 1
 #  bottom  0 1 2 1 | 0 0 2 1
 
-
+# ktoś pomysł na coś lepszego?
         horizontal = [(0, 0, 1, 2), (1, 0, 1, 2)]
         vertical = [(0, 0, 2, 1), (0, 1, 2, 1)]
 
@@ -168,26 +205,9 @@ class Button(Mx.Button):
         Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
 
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name)
-
+    def repair_prop_name(self, name):
+        if '-' in name:
+            return name.replace('-', '_')
 
 class Aperture(Clutter.Actor):
     __gproperties__ = {
