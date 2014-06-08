@@ -16,9 +16,11 @@
                     {
                         "id": "button_1",
                         "type": "PisakSpellerButton",
-			"ratio_width": 0.5,
-			"icon_name": "edytuj",
-			"icon-size": 30
+			"ratio_width": 0.16,
+			"icon-size": 100,
+			"label": "edytuj",
+			"icon-position": "right",
+			"icon-name": "edytuj"
                     },
                     {
                         "id": "button_2",

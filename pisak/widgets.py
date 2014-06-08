@@ -1,4 +1,4 @@
-from gi.repository import Clutter, Mx, GObject, Rsvg
+from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 #import gi._glib.GError as GError
 import os.path
 from pisak import switcher_app, unit, res
@@ -9,16 +9,17 @@ import cairo
 class PropertyAdapter(object):
 
     def find_attribute(self, name):
-        if '-' in name:
-            name = name.replace('-', '_')
-        print(name)
+        name  = self.repair_prop_name(name)
         for relative in self.__class__.mro():
             attribute = relative.__dict__.get(name)
-            print(relative)
             if attribute:
-                print('broke')
                 break
         return attribute
+
+    def repair_prop_name(self, name):
+        if '-' in name:
+            name = name.replace('-', '_')
+        return name
 
     def do_set_property(self, spec, value):
         """
@@ -99,90 +100,68 @@ class Button(Mx.Button, PropertyAdapter):
         if not Mx.IconTheme.get_default().has_icon(value):
             self.set_icon()
 
-    #@property
-    #def icon_width(self):
-    #    return self._icon_width
-    #
-    #@icon_width.setter
-    #def icon_width(self):
-    #    self._icon_width = value
-    #
-    #@property
-    #def icon_height(self):
-    #    return self._icon_height
-    #
-    #@icon_height.setter
-    #def icon_height(self):
-    #    self._icon_height = value
-
     def read_svg(self):
         try:
             handle = Rsvg.Handle()
-            svg_path = ''.join([os.path.join(res.PATH, 
-                                             self.icon_name, 
-                                             'icons'), '.svg'])
+            svg_path = ''.join([os.path.join(res.PATH,'icons',
+                                             self.icon_name), '.svg'])
             self.svg = handle.new_from_file(svg_path)
         except: #GError as error:
-            print('No such {} file found in directory "res".'.format(''.join([self.icon_name, '.svg'])))
+            print('No file found at {}.'.format(svg_path))
             self.svg = False
+
+    def set_image(self):
+        self.image = Mx.Image()
+        self.image_path = os.path.join(res.PATH, "icons", self.icon_name)
+        icon_size = self.get_icon_size()
+        if self.svg:
+            pixbuf = self.svg.get_pixbuf()
+            if icon_size:
+                pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+            self.image.set_from_data(pixbuf.get_pixels(),
+                                     Cogl.PixelFormat.RGBA_8888, 
+                                     pixbuf.get_width(), 
+                                     pixbuf.get_height(), 
+                                     pixbuf.get_rowstride())
+        else:
+            try:
+                self.image.set_from_file(''.join([self.image_path, '.png']))
+            except: # GError as error:
+                print("No PNG, trying JPG")
+                try:
+                    self.image.set_from_file(''.join([self.image_path, '.jpg']))
+                except: # GError as error:
+                    text = "No PNG, SVG or JPG icon found of name {}." 
+                    print(text.format(self.icon_name))
+            self.image.set_scale_mode(1) #1 is FIT, 0 is None, 2 is CROP
+            if icon_size:
+                image_size = self.image.get_size()
+                print(image_size, icon_size)
+                self.image.set_scale(icon_size * 10 / image_size[1],
+                                     icon_size * 10/ image_size[0])
+
 
     def set_icon(self):
         self.custom_content()
         self.read_svg()
-        self.icon = Mx.Image()
-        self.icon_path = os.path.join(res.PATH, "icons", self.icon_name)
-        print(self.get_icon_size())
-        self.icon_user_size = self.get_icon_size()
-        if self.svg:
-            pixbuf = self.svg.get_pixbuf().scale_simple(self.icon_size, 
-                                                        self.icon_size, 3)
-            self.icon.set_form_data(pixbuf.get_pixels(),
-                                    Cogl.PixelFormat.RGBA_8888, 
-                                    pixbuf.get_width(), 
-                                    pixbuf.get_height(), 
-                                    pixbuf.get_rowstride())
-        else:
-            try:
-                self.icon.set_from_file(''.join([self.icon_path, '.png']))
-            except: # GError as error:
-                print("No PNG or SVG icon, trying JPG")
-                try:
-                    self.icon.set_from_file(''.join([self.icon_path, '.jpg']))
-                except: # GError as error:
-                    text = "No PNG, SVG or JPG icon found of name {}." 
-                    print(text.format(self.icon_name))
-                    pass
-            self.icon.set_scale_mode(1) #1 is FIT, 0 is None, 2 is CROP
-            self.icon.set_scale(self.icon.get_size()[0] / self.icon_user_size,
-                                self.icon.get_size()[1] / self.icon_user_size)
-        self.label = Mx.Label()
-        self.label.set_text(self.get_label())
-
-#           ikona    label   
-#          _________________
-#  left    0 0 1 2 | 1 0 1 2
-#  right   1 0 1 2 | 0 0 1 2
-#  top     0 0 2 1 | 0 1 2 1
-#  bottom  0 1 2 1 | 0 0 2 1
-
-# ktoś pomysł na coś lepszego?
-        horizontal = [(0, 0, 1, 2), (1, 0, 1, 2)]
-        vertical = [(0, 0, 2, 1), (0, 1, 2, 1)]
-
-        grid_position = {"left" : horizontal,
-                         "right" : horizontal[::-1],
-                         "top" : vertical,
-                         "bottom" : vertical[::-1]}
+        self.set_image()
         
-        self.icon_pos = self.get_icon_position().value_nick
-        for element, pos in zip([self.icon, self.label], 
-                                grid_position[self.icon_pos]):
-            self.attach(element, *pos)
+        orientation = {"left" : (0, 0), #1 - pos, #2 - orien(0 - HOR, 1 VER)
+                       "right" : (1, 0), "top" : (0, 1), "bottom" : (1, 1)}
+        icon_pos = self.get_icon_position().value_nick
+        spacing = 100
+
+        self.box.set_spacing(spacing)
+
+        self.box.set_orientation(orientation[icon_pos][1])
+        self.box.add_actor(self.image, orientation[icon_pos][0])
 
     def custom_content(self):
-        self.remove_all_children()
-        self.layout = Clutter.GridLayout()
-        self.set_layout_manager(self.layout)
+        children = self.get_children()
+        if len(children) == 1:
+            self.box = children[0]
+        else:
+            print('It appears that Button has custom content already.')
 
     def hilite_off(self):
         self.background_color = colors.offBACK
@@ -204,10 +183,6 @@ class Button(Mx.Button, PropertyAdapter):
         self.select_on()
         Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
-
-    def repair_prop_name(self, name):
-        if '-' in name:
-            return name.replace('-', '_')
 
 class Aperture(Clutter.Actor):
     __gproperties__ = {
