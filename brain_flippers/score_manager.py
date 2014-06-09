@@ -3,10 +3,14 @@ import sqlite3
 
 DATABASE = "brain_flippers/scores.db"
 
-def get_db_connection():
+def _get_db_connection():
     return sqlite3.connect(DATABASE)
 
-def get_today_date():
+def _clean_up(conn):
+    conn.commit()
+    conn.close()
+
+def _get_today_date():
     return time.strftime("%Y-%m-%d")
 
 def add_record(game, name, score):
@@ -36,7 +40,3 @@ def get_best_ever(game):
     records = cur.fetchall()
     clean_up(conn)
     return records
-
-def clean_up(conn):
-    conn.commit()
-    conn.close()
