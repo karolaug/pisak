@@ -1,0 +1,77 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBoxLayout",
+        "orientation": "vertical",
+        "children":
+            [
+                {
+                    "id": "exit_button",
+                    "type": "MxButton",
+                    "x-align": "center",
+                    "label": "WYJŚCIE",
+                    "width": 100,
+                    "height": 50
+                },
+                {
+                    "id": "best_score",
+                    "type": "PisakBoxLayout",
+                    "children":
+                        [
+                            {
+                                "id": "best_score_text",
+                                "type": "MxLabel",
+                                "x-expand": true,
+                                "text": "NAJLEPSZY WYNIK"
+                            },
+                            {
+                                "id": "best_score_value",
+                                "type": "MxLabel",
+                                "x-expand": true,
+                                "text": "x.x"
+                            }
+                        ]
+                },
+                {
+                    "id": "title",
+                    "type": "MxLabel",
+                    "text": "DZISIEJSZE WYNIKI",
+                    "x-align": "center"
+                },
+                {
+                    "id": "score_table",
+                    "type": "PisakBoxLayout",
+                    "orientation": "vertical",
+                    "children":
+                        [
+                            {
+                                "id": "row_1",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_1",
+                                            "type": "MxLabel",
+                                            "x-align": "start",
+                                            "text": "1."
+                                        },
+                                        {
+                                            "id": "name_1",
+                                            "type": "MxLabel",
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_1",
+                                            "type": "MxLabel",
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            }
+                        ]
+                }
+            ]
+        }
+]
+                                
+                    
