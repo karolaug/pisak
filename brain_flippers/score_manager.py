@@ -25,8 +25,8 @@ def get_best_today(game):
     cur = conn.cursor()
     today = get_today_date()
     if game == "monkey":
-        cur.execute("SELECT * FROM monkey WHERE date=? ORDER BY score", (today,))
-    records = cur.fetchall()[:10]
+        cur.execute("SELECT name, score FROM monkey WHERE date=? ORDER BY score DESC LIMIT 10", (today,))
+    records = cur.fetchall()
     clean_up(conn)
     return records
 
@@ -34,8 +34,8 @@ def get_best_ever(game):
     conn = get_db_connection()
     cur = conn.cursor()
     if game == "monkey":
-        cur.execute("SELECT * FROM monkey ORDER BY score")
-    records = cur.fetchall()[:10]
+        cur.execute("SELECT name, score FROM monkey ORDER BY score DESC LIMIT 10")
+    records = cur.fetchall()
     clean_up(conn)
     return records
 
