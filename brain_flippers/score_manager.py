@@ -14,18 +14,16 @@ def add_record(game, name, score):
     cur = conn.cursor()
     today = get_today_date()
     values = (today, name, score)
-    if game == "monkey":
-        cur.execute("""CREATE TABLE IF NOT EXISTS monkey
-                    (date TEXT, name TEXT, score REAL)""")
-        cur.execute("INSERT INTO monkey VALUES (?, ?, ?)", values)
+    query = "INSERT INTO " + game + " VALUES (?, ?, ?)"
+    cur.execute(query, values)
     clean_up(conn)
 
 def get_best_today(game):
     conn = get_db_connection()
     cur = conn.cursor()
     today = get_today_date()
-    if game == "monkey":
-        cur.execute("SELECT name, score FROM monkey WHERE date=? ORDER BY score DESC LIMIT 10", (today,))
+    query = "SELECT name, score FROM " + game + " WHERE date=? ORDER BY score DESC LIMIT 10"
+    cur.execute(query, (today,))
     records = cur.fetchall()
     clean_up(conn)
     return records
@@ -33,8 +31,8 @@ def get_best_today(game):
 def get_best_ever(game):
     conn = get_db_connection()
     cur = conn.cursor()
-    if game == "monkey":
-        cur.execute("SELECT name, score FROM monkey ORDER BY score DESC LIMIT 10")
+    query = "SELECT name, score FROM " + game + " ORDER BY score DESC LIMIT 10"
+    cur.execute(query)
     records = cur.fetchall()
     clean_up(conn)
     return records
