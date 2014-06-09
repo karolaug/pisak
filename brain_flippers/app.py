@@ -3,13 +3,14 @@ import sys
 from gi.repository import Clutter, Mx
 
 from pisak import switcher_app
+from brain_flippers import score_manager
 
 import pisak.widgets  # @UnusedImport
 import pisak.layout  # @UnusedImport
 
 
 class BrainFlipperStage(Clutter.Stage):
-    SCRIPT_PATH = "brain_flippers/results_screen.json"
+    SCRIPT_PATH = "brain_flippers/result_screen.json"
 
     def __init__(self, context):
         super().__init__()
