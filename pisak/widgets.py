@@ -1,5 +1,4 @@
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
-#import gi._glib.GError as GError
 import os.path
 from pisak import switcher_app, unit, res
 import collections
@@ -52,11 +51,14 @@ class Button(Mx.Button, PropertyAdapter):
     }
     
     __gproperties__ = {
-        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
+                        GObject.PARAM_READWRITE),
+        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
+                         GObject.PARAM_READWRITE),
         "icon_name": (GObject.TYPE_STRING, "blank", "name of the icon displayed on the button", "blank", GObject.PARAM_READWRITE),
-        #"icon_width": (GObject.TYPE_INT, "icon width", "width of the icon displayed on the button", 0, 1000, 30, GObject.PARAM_READWRITE),
-        #"icon_height": (GObject.TYPE_INT, "icon height", "height of the icon displayed on the button", 0, 1000, 30, GObject.PARAM_READWRITE),
+        "spacing": (GObject.TYPE_INT64, "space between icon and text",
+                    "space between icon and text", 0, 1000, 100, 
+                    GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
@@ -100,6 +102,37 @@ class Button(Mx.Button, PropertyAdapter):
         if not Mx.IconTheme.get_default().has_icon(value):
             self.set_icon()
 
+    @property
+    def spacing(self):
+        return self._spacing
+
+    @spacing.setter
+    def spacing(self, value):
+        self._spacing = value
+        self.box.set_spacing(value)
+
+    def set_icon(self):
+        self.custom_content()
+        self.read_svg()
+        self.set_image()
+        
+        orientation = {"left" : (0, 0), #1 - pos, #2 - orien(0 - HOR, 1 VER)
+                       "right" : (1, 0), "top" : (0, 1), "bottom" : (1, 1)}
+        icon_pos = self.get_icon_position().value_nick
+
+        self.box.set_orientation(orientation[icon_pos][1])
+        self.box.add_actor(self.image, orientation[icon_pos][0])
+
+
+    def custom_content(self):
+        children = self.get_children()
+        if len(children) == 1:
+            self.box = children[0]
+        else:
+            text = 'It appears that Button has custom content already: {}.' 
+            print(text.format(children))
+
+
     def read_svg(self):
         try:
             handle = Rsvg.Handle()
@@ -129,7 +162,8 @@ class Button(Mx.Button, PropertyAdapter):
             except: # GError as error:
                 print("No PNG, trying JPG")
                 try:
-                    self.image.set_from_file(''.join([self.image_path, '.jpg']))
+                    self.image.set_from_file(''.join([self.image_path, 
+                                                      '.jpg']))
                 except: # GError as error:
                     text = "No PNG, SVG or JPG icon found of name {}." 
                     print(text.format(self.icon_name))
@@ -139,29 +173,6 @@ class Button(Mx.Button, PropertyAdapter):
                 print(image_size, icon_size)
                 self.image.set_scale(icon_size * 10 / image_size[1],
                                      icon_size * 10/ image_size[0])
-
-
-    def set_icon(self):
-        self.custom_content()
-        self.read_svg()
-        self.set_image()
-        
-        orientation = {"left" : (0, 0), #1 - pos, #2 - orien(0 - HOR, 1 VER)
-                       "right" : (1, 0), "top" : (0, 1), "bottom" : (1, 1)}
-        icon_pos = self.get_icon_position().value_nick
-        spacing = 100
-
-        self.box.set_spacing(spacing)
-
-        self.box.set_orientation(orientation[icon_pos][1])
-        self.box.add_actor(self.image, orientation[icon_pos][0])
-
-    def custom_content(self):
-        children = self.get_children()
-        if len(children) == 1:
-            self.box = children[0]
-        else:
-            print('It appears that Button has custom content already.')
 
     def hilite_off(self):
         self.background_color = colors.offBACK

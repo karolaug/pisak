@@ -5,7 +5,7 @@ import pisak.speller.widgets
 
 
 class PisakSpellerStage(Clutter.Stage):
-    SCRIPT_PATH = 'pisak/speller/speller_column.json'
+    SCRIPT_PATH = 'speller_column.json'
     def __init__(self, context):
         super().__init__()
         self.context = context
