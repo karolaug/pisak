@@ -20,4 +20,4 @@ e-mail: bjura@braintech.pl
 
 Aleksander Kijek
 ----------------
-e-mail: saszasasha@gmail.com
+e-mail: sasza@braintech.pl
