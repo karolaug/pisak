@@ -11,8 +11,8 @@ Subpackages
     pisak.viewer
 
 Submodules
-
 ----------
+
 pisak.handlers module
 --------------------
 
@@ -46,7 +46,7 @@ pisak.pisak_view module
     :show-inheritance:
 
 pisak.scanning module
---------------------
+---------------------
 
 .. automodule:: pisak.scanning
     :members:
