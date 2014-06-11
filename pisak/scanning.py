@@ -14,6 +14,9 @@ class Strategy(GObject.GObject):
 
     @property
     def group(self):
+        """
+        Reference to a group which owns the strategy.
+        """
         return self._group
 
     @group.setter
@@ -21,10 +24,19 @@ class Strategy(GObject.GObject):
         self._group = value
 
     def select(self):
+        """
+        Selects currently highlighted element.
+        """
         element = self.get_current_element()
         element.emit("clicked")
 
     def get_current_element(self):
+        """
+        Abstract method to extract currently highlighted element from an
+        internal strategy state.
+
+        :returns: currently highlighed element
+        """
         raise NotImplementedError("Incomplete strategy implementation")
 
 
