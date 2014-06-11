@@ -1,9 +1,8 @@
 from PIL import Image, ImageDraw
 
 class Photo(object):
-    DIVISIONS = {2 : (2, 1), 4: (2, 2), 6 : (3, 2), 12 : (4, 3), 16 : (4, 4),
-                 20 : (5, 4), 24 : (6, 4), 30 : (6, 5), 35 : (7, 5), 
-                 40 : (8, 5), 48 : (8, 6)}
+    DIVISIONS = {4 : (2, 2),9 : (3, 3), 16 : (4, 4), 25 : (5, 5),
+                 36 : (6, 6), 100 : (10, 10)}
 
     def __init__(self, image_path):
         self.image = Image.open(image_path)
@@ -18,7 +17,7 @@ class Photo(object):
         if self.image.size != size:
             self.image = self.image.resize(size, Image.ANTIALIAS)
 
-    def rect_div(self, nr_parts=6):
+    def rect_div(self, nr_parts=16):
         self.diff = tuple(self.image.size[i] // self.DIVISIONS[nr_parts][i] 
                           for i in range(2))
         self.parts = []
