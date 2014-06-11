@@ -10,7 +10,7 @@ import pisak.layout  # @UnusedImport
 
 
 class BrainFlipperStage(Clutter.Stage):
-    SCRIPT_PATH = "brain_flippers/result_screen.json"
+    SCRIPT_PATH = "brain_flippers/user_result_screen.json"
 
     def __init__(self, context):
         super().__init__()

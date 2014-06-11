@@ -1,0 +1,251 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBoxLayout",
+        "orientation": "vertical",
+        "children":
+            [
+                {
+                    "id": "score",
+                    "type": "PisakBoxLayout",
+                    "children":
+                        [
+                            {
+                                "id": "score_text",
+                                "type": "MxLabel",
+                                "text": "TWÓJ WYNIK"
+                            },
+                            {
+                                "id": "score_value",
+                                "type": "MxLabel"
+                            }
+                        ]
+                },
+                {
+                    "id": "name_request",
+                    "type": "MxLabel",
+                    "x-align": "center",
+                    "text": "WPISZ SWOJE INICJAŁY"
+                },
+                {
+                    "id": "name",
+                    "type": "MxLabel",
+                    "x-align": "center",
+                    "text": "_ _"
+                },
+                {
+                    "id": "keyboard_panel",
+                    "type": "PisakBoxLayout",
+                    "orientation": "vertical",
+                    "children":
+                        [
+                            {
+                                "id": "row_1",
+                                "type": "PisakBoxLayout",
+                                "children":
+                                    [
+                                        {
+                                            "id": "row_1_1",
+                                            "type": "MxLabel",
+                                            "text": "Q"
+                                        },
+                                        {
+                                            "id": "row_1_2",
+                                            "type": "MxLabel",
+                                            "text": "W"
+                                        },
+                                        {
+                                            "id": "row_1_3",
+                                            "type": "MxLabel",
+                                            "text": "E"
+                                        },
+                                        {
+                                            "id": "row_1_4",
+                                            "type": "MxLabel",
+                                            "text": "R"
+                                        },
+                                        {
+                                            "id": "row_1_5",
+                                            "type": "MxLabel",
+                                            "text": "T"
+                                        },
+                                        {
+                                            "id": "row_1_6",
+                                            "type": "MxLabel",
+                                            "text": "Y"
+                                        },
+                                        {
+                                            "id": "row_1_7",
+                                            "type": "MxLabel",
+                                            "text": "U"
+                                        },
+                                        {
+                                            "id": "row_1_8",
+                                            "type": "MxLabel",
+                                            "text": "I"
+                                        },
+                                        {
+                                            "id": "row_1_9",
+                                            "type": "MxLabel",
+                                            "text": "O"
+                                        },
+                                        {
+                                            "id": "row_1_10",
+                                            "type": "MxLabel",
+                                            "text": "P"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_2",
+                                "type": "PisakBoxLayout",
+                                "children":
+                                    [
+                                        {
+                                            "id": "row_2_1",
+                                            "type": "MxLabel",
+                                            "text": "A"
+                                        },
+                                        {
+                                            "id": "row_2_2",
+                                            "type": "MxLabel",
+                                            "text": "S"
+                                        },
+                                        {
+                                            "id": "row_2_3",
+                                            "type": "MxLabel",
+                                            "text": "D"
+                                        },
+                                        {
+                                            "id": "row_2_4",
+                                            "type": "MxLabel",
+                                            "text": "F"
+                                        },
+                                        {
+                                            "id": "row_2_5",
+                                            "type": "MxLabel",
+                                            "text": "G"
+                                        },
+                                        {
+                                            "id": "row_2_6",
+                                            "type": "MxLabel",
+                                            "text": "H"
+                                        },
+                                        {
+                                            "id": "row_2_7",
+                                            "type": "MxLabel",
+                                            "text": "J"
+                                        },
+                                        {
+                                            "id": "row_2_8",
+                                            "type": "MxLabel",
+                                            "text": "K"
+                                        },
+                                        {
+                                            "id": "row_2_9",
+                                            "type": "MxLabel",
+                                            "text": "L"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_3",
+                                "type": "PisakBoxLayout",
+                                "children":
+                                    [
+                                        {
+                                            "id": "row_3_1",
+                                            "type": "MxLabel",
+                                            "text": "Z"
+                                        },
+                                        {
+                                            "id": "row_3_2",
+                                            "type": "MxLabel",
+                                            "text": "X"
+                                        },
+                                        {
+                                            "id": "row_3_3",
+                                            "type": "MxLabel",
+                                            "text": "C"
+                                        },
+                                        {
+                                            "id": "row_3_4",
+                                            "type": "MxLabel",
+                                            "text": "V"
+                                        },
+                                        {
+                                            "id": "row_3_5",
+                                            "type": "MxLabel",
+                                            "text": "B"
+                                        },
+                                        {
+                                            "id": "row_3_6",
+                                            "type": "MxLabel",
+                                            "text": "N"
+                                        },
+                                        {
+                                            "id": "row_3_7",
+                                            "type": "MxLabel",
+                                            "text": "M"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_4",
+                                "type": "PisakBoxLayout",
+                                "children":
+                                    [
+                                        {
+                                            "id": "row_4_1",
+                                            "type": "MxLabel",
+                                            "text": "Ą"
+                                        },
+                                        {
+                                            "id": "row_4_2",
+                                            "type": "MxLabel",
+                                            "text": "Ć"
+                                        },
+                                        {
+                                            "id": "row_4_3",
+                                            "type": "MxLabel",
+                                            "text": "Ę"
+                                        },
+                                        {
+                                            "id": "row_4_4",
+                                            "type": "MxLabel",
+                                            "text": "Ł"
+                                        },
+                                        {
+                                            "id": "row_4_5",
+                                            "type": "MxLabel",
+                                            "text": "Ń"
+                                        },
+                                        {
+                                            "id": "row_4_6",
+                                            "type": "MxLabel",
+                                            "text": "Ó"
+                                        },
+                                        {
+                                            "id": "row_4_7",
+                                            "type": "MxLabel",
+                                            "text": "Ś"
+                                        },
+                                        {
+                                            "id": "row_4_8",
+                                            "type": "MxLabel",
+                                            "text": "Ż"
+                                        },
+                                        {
+                                            "id": "row_4_9",
+                                            "type": "MxLabel",
+                                            "text": "Ź"
+                                        }
+                                    ]
+                            }
+                        ]                         
+                }
+            ]
+        }
+]
+                                
+                    
