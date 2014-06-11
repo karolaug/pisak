@@ -14,7 +14,7 @@ class Photo(object):
         self.maskDraw = ImageDraw.Draw(self.mask)
         self.rect_div()
 
-    def resize(self, size=(800, 600)):
+    def resize(self, size=(600, 600)):
         if self.image.size != size:
             self.image = self.image.resize(size, Image.ANTIALIAS)
 

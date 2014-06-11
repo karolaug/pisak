@@ -1,0 +1,75 @@
+[
+    {
+	"id": "main",
+        "type": "MxBoxLayout",
+        "orientation": "horizontal",
+        "children":
+	[
+	    {
+		"type": "MxBoxLayout",
+		"orientation": "horizontal",
+		"children":
+		[
+		    {
+			"id": "button1",
+			"type": "MxButton",
+			"width": 300,
+			"height": 300,
+			"children" : 
+			[
+			    {
+				"id": "part1",
+				"type" : "MxImage"
+			    }
+			]
+		    },
+		    {
+			"id": "button2",
+			"type": "MxButton",
+			"width": 300,
+			"height": 300,
+			"children" : 
+			[
+			    {
+				"id": "part2",
+				"type" : "MxImage"
+			    }
+			]
+		    },
+		    {
+			"id": "button3",
+			"type": "MxButton",
+			"width": 300,
+			"height": 300,
+			"children" : 
+			[
+			    {
+				"id": "part3",
+				"type" : "MxImage"
+			    }
+			]
+		    },
+		    {
+			"id": "button4",
+			"type": "MxButton",
+			"width": 300,
+			"height": 300,
+			"children" : 
+			[
+			    {
+				"id": "part4",
+				"type" : "MxImage"
+			    }
+			]
+		    }
+		]
+	    },
+	    {
+		"id": "image",
+		"type": "MxImage",
+		"width": 600,
+		"height": 600
+	    }
+	]
+    }
+]
