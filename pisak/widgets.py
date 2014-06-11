@@ -1,10 +1,47 @@
-from gi.repository import Clutter, Mx, GObject
-from pisak import switcher_app, unit
+from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
+import os.path
+from pisak import switcher_app, unit, res
 import collections
 from pisak.res import colors, dims
 import cairo
 
-class Button(Mx.Button):
+class PropertyAdapter(object):
+
+    def find_attribute(self, name):
+        name  = self.repair_prop_name(name)
+        for relative in self.__class__.mro():
+            attribute = relative.__dict__.get(name)
+            if attribute:
+                break
+        return attribute
+
+    def repair_prop_name(self, name):
+        if '-' in name:
+            name = name.replace('-', '_')
+        return name
+
+    def do_set_property(self, spec, value):
+        """
+        Introspect object properties and set the value.
+        """
+        attribute = self.find_attribute(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            attribute.fset(self, value)
+        else:
+            raise ValueError("No such property", spec.name)
+
+    def do_get_property(self, spec):
+        """
+        Introspect object properties and get the value.
+        """
+        attribute = self.find_attribute(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            return attribute.fget(self)
+        else:
+            raise ValueError("No such property", spec.name)
+
+
+class Button(Mx.Button, PropertyAdapter):
     """
     Generic Pisak button widget with label and icon.
     """
@@ -14,8 +51,14 @@ class Button(Mx.Button):
     }
     
     __gproperties__ = {
-        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE)
+        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
+                        GObject.PARAM_READWRITE),
+        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
+                         GObject.PARAM_READWRITE),
+        "icon_name": (GObject.TYPE_STRING, "blank", "name of the icon displayed on the button", "blank", GObject.PARAM_READWRITE),
+        "spacing": (GObject.TYPE_INT64, "space between icon and text",
+                    "space between icon and text", 0, 1000, 100, 
+                    GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
@@ -46,9 +89,91 @@ class Button(Mx.Button):
 
     @ratio_height.setter
     def ratio_height(self, value):
-        self,_ratio_height = value
+        self._ratio_height = value
         self.set_height(unit.h(value))
     
+    @property
+    def icon_name(self):
+        return self._icon_name
+    
+    @icon_name.setter
+    def icon_name(self, value):
+        self._icon_name = value
+        if not Mx.IconTheme.get_default().has_icon(value):
+            self.set_icon()
+
+    @property
+    def spacing(self):
+        return self._spacing
+
+    @spacing.setter
+    def spacing(self, value):
+        self._spacing = value
+        self.box.set_spacing(value)
+
+    def set_icon(self):
+        self.custom_content()
+        self.read_svg()
+        self.set_image()
+        
+        orientation = {"left" : (0, 0), #1 - pos, #2 - orien(0 - HOR, 1 VER)
+                       "right" : (1, 0), "top" : (0, 1), "bottom" : (1, 1)}
+        icon_pos = self.get_icon_position().value_nick
+
+        self.box.set_orientation(orientation[icon_pos][1])
+        self.box.add_actor(self.image, orientation[icon_pos][0])
+
+
+    def custom_content(self):
+        children = self.get_children()
+        if len(children) == 1:
+            self.box = children[0]
+        else:
+            text = 'It appears that Button has custom content already: {}.' 
+            print(text.format(children))
+
+
+    def read_svg(self):
+        try:
+            handle = Rsvg.Handle()
+            svg_path = ''.join([os.path.join(res.PATH,'icons',
+                                             self.icon_name), '.svg'])
+            self.svg = handle.new_from_file(svg_path)
+        except: #GError as error:
+            print('No file found at {}.'.format(svg_path))
+            self.svg = False
+
+    def set_image(self):
+        self.image = Mx.Image()
+        self.image_path = os.path.join(res.PATH, "icons", self.icon_name)
+        icon_size = self.get_icon_size()
+        if self.svg:
+            pixbuf = self.svg.get_pixbuf()
+            if icon_size:
+                pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+            self.image.set_from_data(pixbuf.get_pixels(),
+                                     Cogl.PixelFormat.RGBA_8888, 
+                                     pixbuf.get_width(), 
+                                     pixbuf.get_height(), 
+                                     pixbuf.get_rowstride())
+        else:
+            try:
+                self.image.set_from_file(''.join([self.image_path, '.png']))
+            except: # GError as error:
+                print("No PNG, trying JPG")
+                try:
+                    self.image.set_from_file(''.join([self.image_path, 
+                                                      '.jpg']))
+                except: # GError as error:
+                    text = "No PNG, SVG or JPG icon found of name {}." 
+                    print(text.format(self.icon_name))
+            self.image.set_scale_mode(1) #1 is FIT, 0 is None, 2 is CROP
+            if icon_size:
+                image_size = self.image.get_size()
+                print(image_size, icon_size)
+                self.image.set_scale(icon_size * 10 / image_size[1],
+                                     icon_size * 10/ image_size[0])
+
     def hilite_off(self):
         self.background_color = colors.offBACK
         self.foreground_color = colors.offFORE
@@ -69,27 +194,6 @@ class Button(Mx.Button):
         self.select_on()
         Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name)
-
 
 class Aperture(Clutter.Actor):
     __gproperties__ = {
