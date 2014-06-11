@@ -3,6 +3,8 @@
         "id": "main",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
+        "x-expand": true,
+        "y-expand": true,
         "children":
             [
                 {
