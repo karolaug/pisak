@@ -48,53 +48,53 @@
                                     [
                                         {
                                             "id": "row_1_1",
-                                            "type": "MxLabel",
-                                            "text": "Q"
+                                            "type": "MxButton",
+                                            "label": "Q"
                                         },
                                         {
                                             "id": "row_1_2",
-                                            "type": "MxLabel",
-                                            "text": "W"
+                                            "type": "MxButton",
+                                            "label": "W"
                                         },
                                         {
                                             "id": "row_1_3",
-                                            "type": "MxLabel",
-                                            "text": "E"
+                                            "type": "MxButton",
+                                            "label": "E"
                                         },
                                         {
                                             "id": "row_1_4",
-                                            "type": "MxLabel",
-                                            "text": "R"
+                                            "type": "MxButton",
+                                            "label": "R"
                                         },
                                         {
                                             "id": "row_1_5",
-                                            "type": "MxLabel",
-                                            "text": "T"
+                                            "type": "MxButton",
+                                            "label": "T"
                                         },
                                         {
                                             "id": "row_1_6",
-                                            "type": "MxLabel",
-                                            "text": "Y"
+                                            "type": "MxButton",
+                                            "label": "Y"
                                         },
                                         {
                                             "id": "row_1_7",
-                                            "type": "MxLabel",
-                                            "text": "U"
+                                            "type": "MxButton",
+                                            "label": "U"
                                         },
                                         {
                                             "id": "row_1_8",
-                                            "type": "MxLabel",
-                                            "text": "I"
+                                            "type": "MxButton",
+                                            "label": "I"
                                         },
                                         {
                                             "id": "row_1_9",
-                                            "type": "MxLabel",
-                                            "text": "O"
+                                            "type": "MxButton",
+                                            "label": "O"
                                         },
                                         {
                                             "id": "row_1_10",
-                                            "type": "MxLabel",
-                                            "text": "P"
+                                            "type": "MxButton",
+                                            "label": "P"
                                         }
                                     ]
                             },
@@ -105,48 +105,48 @@
                                     [
                                         {
                                             "id": "row_2_1",
-                                            "type": "MxLabel",
-                                            "text": "A"
+                                            "type": "MxButton",
+                                            "label": "A"
                                         },
                                         {
                                             "id": "row_2_2",
-                                            "type": "MxLabel",
-                                            "text": "S"
+                                            "type": "MxButton",
+                                            "label": "S"
                                         },
                                         {
                                             "id": "row_2_3",
-                                            "type": "MxLabel",
-                                            "text": "D"
+                                            "type": "MxButton",
+                                            "label": "D"
                                         },
                                         {
                                             "id": "row_2_4",
-                                            "type": "MxLabel",
-                                            "text": "F"
+                                            "type": "MxButton",
+                                            "label": "F"
                                         },
                                         {
                                             "id": "row_2_5",
-                                            "type": "MxLabel",
-                                            "text": "G"
+                                            "type": "MxButton",
+                                            "label": "G"
                                         },
                                         {
                                             "id": "row_2_6",
-                                            "type": "MxLabel",
-                                            "text": "H"
+                                            "type": "MxButton",
+                                            "label": "H"
                                         },
                                         {
                                             "id": "row_2_7",
-                                            "type": "MxLabel",
-                                            "text": "J"
+                                            "type": "MxButton",
+                                            "label": "J"
                                         },
                                         {
                                             "id": "row_2_8",
-                                            "type": "MxLabel",
-                                            "text": "K"
+                                            "type": "MxButton",
+                                            "label": "K"
                                         },
                                         {
                                             "id": "row_2_9",
-                                            "type": "MxLabel",
-                                            "text": "L"
+                                            "type": "MxButton",
+                                            "label": "L"
                                         }
                                     ]
                             },
@@ -157,38 +157,38 @@
                                     [
                                         {
                                             "id": "row_3_1",
-                                            "type": "MxLabel",
-                                            "text": "Z"
+                                            "type": "MxButton",
+                                            "label": "Z"
                                         },
                                         {
                                             "id": "row_3_2",
-                                            "type": "MxLabel",
-                                            "text": "X"
+                                            "type": "MxButton",
+                                            "label": "X"
                                         },
                                         {
                                             "id": "row_3_3",
-                                            "type": "MxLabel",
-                                            "text": "C"
+                                            "type": "MxButton",
+                                            "label": "C"
                                         },
                                         {
                                             "id": "row_3_4",
-                                            "type": "MxLabel",
-                                            "text": "V"
+                                            "type": "MxButton",
+                                            "label": "V"
                                         },
                                         {
                                             "id": "row_3_5",
-                                            "type": "MxLabel",
-                                            "text": "B"
+                                            "type": "MxButton",
+                                            "label": "B"
                                         },
                                         {
                                             "id": "row_3_6",
-                                            "type": "MxLabel",
-                                            "text": "N"
+                                            "type": "MxButton",
+                                            "label": "N"
                                         },
                                         {
                                             "id": "row_3_7",
-                                            "type": "MxLabel",
-                                            "text": "M"
+                                            "type": "MxButton",
+                                            "label": "M"
                                         }
                                     ]
                             },
@@ -199,48 +199,48 @@
                                     [
                                         {
                                             "id": "row_4_1",
-                                            "type": "MxLabel",
-                                            "text": "Ą"
+                                            "type": "MxButton",
+                                            "label": "Ą"
                                         },
                                         {
                                             "id": "row_4_2",
-                                            "type": "MxLabel",
-                                            "text": "Ć"
+                                            "type": "MxButton",
+                                            "label": "Ć"
                                         },
                                         {
                                             "id": "row_4_3",
-                                            "type": "MxLabel",
-                                            "text": "Ę"
+                                            "type": "MxButton",
+                                            "label": "Ę"
                                         },
                                         {
                                             "id": "row_4_4",
-                                            "type": "MxLabel",
-                                            "text": "Ł"
+                                            "type": "MxButton",
+                                            "label": "Ł"
                                         },
                                         {
                                             "id": "row_4_5",
-                                            "type": "MxLabel",
-                                            "text": "Ń"
+                                            "type": "MxButton",
+                                            "label": "Ń"
                                         },
                                         {
                                             "id": "row_4_6",
-                                            "type": "MxLabel",
-                                            "text": "Ó"
+                                            "type": "MxButton",
+                                            "label": "Ó"
                                         },
                                         {
                                             "id": "row_4_7",
-                                            "type": "MxLabel",
-                                            "text": "Ś"
+                                            "type": "MxButton",
+                                            "label": "Ś"
                                         },
                                         {
                                             "id": "row_4_8",
-                                            "type": "MxLabel",
-                                            "text": "Ż"
+                                            "type": "MxButton",
+                                            "label": "Ż"
                                         },
                                         {
                                             "id": "row_4_9",
-                                            "type": "MxLabel",
-                                            "text": "Ź"
+                                            "type": "MxButton",
+                                            "label": "Ź"
                                         }
                                     ]
                             }

@@ -3,6 +3,8 @@
         "id": "main",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
+        "x-expand": true,
+        "y-expand": true,
         "children":
             [
                 {
@@ -22,12 +24,14 @@
                                 "id": "best_score_text",
                                 "type": "MxLabel",
                                 "x-expand": true,
+                                "x-align": "center",
                                 "text": "NAJLEPSZY WYNIK"
                             },
                             {
                                 "id": "best_score_value",
                                 "type": "MxLabel",
                                 "x-expand": true,
+                                "x-align": "center",
                                 "text": "x.x"
                             }
                         ]
