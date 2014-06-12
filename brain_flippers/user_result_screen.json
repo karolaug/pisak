@@ -5,45 +5,52 @@
         "orientation": "vertical",
         "x-expand": true,
         "y-expand": true,
+        "spacing": 30,
+        "margin-top": 20,
+        "margin-bottom": 20,
+        "margin-left": 20,
+        "margin-right": 20,
         "children":
             [
                 {
                     "id": "score",
                     "type": "PisakBoxLayout",
+                    "spacing": 30,
                     "children":
                         [
                             {
                                 "id": "score_text",
-                                "type": "MxLabel",
+                                "type": "ClutterText",
                                 "text": "TWÓJ WYNIK"
                             },
                             {
                                 "id": "score_value",
-                                "type": "MxLabel"
+                                "type": "ClutterText",
+                                "text": "x.x"
                             }
                         ]
                 },
                 {
                     "id": "name_request",
-                    "type": "MxLabel",
-                    "x-align": "center",
+                    "type": "ClutterText",
                     "text": "WPISZ SWOJE INICJAŁY"
                 },
                 {
                     "id": "name",
-                    "type": "MxLabel",
-                    "x-align": "center",
+                    "type": "ClutterText",
                     "text": "_ _"
                 },
                 {
                     "id": "keyboard_panel",
                     "type": "PisakBoxLayout",
                     "orientation": "vertical",
+                    "spacing": 20,
                     "children":
                         [
                             {
                                 "id": "row_1",
                                 "type": "PisakBoxLayout",
+                                "spacing": 20,
                                 "children":
                                     [
                                         {
@@ -101,6 +108,7 @@
                             {
                                 "id": "row_2",
                                 "type": "PisakBoxLayout",
+                                "spacing": 20,
                                 "children":
                                     [
                                         {
@@ -153,6 +161,7 @@
                             {
                                 "id": "row_3",
                                 "type": "PisakBoxLayout",
+                                "spacing": 20,
                                 "children":
                                     [
                                         {
@@ -195,6 +204,7 @@
                             {
                                 "id": "row_4",
                                 "type": "PisakBoxLayout",
+                                "spacing": 20,
                                 "children":
                                     [
                                         {
@@ -235,16 +245,66 @@
                                         {
                                             "id": "row_4_8",
                                             "type": "MxButton",
-                                            "label": "Ż"
+                                            "label": "Ź"
                                         },
                                         {
                                             "id": "row_4_9",
                                             "type": "MxButton",
-                                            "label": "Ź"
+                                            "label": "Ż"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_5",
+                                "type": "PisakBoxLayout",
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "row_5_1",
+                                            "type": "MxButton",
+                                            "width": 200,
+                                            "height": 50,
+                                            "label": "SKASUJ"
+                                        },
+                                        {
+                                            "id": "row_5_2",
+                                            "type": "MxButton",
+                                            "width": 200,
+                                            "height": 50,
+                                            "label": "ZAPISZ"
                                         }
                                     ]
                             }
-                        ]                         
+                        ]                
+                },
+                {
+                    "id": "menu_panel",
+                    "type": "PisakBoxLayout",
+                    "spacing": 70,
+                    "children": [
+                        {
+                            "id": "try_again",
+                            "type": "MxButton",
+                            "width": 200,
+                            "height": 50,
+                            "label": "SPRÓBUJ JESZCZE RAZ"
+                        },
+                        {
+                            "id": "best_today",
+                            "type": "MxButton",
+                            "width": "200",
+                            "height": "50",
+                            "label": "WYNIKI Z DZIŚ"
+                        },
+                        {
+                            "id": "best_ever",
+                            "type": "MxButton",
+                            "width": "200",
+                            "height": "50",
+                            "label": "WYNIKI Z WYSTAWY"
+                        }
+                    ]
                 }
             ]
         }
