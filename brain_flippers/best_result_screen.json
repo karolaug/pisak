@@ -5,6 +5,11 @@
         "orientation": "vertical",
         "x-expand": true,
         "y-expand": true,
+        "spacing": 30,
+        "margin-top": 20,
+        "margin-bottom": 20,
+        "margin-left": 20,
+        "margin-right": 20,
         "children":
             [
                 {
@@ -18,27 +23,29 @@
                 {
                     "id": "best_score",
                     "type": "PisakBoxLayout",
+                    "x-expand": true,
+                    "spacing": 50,
                     "children":
                         [
                             {
                                 "id": "best_score_text",
-                                "type": "MxLabel",
+                                "type": "ClutterText",
+                                "x-align": "end",
                                 "x-expand": true,
-                                "x-align": "center",
                                 "text": "NAJLEPSZY WYNIK"
                             },
                             {
                                 "id": "best_score_value",
-                                "type": "MxLabel",
+                                "type": "ClutterText",
+                                "x-align": "start",
                                 "x-expand": true,
-                                "x-align": "center",
                                 "text": "x.x"
                             }
                         ]
                 },
                 {
                     "id": "title",
-                    "type": "MxLabel",
+                    "type": "ClutterText",
                     "text": "DZISIEJSZE WYNIKI",
                     "x-align": "center"
                 },
@@ -46,28 +53,289 @@
                     "id": "score_table",
                     "type": "PisakBoxLayout",
                     "orientation": "vertical",
+                    "spacing": 20,
+                    "margin-left": 150,
+                    "margin-right": 150,
                     "children":
                         [
                             {
                                 "id": "row_1",
                                 "type": "PisakBoxLayout",
                                 "x-expand": true,
+                                "spacing": 20,
                                 "children":
                                     [
                                         {
                                             "id": "no_1",
-                                            "type": "MxLabel",
+                                            "type": "ClutterText",
                                             "x-align": "start",
+                                            "width": 20,
                                             "text": "1."
                                         },
                                         {
                                             "id": "name_1",
-                                            "type": "MxLabel",
-                                            "x-align": "center"
+                                            "type": "ClutterText",
+                                            "x-align": "center",
+                                            "x-expand": true,
+                                            "text": "N.N."
                                         },
                                         {
                                             "id": "score_1",
-                                            "type": "MxLabel",
+                                            "type": "ClutterText",
+                                            "x-align": "end",
+                                            "width": 20,
+                                            "text": "x.x"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_2",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_2",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "2."
+                                        },
+                                        {
+                                            "id": "name_2",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_2",
+                                            "type": "ClutterText",
+                                            "width": 20,
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_3",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_3",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "3."
+                                        },
+                                        {
+                                            "id": "name_3",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_3",
+                                            "type": "ClutterText",
+                                            "width": 20,
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_4",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_4",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "4."
+                                        },
+                                        {
+                                            "id": "name_4",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_4",
+                                            "type": "ClutterText",
+                                            "width": 20,
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_5",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_5",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "5."
+                                        },
+                                        {
+                                            "id": "name_5",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_5",
+                                            "type": "ClutterText",
+                                            "width": 20,
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_6",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_6",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "6."
+                                        },
+                                        {
+                                            "id": "name_6",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_6",
+                                            "type": "ClutterText",
+                                            "width": 20,
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_7",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_7",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "7."
+                                        },
+                                        {
+                                            "id": "name_7",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_7",
+                                            "type": "ClutterText",
+                                            "width": 20,
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_8",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_8",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "8."
+                                        },
+                                        {
+                                            "id": "name_8",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_8",
+                                            "type": "ClutterText",
+                                            "width": 20,
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_9",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_9",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "9."
+                                        },
+                                        {
+                                            "id": "name_9",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_9",
+                                            "type": "ClutterText",
+                                            "width": 20,
+                                            "x-align": "end"
+                                        }
+                                    ]
+                            },
+                            {
+                                "id": "row_10",
+                                "type": "PisakBoxLayout",
+                                "x-expand": true,
+                                "spacing": 20,
+                                "children":
+                                    [
+                                        {
+                                            "id": "no_10",
+                                            "type": "ClutterText",
+                                            "x-align": "start",
+                                            "width": 20,
+                                            "text": "10."
+                                        },
+                                        {
+                                            "id": "name_10",
+                                            "type": "ClutterText",
+                                            "x-expand": true,
+                                            "x-align": "center"
+                                        },
+                                        {
+                                            "id": "score_10",
+                                            "type": "ClutterText",
+                                            "width": 20,
                                             "x-align": "end"
                                         }
                                     ]
