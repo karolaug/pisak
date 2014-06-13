@@ -13,8 +13,8 @@
 		    {
 			"id": "button1",
 			"type": "MxButton",
-			"width": 300,
-			"height": 300,
+			"width": 200,
+			"height": 200,
 			"children" : 
 			[
 			    {
@@ -26,8 +26,8 @@
 		    {
 			"id": "button2",
 			"type": "MxButton",
-			"width": 300,
-			"height": 300,
+			"width": 200,
+			"height": 200,
 			"children" : 
 			[
 			    {
@@ -39,8 +39,8 @@
 		    {
 			"id": "button3",
 			"type": "MxButton",
-			"width": 300,
-			"height": 300,
+			"width": 200,
+			"height": 200,
 			"children" : 
 			[
 			    {
@@ -52,8 +52,8 @@
 		    {
 			"id": "button4",
 			"type": "MxButton",
-			"width": 300,
-			"height": 300,
+			"width": 200,
+			"height": 200,
 			"children" : 
 			[
 			    {
