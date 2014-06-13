@@ -13,7 +13,7 @@ class Application(object):
     """
     Path to default CSS style
     """
-    CSS_RES_PATH = "css/default.css"
+    CSS_RES_PATH = "style.css"
 
     def __init__(self, argv):
         """
