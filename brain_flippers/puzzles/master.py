@@ -26,7 +26,8 @@ class PuzzleStage(Clutter.Stage):
         self.photo.next_square()
         self.buttons = [self.script.get_object("button{}".format(i)) 
                         for i in range(1,5)]
-        self.buttons[0].connect("clicked", self.next_frame)
+        for i in self.buttons:
+            i.connect("clicked", self.next_frame)
         self.set_image_from_data()
         self.set_buttons_from_data()
         self.set_layout_manager(Clutter.BoxLayout())
@@ -51,17 +52,21 @@ class PuzzleStage(Clutter.Stage):
         fakes.append(right)
         self.randomizer.shuffle(fakes)
         for button, part_photo in zip(self.buttons, fakes):
-            img = button.get_children()[0]
+            img = [i for i in button.get_children() if type(i) == Mx.Image][0]
             data = part_photo[0].tostring()
             (width, height) = part_photo[0].size
             row_stride = len(data) / height
             img.set_from_data(data, Cogl.PixelFormat.RGB_888, width, height,
                               row_stride)
+            button.status = part_photo[1]
 
-    def next_frame(self, event):
-        self.photo.next_square()
-        self.set_image_from_data()
-        self.set_buttons_from_data()
+    def next_frame(self, button):
+        if button.status:
+            self.photo.next_square()
+            self.set_image_from_data()
+            self.set_buttons_from_data()
+        else:
+            print("Taking life")
 
 class PuzzleApp(switcher_app.Application):
     """
