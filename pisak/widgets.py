@@ -175,25 +175,42 @@ class Button(Mx.Button, PropertyAdapter):
                                      icon_size * 10/ image_size[0])
 
     def hilite_off(self):
-        self.background_color = colors.offBACK
-        self.foreground_color = colors.offFORE
+        self.style_pseudo_class_remove("hover")
     
     def hilite_on(self):
-        self.background_color = colors.onBACK
-        self.foreground_color = colors.onFORE
+        self.style_pseudo_class_add("hover")
 
     def select_on(self):
-        self.background_color = colors.selBACK
-        self.foreground_color = colors.selFORE
+        self.style_pseudo_class_add("active")
 
     def inactivate(self):
-        self.background_color = colors.offBACK
-        self.foreground_color = colors.offFORE
+        self.style_pseudo_class_remove("active")
     
     def click_activate(self, source):
         self.select_on()
         Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
+
+    def do_set_property(self, spec, value):
+        """
+        Introspect object properties and set the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
+        if attribute is not None and isinstance(attribute, property):
+            attribute.fset(self, value)
+        else:
+            raise ValueError("No such property", spec.name.replace("-", "_"))
+
+    def do_get_property(self, spec):
+        """
+        Introspect object properties and get the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
+        if attribute is not None and isinstance(attribute, property):
+            return attribute.fget(self)
+        else:
+            raise ValueError("No such property", spec.name.replace("-", "_"))
+
 
 class Aperture(Clutter.Actor):
     __gproperties__ = {
