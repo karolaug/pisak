@@ -72,6 +72,8 @@ class Button(Mx.Button, PropertyAdapter):
         self.connect("enter-event", lambda *_: self.hilite_on())
         self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
+        self.connect("notify::style-pseudo-class", 
+                     lambda *_: self.change_icon_white())
         self.set_reactive(True)
 
     @property
@@ -120,8 +122,13 @@ class Button(Mx.Button, PropertyAdapter):
                        "right" : (1, 0), "top" : (0, 1), "bottom" : (1, 1)}
         icon_pos = self.get_icon_position().value_nick
 
-        self.box.set_orientation(orientation[icon_pos][1])
-        self.box.add_actor(self.image, orientation[icon_pos][0])
+        self.box2 = Mx.BoxLayout()
+
+        self.box2.set_x_expand(True)
+        self.box2.set_x_align(Clutter.ActorAlign(3))
+        self.box2.add_actor(self.image, 0)
+
+        self.box.add_actor(self.box2, 1)
 
 
     def custom_content(self):
@@ -174,6 +181,36 @@ class Button(Mx.Button, PropertyAdapter):
                 self.image.set_scale(icon_size * 10 / image_size[1],
                                      icon_size * 10/ image_size[0])
 
+    def set_image_white(self):
+        handle = Rsvg.Handle()
+        svg_path = ''.join([os.path.join(res.PATH,'icons',
+                                         self.icon_name), '_white', '.svg'])
+        self.svg_white = handle.new_from_file(svg_path)
+        icon_size = self.get_icon_size()
+        pixbuf = self.svg_white.get_pixbuf()
+        if icon_size:
+            pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+        self.image.set_from_data(pixbuf.get_pixels(),
+                                 Cogl.PixelFormat.RGBA_8888, 
+                                 pixbuf.get_width(), 
+                                 pixbuf.get_height(), 
+                                 pixbuf.get_rowstride())
+
+
+    def change_icon_white(self):
+        if self.style_pseudo_class_contains("hover"):
+            self.set_image_white()
+        else:
+            pixbuf = self.svg.get_pixbuf()
+            icon_size = self.get_icon_size()
+            if icon_size:
+                pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+            self.image.set_from_data(pixbuf.get_pixels(),
+                                     Cogl.PixelFormat.RGBA_8888, 
+                                     pixbuf.get_width(), 
+                                     pixbuf.get_height(), 
+                                     pixbuf.get_rowstride())
+            
     def hilite_off(self):
         self.style_pseudo_class_remove("hover")
     
