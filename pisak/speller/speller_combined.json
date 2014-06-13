@@ -1,6 +1,30 @@
 [
     {
-        "id": "main",
+    "id": "main",
+        "type": "PisakScanningGroup",
+        "strategy": {
+           "id": "main_group_strategy",
+           "type": "PisakRowStrategy",
+           "interval": 800
+        },
+        "signals": [
+            {
+                "name": "show",
+                "handler": "pisak.handlers.start_group"
+            }
+        ],
+                    "children":                    [{
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+        "id": "main_box",
         "type": "PisakBoxLayout",
         "x-expand": true,
         "y-expand": true,
@@ -630,5 +654,5 @@
                 ]
             }
         ]
-    }
+    }]}
 ]

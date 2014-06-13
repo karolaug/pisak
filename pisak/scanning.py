@@ -90,7 +90,7 @@ class Group(Clutter.Actor):
             return attribute.fget(self)
         else:
             raise ValueError("No such property", spec.name)
-    
+
     def get_subgroups(self):
         '''
         Generator of all subgroups of the group.
@@ -112,6 +112,22 @@ class Group(Clutter.Actor):
     def key_release(source, event):
         if event.unicode_value == ' ':
             source.strategy.select()
+
+    def enable_hilite(self):
+        #for s in self.get_subgroups():
+        #    if isinstance(s, Mx.Stylable):
+        #        s.set_style_pseudo_class("hover")
+        #    elif isinstance(s, Group):
+        #        s.enable_hilite()
+        self.set_background_color(Clutter.Color.new(128, 128, 128, 255))
+
+    def disable_hilite(self):
+        #for s in self.get_subgroups():
+        #    if isinstance(s, Mx.Stylable):
+        #        s.set_style_pseudo_class("hover")
+        #    elif isinstance(s, Group):
+        #        s.enable_hilite()
+        self.set_background_color(Clutter.Color.new(0, 0, 0, 0))
 
 
 class RowStrategy(Strategy):
@@ -153,6 +169,9 @@ class RowStrategy(Strategy):
             self.group.connect("allocation-changed", self.update_rows)
 
     def update_rows(self, *args):
+        selection = self._subgroups[self.index]
+        if isinstance(selection, Mx.Stylable):
+            selection.set_style_pseudo_class("")
         self.compute_sequence()
 
     def do_set_property(self, spec, value):
@@ -177,7 +196,8 @@ class RowStrategy(Strategy):
 
     def compute_sequence(self):
         subgroups = list(self.group.get_subgroups())
-        subgroups.sort(key=Clutter.Actor.get_y)
+        key_function = lambda a: a.get_transformed_position()[1]
+        subgroups.sort(key=key_function)
         self._subgroups = subgroups
 
     def start(self):
@@ -192,12 +212,18 @@ class RowStrategy(Strategy):
             selection = self._subgroups[self.index]
             if isinstance(selection, Mx.Stylable):
                 selection.set_style_pseudo_class("")
+            elif isinstance(selection, Group):
+                selection.disable_hilite()
             self.index = (self.index + 1) % len(self._subgroups)
         else:
             self.index = 0
         selection = self._subgroups[self.index]
+        print(selection.get_id())
+        print(selection.get_transformed_position(), selection.get_size())
         if isinstance(selection, Mx.Stylable):
             selection.set_style_pseudo_class("hover")
+        elif isinstance(selection, Group):
+            selection.enable_hilite()
 
     def _has_next(self):
         return True
