@@ -42,7 +42,10 @@ class Dispatcher(object):
             "special_chars": self.special_chars,
             "text_to_speech": self.text_to_speech,
             "backspace": self.backspace,
-            "space": self.space
+            "space": self.space,
+            "nav_left": self.nav_left,
+            "nav_right": self.nav_right,
+            "undo": self.undo
         }
         
     def _connect_menu_buttons(self):
@@ -134,7 +137,15 @@ class Dispatcher(object):
 
     def space(self, source):
         self.text_field.type_text(" ")
-        
+
+    def nav_left(self, source):
+        print(dir(self.text_field))
+
+    def nav_right(self, source):
+        print(dir(self.text_field))
+
+    def undo(self, source):
+        raise NotImplementedError
 
 class PisakSpellerStage(Clutter.Stage):
     STYLESHEET_PATH = "speller_stylesheet.css"
