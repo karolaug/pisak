@@ -41,7 +41,6 @@ class Box(Clutter.Actor):
     @scanning.setter
     def scanning(self, value):
         self._scanning = value
-        print(self._scanning)
     
     def do_set_property(self, spec, value):
         """

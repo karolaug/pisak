@@ -69,8 +69,8 @@ class Button(Mx.Button, PropertyAdapter):
 
     def _connect_signals(self):
         self.connect("clicked", self.click_activate)
-        self.connect("enter-event", lambda *_: self.hilite_on())
-        self.connect("leave-event", lambda *_: self.hilite_off())
+        #self.connect("enter-event", lambda *_: self.hilite_on())
+        #self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
         self.set_reactive(True)
 
@@ -109,7 +109,7 @@ class Button(Mx.Button, PropertyAdapter):
     @spacing.setter
     def spacing(self, value):
         self._spacing = value
-        self.box.set_spacing(value)
+        #self.box.set_spacing(value)
 
     def set_icon(self):
         self.custom_content()

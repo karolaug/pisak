@@ -2,9 +2,11 @@ import sys
 
 from gi.repository import Clutter, Mx
 
-from pisak import switcher_app
-from pisak.speller import widgets  # # @UnusedImport
+from pisak import switcher_app, signals
+from pisak.speller import widgets
+
 import pisak.layout  # @UnusedImport
+import pisak.scanning  # @UnusedImport
 
 
 class Dispatcher(object):
@@ -145,11 +147,11 @@ class PisakSpellerStage(Clutter.Stage):
         self._init_dispatcher()
 
     def _load_script(self):
-        Mx.Button() # workaround for GI loader
         self.script = Clutter.Script()
         self.script.load_from_file(SCRIPT_PATH)
+        self.script.connect_signals_full(signals.python_connect)
         self.view_actor = self.script.get_object("main")
-        self.set_layout_manager(Clutter.BoxLayout())
+        self.set_layout_manager(Clutter.BinLayout())
         self.add_child(self.view_actor)
 
     def _load_stylesheet(self):
