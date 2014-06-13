@@ -191,27 +191,6 @@ class Button(Mx.Button, PropertyAdapter):
         Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
         self.emit("activate")
 
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name.replace("-", "_"))
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name.replace("-", "_"))
-
-
 class Aperture(Clutter.Actor):
     __gproperties__ = {
         'cover': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)

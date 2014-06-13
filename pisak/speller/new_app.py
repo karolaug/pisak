@@ -135,7 +135,7 @@ class Dispatcher(object):
         
 
 class PisakSpellerStage(Clutter.Stage):
-    STYLESHEET_PATH = "pisak/speller/speller_stylesheet.css"
+    STYLESHEET_PATH = "speller_stylesheet.css"
     
     def __init__(self, context):
         super().__init__()
@@ -171,8 +171,8 @@ class PisakSpellerApp(switcher_app.Application):
 
 if __name__ == "__main__":
     SCRIPT_PATH = {
-        "row": "pisak/speller/speller_row.json",
-        "column": "pisak/speller/speller_column.json",
-        "combined": "pisak/speller/speller_combined.json"
+        "row": "speller_row.json",
+        "column": "speller_column.json",
+        "combined": "speller_combined.json"
         }[sys.argv[1]]
     PisakSpellerApp(sys.argv).main()
