@@ -119,6 +119,8 @@ class BrainPuzzleStage(Clutter.Stage):
         elif "ever" in args:
             db_records = score_manager.get_best_ever("puzzle")
             self.script.get_object("title").set_text("WYNIKI Z KIEDYKOLWIEK")
+        best_score_field = self.script.get_object("best_score_value")
+        best_score_field.set_text(str(db_records[0][1]))
         for idx, row in enumerate(score_table.get_children()):
             name_field = row.get_children()[1]
             score_field = row.get_children()[2]
