@@ -137,10 +137,10 @@ class Dispatcher(object):
         self.text_field.type_text(" ")
 
     def nav_left(self, source):
-        print(dir(self.text_field))
+        raise NotImplementedError
 
     def nav_right(self, source):
-        print(dir(self.text_field))
+        raise NotImplementedError
 
     def undo(self, source):
         raise NotImplementedError
@@ -176,7 +176,7 @@ class PisakSpellerApp(switcher_app.Application):
     """
     def create_stage(self, argv):
         stage = PisakSpellerStage(self.context)
-        stage.set_fullscreen(True)
+        stage.set_size(1366, 720)
         return stage
     
 

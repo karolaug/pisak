@@ -28,7 +28,7 @@
                         "ratio-width": 0.16,
                         "ratio-height": 0.09,
 			"icon-size": 50,
-			"label": "LITERY     ",
+			"label": "LITERY      ",
 			"icon-position": "right",
 			"icon-name": "klawiatura",
 			"spacing": 10
@@ -93,7 +93,7 @@
                         "ratio-width": 0.16,
                         "ratio-height": 0.09,
 			"icon-size": 50,
-			"label": "WYŚLIJ    ",
+			"label": "WYŚLIJ     ",
 			"icon-position": "right",
 			"icon-name": "wyslij",
 			"spacing": 10
@@ -106,7 +106,7 @@
                         "ratio-width": 0.16,
                         "ratio-height": 0.09,
 			"icon-size": 50,
-			"label": "DRUKUJ   ",
+			"label": "DRUKUJ    ",
 			"icon-position": "right",
 			"icon-name": "drukuj",
 			"spacing": 10
@@ -119,7 +119,7 @@
                         "ratio-width": 0.16,
                         "ratio-height": 0.09,
 			"icon-size": 50,
-			"label": "NOWY     ",
+			"label": "NOWY       ",
 			"icon-position": "right",
 			"icon-name": "nowy_dokument",
 			"spacing": 10
@@ -132,7 +132,7 @@
                         "ratio-width": 0.16,
                         "ratio-height": 0.09,
 			"icon-size": 50,
-			"label": "START    ",
+			"label": "START     ",
 			"icon-position": "right",
 			"icon-name": "start",
 			"spacing": 10
@@ -188,7 +188,7 @@
                         "x-align": "start",
                         "x-expand": true,
                         "y-expand": true,
-                        "background-color": "lightgray"
+                        "background-color": "lightgrey"
                     },
 		    {
 			"id": "keyboard_menu",
@@ -260,7 +260,7 @@
 				"type": "PisakSpellerButton",
 				"speller-function": "special_chars",
 				"text": " ",
-				"alternative-text": "ABC",
+				"alternative-text": " ",
                                 "ratio-width": 0.06,
                                 "ratio-height": 0.09,
 				"icon-size": 50,
