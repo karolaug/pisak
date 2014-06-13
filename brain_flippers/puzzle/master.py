@@ -1,12 +1,13 @@
 import sys
 
-from gi.repository import Clutter, Mx, Cogl
+from gi.repository import Clutter, Mx, Cogl, GObject
 from PIL import Image
 
 from pisak import switcher_app
 from brain_flippers.puzzles.photo import Photo
 from random import Random
 import os.path
+
 
 class PuzzleBoard(Clutter.Actor):
     __gtype_name__ = "BrainPuzzleBoard"
@@ -71,3 +72,15 @@ class PuzzleBoard(Clutter.Actor):
             self.set_buttons_from_data()
         else:
             print("Taking life")
+
+
+class Logic(GObject.Gobject):
+    __gtype_name__ = "BrainPuzzleLogic"
+    __gproperties__ = {
+        "board": (PuzzleBoard.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "status_bar": (PuzzleStatus.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "answer_1": (Mx.Button.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "answer_2": (Mx.Button.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "answer_3": (Mx.Button.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "answer_4": (Mx.Button.__gtype__, "", "", GObject.PARAM_READWRITE),
+    }
