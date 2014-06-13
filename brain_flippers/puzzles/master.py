@@ -30,7 +30,8 @@ class PuzzleBoard(Clutter.Actor):
         self.photo.next_square()
         self.buttons = [self.script.get_object("button{}".format(i)) 
                         for i in range(1, 5)]
-        self.buttons[0].connect("clicked", self.next_frame)
+        for i in self.buttons:
+            i.connect("clicked", self.next_frame)
         self.set_image_from_data()
         self.set_buttons_from_data()
         self.set_layout_manager(Clutter.BoxLayout())
@@ -44,25 +45,29 @@ class PuzzleBoard(Clutter.Actor):
                                  height, row_stride)
 
     def set_buttons_from_data(self):
-        mirror = [Image.FLIP_LEFT_RIGHT, Image.FLIP_TOP_BOTTOM]
-        rotation = [90, 270, 180]
+        mirror = Image.FLIP_LEFT_RIGHT
+        rotation_fakes = [0, 90, 180, 270]
+        rotation_right = [90, 180, 270]
         cropped = self.photo.part_image
-        fakes = [cropped.transpose(self.randomizer.choice(mirror)) 
-                 for _ in range(3)]
-        fakes = [(i.rotate(self.randomizer.choice(rotation[:2])), False) 
-                 for i in fakes]
-        right = (cropped.rotate(self.randomizer.choice(rotation)), True)
+        fakes = [cropped.transpose(mirror) for i in range(3)]
+        self.randomizer.shuffle(rotation_fakes)
+        fakes = [(i.rotate(rotation_fakes.pop()), False) for i in fakes]
+        right = (cropped.rotate(self.randomizer.choice(rotation_right)), True)
         fakes.append(right)
         self.randomizer.shuffle(fakes)
         for button, part_photo in zip(self.buttons, fakes):
-            img = button.get_children()[0]
+            img = [i for i in button.get_children() if type(i) == Mx.Image][0]
             data = part_photo[0].tostring()
             (width, height) = part_photo[0].size
             row_stride = len(data) / height
             img.set_from_data(data, Cogl.PixelFormat.RGB_888, width, height,
                               row_stride)
+            button.status = part_photo[1]
 
-    def next_frame(self, event):
-        self.photo.next_square()
-        self.set_image_from_data()
-        self.set_buttons_from_data()
+    def next_frame(self, button):
+        if button.status:
+            self.photo.next_square()
+            self.set_image_from_data()
+            self.set_buttons_from_data()
+        else:
+            print("Taking life")
