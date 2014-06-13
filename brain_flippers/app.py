@@ -1,4 +1,5 @@
 import sys
+import os.path
 
 from gi.repository import Clutter, Mx
 
@@ -7,18 +8,18 @@ from brain_flippers import score_manager
 
 import pisak.widgets  # @UnusedImport
 import pisak.layout  # @UnusedImport
-import os.path
+import brain_flippers.puzzles.master  # @UnusedImport
 
 VIEW_PATHS = {
   "high_scores": "best_result_screen.json",
   "enter_score": "user_result_screen.json",
   "main_menu": None,
-  "game_screen": None
+  "game_screen": "main_game_screen.json"
 }
 
 
 class BrainFlipperStage(Clutter.Stage):
-    INITIAL_VIEW = "enter_score"
+    INITIAL_VIEW = "game_screen"
 
     def __init__(self, context):
         super().__init__()

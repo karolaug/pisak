@@ -6,13 +6,17 @@ from PIL import Image
 from pisak import switcher_app
 from brain_flippers.puzzles.photo import Photo
 from random import Random
+import os.path
 
-class PuzzleStage(Clutter.Stage):
-    SCRIPT_PATH = "stage.json"
+class PuzzleBoard(Clutter.Actor):
+    __gtype_name__ = "BrainPuzzleBoard"
+    
+    BASE_PATH = os.path.split(__file__)[0]
+    SCRIPT_PATH = os.path.join(BASE_PATH, "stage.json")
+    IMAGE_PATH = os.path.join(BASE_PATH, "paisaje-wallpaper-1920x1080.jpg")
 
-    def __init__(self, context):
+    def __init__(self):
         super().__init__()
-        self.context = context
         self._load_script()
 
     def _load_script(self):
@@ -22,10 +26,10 @@ class PuzzleStage(Clutter.Stage):
         self.script.load_from_file(self.SCRIPT_PATH)
         self.view_actor = self.script.get_object("main")
         self.image = self.script.get_object("image")
-        self.photo = Photo('paisaje-wallpaper-1920x1080.jpg')
+        self.photo = Photo(self.IMAGE_PATH)
         self.photo.next_square()
         self.buttons = [self.script.get_object("button{}".format(i)) 
-                        for i in range(1,5)]
+                        for i in range(1, 5)]
         self.buttons[0].connect("clicked", self.next_frame)
         self.set_image_from_data()
         self.set_buttons_from_data()
@@ -44,7 +48,7 @@ class PuzzleStage(Clutter.Stage):
         rotation = [90, 270, 180]
         cropped = self.photo.part_image
         fakes = [cropped.transpose(self.randomizer.choice(mirror)) 
-                 for i in range(3)]
+                 for _ in range(3)]
         fakes = [(i.rotate(self.randomizer.choice(rotation[:2])), False) 
                  for i in fakes]
         right = (cropped.rotate(self.randomizer.choice(rotation)), True)
@@ -62,16 +66,3 @@ class PuzzleStage(Clutter.Stage):
         self.photo.next_square()
         self.set_image_from_data()
         self.set_buttons_from_data()
-
-class PuzzleApp(switcher_app.Application):
-    """
-    Brain flipper app with brain flipper stage.
-    """
-    def create_stage(self, argv):
-        stage = PuzzleStage(self.context)
-        stage.set_fullscreen(True)
-        return stage
-
-
-if __name__ == "__main__":
-    PuzzleApp(sys.argv).main()
