@@ -4,13 +4,16 @@ from gi.repository import Clutter, Mx, Cogl, GObject
 from PIL import Image
 
 from pisak import switcher_app
-from brain_flippers.puzzles.photo import Photo
+from brain_flippers.puzzle.photo import Photo
 from random import Random
 import os.path
 
 
 class PuzzleBoard(Clutter.Actor):
     __gtype_name__ = "BrainPuzzleBoard"
+    __gsignals__ = {
+        "leave": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
     
     BASE_PATH = os.path.split(__file__)[0]
     SCRIPT_PATH = os.path.join(BASE_PATH, "stage.json")
@@ -18,7 +21,13 @@ class PuzzleBoard(Clutter.Actor):
 
     def __init__(self):
         super().__init__()
+        self.player_points = 0
+        self.player_errors = 0
+        self.player_clock = 0
+        self.delay_time = 2000
+        self.one_second = 1000
         self._load_script()
+        Clutter.threads_add_timeout(0, self.one_second, self.update_player_clock, None)
 
     def _load_script(self):
         self.randomizer = Random()
@@ -67,18 +76,29 @@ class PuzzleBoard(Clutter.Actor):
 
     def next_frame(self, button):
         if button.status:
-            self.photo.next_square()
-            self.set_image_from_data()
-            self.set_buttons_from_data()
+            self.player_points += 1
+            if not self.photo.next_square():
+                for button in self.buttons:
+                    button.disconnect_by_func(self.next_frame)
+                Clutter.threads_add_timeout(0, self.delay_time, self.end_game, None)
+            else:
+                self.set_image_from_data()
+                self.set_buttons_from_data()
         else:
-            print("Taking life")
+            self.player_errors += 1
+
+    def end_game(self, source):
+        self.emit("leave")
+
+    def update_player_clock(self, source):
+        self.player_clock += 1
 
 
-class Logic(GObject.Gobject):
+class Logic(GObject.GObject):
     __gtype_name__ = "BrainPuzzleLogic"
     __gproperties__ = {
         "board": (PuzzleBoard.__gtype__, "", "", GObject.PARAM_READWRITE),
-        "status_bar": (PuzzleStatus.__gtype__, "", "", GObject.PARAM_READWRITE),
+        #"status_bar": (PuzzleStatus.__gtype__, "", "", GObject.PARAM_READWRITE),
         "answer_1": (Mx.Button.__gtype__, "", "", GObject.PARAM_READWRITE),
         "answer_2": (Mx.Button.__gtype__, "", "", GObject.PARAM_READWRITE),
         "answer_3": (Mx.Button.__gtype__, "", "", GObject.PARAM_READWRITE),

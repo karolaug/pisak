@@ -17,7 +17,7 @@ class Photo(object):
         if self.image.size != size:
             self.image = self.image.resize(size, Image.ANTIALIAS)
 
-    def rect_div(self, nr_parts=16):
+    def rect_div(self, nr_parts=4):
         self.diff = tuple(self.image.size[i] // self.DIVISIONS[nr_parts][i] 
                           for i in range(2))
         self.parts = []
@@ -35,7 +35,7 @@ class Photo(object):
         self.work_parts = self.parts.copy()
         
     def next_square(self):
-        try:
+        if self.work_parts:
             self.square = self.work_parts.pop(0)
             (left, upper), (right, lower) = self.square
             self.part_image = self.image.crop((left, upper, right, lower))
@@ -44,6 +44,7 @@ class Photo(object):
                                             self.mask)
             self.unshadedDraw = ImageDraw.Draw(self.unshaded)
             self.unshadedDraw.rectangle(self.square, outline=(255, 0, 0))
-        except IndexError:
-            print('Whole image has been uncovered.')
+            return True
+        else:
+            return False
         

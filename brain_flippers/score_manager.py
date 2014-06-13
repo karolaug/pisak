@@ -14,29 +14,29 @@ def _get_today_date():
     return time.strftime("%Y-%m-%d")
 
 def add_record(game, name, score):
-    conn = get_db_connection()
+    conn = _get_db_connection()
     cur = conn.cursor()
-    today = get_today_date()
+    today = _get_today_date()
     values = (today, name, score)
     query = "INSERT INTO " + game + " VALUES (?, ?, ?)"
     cur.execute(query, values)
-    clean_up(conn)
+    _clean_up(conn)
 
 def get_best_today(game):
-    conn = get_db_connection()
+    conn = _get_db_connection()
     cur = conn.cursor()
-    today = get_today_date()
+    today = _get_today_date()
     query = "SELECT name, score FROM " + game + " WHERE date=? ORDER BY score DESC LIMIT 10"
     cur.execute(query, (today,))
     records = cur.fetchall()
-    clean_up(conn)
+    _clean_up(conn)
     return records
 
 def get_best_ever(game):
-    conn = get_db_connection()
+    conn = _get_db_connection()
     cur = conn.cursor()
     query = "SELECT name, score FROM " + game + " ORDER BY score DESC LIMIT 10"
     cur.execute(query)
     records = cur.fetchall()
-    clean_up(conn)
+    _clean_up(conn)
     return records
