@@ -198,18 +198,21 @@ class Button(Mx.Button, PropertyAdapter):
 
 
     def change_icon_white(self):
-        if self.style_pseudo_class_contains("hover"):
-            self.set_image_white()
-        else:
-            pixbuf = self.svg.get_pixbuf()
-            icon_size = self.get_icon_size()
-            if icon_size:
-                pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
-            self.image.set_from_data(pixbuf.get_pixels(),
-                                     Cogl.PixelFormat.RGBA_8888, 
-                                     pixbuf.get_width(), 
-                                     pixbuf.get_height(), 
-                                     pixbuf.get_rowstride())
+        try:
+            if self.style_pseudo_class_contains("hover"):
+                self.set_image_white()
+            else:
+                pixbuf = self.svg.get_pixbuf()
+                icon_size = self.get_icon_size()
+                if icon_size:
+                    pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+                    self.image.set_from_data(pixbuf.get_pixels(),
+                                             Cogl.PixelFormat.RGBA_8888, 
+                                             pixbuf.get_width(), 
+                                             pixbuf.get_height(), 
+                                             pixbuf.get_rowstride())
+        except AttributeError:
+            pass
             
     def hilite_off(self):
         self.style_pseudo_class_remove("hover")
