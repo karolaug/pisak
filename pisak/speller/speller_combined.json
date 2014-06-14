@@ -13,9 +13,10 @@
                 "handler": "pisak.handlers.start_group"
             }
         ],
-                    "children":                    [{
+                    "children":                    [
                     
-                    
+                    {"id": "background_box",
+"type": "PisakBackgroundPattern", "x-expand": true, "y-expand": true},{
                     
                     
                     
