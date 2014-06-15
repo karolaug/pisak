@@ -4,7 +4,6 @@ import os.path
 from gi.repository import Clutter, Mx
 
 from pisak import switcher_app
-from pisak import signals
 from brain_flippers import score_manager, widgets
 
 import pisak.widgets  # @UnusedImport
@@ -188,6 +187,7 @@ class BrainPuzzleStage(Clutter.Stage):
     def enable_high_scores_view(self):
         exit_button = self.script.get_object("exit_button")
         exit_button.connect("activate", self.enter_welcome_view)
+
     
 class BrainPuzzleApp(switcher_app.Application):
     """
@@ -195,8 +195,7 @@ class BrainPuzzleApp(switcher_app.Application):
     """
     def create_stage(self, argv):
         stage = BrainPuzzleStage(self.context)
-        stage.set_size(1200, 800)
-        #stage.set_fullscreen(True)
+        stage.set_fullscreen(True)
         return stage
 
 
