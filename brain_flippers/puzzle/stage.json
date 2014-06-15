@@ -3,11 +3,13 @@
 	"id": "main",
         "type": "MxBoxLayout",
         "orientation": "horizontal",
+        "spacing": 60,
         "children":
 	[
 	    {
 		"type": "MxBoxLayout",
-		"orientation": "horizontal",
+		"orientation": "vertical",
+                "spacing": 10,
 		"children":
 		[
 		    {

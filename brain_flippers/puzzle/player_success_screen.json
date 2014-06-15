@@ -21,24 +21,32 @@
                             {
                                 "id": "score_text",
                                 "type": "ClutterText",
-                                "text": "TWÓJ WYNIK"
+                                "text": "TWÓJ WYNIK",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
                             },
                             {
                                 "id": "score_value",
                                 "type": "ClutterText",
-                                "text": "x.x"
+                                "text": "x.x",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
                             }
                         ]
                 },
                 {
                     "id": "name_request",
                     "type": "ClutterText",
-                    "text": "WPISZ SWOJE INICJAŁY"
+                    "text": "WPISZ SWOJE INICJAŁY",
+                    "color": "#001933",
+                    "font-name": "Sans 20"
                 },
                 {
                     "id": "name",
                     "type": "ClutterText",
-                    "text": "_ _"
+                    "text": "_ _",
+                    "color": "#001933",
+                    "font-name": "Sans 20"
                 },
                 {
                     "id": "keyboard_panel",
@@ -55,53 +63,73 @@
                                     [
                                         {
                                             "id": "row_1_1",
-                                            "type": "MxButton",
-                                            "label": "Q"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Q",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_2",
-                                            "type": "MxButton",
-                                            "label": "W"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "W",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_3",
-                                            "type": "MxButton",
-                                            "label": "E"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "E",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_4",
-                                            "type": "MxButton",
-                                            "label": "R"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "R",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_5",
-                                            "type": "MxButton",
-                                            "label": "T"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "T",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_6",
-                                            "type": "MxButton",
-                                            "label": "Y"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Y",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_7",
-                                            "type": "MxButton",
-                                            "label": "U"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "U",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_8",
-                                            "type": "MxButton",
-                                            "label": "I"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "I",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_9",
-                                            "type": "MxButton",
-                                            "label": "O"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "O",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_1_10",
-                                            "type": "MxButton",
-                                            "label": "P"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "P",
+                                            "width": "40",
+                                            "height": "40"
                                         }
                                     ]
                             },
@@ -113,48 +141,66 @@
                                     [
                                         {
                                             "id": "row_2_1",
-                                            "type": "MxButton",
-                                            "label": "A"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "A",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_2_2",
-                                            "type": "MxButton",
-                                            "label": "S"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "S",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_2_3",
-                                            "type": "MxButton",
-                                            "label": "D"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "D",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_2_4",
-                                            "type": "MxButton",
-                                            "label": "F"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "F",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_2_5",
-                                            "type": "MxButton",
-                                            "label": "G"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "G",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_2_6",
-                                            "type": "MxButton",
-                                            "label": "H"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "H",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_2_7",
-                                            "type": "MxButton",
-                                            "label": "J"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "J",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_2_8",
-                                            "type": "MxButton",
-                                            "label": "K"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "K",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_2_9",
-                                            "type": "MxButton",
-                                            "label": "L"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "L",
+                                            "width": "40",
+                                            "height": "40"
                                         }
                                     ]
                             },
@@ -166,38 +212,52 @@
                                     [
                                         {
                                             "id": "row_3_1",
-                                            "type": "MxButton",
-                                            "label": "Z"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Z",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_3_2",
-                                            "type": "MxButton",
-                                            "label": "X"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "X",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_3_3",
-                                            "type": "MxButton",
-                                            "label": "C"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "C",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_3_4",
-                                            "type": "MxButton",
-                                            "label": "V"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "V",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_3_5",
-                                            "type": "MxButton",
-                                            "label": "B"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "B",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_3_6",
-                                            "type": "MxButton",
-                                            "label": "N"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "N",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_3_7",
-                                            "type": "MxButton",
-                                            "label": "M"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "M",
+                                            "width": "40",
+                                            "height": "40"
                                         }
                                     ]
                             },
@@ -209,48 +269,66 @@
                                     [
                                         {
                                             "id": "row_4_1",
-                                            "type": "MxButton",
-                                            "label": "Ą"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ą",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_4_2",
-                                            "type": "MxButton",
-                                            "label": "Ć"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ć",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_4_3",
-                                            "type": "MxButton",
-                                            "label": "Ę"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ę",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_4_4",
-                                            "type": "MxButton",
-                                            "label": "Ł"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ł",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_4_5",
-                                            "type": "MxButton",
-                                            "label": "Ń"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ń",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_4_6",
-                                            "type": "MxButton",
-                                            "label": "Ó"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ó",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_4_7",
-                                            "type": "MxButton",
-                                            "label": "Ś"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ś",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_4_8",
-                                            "type": "MxButton",
-                                            "label": "Ź"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ź",
+                                            "width": "40",
+                                            "height": "40"
                                         },
                                         {
                                             "id": "row_4_9",
-                                            "type": "MxButton",
-                                            "label": "Ż"
+                                            "type": "BrainPuzzleButton",
+                                            "label": "Ż",
+                                            "width": "40",
+                                            "height": "40"
                                         }
                                     ]
                             },
@@ -262,14 +340,14 @@
                                     [
                                         {
                                             "id": "row_5_1",
-                                            "type": "MxButton",
+                                            "type": "BrainPuzzleButton",
                                             "width": 200,
                                             "height": 50,
                                             "label": "SKASUJ"
                                         },
                                         {
                                             "id": "row_5_2",
-                                            "type": "MxButton",
+                                            "type": "BrainPuzzleButton",
                                             "width": 200,
                                             "height": 50,
                                             "label": "ZAPISZ"
@@ -285,21 +363,21 @@
                     "children": [
                         {
                             "id": "try_again",
-                            "type": "MxButton",
+                            "type": "BrainPuzzleButton",
                             "width": 200,
                             "height": 50,
                             "label": "SPRÓBUJ JESZCZE RAZ"
                         },
                         {
                             "id": "best_today",
-                            "type": "MxButton",
+                            "type": "BrainPuzzleButton",
                             "width": "200",
                             "height": "50",
                             "label": "WYNIKI Z DZIŚ"
                         },
                         {
                             "id": "best_ever",
-                            "type": "MxButton",
+                            "type": "BrainPuzzleButton",
                             "width": "200",
                             "height": "50",
                             "label": "WYNIKI Z WYSTAWY"

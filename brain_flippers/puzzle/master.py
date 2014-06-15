@@ -12,7 +12,7 @@ import os.path
 class PuzzleBoard(Clutter.Actor):
     __gtype_name__ = "BrainPuzzleBoard"
     __gsignals__ = {
-        "leave": (GObject.SIGNAL_RUN_FIRST, None, ())
+        "game_end": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
     
     BASE_PATH = os.path.split(__file__)[0]
@@ -24,11 +24,12 @@ class PuzzleBoard(Clutter.Actor):
         self.player_points = 0
         self.player_errors = 0
         self.player_clock = 0
-        self.delay_time = 2000
-        self.one_second = 1000
+        self.player_clock_ticking = True
+        self.final_delay = 2000
         self._load_script()
-        Clutter.threads_add_timeout(0, self.one_second, self.update_player_clock, None)
-
+        one_second = 1000
+        Clutter.threads_add_timeout(0, one_second, self.update_player_clock, None)
+        
     def _load_script(self):
         self.randomizer = Random()
         Mx.Button() # workaround for GI loader
@@ -80,18 +81,24 @@ class PuzzleBoard(Clutter.Actor):
             if not self.photo.next_square():
                 for button in self.buttons:
                     button.disconnect_by_func(self.next_frame)
-                Clutter.threads_add_timeout(0, self.delay_time, self.end_game, None)
+                Clutter.threads_add_timeout(0, self.final_delay, self.end_game, None)
             else:
                 self.set_image_from_data()
                 self.set_buttons_from_data()
         else:
             self.player_errors += 1
 
-    def end_game(self, source):
-        self.emit("leave")
+    def end_game(self, *args):
+        self.player_clock_ticking = False
+        self.emit("game_end")
+        return False
 
     def update_player_clock(self, source):
-        self.player_clock += 1
+        if self.player_clock_ticking:
+            self.player_clock += 1
+            return True
+        else: 
+            return False
 
 
 class Logic(GObject.GObject):

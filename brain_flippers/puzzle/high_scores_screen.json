@@ -14,11 +14,11 @@
             [
                 {
                     "id": "exit_button",
-                    "type": "MxButton",
+                    "type": "BrainPuzzleButton",
                     "x-align": "center",
                     "label": "WYJŚCIE",
-                    "width": 100,
-                    "height": 50
+                    "width": 200,
+                    "height": 60
                 },
                 {
                     "id": "best_score",
@@ -32,14 +32,18 @@
                                 "type": "ClutterText",
                                 "x-align": "end",
                                 "x-expand": true,
-                                "text": "NAJLEPSZY WYNIK"
+                                "text": "NAJLEPSZY WYNIK",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
                             },
                             {
                                 "id": "best_score_value",
                                 "type": "ClutterText",
                                 "x-align": "start",
                                 "x-expand": true,
-                                "text": "x.x"
+                                "text": "x.x",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
                             }
                         ]
                 },
@@ -47,7 +51,9 @@
                     "id": "title",
                     "type": "ClutterText",
                     "text": "DZISIEJSZE WYNIKI",
-                    "x-align": "center"
+                    "x-align": "center",
+                    "color": "#001933",
+                    "font-name": "Sans 20"
                 },
                 {
                     "id": "score_table",
@@ -69,22 +75,29 @@
                                             "id": "no_1",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "1."
+                                            "width": 50,
+                                            "text": "1.",
+                                            "color": "#001933",
+                                            "font-name": "Sans 20"
+                                            
                                         },
                                         {
                                             "id": "name_1",
                                             "type": "ClutterText",
                                             "x-align": "center",
                                             "x-expand": true,
-                                            "text": "N.N."
+                                            "color": "#001933",
+                                            "text": "N.N.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_1",
                                             "type": "ClutterText",
                                             "x-align": "end",
-                                            "width": 20,
-                                            "text": "x.x"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "x.x",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -99,20 +112,26 @@
                                             "id": "no_2",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "2."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "2.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_2",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_2",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -127,20 +146,26 @@
                                             "id": "no_3",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "3."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "3.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_3",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_3",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -155,20 +180,26 @@
                                             "id": "no_4",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "4."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "4.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_4",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_4",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -183,20 +214,26 @@
                                             "id": "no_5",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "5."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "5.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_5",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_5",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -211,20 +248,26 @@
                                             "id": "no_6",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "6."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "6.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_6",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_6",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -239,20 +282,26 @@
                                             "id": "no_7",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "7."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "7.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_7",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_7",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -267,20 +316,26 @@
                                             "id": "no_8",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "8."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "8.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_8",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_8",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -295,20 +350,26 @@
                                             "id": "no_9",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "9."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "9.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_9",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_9",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             },
@@ -323,20 +384,26 @@
                                             "id": "no_10",
                                             "type": "ClutterText",
                                             "x-align": "start",
-                                            "width": 20,
-                                            "text": "10."
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "text": "10.",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "name_10",
                                             "type": "ClutterText",
                                             "x-expand": true,
-                                            "x-align": "center"
+                                            "color": "#001933",
+                                            "x-align": "center",
+                                            "font-name": "Sans 20"
                                         },
                                         {
                                             "id": "score_10",
                                             "type": "ClutterText",
-                                            "width": 20,
-                                            "x-align": "end"
+                                            "width": 50,
+                                            "color": "#001933",
+                                            "x-align": "end",
+                                            "font-name": "Sans 20"
                                         }
                                     ]
                             }

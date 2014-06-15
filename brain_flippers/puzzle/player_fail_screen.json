@@ -1,0 +1,92 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBoxLayout",
+        "orientation": "vertical",
+        "x-expand": true,
+        "y-expand": true,
+        "spacing": 50,
+        "margin-top": 50,
+        "margin-bottom": 50,
+        "margin-left": 50,
+        "margin-right": 50,
+        "children":
+            [
+                {
+                    "id": "player_score",
+                    "type": "PisakBoxLayout",
+                    "spacing": 30,
+                    "children":
+                        [
+                            {
+                                "id": "player_score_text",
+                                "type": "ClutterText",
+                                "text": "TWÓJ WYNIK",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
+                            },
+                            {
+                                "id": "player_score_value",
+                                "type": "ClutterText",
+                                "text": "x.x",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
+                            }
+                        ]
+                },
+                {
+                    "id": "average_score",
+                    "type": "PisakBoxLayout",
+                    "spacing": 30,
+                    "children":
+                        [
+                            {
+                                "id": "average_score_text",
+                                "type": "ClutterText",
+                                "text": "ŚREDNI WYNIK Z WYSTAWY",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
+                            },
+                            {
+                                "id": "average_score_value",
+                                "type": "ClutterText",
+                                "text": "x.x",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
+                            }
+                        ]
+                },
+                {
+                    "id": "menu_panel",
+                    "type": "PisakBoxLayout",
+                    "margin-top": 200,
+                    "spacing": 70,
+                    "children": [
+                        {
+                            "id": "try_again",
+                            "type": "BrainPuzzleButton",
+                            "width": 200,
+                            "height": 50,
+                            "label": "SPRÓBUJ JESZCZE RAZ"
+                        },
+                        {
+                            "id": "best_today",
+                            "type": "BrainPuzzleButton",
+                            "width": "200",
+                            "height": "50",
+                            "label": "WYNIKI Z DZIŚ"
+                        },
+                        {
+                            "id": "best_ever",
+                            "type": "BrainPuzzleButton",
+                            "width": "200",
+                            "height": "50",
+                            "label": "WYNIKI Z WYSTAWY"
+                        }
+                    ]
+                }
+            ]
+        }
+]
+                                
+                    
