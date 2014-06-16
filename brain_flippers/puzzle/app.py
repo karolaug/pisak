@@ -11,20 +11,21 @@ import pisak.layout  # @UnusedImport
 import brain_flippers.puzzle.master  # @UnusedImport
 
 VIEW_PATHS = {
-  "high_scores": "high_scores_screen.json",
-  "player_success": "player_success_screen.json",
-  "player_fail": "player_fail_screen.json",
-  "welcome_screen": "welcome_screen.json",
-  "game_screen": "main_game_screen.json"
+  "high_scores": "brain_flippers/high_scores_screen.json",
+  "player_success": "brain_flippers/player_success_screen.json",
+  "player_fail": "brain_flippers/player_fail_screen.json",
+  "welcome_screen": "brain_flippers/welcome_screen.json",
+  "game_screen": "brain_flippers/puzzle/main_game_screen.json"
 }
 
 
 class BrainPuzzleStage(Clutter.Stage):
     INITIAL_VIEW = "welcome_screen"
-
+    WELCOME_TEXT = "Przed Tobą zadanie wymagające wyobraźni, sprytu i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku niewyraźne i jakby za mgłą, a obok niego cztery puzzle. Twoim zadaniem będzie odtworzyć stopniowo, po fragmencie, cały obraz, tak żeby miał ręce i nogi i wszystko było na właściwym miejscu, poprzez dopasowanie za każdym razem któregoś z czterech zaproponowanych kawałków. Ale uważaj! Choć na pierwszy rzut oka może Ci się wydawać inaczej, nie jest to wcale takie proste i za każdym razem tylko jedna z podanych opcji jest właściwa.\nPamiętaj także, żeby podejmować decyzje szybko, bo czas płynie.\nPowodzenia!"
+       
     def __init__(self, context):
         super().__init__()
-        self._init_views()
+        #self._init_views()
         self.view_transition_duration = 400
         self.view_transition_delay = 1000
         black = Clutter.Color.new(0, 0, 0, 255)
@@ -44,12 +45,12 @@ class BrainPuzzleStage(Clutter.Stage):
             self.views[name] = view_script
 
     def resolve_path(self, path):
-        current_path = os.path.split(__file__)[0]
+        current_path = os.path.split(__name__)[0]
         return os.path.join(current_path, path)
 
     def load_view_from_script(self, name):
         self.script = Clutter.Script()
-        path = self.resolve_path(VIEW_PATHS[name])
+        path = VIEW_PATHS[name]
         self.script.load_from_file(path)
         Clutter.threads_add_timeout(0, self.view_transition_delay, self.switch_views, None)
 
@@ -67,7 +68,12 @@ class BrainPuzzleStage(Clutter.Stage):
         
     def enter_welcome_view(self, *args):
         self.load_view_from_script("welcome_screen")
+        self.adjust_welcome_view()
         self.enable_welcome_view()
+
+    def adjust_welcome_view(self):
+        welcome_text = self.script.get_object("welcome_text")
+        welcome_text.set_text(self.WELCOME_TEXT)
 
     def enable_welcome_view(self):
         start_button = self.script.get_object("start_button")
