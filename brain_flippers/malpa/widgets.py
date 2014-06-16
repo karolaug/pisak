@@ -60,4 +60,45 @@ class Logic(GObject.GObject, PropertyAdapter):
         "board": (MomentaryButtonGrid.__gtype__, "", "", GObject.PARAM_WRITABLE),
         "status": (StatusBar.__gtype__, "", "", GObject.PARAM_WRITABLE)
     }
-    
+
+    def __init__(self):
+        super().__init__()
+        self.score = 0
+        self.lives = 3
+
+    def good_answer(self):
+        self.score += 1000
+        self.status.set_score(self.score)
+        if self.answers >= self.all_tiles:
+            self.puzzle_solved()
+
+    def bad_answer(self):
+        if self.lives == 0:
+            self.game_over()
+        else:
+            self.lives -= 1
+            self.status.set_lives(self.lives)
+
+    def game_over(self):
+        print("Zbyt wiele prób")
+
+    def puzzle_solved(self):
+        print("Ułożone")
+
+    @property
+    def board(self):
+        return self._board
+
+    @board.setter
+    def board(self, value):
+        self._board = value
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, value):
+        self._status = value
+        self.status.set_score(self.score)
+        self.status.set_lives(self.lives)
