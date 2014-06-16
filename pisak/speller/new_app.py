@@ -170,9 +170,19 @@ class PisakSpellerApp(switcher_app.Application):
     
 
 if __name__ == "__main__":
-    SCRIPT_PATH = {
-        "row": "pisak/speller/speller_row.json",
-        "column": "pisak/speller/speller_column.json",
-        "combined": "pisak/speller/speller_combined.json"
-        }[sys.argv[1]]
-    PisakSpellerApp(sys.argv).main()
+    def usage():
+        print("Parameters:\n"
+              " row - speller with row layout\n"
+              " column - speller with column layout\n"
+              " combined - speller with combined layout"
+              )
+    try:
+        SCRIPT_PATH = {
+            "row": "pisak/speller/speller_row.json",
+            "column": "pisak/speller/speller_column.json",
+            "combined": "pisak/speller/speller_combined.json"
+            }[sys.argv[1]]
+        PisakSpellerApp(sys.argv).main()
+    except IndexError:
+        print("No parameters passed.")
+        usage()
