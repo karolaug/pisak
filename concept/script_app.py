@@ -1,29 +1,41 @@
+#!/usr/bin/env python3
 '''
-Does button work?
+JSON script tester app
 '''
 import sys
-from pisak import switcher_app, res
+from pisak import switcher_app
 from gi.repository import Clutter
-from gi.repository import Mx
-from gi.repository import GObject
 
-class DummyButton(Mx.Button):
-    pass
+import pisak.scanning  # @UnusedImport
+import pisak.layout  # @UnusedImport
 
-GObject.type_register(DummyButton)
 
 class ButtonApp(switcher_app.Application):
     '''
     Simple app written for test purposes
     '''
+    def usage(self, argv):
+        print("Usage:")
+        print(argv[0] + " JSON_PATH")
+
     def create_stage(self, argv):
-        style = Mx.Style.get_default()
-        style.load_from_file(res.get("style.css"))
+        if len(argv) != 2:
+            self.usage(argv)
+            sys.exit(1)
+        script_path = argv[1]
         script = Clutter.Script()
-        script.load_from_file(res.get("script.json"))
-        print(script.list_objects())
-        return script.get_object("stage")
-        
+        try:
+            script.load_from_file(script_path)
+        except:
+            print("Failed to load script.")
+            exit(2)
+        stage = Clutter.Stage()
+        stage.set_layout_manager(Clutter.BinLayout())
+        stage.add_child(script.get_object("main"))
+        main_actor = script.get_object("main")
+        stage.add_child(main_actor)
+        return stage
+
 
 if __name__ == '__main__':
     ButtonApp(sys.argv).main()
