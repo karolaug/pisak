@@ -29,11 +29,11 @@ class Code(Mx.Label):
 
     def generate_code(self, code_length):
         self.code = [randint(1, 9) for i in range(int(code_length))]
-        
-    def convert_text():
+
+    def convert_text(self):
         self.text = ''.join(self.code)
 
-    def next_lvl(diff):
+    def next_lvl(self, diff):
         code_length = len(self.code)
         self.generate_code(code_length + int(diff))
         self.convert_text()
