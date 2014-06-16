@@ -36,8 +36,12 @@ def get_best_ever(game):
 def get_average_today(game):
     today = _get_today_date()
     query = "SELECT AVG(score) FROM " + game + " WHERE date=?"
-    return _query_db(query, (today,))[0][0]
+    response = _query_db(query)
+    if response:
+        return response[0][0]
 
 def get_average_ever(game):
     query = "SELECT AVG(score) FROM " + game
-    return _query_db(query)[0][0]
+    response = _query_db(query)
+    if response:
+        return response[0][0]

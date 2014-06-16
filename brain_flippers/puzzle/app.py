@@ -11,10 +11,10 @@ import pisak.layout  # @UnusedImport
 import brain_flippers.puzzle.master  # @UnusedImport
 
 VIEW_PATHS = {
-  "high_scores": "puzzle/high_scores_screen.json",
-  "player_success": "puzzle/player_success_screen.json",
-  "player_fail": "puzzle/player_fail_screen.json",
-  "welcome_screen": "puzzle/welcome_screen.json",
+  "high_scores": "high_scores_screen.json",
+  "player_success": "player_success_screen.json",
+  "player_fail": "player_fail_screen.json",
+  "welcome_screen": "welcome_screen.json",
   "game_screen": "main_game_screen.json"
 }
 
@@ -197,7 +197,3 @@ class BrainPuzzleApp(switcher_app.Application):
         stage = BrainPuzzleStage(self.context)
         stage.set_fullscreen(True)
         return stage
-
-
-if __name__ == "__main__":
-    BrainPuzzleApp(sys.argv).main()
