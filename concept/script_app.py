@@ -10,6 +10,7 @@ import pisak.scanning  # @UnusedImport
 import pisak.layout  # @UnusedImport
 import pisak.widgets # @UnusedImport
 import pisak.speller.widgets # @UnusedImport
+import brain_flippers.safe.widgets  # @UnusedImport
 
 
 class ButtonApp(switcher_app.Application):
@@ -33,8 +34,7 @@ class ButtonApp(switcher_app.Application):
             exit(2)
         stage = Clutter.Stage()
         stage.set_layout_manager(Clutter.BinLayout())
-        main_actor = script.get_object("main")
-        stage.add_child(main_actor)
+        stage.add_child(script.get_object("main"))
         return stage
 
 
