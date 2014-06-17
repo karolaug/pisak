@@ -21,8 +21,9 @@ class DigitButton(Mx.Button):
 class Code(Mx.Label):
     __gtype_name__ = "BrainSafeCode"
 
-    def __init__(self, code_length):
+    def __init__(self):
         super().__init__()
+        code_length = 4
         self.generate_code(code_length)
         self.convert_text()
         self.set_text(self.text)
@@ -31,7 +32,7 @@ class Code(Mx.Label):
         self.code = [randint(1, 9) for i in range(int(code_length))]
 
     def convert_text(self):
-        self.text = ''.join(self.code)
+        self.text = ''.join(str(self.code))
 
     def next_lvl(self, diff):
         code_length = len(self.code)
