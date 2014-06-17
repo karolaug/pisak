@@ -68,7 +68,6 @@ class PuzzleBoard(Clutter.Actor):
         self.script.get_object("life_panel").set_text(self.player_lives_str)
 
     def _display_level_info(self):
-        print(self.script.list_objects())
         self.script.get_object("level_value").set_text(str(self.level+1) + " / " + str(len(self.NR_PARTS)))
 
     def on_life_loss(self):
