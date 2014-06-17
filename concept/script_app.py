@@ -8,6 +8,7 @@ from gi.repository import Clutter
 
 import pisak.scanning  # @UnusedImport
 import pisak.layout  # @UnusedImport
+import brain_flippers.safe.widgets  # @UnusedImport
 
 
 class ButtonApp(switcher_app.Application):
@@ -32,8 +33,6 @@ class ButtonApp(switcher_app.Application):
         stage = Clutter.Stage()
         stage.set_layout_manager(Clutter.BinLayout())
         stage.add_child(script.get_object("main"))
-        main_actor = script.get_object("main")
-        stage.add_child(main_actor)
         return stage
 
 
