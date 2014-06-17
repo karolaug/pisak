@@ -13,20 +13,42 @@
         "children":
             [
                 {
-                    "id": "score",
+                    "id": "player_score",
                     "type": "PisakBoxLayout",
                     "spacing": 30,
                     "children":
                         [
                             {
-                                "id": "score_text",
+                                "id": "player_score_text",
                                 "type": "ClutterText",
                                 "text": "TWÓJ WYNIK",
                                 "color": "#001933",
                                 "font-name": "Sans 20"
                             },
                             {
-                                "id": "score_value",
+                                "id": "player_score_value",
+                                "type": "ClutterText",
+                                "text": "x.x",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
+                            }
+                        ]
+                },
+                {
+                    "id": "average_score",
+                    "type": "PisakBoxLayout",
+                    "spacing": 30,
+                    "children":
+                        [
+                            {
+                                "id": "average_score_text",
+                                "type": "ClutterText",
+                                "text": "ŚREDNI WYNIK Z WYSTAWY",
+                                "color": "#001933",
+                                "font-name": "Sans 20"
+                            },
+                            {
+                                "id": "average_score_value",
                                 "type": "ClutterText",
                                 "text": "x.x",
                                 "color": "#001933",
