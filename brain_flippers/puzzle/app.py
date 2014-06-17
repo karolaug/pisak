@@ -52,19 +52,10 @@ class BrainPuzzleStage(Clutter.Stage):
         self.script = Clutter.Script()
         path = VIEW_PATHS[name]
         self.script.load_from_file(path)
-        Clutter.threads_add_timeout(0, self.view_transition_delay, self.switch_views, None)
-
-    def switch_views(self, *args):
         if self.get_children():
             self.remove_all_children()
         new_view = self.script.get_object("main")
-        new_view.set_opacity(0)
         self.add_child(new_view)
-        transition = Clutter.PropertyTransition.new("opacity")
-        transition.set_to(255)
-        transition.set_remove_on_complete(True)
-        transition.set_duration(self.view_transition_duration)
-        new_view.add_transition("opacity", transition)
         
     def enter_welcome_view(self, *args):
         self.load_view_from_script("welcome_screen")
