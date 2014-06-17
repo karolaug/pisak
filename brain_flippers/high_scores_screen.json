@@ -94,7 +94,7 @@
                                             "id": "score_1",
                                             "type": "ClutterText",
                                             "x-align": "end",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "text": "x.x",
                                             "font-name": "Sans 20"
@@ -128,7 +128,7 @@
                                         {
                                             "id": "score_2",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
@@ -162,7 +162,7 @@
                                         {
                                             "id": "score_3",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
@@ -196,7 +196,7 @@
                                         {
                                             "id": "score_4",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
@@ -230,7 +230,7 @@
                                         {
                                             "id": "score_5",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
@@ -264,7 +264,7 @@
                                         {
                                             "id": "score_6",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
@@ -298,7 +298,7 @@
                                         {
                                             "id": "score_7",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
@@ -332,7 +332,7 @@
                                         {
                                             "id": "score_8",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
@@ -366,7 +366,7 @@
                                         {
                                             "id": "score_9",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
@@ -400,7 +400,7 @@
                                         {
                                             "id": "score_10",
                                             "type": "ClutterText",
-                                            "width": 50,
+                                            "width": 100,
                                             "color": "#001933",
                                             "x-align": "end",
                                             "font-name": "Sans 20"
