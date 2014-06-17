@@ -81,10 +81,13 @@ class BrainPuzzleStage(Clutter.Stage):
     def enter_player_result_view(self, game_outcome):
         score = game_outcome.player_points - game_outcome.player_errors
         db_records = score_manager.get_best_today("puzzle")
-        if len(db_records) < 10 or score >= db_records[-1][1]:
-            self.enter_player_success_view(game_outcome)
+        if db_records:
+            if len(db_records) < 10 or score >= db_records[-1][1]:
+                self.enter_player_success_view(game_outcome)
+            else:
+                self.enter_player_fail_view(game_outcome)
         else:
-            self.enter_player_fail_view(game_outcome)
+            self.enter_player_success_view(game_outcome)
             
     def enter_player_success_view(self, game_outcome): 
         self.load_view_from_script("player_success")
@@ -145,9 +148,12 @@ class BrainPuzzleStage(Clutter.Stage):
         player_score_entry = self.script.get_object("player_score_value")
         player_score = game_outcome.player_points - game_outcome.player_errors
         player_score_entry.set_text(str(player_score))
-        average_score_entry = self.script.get_object("average_score_value")
         average_score = score_manager.get_average_ever("puzzle")
-        average_score_entry.set_text(str(round(average_score, 2)))
+        if average_score:
+            average_score_entry = self.script.get_object("average_score_value")
+            average_score_entry.set_text(str(round(average_score, 2)))
+        else:
+            self.script.get_object("average_score").hide()
         
     def enable_player_fail_view(self):
         try_again_button = self.script.get_object("try_again")
@@ -169,17 +175,20 @@ class BrainPuzzleStage(Clutter.Stage):
         elif request == "ever":
             db_records = score_manager.get_best_ever("puzzle")
             self.script.get_object("title").set_text("WYNIKI Z KIEDYKOLWIEK")
-        best_score_entry = self.script.get_object("best_score_value")
-        best_score_entry.set_text(str(db_records[0][1]))
-        score_table = self.script.get_object("score_table")
-        for idx, row in enumerate(score_table.get_children()):
-            name_entry = row.get_children()[1]
-            score_entry = row.get_children()[2]
-            if idx < len(db_records):
-                name_entry.set_text(db_records[idx][0])
-                score_entry.set_text(str(db_records[idx][1]))
-            else:
-                row.hide()
+        if db_records:
+            best_score_entry = self.script.get_object("best_score_value")
+            best_score_entry.set_text(str(db_records[0][1]))
+            score_table = self.script.get_object("score_table")
+            for idx, row in enumerate(score_table.get_children()):
+                name_entry = row.get_children()[1]
+                score_entry = row.get_children()[2]
+                if idx < len(db_records):
+                    name_entry.set_text(db_records[idx][0])
+                    score_entry.set_text(str(db_records[idx][1]))
+                else:
+                    row.hide()
+        else:
+            self.script.get_object("score_table").hide()
 
     def enable_high_scores_view(self):
         exit_button = self.script.get_object("exit_button")
