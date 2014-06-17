@@ -14,20 +14,24 @@ VIEW_PATHS = {
   "high_scores": "brain_flippers/high_scores_screen.json",
   "player_success": "brain_flippers/player_success_screen.json",
   "player_fail": "brain_flippers/player_fail_screen.json",
+  "player_death": "brain_flippers/player_death_screen.json",
   "welcome_screen": "brain_flippers/welcome_screen.json",
-  "game_screen": "brain_flippers/puzzle/main_game_screen.json"
+  "game_screen": "brain_flippers/puzzle/main_game_screen.json",
 }
 
 
 class BrainPuzzleStage(Clutter.Stage):
     INITIAL_VIEW = "welcome_screen"
     WELCOME_TEXT = "Przed Tobą zadanie wymagające wyobraźni, sprytu i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku niewyraźne i jakby za mgłą, a obok niego cztery puzzle. Twoim zadaniem będzie odtworzyć stopniowo, po fragmencie, cały obraz, tak żeby miał ręce i nogi i wszystko było na właściwym miejscu, poprzez dopasowanie za każdym razem któregoś z czterech zaproponowanych kawałków. Ale uważaj! Choć na pierwszy rzut oka może Ci się wydawać inaczej, nie jest to wcale takie proste i za każdym razem tylko jedna z podanych opcji jest właściwa.\nPamiętaj także, żeby podejmować decyzje szybko, bo czas płynie.\nPowodzenia!"
-       
+    CONSOLATION_TEXT = "Niestety.\nStraciłeś wszystkie życia i umarłeś.\nMimo wszystko nie poddawaj się i spróbuj jeszcze raz!"
+    
     def __init__(self, context):
         super().__init__()
         #self._init_views()
         self.view_transition_duration = 400
         self.view_transition_delay = 1000
+        self.death_view_idle = 8000
+        self.db_max_len = 10
         black = Clutter.Color.new(0, 0, 0, 255)
         self.set_background_color(black)
         self.set_layout_manager(Clutter.BinLayout())
@@ -54,8 +58,8 @@ class BrainPuzzleStage(Clutter.Stage):
         self.script.load_from_file(path)
         if self.get_children():
             self.remove_all_children()
-        new_view = self.script.get_object("main")
-        self.add_child(new_view)
+        view_actor = self.script.get_object("main")
+        self.add_child(view_actor)
         
     def enter_welcome_view(self, *args):
         self.load_view_from_script("welcome_screen")
@@ -77,12 +81,21 @@ class BrainPuzzleStage(Clutter.Stage):
     def enable_game_view(self):
         game_actor = self.script.get_object("main")
         game_actor.connect("game-end", self.enter_player_result_view)
-        
+        game_actor.connect("game-over", self.enter_player_death_view)
+
+    def enter_player_death_view(self, *args):
+        self.load_view_from_script("player_death")
+        self.adjust_player_death_view()
+        Clutter.threads_add_timeout(0, self.death_view_idle, self.enter_welcome_view, None)
+
+    def adjust_player_death_view(self):
+        self.script.get_object("consolation").set_text(self.CONSOLATION_TEXT)
+               
     def enter_player_result_view(self, game_outcome):
-        score = game_outcome.player_points - game_outcome.player_errors
+        score = game_outcome.player_score
         db_records = score_manager.get_best_today("puzzle")
         if db_records:
-            if len(db_records) < 10 or score >= db_records[-1][1]:
+            if len(db_records) < self.db_max_len or score >= db_records[-1][1]:
                 self.enter_player_success_view(game_outcome)
             else:
                 self.enter_player_fail_view(game_outcome)
@@ -95,9 +108,15 @@ class BrainPuzzleStage(Clutter.Stage):
         self.enable_player_success_view()
 
     def adjust_player_success_view(self, game_outcome):
-        score_entry = self.script.get_object("score_value")
-        score = game_outcome.player_points - game_outcome.player_errors
+        score_entry = self.script.get_object("player_score_value")
+        score = game_outcome.player_score
         score_entry.set_text(str(score))
+        average_score = score_manager.get_average_ever("puzzle")
+        if average_score:
+            average_score_entry = self.script.get_object("average_score_value")
+            average_score_entry.set_text(str(round(average_score, 2)))
+        else:
+            self.script.get_object("average_score").hide()
 
     def enable_player_success_view(self):
         for item in self.script.list_objects():
@@ -112,9 +131,15 @@ class BrainPuzzleStage(Clutter.Stage):
         try_again_button = self.script.get_object("try_again")
         try_again_button.connect("activate", self.enter_game_view)
         best_today_button = self.script.get_object("best_today")
-        best_today_button.connect("activate", self.enter_high_scores_view, "today")
+        if score_manager.get_best_today("puzzle"):
+            best_today_button.connect("activate", self.enter_high_scores_view, "today")
+        else:
+            best_today_button.hide()
         best_ever_button = self.script.get_object("best_ever")
-        best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
+        if score_manager.get_best_ever("puzzle"):
+            best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
+        else:
+            best_ever_button.hide()
             
     def type_name(self, button):
         name_entry = self.script.get_object("name")
@@ -135,8 +160,10 @@ class BrainPuzzleStage(Clutter.Stage):
     def save_score(self, *args):
         name = self.script.get_object("name").get_text()
         if "_" in name:
-            name = "Gall Anonim"
-        score = float(self.script.get_object("score_value").get_text())
+            name = "NN"
+        else:
+            name = name.replace(" ", "")
+        score = float(self.script.get_object("player_score_value").get_text())
         score_manager.add_record("puzzle", name, score)
 
     def enter_player_fail_view(self, game_outcome):
@@ -146,7 +173,7 @@ class BrainPuzzleStage(Clutter.Stage):
 
     def adjust_player_fail_view(self, game_outcome):
         player_score_entry = self.script.get_object("player_score_value")
-        player_score = game_outcome.player_points - game_outcome.player_errors
+        player_score = game_outcome.player_score
         player_score_entry.set_text(str(player_score))
         average_score = score_manager.get_average_ever("puzzle")
         if average_score:
@@ -175,20 +202,17 @@ class BrainPuzzleStage(Clutter.Stage):
         elif request == "ever":
             db_records = score_manager.get_best_ever("puzzle")
             self.script.get_object("title").set_text("WYNIKI Z KIEDYKOLWIEK")
-        if db_records:
-            best_score_entry = self.script.get_object("best_score_value")
-            best_score_entry.set_text(str(db_records[0][1]))
-            score_table = self.script.get_object("score_table")
-            for idx, row in enumerate(score_table.get_children()):
-                name_entry = row.get_children()[1]
-                score_entry = row.get_children()[2]
-                if idx < len(db_records):
-                    name_entry.set_text(db_records[idx][0])
-                    score_entry.set_text(str(db_records[idx][1]))
-                else:
-                    row.hide()
-        else:
-            self.script.get_object("score_table").hide()
+        best_score_entry = self.script.get_object("best_score_value")
+        best_score_entry.set_text(str(db_records[0][1]))
+        score_table = self.script.get_object("score_table")
+        for idx, row in enumerate(score_table.get_children()):
+            name_entry = row.get_children()[1]
+            score_entry = row.get_children()[2]
+            if idx < len(db_records):
+                name_entry.set_text(db_records[idx][0])
+                score_entry.set_text(str(db_records[idx][1]))
+            else:
+                row.hide()
 
     def enable_high_scores_view(self):
         exit_button = self.script.get_object("exit_button")

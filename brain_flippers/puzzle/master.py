@@ -12,7 +12,8 @@ import os.path
 class PuzzleBoard(Clutter.Actor):
     __gtype_name__ = "BrainPuzzleBoard"
     __gsignals__ = {
-        "game_end": (GObject.SIGNAL_RUN_FIRST, None, ())
+        "game_end": (GObject.SIGNAL_RUN_FIRST, None, ()),
+        "game_over": (GObject.SIGNAL_RUN_FIRST, None, ()),
     }
     
     BASE_PATH = os.path.split(__file__)[0]
@@ -24,12 +25,16 @@ class PuzzleBoard(Clutter.Actor):
         self.player_points = 0
         self.player_errors = 0
         self.player_clock = 0
+        self.player_score = 0
+        self.player_lives = 4
         self.player_clock_ticking = True
         self.final_delay = 2000
         self._load_script()
+        self._display_player_clock()
+        self._display_player_life_panel()
         one_second = 1000
         Clutter.threads_add_timeout(0, one_second, self.update_player_clock, None)
-        
+
     def _load_script(self):
         self.randomizer = Random()
         Mx.Button() # workaround for GI loader
@@ -48,6 +53,19 @@ class PuzzleBoard(Clutter.Actor):
         self.set_layout_manager(Clutter.BoxLayout())
         self.add_child(self.view_actor)
 
+    def _display_player_clock(self):
+        self.script.get_object("clock").set_text("00:00")
+
+    def _display_player_life_panel(self):
+        life_panel = self.script.get_object("life_panel")
+        life_panel.set_text(self.player_lives*"+ ")
+
+    def on_life_loss(self):
+        life_panel = self.script.get_object("life_panel")
+        life_panel.set_text(life_panel.get_text()[:-2])
+        if not life_panel.get_text():
+            self.emit("game_over")
+            
     def set_image_from_data(self):
         data = self.photo.unshaded.tostring()
         (width, height) = self.photo.image.size
@@ -87,15 +105,28 @@ class PuzzleBoard(Clutter.Actor):
                 self.set_buttons_from_data()
         else:
             self.player_errors += 1
+            self.on_life_loss()
 
     def end_game(self, *args):
         self.player_clock_ticking = False
+        self.calculate_player_score()
         self.emit("game_end")
         return False
+
+    def calculate_player_score(self):
+        limit = 300
+        coeff = 10
+        formula = limit - self.player_clock/len(self.photo.parts) - coeff*(self.player_errors - len(self.photo.parts)/2)
+        self.player_score = round(formula, 2)
 
     def update_player_clock(self, source):
         if self.player_clock_ticking:
             self.player_clock += 1
+            minutes = str(self.player_clock//60)
+            seconds = str(self.player_clock%60)
+            minutes = (2-len(minutes)) * "0" + minutes
+            seconds = (2-len(seconds)) * "0" + seconds
+            self.script.get_object("clock").set_text(minutes+":"+seconds)
             return True
         else: 
             return False

@@ -1,0 +1,30 @@
+[
+    {
+        "id": "main",
+        "type": "ClutterActor",
+        "x-expand": true,
+        "y-expand": true,
+        "margin-top": 100,
+        "margin-bottom": 100,
+        "margin-left": 100,
+        "margin-right": 100,
+        "layout-manager":
+            {
+                "type": "ClutterBinLayout"
+            },
+        "children":
+            [
+                {
+                    "id": "consolation",
+                    "type": "ClutterText",
+                    "x-align": "center",
+                    "width": 600,
+                    "color": "#001933",
+                    "line-alignment": "center",
+                    "font-name": "Sans 50",
+                    "line-wrap": true,
+                    "text": "Zastąp mnie tekstem właściwym dla danej gry."
+                }
+            ]
+    }
+]
