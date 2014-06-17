@@ -27,7 +27,7 @@ class MomentaryButton(Mx.Button):
 class MomentaryButtonGrid(Clutter.Actor):
     __gtype_name__ = "BrainMomentaryButtonGrid"
 
-    POSITION_LIST = itertools.product(list(range(4)), list(range(8)))
+    POSITION_LIST = list(itertools.product(list(range(4)), list(range(8))))
     
     def __init__(self):
         super().__init__()
