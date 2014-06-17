@@ -10,7 +10,7 @@ import pisak.scanning  # @UnusedImport
 import pisak.layout  # @UnusedImport
 import pisak.widgets # @UnusedImport
 import pisak.speller.widgets # @UnusedImport
-import brain_flippers.safe.widgets
+import brain_flippers.safe.widgets  # @UnusedImport
 
 
 class ButtonApp(switcher_app.Application):
