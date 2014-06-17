@@ -201,5 +201,6 @@ class BrainPuzzleApp(switcher_app.Application):
     """
     def create_stage(self, argv):
         stage = BrainPuzzleStage(self.context)
-        stage.set_fullscreen(True)
+        stage.set_size(1366, 768)
+        #stage.set_fullscreen(True)
         return stage

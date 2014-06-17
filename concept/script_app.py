@@ -10,6 +10,7 @@ import pisak.scanning  # @UnusedImport
 import pisak.layout  # @UnusedImport
 import pisak.widgets # @UnusedImport
 import pisak.speller.widgets # @UnusedImport
+import brain_flippers.safe.widgets
 
 
 class ButtonApp(switcher_app.Application):
@@ -28,8 +29,8 @@ class ButtonApp(switcher_app.Application):
         script = Clutter.Script()
         try:
             script.load_from_file(script_path)
-        except:
-            print("Failed to load script.")
+        except IOError as e:
+            print(e, "Failed to load script.")
             exit(2)
         stage = Clutter.Stage()
         stage.set_layout_manager(Clutter.BinLayout())
