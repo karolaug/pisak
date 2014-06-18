@@ -50,8 +50,6 @@ class Code(Mx.Label, PropertyAdapter):
 
     def __init__(self):
         super().__init__()
-        self.generate_code(self.base_code_length)
-        self.convert_text()
 
     @property
     def lvl_diff(self):
@@ -76,6 +74,8 @@ class Code(Mx.Label, PropertyAdapter):
     @base_code_length.setter
     def base_code_length(self, value):
         self._base_code_length = value
+        self.generate_code(self.base_code_length)
+        self.convert_text()
 
     def generate_code(self, code_length):
         self.code = [randint(1, 9) for i in range(int(code_length))]
