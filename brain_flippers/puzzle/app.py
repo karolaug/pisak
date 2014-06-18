@@ -3,7 +3,7 @@ import os.path
 
 from gi.repository import Clutter, Mx
 
-from pisak import switcher_app
+from pisak import switcher_app, unit
 from brain_flippers import score_manager, widgets
 
 import pisak.widgets  # @UnusedImport
@@ -225,6 +225,6 @@ class BrainPuzzleApp(switcher_app.Application):
     """
     def create_stage(self, argv):
         stage = BrainPuzzleStage(self.context)
-        stage.set_size(1366, 768)
-        #stage.set_fullscreen(True)
+        stage.set_size(unit.size_pix[0], unit.size_pix[1])
+        stage.set_fullscreen(True)
         return stage
