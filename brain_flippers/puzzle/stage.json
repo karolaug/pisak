@@ -73,6 +73,26 @@
                 "children":
                     [
                         {
+                            "type": "PisakBoxLayout",
+                            "spacing": 50,
+                            "children":
+                                [
+                                    {
+                                        "id": "level_text",
+                                        "type": "ClutterText",
+                                        "color": "#001933",
+                                        "font-name": "Arial 30",
+                                        "text": "POZIOM:"
+                                    },
+                                    {
+                                        "id": "level_value",
+                                        "type": "ClutterText",
+                                        "color": "#001933",
+                                        "font-name": "Arial 30"
+                                    }
+                                ]
+                        },
+                        {
                             "id": "image",
                             "type": "MxImage",
                             "width": 600,

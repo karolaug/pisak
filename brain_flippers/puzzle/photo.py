@@ -1,5 +1,6 @@
 from PIL import Image, ImageDraw
 
+
 class Photo(object):
     DIVISIONS = {4 : (2, 2),9 : (3, 3), 16 : (4, 4), 25 : (5, 5),
                  36 : (6, 6), 100 : (10, 10)}
@@ -11,7 +12,6 @@ class Photo(object):
         shade = Image.new('RGB', self.image.size, 'grey')
         self.shaded = Image.blend(self.image, shade, 0.7)
         self.maskDraw = ImageDraw.Draw(self.mask)
-        self.rect_div()
 
     def resize(self, size=(600, 600)):
         if self.image.size != size:

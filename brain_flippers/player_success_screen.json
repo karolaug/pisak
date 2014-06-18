@@ -5,7 +5,7 @@
         "orientation": "vertical",
         "x-expand": true,
         "y-expand": true,
-        "spacing": 30,
+        "spacing": 20,
         "margin-top": 20,
         "margin-bottom": 20,
         "margin-left": 20,
@@ -21,7 +21,7 @@
                             {
                                 "id": "player_score_text",
                                 "type": "ClutterText",
-                                "text": "TWÓJ WYNIK",
+                                "text": "TWÓJ WYNIK:",
                                 "color": "#001933",
                                 "font-name": "Sans 20"
                             },
@@ -43,7 +43,7 @@
                             {
                                 "id": "average_score_text",
                                 "type": "ClutterText",
-                                "text": "ŚREDNI WYNIK Z WYSTAWY",
+                                "text": "ŚREDNI WYNIK Z WYSTAWY:",
                                 "color": "#001933",
                                 "font-name": "Sans 20"
                             },
@@ -59,7 +59,8 @@
                 {
                     "id": "name_request",
                     "type": "ClutterText",
-                    "text": "WPISZ SWOJE INICJAŁY",
+                    "line-alignment": "center",
+                    "text": "Gratulacje!\nOsiągnąłeś bardzo dobry rezultat.\nMożesz wpisać swoje inicjały\ni trafić do bazy najlepszych wyników.",
                     "color": "#001933",
                     "font-name": "Sans 20"
                 },
