@@ -8,36 +8,29 @@ from brain_flippers.puzzle.photo import Photo
 from random import Random
 import os.path
 
+
 class PuzzleBoard(Clutter.Actor):
     __gtype_name__ = "BrainPuzzleBoard"
     __gsignals__ = {
-        "game_end": (GObject.SIGNAL_RUN_FIRST, None, ()),
-        "game_over": (GObject.SIGNAL_RUN_FIRST, None, ()),
+        "game_end": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
     
     BASE_PATH = os.path.split(__file__)[0]
     SCRIPT_PATH = os.path.join(BASE_PATH, "stage.json")
     IMAGE_PATH = os.path.join(BASE_PATH, "paisaje-wallpaper-1920x1080.jpg")
-    NR_PARTS = [4, 9, 16, 25, 36, 100]
 
     def __init__(self):
         super().__init__()
         self.player_points = 0
         self.player_errors = 0
         self.player_clock = 0
-        self.player_score = 0
-        self.player_lives = 4
-        self.player_lives_str = self.player_lives*"+ "
-        self.player_clock_ticking = False
-        self.player_clock_str = "00:00"
-        self.one_second = 1000
-        self.level = 0
+        self.player_clock_ticking = True
         self.final_delay = 2000
-        self._load_script(self.level)
-
-    def _load_script(self, level):
-        if self.get_children():
-            self.remove_all_children()
+        self._load_script()
+        one_second = 1000
+        Clutter.threads_add_timeout(0, one_second, self.update_player_clock, None)
+        
+    def _load_script(self):
         self.randomizer = Random()
         Mx.Button() # workaround for GI loader
         self.script = Clutter.Script()
@@ -45,7 +38,6 @@ class PuzzleBoard(Clutter.Actor):
         self.view_actor = self.script.get_object("main")
         self.image = self.script.get_object("image")
         self.photo = Photo(self.IMAGE_PATH)
-        self.photo.rect_div(self.NR_PARTS[level%len(self.NR_PARTS)])
         self.photo.next_square()
         self.buttons = [self.script.get_object("button{}".format(i)) 
                         for i in range(1, 5)]
@@ -55,29 +47,7 @@ class PuzzleBoard(Clutter.Actor):
         self.set_buttons_from_data()
         self.set_layout_manager(Clutter.BoxLayout())
         self.add_child(self.view_actor)
-        self._display_player_clock()
-        self._display_player_life_panel()
-        self._display_level_info()
-        self.player_clock_ticking = True
-        Clutter.threads_add_timeout(0, self.one_second, self.update_player_clock, None)
 
-    def _display_player_clock(self):
-        self.script.get_object("clock").set_text(self.player_clock_str)
-
-    def _display_player_life_panel(self):
-        self.script.get_object("life_panel").set_text(self.player_lives_str)
-
-    def _display_level_info(self):
-        self.script.get_object("level_value").set_text(str(self.level+1) + " / " + str(len(self.NR_PARTS)))
-
-    def on_life_loss(self):
-        life_panel = self.script.get_object("life_panel")
-        self.player_lives_str = life_panel.get_text()[:-2]
-        life_panel.set_text(self.player_lives_str)
-        if not life_panel.get_text():
-            self.player_clock_ticking = False
-            Clutter.threads_add_timeout(0, self.final_delay, self.end_game, None)
-            
     def set_image_from_data(self):
         data = self.photo.unshaded.tostring()
         (width, height) = self.photo.image.size
@@ -111,43 +81,21 @@ class PuzzleBoard(Clutter.Actor):
             if not self.photo.next_square():
                 for button in self.buttons:
                     button.disconnect_by_func(self.next_frame)
-                self.player_clock_ticking = False
-                Clutter.threads_add_timeout(0, self.final_delay, self.next_level, None)
+                Clutter.threads_add_timeout(0, self.final_delay, self.end_game, None)
             else:
                 self.set_image_from_data()
                 self.set_buttons_from_data()
         else:
             self.player_errors += 1
-            self.on_life_loss()
-
-    def next_level(self, *args):
-        self.level += 1
-        if self.level < len(self.NR_PARTS):
-            self._load_script(self.level)
-        else:
-            self.end_game()
-        return False
 
     def end_game(self, *args):
-        self.calculate_player_score()
+        self.player_clock_ticking = False
         self.emit("game_end")
-
-    def calculate_player_score(self):
-        limit = 300
-        error_coeff = 10
-        level_coeff = self.player_clock + limit/5
-        formula = limit - self.player_clock - error_coeff*self.player_errors + level_coeff*self.level
-        self.player_score = round(formula, 2)
+        return False
 
     def update_player_clock(self, source):
         if self.player_clock_ticking:
             self.player_clock += 1
-            minutes = str(self.player_clock//60)
-            seconds = str(self.player_clock%60)
-            minutes = (2-len(minutes)) * "0" + minutes
-            seconds = (2-len(seconds)) * "0" + seconds
-            self.player_clock_str = minutes+":"+seconds
-            self.script.get_object("clock").set_text(self.player_clock_str)
             return True
         else: 
             return False

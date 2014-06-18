@@ -1,0 +1,22 @@
+[
+    {
+	"id": "main",
+        "type": "PisakBoxLayout",
+        "orientation": "vertical",
+        "spacing": 60,
+        "children":
+	[
+	    {
+		"id": "code",
+		"type": "BrainSafeCode",
+		"base_code_length": 3,
+		"lvl_diff": 1,
+		"nr_lvl": 3
+	    },
+	    {
+		"id": "numpad",
+		"type": "BrainNumpad"
+	    }
+	]
+    }
+]

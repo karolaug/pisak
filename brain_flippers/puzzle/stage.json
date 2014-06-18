@@ -66,12 +66,61 @@
 		    }
 		]
 	    },
-	    {
-		"id": "image",
-		"type": "MxImage",
-		"width": 600,
-		"height": 600
-	    }
+            {
+                "type": "PisakBoxLayout",
+                "spacing": 10,
+                "orientation": "vertical",
+                "children":
+                    [
+                        {
+                            "type": "PisakBoxLayout",
+                            "spacing": 50,
+                            "children":
+                                [
+                                    {
+                                        "id": "level_text",
+                                        "type": "ClutterText",
+                                        "color": "#001933",
+                                        "font-name": "Arial 30",
+                                        "text": "POZIOM:"
+                                    },
+                                    {
+                                        "id": "level_value",
+                                        "type": "ClutterText",
+                                        "color": "#001933",
+                                        "font-name": "Arial 30"
+                                    }
+                                ]
+                        },
+                        {
+                            "id": "image",
+                            "type": "MxImage",
+                            "width": 600,
+                            "height": 600
+                        },
+                        {
+                            "type": "PisakBoxLayout",
+                            "spacing": 50,
+                            "children":
+                                [
+                                    {
+                                        "id": "clock",
+                                        "type": "ClutterText",
+                                        "color": "#001933",
+                                        "width": 175,
+                                        "font-name": "Arial 50"
+                                    },
+                                    {
+                                        "id": "life_panel",
+                                        "type": "ClutterText",
+                                        "width": 275,
+                                        "color": "red",
+                                        "font-name": "Arial 50"
+                                    }
+                                ]
+                        }
+                    ]
+            }
 	]
     }
 ]

@@ -29,12 +29,13 @@ class ButtonApp(switcher_app.Application):
         script = Clutter.Script()
         try:
             script.load_from_file(script_path)
-        except:
-            print("Failed to load script.")
+        except IOError as e:
+            print(e, "Failed to load script.")
             exit(2)
         stage = Clutter.Stage()
         stage.set_layout_manager(Clutter.BinLayout())
-        stage.add_child(script.get_object("main"))
+        main_actor = script.get_object("main")
+        stage.add_child(main_actor)
         return stage
 
 
