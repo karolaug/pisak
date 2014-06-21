@@ -1,0 +1,20 @@
+[
+    {
+        "id": "main",
+        "type": "ClutterActor",
+        "layou-manager": {
+            "layout": "ClutterBinLayout"
+            },
+        "children": [
+            {
+                "id": "info_text",
+                "type": "ClutterText",
+                "font-name": "Serif 60",
+                "color": "white",
+                "line-alignment": "center",
+                "line-wrap": true,
+                "text": "Zmiana reguł gry."
+            }
+        ]
+    }
+]
