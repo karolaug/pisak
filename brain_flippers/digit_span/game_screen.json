@@ -1,12 +1,24 @@
 [
     {
         "id": "status_bar",
-        "type": "MxLabel",
-        "x-expand": true,
-        "text": "STATUS"
+        "type": "BrainDigitSpanStatus",
+        "x-expand": true
+    },
+    {
+        "id": "logic",
+        "type": "BrainDigitSpanLogic",
+        "status-bar": "status_bar",
+        "code-display": "display",
+        "keypad": "keyboard",
+        "stimulus": "stimulus"
     },
     {
         "id": "main",
+        "type": "PisakBinLayout",
+        "children": ["stimulus", "main_box", "logic"]
+    },
+    {
+        "id": "main_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
         "x-expand": true,
@@ -21,13 +33,7 @@
     {
         "id": "keyboard",
         "type": "BrainNumpad",
-        "max-stride": 3,
-        "children": [
-            "digit_1", "digit_2", "digit_3",
-            "digit_4", "digit_5", "digit_6",
-            "digit_7", "digit_8", "digit_9",
-            "space_1", "digit_0", "space_2"
-        ]
+        "x-expand": true
     },
     {
         "id": "game_board",
@@ -35,54 +41,11 @@
         "orientation": "vertical",
         "children": ["display", "keyboard"]
     },
-
     {
-        "id": "digit_0","type": "BrainDigitButton", "label": "0",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_1","type": "BrainDigitButton", "label": "1",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_2","type": "BrainDigitButton", "label": "2",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_3","type": "BrainDigitButton", "label": "3",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_4","type": "BrainDigitButton", "label": "4",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_5","type": "BrainDigitButton", "label": "5",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_6","type": "BrainDigitButton", "label": "6",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_7","type": "BrainDigitButton", "label": "7",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_8","type": "BrainDigitButton", "label": "8",
-        "size": [100, 100]
-    },
-    {
-        "id": "digit_9","type": "BrainDigitButton", "label": "9",
-        "size": [100, 100]
-    },
-    
-    {
-        "id": "space_1","type": "ClutterActor",
-        "size": [100, 100]
-    },
-    {
-        "id": "space_2","type": "ClutterActor",
-        "size": [100, 100]
+        "id": "stimulus",
+        "type": "BrainDigitSpanStimulus",
+        "background-color": "gray",
+        "x-expand": true,
+        "y-expand": true
     }
 ]
