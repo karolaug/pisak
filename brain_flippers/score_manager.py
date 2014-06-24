@@ -19,7 +19,7 @@ def _query_db(query, values=None):
     return response
 
 def _create_table(game):
-    query = "CREATE TABLE " + game + " IF NOT EXISTS"
+    query = "CREATE TABLE IF NOT EXISTS " + game + "(date TEXT, name TEXT, score REAL)"
     _query_db(query)
     
 def add_record(game, name, score):
