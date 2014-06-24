@@ -2,8 +2,8 @@
 Widgets dedicated for Safe game
 '''
 from gi.repository import Mx, Clutter, GObject
-from random import randint
-from pisak import widgets
+import pisak.widgets
+from brain_flippers import widgets
 import random
 import time
 
@@ -41,7 +41,7 @@ class Numpad(Clutter.Actor):
         self.emit("digit", int(button.get_label()))
 
 
-class Code(Mx.Label, widgets.PropertyAdapter):
+class Code(Mx.Label, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "BrainSafeCode"
     __gproperties__ = {"base_code_length": (GObject.TYPE_INT64,
                                             "code length",
@@ -137,6 +137,7 @@ class Stimulus(Clutter.Actor):
     
     def __init__(self):
         super().__init__()
+        self.stop_time = None
         self._init_layout()
         self._init_elements()
         
@@ -153,7 +154,7 @@ class Stimulus(Clutter.Actor):
         self._code = code
         self._index = 0
         self._show_digit()
-        Clutter.threads_add_timeout(0, 1000, self._show_next_digit, None)
+        Clutter.threads_add_timeout(0, 1200, self._show_next_digit, None)
     
     def _show_digit(self):
         digit_text = str(self._code[self._index])
@@ -167,19 +168,21 @@ class Stimulus(Clutter.Actor):
             return True
         else:
             self.hide()
+            self.stop_time = time.time()
             return False
 
 
-class Logic(Clutter.Actor, widgets.PropertyAdapter):
+class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "BrainDigitSpanLogic"
-    
+
     __gproperties__ = {
         "status-bar": (Statusbar.__gtype__, "", "", GObject.PARAM_READWRITE),
         "stimulus": (Stimulus.__gtype__, "", "", GObject.PARAM_READWRITE),
         "code-display": (Code.__gtype__, "", "", GObject.PARAM_READWRITE),
-        "keypad": (Numpad.__gtype__, "", "", GObject.PARAM_READWRITE)
+        "keypad": (Numpad.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "score-summary": (widgets.ScoreSummary.__gtype__, "", "", GObject.PARAM_READWRITE)
     }
-    
+
     def __init__(self):
         super().__init__()
         self.set_fixed_position_set(True)  # bypass layout manager
@@ -189,40 +192,61 @@ class Logic(Clutter.Actor, widgets.PropertyAdapter):
         self.keypad = None
         self.connect("notify::mapped", self._initialize_game)
         #self._ready_id = self.connect("parent-set", self._get_ready)
-    
+
     def _get_ready(self, source, old_parent):
         source.disconnect(self._ready_id)
         if self.get_stage():
             self.get_stage().connect("show", self._initialize_game)
         else:
             self._ready_id = source.get_parent().connect("parent-set", self._get_ready)
-    
+
     def _initialize_game(self, *args):
         self.score = 0
-        self.code = self.generate_code(4)
-        self.entered_code = []
+        self.success_count = 0
+        self.trials = 0
         self.status_bar.score = self.score
+        self.code_length = 3
+        self._start_round()
+
+    def _start_round(self):
+        self.code = self.generate_code(self.code_length)
+        self.entered_code = []
         self.code_display.clear()
         self._key_handle = self.keypad.connect("digit", self._keypad_digit)
         self.stimulus.show_code(self.code)
-    
+
     def _keypad_digit(self, keypad, digit):
         self.entered_code.append(digit)
         self.code_display.append(digit)
         if len(self.code) <= len(self.entered_code):
             self.keypad.disconnect(self._key_handle)
+            self.trials += 1
             if self.code == self.entered_code:
+                self.code_length += 1
+                self.success_count += 1
                 self.feedback_good()
             else:
                 self.feedback_bad()
-            self._initialize_game()
-    
+
     def feedback_good(self):
-        print("dobrze")
-    
+        solving_time = time.time() - self.stimulus.stop_time
+        print("czas: ", solving_time)
+        base_score = self.code_length * 2
+        print("punkty bazowe", base_score)
+        time_bonus = max(int((self.code_length * 2 - solving_time) * 3), 0)
+        print("bonus czasowy: ", time_bonus)
+        ratio_bonus = int(max((self.success_count / self.trials) - 0.5, 0) * self.code_length)
+        print("bonus za efektywność:", ratio_bonus)
+        round_score = base_score + time_bonus + ratio_bonus
+        print("punkty za rundę:", round_score)
+        self.score += round_score
+        print("suma punktów:", self.score)
+        self.score_summary.display_score({}, self.score)
+
     def feedback_bad(self):
         print("źle")
-                
+        self._start_round()
+
     @staticmethod
     def generate_code(length):
         return [random.choice(range(1, 10)) for _ in range(length)]
@@ -250,11 +274,20 @@ class Logic(Clutter.Actor, widgets.PropertyAdapter):
     @stimulus.setter
     def stimulus(self, value):
         self._stimulus = value
-    
+
     @property
     def keypad(self):
         return self._keypad
-    
+
     @keypad.setter
     def keypad(self, value):
         self._keypad = value
+
+    @property
+    def score_summary(self):
+        return self._score_summary
+
+    @score_summary.setter
+    def score_summary(self, value):
+        self._score_summary = value
+
