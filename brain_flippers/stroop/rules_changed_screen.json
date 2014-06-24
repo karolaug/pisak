@@ -1,7 +1,15 @@
 [
     {
         "id": "main",
-        "type": "ClutterActor",
+        "type": "PisakBoxLayout",
+	"orientation": "vertical",
+        "x-expand": true,
+        "y-expand": true,
+	"spacing": 40,
+        "margin-top": 30,
+        "margin-bottom": 30,
+        "margin-left": 30,
+        "margin-right": 30,
         "layou-manager": {
             "layout": "ClutterBinLayout"
             },
@@ -14,7 +22,14 @@
                 "line-alignment": "center",
                 "line-wrap": true,
                 "text": "Zmiana reguł gry."
-            }
+            },
+	    {
+		"id": "start_button",
+		"type": "BrainPuzzleButton",
+		"label": "START",
+		"width": 200,
+		"height": 100
+	    }
         ]
     }
 ]

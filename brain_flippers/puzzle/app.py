@@ -22,8 +22,17 @@ VIEW_PATHS = {
 
 class BrainPuzzleStage(Clutter.Stage):
     INITIAL_VIEW = "welcome_screen"
-    WELCOME_TEXT = "Przed Tobą zadanie wymagające wyobraźni, sprytu i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku niewyraźne i jakby za mgłą, a obok niego cztery puzzle. Twoim zadaniem będzie odtworzyć stopniowo, po fragmencie, cały obraz, tak żeby miał ręce i nogi i wszystko było na właściwym miejscu, poprzez dopasowanie za każdym razem któregoś z czterech zaproponowanych kawałków. Ale uważaj! Choć na pierwszy rzut oka może Ci się wydawać inaczej, nie jest to wcale takie proste i za każdym razem tylko jedna z podanych opcji jest właściwa.\nPamiętaj także, żeby podejmować decyzje szybko, bo czas płynie.\nPowodzenia!"
-    CONSOLATION_TEXT = "Niestety.\nStraciłeś wszystkie życia i umarłeś.\nMimo wszystko nie poddawaj się i spróbuj jeszcze raz!"
+    WELCOME_TEXT = """Przed Tobą zadanie wymagające wyobraźni, sprytu 
+i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
+ niewyraźne i jakby za mgłą, a obok niego cztery puzzle. Twoim zadaniem
+ będzie odtworzyć stopniowo, po fragmencie, cały obraz, tak żeby miał
+ ręce i nogi i wszystko było na właściwym miejscu, poprzez dopasowanie
+ za każdym razem któregoś z czterech zaproponowanych kawałków. Ale uważaj!
+ Choć na pierwszy rzut oka może Ci się wydawać inaczej, nie jest to wcale
+ takie proste i za każdym razem tylko jedna z podanych opcji jest właściwa.
+\nPamiętaj także, żeby podejmować decyzje szybko, bo czas płynie.\nPowodzenia!"""
+    CONSOLATION_TEXT = """Niestety.\nStraciłeś wszystkie życia i umarłeś.\nMimo
+ wszystko nie poddawaj się i spróbuj jeszcze raz!"""
     
     def __init__(self, context):
         super().__init__()
