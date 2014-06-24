@@ -10,12 +10,13 @@
         "status-bar": "status_bar",
         "code-display": "display",
         "keypad": "keyboard",
-        "stimulus": "stimulus"
+        "stimulus": "stimulus",
+        "score-summary": "score_summary"
     },
     {
         "id": "main",
         "type": "PisakBinLayout",
-        "children": ["stimulus", "main_box", "logic"]
+        "children": ["stimulus", "main_box", "logic", "score_summary"]
     },
     {
         "id": "main_box",
@@ -45,6 +46,14 @@
         "id": "stimulus",
         "type": "BrainDigitSpanStimulus",
         "background-color": "gray",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "score_summary",
+        "type": "BrainScoreSummary",
+        "background-color": "green",
+        "visible": false,
         "x-expand": true,
         "y-expand": true
     }
