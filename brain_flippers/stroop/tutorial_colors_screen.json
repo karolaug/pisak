@@ -1,0 +1,78 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBoxLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "orientation": "vertical",
+        "spacing": 200,
+        "margin-top": 30,
+        "margin-bottom": 30,
+        "margin-left": 30,
+        "margin-right": 30,
+        "children": [
+            {
+                "type": "PisakBoxLayout",
+                "spacing": 30,
+                "children": [
+                    {
+                        "id": "info_text",
+                        "type": "ClutterText",
+                        "color": "white",
+                        "font-name": "Serif 30"
+                    },
+                    {
+                        "id": "next_button",
+                        "type": "BrainPuzzleButton",
+                        "label": "DALEJ",
+                        "width": 200,
+                        "height": 100
+                    }
+                ]
+            },
+	    {
+		"id": "color_text",
+		"type": "ClutterText",
+		"font-name": "Serif 30"
+	    },
+            {
+                "id": "color_fields",
+                "type": "PisakBoxLayout",
+                "spacing": 40,
+                "x-expand": true,
+                "y-expand": true,
+                "x-align": "center",
+                "children": [
+                    {
+                        "id": "red",
+                        "type": "ClutterActor",
+                        "background-color": "#FF0000",
+                        "width": 200,
+                        "height": 100
+                    },
+                    {
+                        "id": "yellow",
+                        "type": "ClutterActor",
+                        "background-color": "#FFFF00",
+                        "width": 200,
+                        "height": 100
+                    },
+                    {
+                        "id": "green",
+                        "type": "ClutterActor",
+                        "background-color": "#00FF00",
+                        "width": 200,
+                        "height": 100
+                    },
+                    {
+                        "id": "blue",
+                        "type": "ClutterActor",
+                        "background-color": "#0000FF",
+                        "width": 200,
+                        "height": 100
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -10,6 +10,9 @@ from brain_flippers import widgets
 
 import pisak.layout  # @UnusedImport
 
+WELCOME_TEXT = "Witaj w grze Stroop."
+INDEX_FINGER_PATH = "brain_flippers/stroop/index_finger.png"
+LIFE_UNICHAR = u"\u2764"
 VIEW_PATHS = {
     "game": "brain_flippers/stroop/main_game_screen.json",
     "colors": "brain_flippers/stroop/colors_screen.json",
@@ -18,7 +21,8 @@ VIEW_PATHS = {
     "high_scores": "brain_flippers/high_scores_screen.json",
     "player_success": "brain_flippers/player_success_screen.json",
     "player_fail": "brain_flippers/player_fail_screen.json",
-    "tutorial": "brain_flippers/stroop/main_tutorial_screen.json"
+    "tutorial": "brain_flippers/stroop/main_tutorial_screen.json",
+    "tutorial_colors": "brain_flippers/stroop/tutorial_colors_screen.json"
 }
 COLOR_MAP = {
     "czerwony": Clutter.Color.from_string("#FF0000")[1],
@@ -32,7 +36,6 @@ RULES_CHANGED_TEXT = {
     "1": "Zasady gry ulegają zmianie.\nIgnoruj kolor słowa,\n"
          "zwracaj uwagę na jego znaczenie."
 }
-WELCOME_TEXT = "Witaj w grze Stroop."
 
 class BrainStroopGame(Clutter.Actor):
     __gtype_name__ = "BrainStroopGame"
@@ -59,8 +62,8 @@ class BrainStroopGame(Clutter.Actor):
         self.levels = 1
         self.laps_per_mode = 8
         self.player_lives = 4
+        self.player_lives_left = self.player_lives
         self.rules_changed_view_idle = 2000
-        self.player_lives_str = self.player_lives*"+ "
 
     def _load_view_from_script(self, name):
         self.script = Clutter.Script()
@@ -96,7 +99,9 @@ class BrainStroopGame(Clutter.Actor):
             return False
         
     def display_player_life_panel(self):
-        self.script.get_object("life_panel").set_text(self.player_lives_str)
+        life_panel = self.script.get_object("life_panel")
+        for life in range(self.player_lives_left):
+            life_panel.insert_unichar(LIFE_UNICHAR)
         
     def enable_color_view(self):
         for field in self.script.get_object("color_fields").get_children():
@@ -157,9 +162,9 @@ class BrainStroopGame(Clutter.Actor):
 
     def on_life_loss(self):
         life_panel = self.script.get_object("life_panel")
-        self.player_lives_str = life_panel.get_text()[:-2]
-        life_panel.set_text(self.player_lives_str)
-        if not life_panel.get_text():
+        self.player_lives_left -= 1
+        life_panel.set_text(life_panel.get_text()[:-1])
+        if not self.player_lives_left:
             self.end_game()
 
     def end_game(self):
@@ -178,7 +183,42 @@ class BrainStroopTutorial(Clutter.Actor):
     
     def __init__(self):
         super().__init__()
-    
+        self.set_layout_manager(Clutter.BinLayout())
+        self.view_num = 0
+        self.views = 3
+        self._load_script()
+        self._init_index_finger()
+        self.reload_view()
+
+    def _load_script(self):
+        self.script = Clutter.Script()
+        self.script.load_from_file(VIEW_PATHS["tutorial_colors"])
+        view_actor = self.script.get_object("main")
+        self.add_child(view_actor)
+
+    def _init_index_finger(self):
+        self.index_finger = Mx.Image()
+        self.index_finger.set_from_file(INDEX_FINGER_PATH)
+
+    def reload_view(self):
+        self.enable_view()
+        self.adjust_view()
+
+    def adjust_view(self):
+        self.script.get_object("red").add_child(self.index_finger)
+        color_text = self.script.get_object("color_text")
+        color_text.set_color(COLOR_MAP["zielony"])
+        color_text.set_text("zielony")
+        info_text = self.script.get_object("info_text")
+        info_text.set_text("Instrukcja")
+
+    def enable_view(self):
+        next_button = self.script.get_object("next_button")
+        next_button.connect("activate", self.on_button_activate)
+
+    def on_button_activate(self, *args):
+        self.emit("tutorial-end")
+        
 
 class BrainStroopStage(Clutter.Stage):
     def __init__(self, context):
