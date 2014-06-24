@@ -43,6 +43,7 @@ class BrainStroopGame(Clutter.Actor):
     
     def __init__(self):
         super().__init__()
+        self.set_layout_manager(Clutter.BinLayout())
         self._init_parameters()
         self.enter_colors_view()
 
