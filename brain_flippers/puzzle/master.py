@@ -18,6 +18,7 @@ class PuzzleBoard(Clutter.Actor):
     BASE_PATH = os.path.split(__file__)[0]
     SCRIPT_PATH = os.path.join(BASE_PATH, "stage.json")
     IMAGE_PATH = os.path.join(BASE_PATH, "paisaje-wallpaper-1920x1080.jpg")
+    PLAYER_LIFE_UNICHAR = u"\u2764"
     NR_PARTS = [4, 9, 16, 25, 36, 100]
 
     def __init__(self):
@@ -27,7 +28,7 @@ class PuzzleBoard(Clutter.Actor):
         self.player_clock = 0
         self.player_score = 0
         self.player_lives = 4
-        self.player_lives_str = self.player_lives*"+ "
+        self.player_lives_left = self.player_lives
         self.player_clock_ticking = False
         self.player_clock_str = "00:00"
         self.one_second = 1000
@@ -65,16 +66,18 @@ class PuzzleBoard(Clutter.Actor):
         self.script.get_object("clock").set_text(self.player_clock_str)
 
     def _display_player_life_panel(self):
-        self.script.get_object("life_panel").set_text(self.player_lives_str)
+        life_panel = self.script.get_object("life_panel")
+        for life in range(self.player_lives_left):
+            life_panel.insert_unichar(self.PLAYER_LIFE_UNICHAR)
 
     def _display_level_info(self):
         self.script.get_object("level_value").set_text(str(self.level+1) + " / " + str(len(self.NR_PARTS)))
 
     def on_life_loss(self):
         life_panel = self.script.get_object("life_panel")
-        self.player_lives_str = life_panel.get_text()[:-2]
-        life_panel.set_text(self.player_lives_str)
-        if not life_panel.get_text():
+        self.player_lives_left -= 1
+        life_panel.set_text(life_panel.get_text()[:-1])
+        if not self.player_lives_left:
             self.player_clock_ticking = False
             Clutter.threads_add_timeout(0, self.final_delay, self.end_game, None)
             

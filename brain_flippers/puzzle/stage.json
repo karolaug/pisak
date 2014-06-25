@@ -80,14 +80,14 @@
                                     {
                                         "id": "level_text",
                                         "type": "ClutterText",
-                                        "color": "#001933",
+                                        "color": "white",
                                         "font-name": "Arial 30",
                                         "text": "POZIOM:"
                                     },
                                     {
                                         "id": "level_value",
                                         "type": "ClutterText",
-                                        "color": "#001933",
+                                        "color": "white",
                                         "font-name": "Arial 30"
                                     }
                                 ]
@@ -106,7 +106,7 @@
                                     {
                                         "id": "clock",
                                         "type": "ClutterText",
-                                        "color": "#001933",
+                                        "color": "white",
                                         "width": 175,
                                         "font-name": "Arial 50"
                                     },
