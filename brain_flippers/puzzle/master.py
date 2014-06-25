@@ -33,7 +33,7 @@ class PuzzleBoard(Clutter.Actor):
         self.player_clock_str = "00:00"
         self.one_second = 1000
         self.level = 0
-        self.final_delay = 2000
+        self.final_delay = 100
         self._load_script(self.level)
 
     def _load_script(self, level):
