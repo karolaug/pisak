@@ -89,6 +89,7 @@ class PuzzleBoard(Clutter.Actor):
                                  height, row_stride)
 
     def set_buttons_from_data(self):
+        margin = Clutter.Margin.new()
         mirror = Image.FLIP_LEFT_RIGHT
         rotation_fakes = [0, 90, 180, 270]
         rotation_right = [90, 180, 270]
@@ -103,10 +104,13 @@ class PuzzleBoard(Clutter.Actor):
             img = [i for i in button.get_children() if type(i) == Mx.Image][0]
             data = part_photo[0].tostring()
             (width, height) = part_photo[0].size
+            print(width, height)
             row_stride = len(data) / height
+            img.set_scale_mode(1)
             img.set_from_data(data, Cogl.PixelFormat.RGB_888, width, height,
                               row_stride)
             button.status = part_photo[1]
+            
 
     def next_frame(self, button):
         if button.status:
