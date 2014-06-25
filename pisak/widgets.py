@@ -459,7 +459,8 @@ class PagedTileView(Clutter.Actor):
         self.page_actor = None
         self.items = []
         self.page_interval = None
-        self.pages_current, self.pages_old = set(), set()
+        self.pages_current = set()
+        self.pages_old = set()
         self.tile_handler = None
         self._init_tiles()
         self._paginate_items()

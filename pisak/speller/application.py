@@ -53,18 +53,15 @@ class ButtonBlock(Clutter.Actor):
         raise NotImplementedError()
     
     def hilite_on(self):
-        buttons = self.get_children()
-        for b in buttons:
+        for b in self.get_children():
             b.hilite_on()
 
     def hilite_off(self):
-        buttons = self.get_children()
-        for b in buttons:
+        for b in self.get_children():
             b.hilite_off()
 
     def select_on(self):
-        buttons = self.get_children()
-        for b in buttons:
+        for b in self.get_children():
             b.select_on()
 
     def create_cycle(self):
@@ -400,9 +397,7 @@ class MainView(Clutter.Actor):
         return MainViewCycle(self)
 
     def create_initial_cycle(self):
-        cycle = self.create_cycle()
-        return cycle
-
+        return self.create_cycle()
 
 class MainViewCycle(switcher_app.Cycle):
     interval = 1000
