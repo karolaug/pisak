@@ -243,9 +243,10 @@ class BrainStroopTutorial(Clutter.Actor):
             
     def enable_view(self):
         next_button = self.script.get_object("next_button")
-        if self.view_num in (0, 1):
+        if self.view_num == 0:
             next_button.connect("activate", self.next_page)
         elif self.view_num == 2:
+            next_button.disconnect_by_func(self.next_page)
             next_button.connect("activate", self.end_tutorial)
 
     def end_tutorial(self, *args):
