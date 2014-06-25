@@ -124,6 +124,13 @@ class Text(Mx.Label):
         """
         self.clutter_text.insert_text(text, -1)
 
+    def type_unicode_char(self, char):
+        """
+        Append the given unicode char to the text buffer
+        @param char unicode char in the form of unicode escape sequence
+        """    
+        self.clutter_text.insert_unichar(char)
+
     def delete_char(self):
         """
         Delete the endmost single character
