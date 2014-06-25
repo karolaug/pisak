@@ -126,8 +126,8 @@ class Text(Mx.Label):
 
     def type_unicode_char(self, char):
         """
-        Append the given unicode char to the text buffer
-        @param char unicode char in the form of unicode escape sequence
+        Append the given unicode character to the text buffer
+        @param char unicode character in the form of unicode escape sequence
         """    
         self.clutter_text.insert_unichar(char)
 
