@@ -109,6 +109,11 @@ class BrainStroopGame(Clutter.Actor):
         color_text_entry.set_text(self.color_names_chain.pop(0))
         color_text_entry.set_color(self.color_values_chain.pop(0))
 
+    def enable_color_view(self):
+        for field in self.script.get_object("color_fields").get_children():
+            field.connect("button-press-event", self.on_player_choice)
+            field.set_reactive(True)
+
     def update_player_clock(self, *args):
         self.player_clock += 1
         if self.player_clock_ticking:
@@ -120,11 +125,6 @@ class BrainStroopGame(Clutter.Actor):
         life_panel = self.script.get_object("life_panel")
         for life in range(self.player_lives_left):
             life_panel.insert_unichar(PLAYER_LIFE_UNICHAR)
-        
-    def enable_color_view(self):
-        for field in self.script.get_object("color_fields").get_children():
-            field.connect("button-press-event", self.on_player_choice)
-            field.set_reactive(True)
 
     def enter_rules_changed_view(self):
         self.player_clock_ticking = False
@@ -140,44 +140,44 @@ class BrainStroopGame(Clutter.Actor):
         start_button.connect("activate", self.enter_colors_view)
 
     def on_player_choice(self, field, event):
+        self.lap += 1
+        field_color = field.get_background_color()
         if self.mode == 0:
-            field_color = field.get_background_color()
-            text_color = self.script.get_object("color_text").get_color()
-            if Clutter.Color.equal(field_color, text_color):
-                self.lap += 1
-                if self.lap == self.laps_per_mode:
-                    self.lap = 0
-                    self.mode = 1
-                    self.enter_rules_changed_view()
-                elif self.lap < self.laps_per_mode:
-                    self.adjust_colors_view()
-            else:
-                self.on_life_loss()
+            requested_color = self.script.get_object("color_text").get_color()
         elif self.mode == 1:
-            field_color = field.get_background_color()
-            color_name = COLORS_MAP[self.script.get_object("color_text").get_text()]
-            if Clutter.Color.equal(field_color, color_name):
-                self.lap += 1
-                if self.lap == self.laps_per_mode:
-                    self.lap = 0
-                    self.mode = 0
-                    self.level += 1
-                    if self.level == self.levels:
-                        self.end_game()
-                    elif self.level < self.levels:
-                        self.enter_rules_changed_view()
-                elif self.lap < self.laps_per_mode:
-                    self.adjust_colors_view()
-            else:
-                self.on_life_loss()
+            requested_color = COLORS_MAP[self.script.get_object("color_text").get_text()]
+        if Clutter.Color.equal(field_color, requested_color):
+            self.on_correct_answer()
+        else:
+            self.on_life_loss()
 
+    def on_correct_answer(self):
+        self.move_on()
+        
     def on_life_loss(self):
         life_panel = self.script.get_object("life_panel")
         self.player_lives_left -= 1
         life_panel.set_text(life_panel.get_text()[:-1])
         if not self.player_lives_left:
             self.end_game()
+        else:
+            self.move_on()
 
+    def move_on(self):
+        if self.lap == self.laps_per_mode:
+            self.lap = 0
+            if self.mode == 0:
+                self.mode = 1
+            elif self.mode == 1:
+                self.mode = 0
+                self.level += 1
+                if self.level == self.levels:
+                    self.end_game()
+                    return
+            self.enter_rules_changed_view()
+        elif self.lap < self.laps_per_mode:
+            self.adjust_colors_view()
+                        
     def end_game(self):
         self.calculate_player_score()
         self.emit("game_end")
