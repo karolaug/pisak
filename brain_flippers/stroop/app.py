@@ -136,13 +136,6 @@ class BrainStroopGame(Clutter.Actor):
         start_button = self.script.get_object("start_button")
         start_button.connect("activate", self.enter_colors_view)
 
-    """def on_idle_timeout(self):
-        self.lap += 1
-        if self.lap == self.laps_per_mode:
-
-         elif self.lap < self.laps_per_mode:
-            self.adjust_colors_view()"""
-
     def on_player_choice(self, field, event):
         if self.mode == 0:
             field_color = field.get_background_color()
@@ -199,8 +192,7 @@ class BrainStroopTutorial(Clutter.Actor):
     def __init__(self):
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
-        self.view_num = 0
-        self.views = 3
+        self._init_parameters()
         self._load_script()
         self._init_index_finger()
         self.reload_view()
@@ -210,6 +202,10 @@ class BrainStroopTutorial(Clutter.Actor):
         self.script.load_from_file(VIEW_PATHS["tutorial_colors"])
         view_actor = self.script.get_object("main")
         self.add_child(view_actor)
+
+    def _init_parameters(self):
+        self.view_num = 0
+        self.views = 3
 
     def _init_index_finger(self):
         self.index_finger = Mx.Image()
