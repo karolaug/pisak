@@ -18,6 +18,7 @@ class PuzzleBoard(Clutter.Actor):
     BASE_PATH = os.path.split(__file__)[0]
     SCRIPT_PATH = os.path.join(BASE_PATH, "stage.json")
     IMAGE_PATH = os.path.join(BASE_PATH, "paisaje-wallpaper-1920x1080.jpg")
+    PLAYER_LIFE_UNICHAR = u"\u2764"
     NR_PARTS = [4, 9, 16, 25, 36, 100]
 
     def __init__(self):
@@ -27,12 +28,12 @@ class PuzzleBoard(Clutter.Actor):
         self.player_clock = 0
         self.player_score = 0
         self.player_lives = 4
-        self.player_lives_str = self.player_lives*"+ "
+        self.player_lives_left = self.player_lives
         self.player_clock_ticking = False
         self.player_clock_str = "00:00"
         self.one_second = 1000
         self.level = 0
-        self.final_delay = 2000
+        self.final_delay = 100
         self._load_script(self.level)
 
     def _load_script(self, level):
@@ -65,16 +66,18 @@ class PuzzleBoard(Clutter.Actor):
         self.script.get_object("clock").set_text(self.player_clock_str)
 
     def _display_player_life_panel(self):
-        self.script.get_object("life_panel").set_text(self.player_lives_str)
+        life_panel = self.script.get_object("life_panel")
+        for life in range(self.player_lives_left):
+            life_panel.insert_unichar(self.PLAYER_LIFE_UNICHAR)
 
     def _display_level_info(self):
         self.script.get_object("level_value").set_text(str(self.level+1) + " / " + str(len(self.NR_PARTS)))
 
     def on_life_loss(self):
         life_panel = self.script.get_object("life_panel")
-        self.player_lives_str = life_panel.get_text()[:-2]
-        life_panel.set_text(self.player_lives_str)
-        if not life_panel.get_text():
+        self.player_lives_left -= 1
+        life_panel.set_text(life_panel.get_text()[:-1])
+        if not self.player_lives_left:
             self.player_clock_ticking = False
             Clutter.threads_add_timeout(0, self.final_delay, self.end_game, None)
             
@@ -86,6 +89,7 @@ class PuzzleBoard(Clutter.Actor):
                                  height, row_stride)
 
     def set_buttons_from_data(self):
+        margin = Clutter.Margin.new()
         mirror = Image.FLIP_LEFT_RIGHT
         rotation_fakes = [0, 90, 180, 270]
         rotation_right = [90, 180, 270]
@@ -100,10 +104,13 @@ class PuzzleBoard(Clutter.Actor):
             img = [i for i in button.get_children() if type(i) == Mx.Image][0]
             data = part_photo[0].tostring()
             (width, height) = part_photo[0].size
+            print(width, height)
             row_stride = len(data) / height
+            img.set_scale_mode(1)
             img.set_from_data(data, Cogl.PixelFormat.RGB_888, width, height,
                               row_stride)
             button.status = part_photo[1]
+            
 
     def next_frame(self, button):
         if button.status:

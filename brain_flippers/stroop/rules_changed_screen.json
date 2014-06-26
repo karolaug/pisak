@@ -5,19 +5,16 @@
 	"orientation": "vertical",
         "x-expand": true,
         "y-expand": true,
-	"spacing": 40,
-        "margin-top": 30,
+	"spacing": 150,
+        "margin-top": 100,
         "margin-bottom": 30,
         "margin-left": 30,
         "margin-right": 30,
-        "layou-manager": {
-            "layout": "ClutterBinLayout"
-            },
         "children": [
             {
                 "id": "info_text",
                 "type": "ClutterText",
-                "font-name": "Serif 60",
+                "font-name": "Serif 40",
                 "color": "white",
                 "line-alignment": "center",
                 "line-wrap": true,
@@ -27,7 +24,7 @@
 		"id": "start_button",
 		"type": "BrainPuzzleButton",
 		"label": "START",
-		"width": 200,
+		"width": 300,
 		"height": 100
 	    }
         ]

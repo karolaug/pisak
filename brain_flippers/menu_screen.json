@@ -5,40 +5,46 @@
         "x-expand": true,
         "y-expand": true,
         "orientation": "vertical",
-        "spacing": 50,
-        "margin-top": 100,
-        "margin-bottom": 100,
-        "margin-left": 30,
-        "margin-right": 30,
+        "spacing": 200,
+	"margin-top": 100,
         "children": [
-            {
+	    {
                 "id": "welcome_text",
                 "type": "ClutterText",
                 "font-name": "Sans 30",
-                "text": "GRA xx",
+              	"text": "GRA xx",
 		"color": "white"
             },
-            {
-                "id": "start_button",
-                "type": "BrainPuzzleButton",
-                "label": "GRAJ",
-                "width": 150,
-                "height": 50
-            },
-            {
-                "id": "tutorial_button",
-                "type": "BrainPuzzleButton",
-                "label": "INSTRUKCJA",
-                "width": 150,
-                "height": 50
-            },
-            {
-                "id": "score_table_button",
-                "type": "BrainPuzzleButton",
-                "label": "TABELA WYNIKÓW",
-                "width": 150,
-                "height": 50
-            }
+	    {
+		"type": "PisakBoxLayout",
+        	"x-expand": true,
+        	"y-expand": true,
+        	"orientation": "vertical",
+        	"spacing": 70,
+		"children": [
+            		{
+               			"id": "start_button",
+               			"type": "BrainPuzzleButton",
+               			"label": "GRAJ",
+                		"width": 300,
+                		"height": 100
+            		},
+           		{
+                		"id": "tutorial_button",
+                		"type": "BrainPuzzleButton",
+                		"label": "INSTRUKCJA",
+                		"width": 300,
+                		"height": 100
+            		},
+            		{
+                		"id": "score_table_button",
+                		"type": "BrainPuzzleButton",
+                		"label": "TABELA WYNIKÓW",
+                		"width": 300,
+                		"height": 100
+            		}
+		]
+	    }
         ]
     }
 ]

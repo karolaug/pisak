@@ -19,7 +19,8 @@
                         "id": "info_text",
                         "type": "ClutterText",
                         "color": "white",
-                        "font-name": "Serif 30"
+			"width": 900,
+                        "font-name": "Serif 20"
                     },
                     {
                         "id": "next_button",
@@ -33,7 +34,7 @@
 	    {
 		"id": "color_text",
 		"type": "ClutterText",
-		"font-name": "Serif 30"
+		"font-name": "Serif 50"
 	    },
             {
                 "id": "color_fields",

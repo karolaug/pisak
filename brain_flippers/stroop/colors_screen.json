@@ -5,16 +5,16 @@
         "x-expand": true,
         "y-expand": true,
         "orientation": "vertical",
-        "spacing": 50,
+        "spacing": 220,
         "margin-top": 30,
         "margin-bottom": 30,
-        "margin-left": 30,
-        "margin-right": 30,
+        "margin-left": 100,
+        "margin-right": 100,
         "children": [
             {
                 "id": "life_panel",
                 "type": "ClutterText",
-                "x-expand": true,
+                "width": 700,
                 "x-align": "start",
                 "color": "red",
                 "font-name": "Arial 50"
@@ -22,10 +22,6 @@
             {
                 "id": "color_text",
                 "type": "ClutterText",
-                "x-expand": true,
-                "x-align": "center",
-                "margin-top": 200,
-                "margin-bottom": 200,
                 "font-name": "Sans 60"
             },
             {

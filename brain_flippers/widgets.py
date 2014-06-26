@@ -19,15 +19,15 @@ class PuzzleButton(Clutter.Actor):
 
     def __init__(self):
         super().__init__()
-        self.r, self.g, self.b, self.a = 0, 0.1, 0.2, 0.5
+        self.r, self.g, self.b, self.a = 0.21, 0.69, 0.87, 0.5
         self.label_font = "Sans 20"
         self.hilite_duration = 1000
         self.set_layout_manager(Clutter.BinLayout())
         self._init_canvas()
         self._init_label_entry()
         self.set_reactive(True)
-        self.connect("button-press-event", self.event_activate)
-        self.connect("touch-event", self.event_activate)
+        self.connect("button-press-event", self.fire_activate)
+        self.connect("touch-event", self.fire_activate)
 
     def _init_canvas(self):
         canvas = Clutter.Canvas()
@@ -55,8 +55,14 @@ class PuzzleButton(Clutter.Actor):
         context.stroke()
         return True
 
-    def update_label(self):
+    def _update_label(self):
         self.label_entry.set_text(self.label)
+
+    def set_label(self, label):
+        self.label = label
+
+    def get_label(self):
+        return self.label
 
     @property
     def label(self):
@@ -65,7 +71,7 @@ class PuzzleButton(Clutter.Actor):
     @label.setter
     def label(self, value):
         self._label = value
-        self.update_label()
+        self._update_label()
 
     def do_set_property(self, spec, value):
         """
@@ -87,7 +93,7 @@ class PuzzleButton(Clutter.Actor):
         else:
             raise ValueError("No such property", spec.name.replace("-", "_"))
 
-    def event_activate(self, source, event):
+    def fire_activate(self, source, event):
         if isinstance(event, Clutter.TouchEvent):
             if event.type != 13:  # touch-begin type of event
                 return None

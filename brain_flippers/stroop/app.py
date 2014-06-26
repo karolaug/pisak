@@ -10,9 +10,9 @@ from brain_flippers import widgets
 
 import pisak.layout  # @UnusedImport
 
-WELCOME_TEXT = "Witaj w grze Stroop."
-INDEX_FINGER_PATH = "brain_flippers/stroop/index_finger.png"
-LIFE_UNICHAR = u"\u2764"
+WELCOME_TEXT = "WITAJ W GRZE STROOP."
+INDEX_FINGER_ICON_PATH = "brain_flippers/stroop/index_finger.png"
+PLAYER_LIFE_UNICHAR = u"\u2764"
 VIEW_PATHS = {
     "game": "brain_flippers/stroop/main_game_screen.json",
     "colors": "brain_flippers/stroop/colors_screen.json",
@@ -24,17 +24,32 @@ VIEW_PATHS = {
     "tutorial": "brain_flippers/stroop/main_tutorial_screen.json",
     "tutorial_colors": "brain_flippers/stroop/tutorial_colors_screen.json"
 }
-COLOR_MAP = {
+COLORS_MAP = {
     "czerwony": Clutter.Color.from_string("#FF0000")[1],
     "żółty": Clutter.Color.from_string("#FFFF00")[1],
     "zielony": Clutter.Color.from_string("#00FF00")[1],
     "niebieski": Clutter.Color.from_string("#0000FF")[1]
 }
 RULES_CHANGED_TEXT = {
-    "0": "Zasady gry ulegają zmianie.\nIgnoruj znaczenie słowa,\n"
-         "zwracaj uwagę na jego kolor.",
-    "1": "Zasady gry ulegają zmianie.\nIgnoruj kolor słowa,\n"
-         "zwracaj uwagę na jego znaczenie."
+    "0": "UWAGA! ZMIANA REGUŁ GRY!\n"
+         "REAGUJ NA NA KOLOR SŁÓW\n"
+         "WYBIERAJĄC ODPOWIEDNIE POLA.\n"
+         "IGNORUJ ICH ZNACZENIE.",
+    "1": "UWAGA! ZMIANA REGUŁ GRY!\n"
+         "REAGUJ NA NA ZNACZENIE SŁÓW\n"
+         "WYBIERAJĄC ODPOWIEDNIE POLA.\n"
+         "IGNORUJ ICH KOLOR."
+}
+TUTORIAL_TEXT = {
+    "0": "W PIERWSZEJ CZĘŚCI GRY BĘDZIESZ MUSIAŁ REAGOWAĆ\n"
+         "NA KOLORY. W TYM PRZYKŁADZIE NA EKRANIE WIDZISZ\n"
+         """SŁOWO "ŻÓŁTY" NAPISANE NA CZERWONO.""",
+    "1": "IGNORUJ TREŚĆ SŁOWA I JAK NAJSZYBCIEJ WYBIERZ POLE\n"
+         "ODPOWIADAJĄCE KOLOROWI LITER, CZYLI W TYM PRZYPADKU\n"
+         "CZERWONE. W TEN SPOSÓB ZDOBĘDZIESZ PUNKT.",
+    "2": """TERAZ WIDZIMY SŁOWO "CZERWONY" NAPISANE ZIELONYMI\n"""
+         "LITERAMI, WIĘC JAK NAJSZYBCIEJ WYBIERAMY ZIELONE POLE\n"
+         "I ZDOBYWAMY DRUGI PUNKT..."
 }
 
 class BrainStroopGame(Clutter.Actor):
@@ -76,8 +91,8 @@ class BrainStroopGame(Clutter.Actor):
 
     def enter_colors_view(self, *args):
         self._load_view_from_script("colors")
-        self.color_values_chain = self.color_repetition * list(COLOR_MAP.values())
-        self.color_names_chain = self.color_repetition * list(COLOR_MAP.keys())
+        self.color_values_chain = self.color_repetition * list(COLORS_MAP.values())
+        self.color_names_chain = self.color_repetition * list(COLORS_MAP.keys())
         random.shuffle(self.color_values_chain)
         random.shuffle(self.color_names_chain)
         self.display_player_life_panel()
@@ -101,7 +116,7 @@ class BrainStroopGame(Clutter.Actor):
     def display_player_life_panel(self):
         life_panel = self.script.get_object("life_panel")
         for life in range(self.player_lives_left):
-            life_panel.insert_unichar(LIFE_UNICHAR)
+            life_panel.insert_unichar(PLAYER_LIFE_UNICHAR)
         
     def enable_color_view(self):
         for field in self.script.get_object("color_fields").get_children():
@@ -144,7 +159,7 @@ class BrainStroopGame(Clutter.Actor):
                 self.on_life_loss()
         elif self.mode == 1:
             field_color = field.get_background_color()
-            color_name = COLOR_MAP[self.script.get_object("color_text").get_text()]
+            color_name = COLORS_MAP[self.script.get_object("color_text").get_text()]
             if Clutter.Color.equal(field_color, color_name):
                 self.lap += 1
                 if self.lap == self.laps_per_mode:
@@ -198,26 +213,48 @@ class BrainStroopTutorial(Clutter.Actor):
 
     def _init_index_finger(self):
         self.index_finger = Mx.Image()
-        self.index_finger.set_from_file(INDEX_FINGER_PATH)
+        self.index_finger.set_from_file(INDEX_FINGER_ICON_PATH)
 
     def reload_view(self):
         self.enable_view()
         self.adjust_view()
 
     def adjust_view(self):
-        self.script.get_object("red").add_child(self.index_finger)
-        color_text = self.script.get_object("color_text")
-        color_text.set_color(COLOR_MAP["zielony"])
-        color_text.set_text("zielony")
         info_text = self.script.get_object("info_text")
-        info_text.set_text("Instrukcja")
-
+        info_text.set_text(TUTORIAL_TEXT[str(self.view_num)])
+        if self.view_num == 0:
+            color_text = self.script.get_object("color_text")
+            color_text.set_color(COLORS_MAP["czerwony"])
+            color_text.set_text("żółty")
+            next_button = self.script.get_object("next_button")
+            next_button.set_label("DALEJ")
+        elif self.view_num == 1:
+            self.script.get_object("red").add_child(self.index_finger)
+            next_button = self.script.get_object("next_button")
+            next_button.set_label("DALEJ")
+        elif self.view_num == 2:
+            self.script.get_object("red").remove_child(self.index_finger)
+            self.script.get_object("green").add_child(self.index_finger)
+            color_text = self.script.get_object("color_text")
+            color_text.set_color(COLORS_MAP["zielony"])
+            color_text.set_text("czerwony")
+            next_button = self.script.get_object("next_button")
+            next_button.set_label("WYJDŹ")
+            
     def enable_view(self):
         next_button = self.script.get_object("next_button")
-        next_button.connect("activate", self.on_button_activate)
+        if self.view_num == 0:
+            next_button.connect("activate", self.next_page)
+        elif self.view_num == 2:
+            next_button.disconnect_by_func(self.next_page)
+            next_button.connect("activate", self.end_tutorial)
 
-    def on_button_activate(self, *args):
+    def end_tutorial(self, *args):
         self.emit("tutorial-end")
+
+    def next_page(self, *args):
+        self.view_num = self.view_num + 1
+        self.reload_view()
         
 
 class BrainStroopStage(Clutter.Stage):
@@ -249,6 +286,9 @@ class BrainStroopStage(Clutter.Stage):
     def adjust_main_menu_view(self):
         welcome_text = self.script.get_object("welcome_text")
         welcome_text.set_text(WELCOME_TEXT)
+        high_scores = score_manager.get_best_ever("stroop")
+        if not high_scores:
+            self.script.get_object("score_table_button").hide()
 
     def enable_main_menu_view(self):
         start_button = self.script.get_object("start_button")

@@ -5,7 +5,7 @@
         "orientation": "vertical",
         "x-expand": true,
         "y-expand": true,
-        "spacing": 50,
+        "spacing": 100,
         "margin-top": 50,
         "margin-bottom": 50,
         "margin-left": 50,
@@ -21,16 +21,16 @@
                             {
                                 "id": "player_score_text",
                                 "type": "ClutterText",
-                                "text": "TWÓJ WYNIK",
-                                "color": "#001933",
-                                "font-name": "Sans 20"
+                                "text": "TWÓJ WYNIK:",
+                                "color": "white",
+                                "font-name": "Sans 30"
                             },
                             {
                                 "id": "player_score_value",
                                 "type": "ClutterText",
                                 "text": "x.x",
-                                "color": "#001933",
-                                "font-name": "Sans 20"
+                                "color": "white",
+                                "font-name": "Sans 30"
                             }
                         ]
                 },
@@ -43,16 +43,16 @@
                             {
                                 "id": "average_score_text",
                                 "type": "ClutterText",
-                                "text": "ŚREDNI WYNIK Z WYSTAWY",
-                                "color": "#001933",
-                                "font-name": "Sans 20"
+                                "text": "ŚREDNI WYNIK Z WYSTAWY:",
+                                "color": "white",
+                                "font-name": "Sans 30"
                             },
                             {
                                 "id": "average_score_value",
                                 "type": "ClutterText",
                                 "text": "x.x",
-                                "color": "#001933",
-                                "font-name": "Sans 20"
+                                "color": "white",
+                                "font-name": "Sans 30"
                             }
                         ]
                 },
@@ -65,22 +65,22 @@
                         {
                             "id": "try_again",
                             "type": "BrainPuzzleButton",
-                            "width": 200,
-                            "height": 50,
+                            "width": 300,
+                            "height": 100,
                             "label": "SPRÓBUJ JESZCZE RAZ"
                         },
                         {
                             "id": "best_today",
                             "type": "BrainPuzzleButton",
-                            "width": "200",
-                            "height": "50",
+                            "width": "300",
+                            "height": "100",
                             "label": "WYNIKI Z DZIŚ"
                         },
                         {
                             "id": "best_ever",
                             "type": "BrainPuzzleButton",
-                            "width": "200",
-                            "height": "50",
+                            "width": "300",
+                            "height": "100",
                             "label": "WYNIKI Z WYSTAWY"
                         }
                     ]
