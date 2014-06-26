@@ -14,17 +14,23 @@ class PuzzleButton(Clutter.Actor):
              "label on the key",
              "label displayed on the key",
              "",
-             GObject.PARAM_READWRITE)
+             GObject.PARAM_READWRITE),
+         "label_font": (
+             GObject.TYPE_STRING,
+             "font of the label",
+             "font name of the label",
+             "",
+             GObject.PARAM_READWRITE),
     }
 
     def __init__(self):
         super().__init__()
         self.r, self.g, self.b, self.a = 0.21, 0.69, 0.87, 0.5
+        self._init_label_entry()
         self.label_font = "Sans 20"
         self.hilite_duration = 1000
         self.set_layout_manager(Clutter.BinLayout())
         self._init_canvas()
-        self._init_label_entry()
         self.set_reactive(True)
         self.connect("button-press-event", self.fire_activate)
         self.connect("touch-event", self.fire_activate)
@@ -40,7 +46,6 @@ class PuzzleButton(Clutter.Actor):
         self.label_entry = Clutter.Text()
         color = Clutter.Color.new(self.r*255, self.g*255, self.b*255, 255)
         self.label_entry.set_color(color)
-        self.label_entry.set_font_name(self.label_font)
         self.add_child(self.label_entry)
 
     def update_canvas(self, canvas, context, w, h):
@@ -58,11 +63,20 @@ class PuzzleButton(Clutter.Actor):
     def _update_label(self):
         self.label_entry.set_text(self.label)
 
+    def _update_label_font(self):
+        self.label_entry.set_font_name(self.label_font)
+
     def set_label(self, label):
         self.label = label
 
     def get_label(self):
         return self.label
+
+    def set_label_font(self, label_font):
+        self.label_font = label_font
+
+    def get_label_font(self):
+        return self.label_font
 
     @property
     def label(self):
@@ -72,6 +86,15 @@ class PuzzleButton(Clutter.Actor):
     def label(self, value):
         self._label = value
         self._update_label()
+
+    @property
+    def label_font(self):
+        return self._label_font
+
+    @label_font.setter
+    def label_font(self, value):
+        self._label_font = value
+        self._update_label_font()
 
     def do_set_property(self, spec, value):
         """
