@@ -4,6 +4,12 @@ from gi.repository import Gdk
 import re
 from sys import platform
 
+temp = []
+screen_mm = namedtuple('ScreenSizeMM', 'width height')
+screen_pixels = namedtuple('ScreenSizePix', 'width height')
+size_pix = screen_pixels(Gdk.Screen.width(), Gdk.Screen.height())
+
+
 if 'linux' in platform:
     try:
         out = str(Popen('xrandr', stdout=PIPE).stdout.read()).split()
@@ -20,11 +26,6 @@ if 'linux' in platform:
 else:
     print('Apparently not on linux, using Gdk.Screen for mm size.')
     size_mm = screen_mm(Gdk.Screen.width_mm(), Gdk.Screen.height_mm())
-
-temp = []
-screen_mm = namedtuple('ScreenSizeMM', 'width height')
-screen_pixels = namedtuple('ScreenSizePix', 'width height')
-size_pix = screen_pixels(Gdk.Screen.width(), Gdk.Screen.height())
 
 SCREEN_DPMM = getattr(size_pix, 'width') / getattr(size_mm, 'width')
 SCREEN_DPI = SCREEN_DPMM * 25.4
