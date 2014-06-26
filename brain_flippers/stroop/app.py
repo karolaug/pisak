@@ -1,3 +1,6 @@
+"""
+Main module of the stroop game application.
+"""
 import sys
 import os.path
 import random
@@ -10,7 +13,7 @@ from brain_flippers import widgets
 
 import pisak.layout  # @UnusedImport
 
-WELCOME_TEXT = "WITAJ W GRZE STROOP."
+WELCOME_TEXT = "WITAJ W GRZE STROOP"
 INDEX_FINGER_ICON_PATH = "brain_flippers/stroop/index_finger.png"
 PLAYER_LIFE_UNICHAR = u"\u2764"
 VIEW_PATHS = {
@@ -348,7 +351,7 @@ class BrainStroopStage(Clutter.Stage):
                     item.connect("activate", self.save_score)
                     item.connect_after("activate", self.enter_high_scores_view, "today")
         try_again_button = self.script.get_object("try_again")
-        try_again_button.connect("activate", self.enter_game_view)
+        try_again_button.connect("activate", self.enter_main_menu_view)
         best_today_button = self.script.get_object("best_today")
         if score_manager.get_best_today("stroop"):
             best_today_button.connect("activate", self.enter_high_scores_view, "today")
@@ -403,7 +406,7 @@ class BrainStroopStage(Clutter.Stage):
         
     def enable_player_fail_view(self):
         try_again_button = self.script.get_object("try_again")
-        try_again_button.connect("activate", self.enter_game_view)
+        try_again_button.connect("activate", self.enter_main_menu_view)
         best_today_button = self.script.get_object("best_today")
         best_today_button.connect("activate", self.enter_high_scores_view, "today")
         best_ever_button = self.script.get_object("best_ever")
