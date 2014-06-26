@@ -1,6 +1,20 @@
 """
-Main module of the stroop game application.
+Main module of the stroop game application. The whole gui part of the game,
+at least for now, is divided into three classes, that is: so called stage-
+main class responsible for switching the main views and organizing communication
+between them, with methods which names begin with enter- they introduce
+new views, adjust- they make all the neccessary gui adjustments like setting
+appropriate info messages, button labels etc and enable- they take buttons
+or the whole views from dedicated jsons and connect signals to them;
+game- class that runs the proper game, used as an object by the main game json,
+switching colors and rules changed views by itself, counts time and points,
+sends game end signal when the game is over; and finally tutorial- class
+responsible for the whole tutorial part, used as an object by the main tutorial
+json, switches between three views, sends the tutorial end signal when the tutorial is over.
+All used parameters are declared at the beginning of the module or very close to
+the beginning of a proper class.
 """
+
 import sys
 import os.path
 import random
