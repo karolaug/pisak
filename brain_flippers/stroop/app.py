@@ -230,12 +230,16 @@ class BrainStroopTutorial(Clutter.Actor):
         self.add_child(view_actor)
 
     def _init_parameters(self):
+        self.index_finger_width = 100
+        self.index_finger_height = 120
         self.view_num = 0
         self.views = 3
 
     def _init_index_finger(self):
         self.index_finger = Mx.Image()
         self.index_finger.set_from_file(INDEX_FINGER_ICON_PATH)
+        self.index_finger.set_scale_mode(1)  # fit scale mode
+        self.index_finger.set_size(self.index_finger_width, self.index_finger_height)
 
     def reload_view(self):
         self.enable_view()
@@ -251,12 +255,12 @@ class BrainStroopTutorial(Clutter.Actor):
             next_button = self.script.get_object("next_button")
             next_button.set_label("DALEJ")
         elif self.view_num == 1:
-            self.script.get_object("red").add_child(self.index_finger)
+            self.allocate_index_finger(self.script.get_object("red"))
             next_button = self.script.get_object("next_button")
             next_button.set_label("DALEJ")
         elif self.view_num == 2:
             self.script.get_object("red").remove_child(self.index_finger)
-            self.script.get_object("green").add_child(self.index_finger)
+            self.allocate_index_finger(self.script.get_object("green"))
             color_text = self.script.get_object("color_text")
             color_text.set_color(COLORS_MAP["zielony"])
             color_text.set_text("czerwony")
@@ -270,6 +274,14 @@ class BrainStroopTutorial(Clutter.Actor):
         elif self.view_num == 2:
             next_button.disconnect_by_func(self.next_page)
             next_button.connect("activate", self.end_tutorial)
+
+    def allocate_index_finger(self, relative_field):
+        self.index_finger.clear_constraints()
+        relative_field.set_layout_manager(Clutter.BinLayout())
+        relative_field.add_child(self.index_finger)
+        relative_y = relative_field.get_height()/3
+        bind_y = Clutter.BindConstraint.new(relative_field, Clutter.BindCoordinate.Y, relative_y)
+        self.index_finger.add_constraint(bind_y)
 
     def end_tutorial(self, *args):
         self.emit("tutorial-end")
