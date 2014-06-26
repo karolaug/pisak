@@ -16,7 +16,7 @@
     {
         "id": "main",
         "type": "PisakBinLayout",
-        "children": ["stimulus", "main_box", "logic", "score_summary"]
+        "children": ["stimulus",  "score_summary", "fail_feedback", "main_box", "logic"]
     },
     {
         "id": "main_box",
@@ -52,8 +52,14 @@
     {
         "id": "score_summary",
         "type": "BrainScoreSummary",
-        "background-color": "green",
+        "background-color": "white",
         "visible": false,
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "fail_feedback",
+        "type": "BrainVideoFeedback",
         "x-expand": true,
         "y-expand": true
     }

@@ -1,4 +1,4 @@
-from gi.repository import Clutter, cairo, GObject, Mx
+from gi.repository import Clutter, GObject, Mx, Gst, ClutterGst
 
 class PuzzleButton(Clutter.Actor):
     __gtype_name__ = "BrainPuzzleButton"
@@ -108,31 +108,82 @@ class ScoreSummary(Clutter.Actor):
     Actor which allow displaying unified score summaries
     """
     __gtype_name__ = "BrainScoreSummary"
-    
-    __gsignals__ = {}
-    
+
+    __gsignals__ = {    
+        "dismissed": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+
     def __init__(self):
         super().__init__()
         self._init_layout()
         self._init_elements()
-    
+
     def _init_layout(self):
-        self.layout = Clutter.GridLayout()
-        self.set_layout_manager()
-    
+        self.layout = Clutter.BinLayout()
+        self.set_layout_manager(self.layout)
+
     def _init_elements(self):
         self.dismiss_button = Mx.Button()
         self.dismiss_button.set_label(">")
+        self.dismiss_button.connect("clicked", self._dismiss)
+        self.grid = Clutter.Actor()
+        self.grid_layout = Clutter.GridLayout()
+        self.grid.set_layout_manager(self.grid_layout)
+        self.add_child(self.grid)
     
-    def display_score(self, entries, old_score):
+    def _dismiss(self, *args):
+        self.hide()
+        self.grid.remove_all_children()
+        self.emit("dismissed")
+
+    def display_score(self, entries, total_score):
         """
         Show the actor with supplied level score summary
         """
-        for row, (description, score) in enumerate(entries):
+        row = 0
+        score_sum = 0
+        for description, score in entries:
             description_label = Mx.Label.new_with_text(description)
             score_label = Mx.Label.new_with_text(str(score))
-            self.layout.attach(description_label, row, 0, 1, 1)
-            self.layout.attach(score_label, row, 1, 1, 1)
-        self.layout.attach(self.dismiss_button, len(entries), 0, 2, 1)
+            self.grid_layout.attach(description_label, 0, row, 1, 1)
+            self.grid_layout.attach(score_label, 1, row, 1, 1)
+            score_sum += score
+            row += 1
+        round_label = Mx.Label.new_with_text("suma punktów za rundę")
+        round_score_label = Mx.Label.new_with_text(str(score_sum))
+        total_label = Mx.Label.new_with_text("aktualny wynik")
+        total_score_label = Mx.Label.new_with_text(str(total_score))
+        self.grid_layout.attach(round_label, 0, row + 2, 1, 1)
+        self.grid_layout.attach(round_score_label, 1, row + 2, 1, 1)
+        self.grid_layout.attach(total_label, 0, row + 4, 1, 1)
+        self.grid_layout.attach(total_score_label, 1, row + 4, 1, 1)
+        self.grid_layout.attach(self.dismiss_button, 0, row + 6, 2, 1)
         self.show()
-       
+
+
+class VideoFeedback(Clutter.Actor):
+    __gtype_name__ = "BrainVideoFeedback"
+    
+    __gsignals__ = {    
+        "dismissed": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+    
+    def init(self):
+        self.layout = Clutter.BinLayout()
+        self.set_layout_manager(self.layout)
+        
+        self.video_texture = ClutterGst.VideoTexture()
+        self.video_texture.set_x_expand(True)
+        self.video_texture.set_y_expand(True)
+        self.add_child(self.video_texture)
+        
+        descriptor = "playbin uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm"
+        self.pipeline = Gst.parse_launch(descriptor)
+        
+        self.clutter_sink = Gst.ElementFactory.make("autocluttersink")
+        self.clutter_sink.set_property("texture", self.video_texture)
+        self.pipeline.set_property("video-sink", self.clutter_sink)
+        
+        #self.uri_source.link(self.clutter_sink)
+        self.uri_source.set_state(Gst.State.PLAYING)
+        #self.clutter_sink.set_state(Gst.State.PLAYING)

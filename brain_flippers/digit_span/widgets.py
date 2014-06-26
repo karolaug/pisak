@@ -180,7 +180,8 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         "stimulus": (Stimulus.__gtype__, "", "", GObject.PARAM_READWRITE),
         "code-display": (Code.__gtype__, "", "", GObject.PARAM_READWRITE),
         "keypad": (Numpad.__gtype__, "", "", GObject.PARAM_READWRITE),
-        "score-summary": (widgets.ScoreSummary.__gtype__, "", "", GObject.PARAM_READWRITE)
+        "score-summary": (widgets.ScoreSummary.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "fail-feedback": (widgets.VideoFeedback.__gtype__, "", "", GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
@@ -191,14 +192,6 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.stimulus = None
         self.keypad = None
         self.connect("notify::mapped", self._initialize_game)
-        #self._ready_id = self.connect("parent-set", self._get_ready)
-
-    def _get_ready(self, source, old_parent):
-        source.disconnect(self._ready_id)
-        if self.get_stage():
-            self.get_stage().connect("show", self._initialize_game)
-        else:
-            self._ready_id = source.get_parent().connect("parent-set", self._get_ready)
 
     def _initialize_game(self, *args):
         self.score = 0
@@ -207,6 +200,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.status_bar.score = self.score
         self.code_length = 3
         self._start_round()
+        self.score_summary.connect("dismissed", self._finish_round)
 
     def _start_round(self):
         self.code = self.generate_code(self.code_length)
@@ -214,6 +208,13 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.code_display.clear()
         self._key_handle = self.keypad.connect("digit", self._keypad_digit)
         self.stimulus.show_code(self.code)
+    
+    def _finish_round(self, *args):
+        self.code_length += 1
+        if self.code_length < 13:
+            self._start_round()
+        else:
+            print("Koniec")
 
     def _keypad_digit(self, keypad, digit):
         self.entered_code.append(digit)
@@ -222,7 +223,6 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
             self.keypad.disconnect(self._key_handle)
             self.trials += 1
             if self.code == self.entered_code:
-                self.code_length += 1
                 self.success_count += 1
                 self.feedback_good()
             else:
@@ -230,22 +230,20 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
 
     def feedback_good(self):
         solving_time = time.time() - self.stimulus.stop_time
-        print("czas: ", solving_time)
         base_score = self.code_length * 2
-        print("punkty bazowe", base_score)
         time_bonus = max(int((self.code_length * 2 - solving_time) * 3), 0)
-        print("bonus czasowy: ", time_bonus)
         ratio_bonus = int(max((self.success_count / self.trials) - 0.5, 0) * self.code_length)
-        print("bonus za efektywność:", ratio_bonus)
         round_score = base_score + time_bonus + ratio_bonus
-        print("punkty za rundę:", round_score)
         self.score += round_score
-        print("suma punktów:", self.score)
-        self.score_summary.display_score({}, self.score)
+        entries = [
+            ("punkty bazowe", base_score),
+            ("bonus za czas", time_bonus),
+            ("bonus za skuteczność", ratio_bonus)
+        ]
+        self.score_summary.display_score(entries, self.score)
 
     def feedback_bad(self):
-        print("źle")
-        self._start_round()
+        self.fail_feeback.display()
 
     @staticmethod
     def generate_code(length):
