@@ -89,8 +89,10 @@ class BrainStroopGame(Clutter.Actor):
         self.player_score = 0
         self.color_repetition = 2
         self.player_clock = 0
+        self.correct_answers = 0
         self.player_clock_quantum = 1000
         self.player_clock_ticking = False
+        self.score_coeff = 10
         self.levels = 1
         self.laps_per_mode = 8
         self.player_lives = 4
@@ -170,6 +172,7 @@ class BrainStroopGame(Clutter.Actor):
             self.on_life_loss()
 
     def on_correct_answer(self):
+        self.correct_answers += 1
         self.move_on()
         
     def on_life_loss(self):
@@ -201,7 +204,7 @@ class BrainStroopGame(Clutter.Actor):
         self.emit("game_end")
 
     def calculate_player_score(self):
-        self.player_score = self.player_clock
+        self.player_score = self.score_coeff * float(self.correct_answers) / self.player_clock
 
 
 class BrainStroopTutorial(Clutter.Actor):
@@ -349,7 +352,7 @@ class BrainStroopStage(Clutter.Stage):
 
     def adjust_player_success_view(self, game_outcome):
         score_entry = self.script.get_object("player_score_value")
-        score = game_outcome.player_score
+        score = round(game_outcome.player_score, 2)
         score_entry.set_text(str(score))
         average_score = score_manager.get_average_ever("stroop")
         if average_score:
@@ -413,7 +416,7 @@ class BrainStroopStage(Clutter.Stage):
 
     def adjust_player_fail_view(self, game_outcome):
         player_score_entry = self.script.get_object("player_score_value")
-        player_score = game_outcome.player_score
+        player_score = round(game_outcome.player_score, 2)
         player_score_entry.set_text(str(player_score))
         average_score = score_manager.get_average_ever("stroop")
         if average_score:
