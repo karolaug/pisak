@@ -112,6 +112,7 @@ class BrainStroopGame(Clutter.Actor):
     def enable_color_view(self):
         for field in self.script.get_object("color_fields").get_children():
             field.connect("button-press-event", self.on_player_choice)
+            field.connect("touch-event", self.on_player_choice)
             field.set_reactive(True)
 
     def update_player_clock(self, *args):
@@ -140,6 +141,9 @@ class BrainStroopGame(Clutter.Actor):
         start_button.connect("activate", self.enter_colors_view)
 
     def on_player_choice(self, field, event):
+        if isinstance(event, Clutter.TouchEvent):
+            if event.type != 13:  # touch-begin type of event
+                return
         self.lap += 1
         field_color = field.get_background_color()
         if self.mode == 0:
