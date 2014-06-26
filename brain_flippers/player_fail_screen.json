@@ -67,21 +67,24 @@
                             "type": "BrainPuzzleButton",
                             "width": 300,
                             "height": 100,
-                            "label": "SPRÓBUJ JESZCZE RAZ"
+                            "label": "SPRÓBUJ JESZCZE RAZ",
+                            "label-font": "Courier 15"
                         },
                         {
                             "id": "best_today",
                             "type": "BrainPuzzleButton",
                             "width": "300",
                             "height": "100",
-                            "label": "WYNIKI Z DZIŚ"
+                            "label": "WYNIKI Z DZIŚ",
+                            "label-font": "Courier 15"
                         },
                         {
                             "id": "best_ever",
                             "type": "BrainPuzzleButton",
                             "width": "300",
                             "height": "100",
-                            "label": "WYNIKI Z WYSTAWY"
+                            "label": "WYNIKI Z WYSTAWY",
+                            "label-font": "Courier 15"
                         }
                     ]
                 }

@@ -88,6 +88,7 @@
                                             "id": "row_1_1",
                                             "type": "BrainPuzzleButton",
                                             "label": "Q",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -95,6 +96,7 @@
                                             "id": "row_1_2",
                                             "type": "BrainPuzzleButton",
                                             "label": "W",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -102,6 +104,7 @@
                                             "id": "row_1_3",
                                             "type": "BrainPuzzleButton",
                                             "label": "E",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -109,6 +112,7 @@
                                             "id": "row_1_4",
                                             "type": "BrainPuzzleButton",
                                             "label": "R",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -116,6 +120,7 @@
                                             "id": "row_1_5",
                                             "type": "BrainPuzzleButton",
                                             "label": "T",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -123,6 +128,7 @@
                                             "id": "row_1_6",
                                             "type": "BrainPuzzleButton",
                                             "label": "Y",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -130,6 +136,7 @@
                                             "id": "row_1_7",
                                             "type": "BrainPuzzleButton",
                                             "label": "U",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -137,6 +144,7 @@
                                             "id": "row_1_8",
                                             "type": "BrainPuzzleButton",
                                             "label": "I",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -144,6 +152,7 @@
                                             "id": "row_1_9",
                                             "type": "BrainPuzzleButton",
                                             "label": "O",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -151,6 +160,7 @@
                                             "id": "row_1_10",
                                             "type": "BrainPuzzleButton",
                                             "label": "P",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         }
@@ -166,6 +176,7 @@
                                             "id": "row_2_1",
                                             "type": "BrainPuzzleButton",
                                             "label": "A",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -173,6 +184,7 @@
                                             "id": "row_2_2",
                                             "type": "BrainPuzzleButton",
                                             "label": "S",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -180,6 +192,7 @@
                                             "id": "row_2_3",
                                             "type": "BrainPuzzleButton",
                                             "label": "D",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -187,6 +200,7 @@
                                             "id": "row_2_4",
                                             "type": "BrainPuzzleButton",
                                             "label": "F",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -194,6 +208,7 @@
                                             "id": "row_2_5",
                                             "type": "BrainPuzzleButton",
                                             "label": "G",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -201,6 +216,7 @@
                                             "id": "row_2_6",
                                             "type": "BrainPuzzleButton",
                                             "label": "H",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -208,6 +224,7 @@
                                             "id": "row_2_7",
                                             "type": "BrainPuzzleButton",
                                             "label": "J",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -215,6 +232,7 @@
                                             "id": "row_2_8",
                                             "type": "BrainPuzzleButton",
                                             "label": "K",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -222,6 +240,7 @@
                                             "id": "row_2_9",
                                             "type": "BrainPuzzleButton",
                                             "label": "L",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         }
@@ -237,6 +256,7 @@
                                             "id": "row_3_1",
                                             "type": "BrainPuzzleButton",
                                             "label": "Z",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -244,6 +264,7 @@
                                             "id": "row_3_2",
                                             "type": "BrainPuzzleButton",
                                             "label": "X",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -251,6 +272,7 @@
                                             "id": "row_3_3",
                                             "type": "BrainPuzzleButton",
                                             "label": "C",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -258,6 +280,7 @@
                                             "id": "row_3_4",
                                             "type": "BrainPuzzleButton",
                                             "label": "V",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -265,6 +288,7 @@
                                             "id": "row_3_5",
                                             "type": "BrainPuzzleButton",
                                             "label": "B",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -272,6 +296,7 @@
                                             "id": "row_3_6",
                                             "type": "BrainPuzzleButton",
                                             "label": "N",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -279,6 +304,7 @@
                                             "id": "row_3_7",
                                             "type": "BrainPuzzleButton",
                                             "label": "M",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         }
@@ -294,6 +320,7 @@
                                             "id": "row_4_1",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ą",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -301,6 +328,7 @@
                                             "id": "row_4_2",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ć",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -308,6 +336,7 @@
                                             "id": "row_4_3",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ę",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -315,6 +344,7 @@
                                             "id": "row_4_4",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ł",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -322,6 +352,7 @@
                                             "id": "row_4_5",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ń",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -329,6 +360,7 @@
                                             "id": "row_4_6",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ó",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -336,6 +368,7 @@
                                             "id": "row_4_7",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ś",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -343,6 +376,7 @@
                                             "id": "row_4_8",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ź",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         },
@@ -350,6 +384,7 @@
                                             "id": "row_4_9",
                                             "type": "BrainPuzzleButton",
                                             "label": "Ż",
+                                            "label-font": "Courier 25",
                                             "width": "40",
                                             "height": "40"
                                         }
@@ -366,14 +401,16 @@
                                             "type": "BrainPuzzleButton",
                                             "width": 200,
                                             "height": 50,
-                                            "label": "SKASUJ"
+                                            "label": "SKASUJ",
+                                            "label-font": "Courier 30"
                                         },
                                         {
                                             "id": "row_5_2",
                                             "type": "BrainPuzzleButton",
                                             "width": 200,
                                             "height": 50,
-                                            "label": "ZAPISZ"
+                                            "label": "ZAPISZ",
+                                            "label-font": "Courier 30"
                                         }
                                     ]
                             }
@@ -389,21 +426,24 @@
                             "type": "BrainPuzzleButton",
                             "width": 250,
                             "height": 100,
-                            "label": "SPRÓBUJ JESZCZE RAZ"
+                            "label": "SPRÓBUJ JESZCZE RAZ",
+                            "label-font": "Courier 12"
                         },
                         {
                             "id": "best_today",
                             "type": "BrainPuzzleButton",
                             "width": "250",
                             "height": "100",
-                            "label": "WYNIKI Z DZIŚ"
+                            "label": "WYNIKI Z DZIŚ",
+                            "label-font": "Courier 12"
                         },
                         {
                             "id": "best_ever",
                             "type": "BrainPuzzleButton",
                             "width": "250",
                             "height": "100",
-                            "label": "WYNIKI Z WYSTAWY"
+                            "label": "WYNIKI Z WYSTAWY",
+                            "label-font": "Courier 12"
                         }
                     ]
                 }

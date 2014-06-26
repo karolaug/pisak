@@ -27,6 +27,7 @@
                 "id": "start_button",
                 "type": "BrainPuzzleButton",
                 "label": "START",
+                "label-font": "Courier 40",
                 "width": 300,
                 "height": 100
             }

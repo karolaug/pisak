@@ -6,7 +6,7 @@
         "x-expand": true,
         "y-expand": true,
         "spacing": 30,
-        "margin-top": 20,
+        "margin-top": 30,
         "margin-bottom": 20,
         "margin-left": 20,
         "margin-right": 20,
@@ -17,8 +17,9 @@
                     "type": "BrainPuzzleButton",
                     "x-align": "center",
                     "label": "WYJŚCIE",
-                    "width": 200,
-                    "height": 60
+                    "label-font": "Courier 30",
+                    "width": 250,
+                    "height": 70
                 },
                 {
                     "id": "best_score",
