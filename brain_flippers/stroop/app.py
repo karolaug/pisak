@@ -86,15 +86,16 @@ class BrainStroopGame(Clutter.Actor):
         self.level = 0
         self.mode = 0
         self.lap = 0
-        self.player_score = 0
+        self.levels = 1
         self.color_repetition = 2
+        self.laps_per_mode = self.color_repetition * len(COLORS_MAP)
+        self.player_score = 0
         self.player_clock = 0
-        self.correct_answers = 0
+        self.player_correct_answers = 0
+        self.player_errors = 0
         self.player_clock_quantum = 1000
         self.player_clock_ticking = False
-        self.score_coeff = 10
-        self.levels = 1
-        self.laps_per_mode = 8
+        self.player_score_coeff = 10
         self.player_lives = 4
         self.player_lives_left = self.player_lives
         self.rules_changed_view_idle = 2000
@@ -172,12 +173,13 @@ class BrainStroopGame(Clutter.Actor):
             self.on_life_loss()
 
     def on_correct_answer(self):
-        self.correct_answers += 1
+        self.player_correct_answers += 1
         self.move_on()
         
     def on_life_loss(self):
-        life_panel = self.script.get_object("life_panel")
+        self.player_errors += 1
         self.player_lives_left -= 1
+        life_panel = self.script.get_object("life_panel")
         life_panel.set_text(life_panel.get_text()[:-1])
         if not self.player_lives_left:
             self.end_game()
@@ -204,8 +206,8 @@ class BrainStroopGame(Clutter.Actor):
         self.emit("game_end")
 
     def calculate_player_score(self):
-        self.player_score = self.score_coeff * float(self.correct_answers) / self.player_clock
-
+        self.player_score = self.player_score_coeff * self.player_correct_answers / (1+self.player_errors) / (1+self.player_clock)
+            
 
 class BrainStroopTutorial(Clutter.Actor):
     __gtype_name__ = "BrainStroopTutorial"
