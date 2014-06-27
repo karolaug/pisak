@@ -256,7 +256,6 @@ class BrainStroopTutorial(Clutter.Actor):
             self.next_button.set_label("DALEJ")
         elif self.view_num == 1:
             self.next_button.hilite_off()
-            self.next_button.set_label("DALEJ")
             self.allocate_index_finger(self.script.get_object("red"))
         elif self.view_num == 2:
             self.next_button.hilite_off()
