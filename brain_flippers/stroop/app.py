@@ -86,7 +86,7 @@ class BrainStroopGame(Clutter.Actor):
         self.level = 0
         self.mode = 0
         self.lap = 0
-        self.levels = 1
+        self.levels = 3
         self.color_repetition = 2
         self.laps_per_mode = self.color_repetition * len(COLORS_MAP)
         self.player_score = 0
@@ -242,38 +242,36 @@ class BrainStroopTutorial(Clutter.Actor):
         self.index_finger.set_size(self.index_finger_width, self.index_finger_height)
 
     def reload_view(self):
-        self.enable_view()
         self.adjust_view()
+        self.enable_view()
 
     def adjust_view(self):
         info_text = self.script.get_object("info_text")
         info_text.set_text(TUTORIAL_TEXT[str(self.view_num)])
         if self.view_num == 0:
-            color_text = self.script.get_object("color_text")
-            color_text.set_color(COLORS_MAP["czerwony"])
-            color_text.set_text("żółty")
-            next_button = self.script.get_object("next_button")
-            next_button.set_label("DALEJ")
+            self.color_text = self.script.get_object("color_text")
+            self.color_text.set_color(COLORS_MAP["czerwony"])
+            self.color_text.set_text("żółty")
+            self.next_button = self.script.get_object("next_button")
+            self.next_button.set_label("DALEJ")
         elif self.view_num == 1:
+            self.next_button.hilite_off()
+            self.next_button.set_label("DALEJ")
             self.allocate_index_finger(self.script.get_object("red"))
-            next_button = self.script.get_object("next_button")
-            next_button.set_label("DALEJ")
         elif self.view_num == 2:
+            self.next_button.hilite_off()
+            self.next_button.set_label("WYJDŹ")
             self.script.get_object("red").remove_child(self.index_finger)
             self.allocate_index_finger(self.script.get_object("green"))
-            color_text = self.script.get_object("color_text")
-            color_text.set_color(COLORS_MAP["zielony"])
-            color_text.set_text("czerwony")
-            next_button = self.script.get_object("next_button")
-            next_button.set_label("WYJDŹ")
+            self.color_text.set_color(COLORS_MAP["zielony"])
+            self.color_text.set_text("czerwony")
             
     def enable_view(self):
-        next_button = self.script.get_object("next_button")
         if self.view_num == 0:
-            next_button.connect("activate", self.next_page)
+            self.next_button.connect("activate", self.next_page)
         elif self.view_num == 2:
-            next_button.disconnect_by_func(self.next_page)
-            next_button.connect("activate", self.end_tutorial)
+            self.next_button.disconnect_by_func(self.next_page)
+            self.next_button.connect("activate", self.end_tutorial)
 
     def allocate_index_finger(self, relative_field):
         self.index_finger.clear_constraints()

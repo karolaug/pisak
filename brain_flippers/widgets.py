@@ -25,7 +25,7 @@ class PuzzleButton(Clutter.Actor):
 
     def __init__(self):
         super().__init__()
-        self.r, self.g, self.b, self.a = 0.21, 0.69, 0.87, 0.5
+        self.r, self.g, self.b, self.a = 0.21, 0.69, 0.87, 1
         self._init_label_entry()
         self.label_font = "Sans 20"
         self.hilite_duration = 1000
@@ -124,11 +124,12 @@ class PuzzleButton(Clutter.Actor):
         self.hilite_on()
 
     def hilite_on(self):
-        effect = Clutter.BlurEffect.new()
-        self.add_effect_with_name("hilite", effect)
-        Clutter.threads_add_timeout(0, self.hilite_duration, self.hilite_off, None)
+        if not self.get_effect("hilite"):
+            effect = Clutter.BlurEffect.new()
+            self.add_effect_with_name("hilite", effect)
+            Clutter.threads_add_timeout(0, self.hilite_duration, self.hilite_off, None)
 
-    def hilite_off(self, data):
+    def hilite_off(self, *args):
         self.remove_effect_by_name("hilite")
 
 
