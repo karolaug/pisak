@@ -243,7 +243,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.score_summary.display_score(entries, self.score)
 
     def feedback_bad(self):
-        self.fail_feeback.display()
+        self.fail_feedback.display()
 
     @staticmethod
     def generate_code(length):
