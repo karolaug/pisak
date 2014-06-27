@@ -1,6 +1,8 @@
 from gi.repository import Clutter, GObject, Mx, Gst, ClutterGst
 
-class PuzzleButton(Clutter.Actor):
+from pisak.widgets import PropertyAdapter
+
+class PuzzleButton(Clutter.Actor, PropertyAdapter):
     __gtype_name__ = "BrainPuzzleButton"
     __gsignals__ = {
         "activate": (
@@ -60,20 +62,14 @@ class PuzzleButton(Clutter.Actor):
         context.stroke()
         return True
 
-    def _update_label(self):
-        self.label_entry.set_text(self.label)
-
-    def _update_label_font(self):
-        self.label_entry.set_font_name(self.label_font)
-
-    def set_label(self, label):
-        self.label = label
+    def set_label(self, value):
+        self.label = value
 
     def get_label(self):
         return self.label
 
-    def set_label_font(self, label_font):
-        self.label_font = label_font
+    def set_label_font(self, value):
+        self.label_font = value
 
     def get_label_font(self):
         return self.label_font
@@ -85,7 +81,7 @@ class PuzzleButton(Clutter.Actor):
     @label.setter
     def label(self, value):
         self._label = value
-        self._update_label()
+        self.label_entry.set_text(self.label)
 
     @property
     def label_font(self):
@@ -94,27 +90,7 @@ class PuzzleButton(Clutter.Actor):
     @label_font.setter
     def label_font(self, value):
         self._label_font = value
-        self._update_label_font()
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name.replace("-", "_"))
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name.replace("-", "_"))
+        self.label_entry.set_font_name(self.label_font)
 
     def fire_activate(self, source, event):
         if isinstance(event, Clutter.TouchEvent):
