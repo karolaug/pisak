@@ -7,7 +7,6 @@ import itertools
 from gi.overrides import GObject
 from pisak.widgets import PropertyAdapter
 
-
 class MomentaryButton(Mx.Button):
     __gtype_name__ = "BrainMomentaryButton"
 
@@ -18,10 +17,10 @@ class MomentaryButton(Mx.Button):
 
     def schedule_cover(self, *args):
         self.set_label(str(self.number))
-        Clutter.threads_add_timeout(1000, self._cover)
+        Clutter.threads_add_timeout(0, 1000, self._cover)
 
     def _cover(self):
-        self.set_label("")
+        self.set_label("*")
 
 
 class MomentaryButtonGrid(Clutter.Actor):
@@ -50,9 +49,9 @@ class StatusBar(Clutter.Actor):
     __gtype_name__ = "BrainMalpaStatusBar"
     
     __gproperties__ = {
-        "lives": (GObject.TYPE_INT64, "", "", 3, 0, 100, 
+        "lives": (GObject.TYPE_INT64, "", "", 0, 100, 3, 
                   GObject.PARAM_READWRITE),
-        "score": (GObject.TYPE_INT64, "", "", 0, 0, 1000000, 
+        "score": (GObject.TYPE_INT64, "", "", 0, 1000000, 0, 
                   GObject.PARAM_READWRITE)
     }
     def __init__(self):
@@ -80,13 +79,13 @@ class StatusBar(Clutter.Actor):
         self._score = value
         self.score_display.set_text(str(value))
 
-class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
+class Logic(Clutter.Actor, PropertyAdapter):
     __gtype_name__ = "BrainMalpaLogic"
 
     __gproperties__ = {
         "board": (MomentaryButtonGrid.__gtype__, "", "", 
                   GObject.PARAM_WRITABLE),
-        "status-bar": (Statusbar.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "status-bar": (StatusBar.__gtype__, "", "", GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
@@ -103,7 +102,6 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.status_bar.score = self.score
         self.grid_length = 3
         self._start_round()
-        self.score_summary.connect("dismissed", self._finish_round)
 
     def _start_round(self):
         self.board.remove_all_children()
@@ -163,12 +161,9 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     @status_bar.setter
     def status_bar(self, value):
         self._status_bar = value
-        self.status_bar.set_score(self.score)
-        self.status_bar.set_lives(self.lives)
-
 
     @property
-    def boad(self):
+    def board(self):
         return self._board
 
     @board.setter
