@@ -36,11 +36,15 @@ class MomentaryButtonGrid(Clutter.Actor):
     
     def init_buttons(self, count):
         self.count = count
+        self.buttons = []
         self.positions = random.sample(self.POSITION_LIST, self.count) 
-        for pos, number in zip(self.positions, range(self.count)):
+        for pos, number in zip(self.positions, range(1, self.count+1)):
             button = MomentaryButton(number)
+            self.buttons.append(button)
             self.layout.attach(button, pos[0], pos[1], 1, 1)
 
+    def clear(self):
+        self.remove_all_children()
 
 class StatusBar(Clutter.Actor):
     __gtype_name__ = "BrainMalpaStatusBar"
@@ -76,53 +80,97 @@ class StatusBar(Clutter.Actor):
         self._score = value
         self.score_display.set_text(str(value))
 
-
-class Logic(GObject.GObject, PropertyAdapter):
+class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "BrainMalpaLogic"
-    
+
     __gproperties__ = {
-        "board": (MomentaryButtonGrid.__gtype__, "", "", GObject.PARAM_WRITABLE),
-        "status": (StatusBar.__gtype__, "", "", GObject.PARAM_WRITABLE)
+        "board": (MomentaryButtonGrid.__gtype__, "", "", 
+                  GObject.PARAM_WRITABLE),
+        "status-bar": (Statusbar.__gtype__, "", "", GObject.PARAM_READWRITE),
     }
 
     def __init__(self):
         super().__init__()
+        self.set_fixed_position_set(True)  # bypass layout manager
+        self.status_bar = None
+        self.board = None
+        self.connect("notify::mapped", self._initialize_game)
+
+    def _initialize_game(self, *args):
         self.score = 0
-        self.lives = 3
+        self.success_count = 0
+        self.trials = 0
+        self.status_bar.score = self.score
+        self.grid_length = 3
+        self._start_round()
+        self.score_summary.connect("dismissed", self._finish_round)
 
-    def good_answer(self):
-        self.score += 1000
-        self.status.set_score(self.score)
-        if self.answers >= self.all_tiles:
-            self.puzzle_solved()
-
-    def bad_answer(self):
-        if self.lives == 0:
-            self.game_over()
+    def _start_round(self):
+        self.board.remove_all_children()
+        self.board.init_buttons(4)
+        for button in self.board.buttons:
+            button.connect("clicked", self.check_value)
+        self.button_values = (value for value in range(1, self.board.count))
+        self.button_to_be_clicked = next(self.button_values)
+    
+    def _finish_round(self, *args):
+        self.grid_length += 1
+        if self.grid_length < 13:
+            self._start_round()
         else:
-            self.lives -= 1
-            self.status.set_lives(self.lives)
+            self.end_game()
 
-    def game_over(self):
-        print("Zbyt wiele prób")
+    def next_round(self):
+        self.success_count += 1
+        self.feedback_good()
+        self._finish_round()
 
-    def puzzle_solved(self):
-        print("Ułożone")
+    def check_value(self, button):
+        value_clicked = button.number
+        if value_clicked == self.button_to_be_clicked:
+            try:
+                self.Button_to_be_clicked = next(self.button_values)
+                button.set_label(value.clicked)
+            except StopIteration:
+                self.next_round()
+        else:
+            self.status_bar.lives -= 1
+            if self.status_bar.lives == 0:
+                self.end_game()
+            else:
+                self._start_round()
+
+    def feedback_good(self):
+        solving_time = time.time() - self.stimulus.stop_time
+        base_score = self.grid_length * 2
+        time_bonus = max(int((self.grid_length * 2 - solving_time) * 3), 0)
+        ratio_bonus = int(max((self.success_count / self.trials) - 0.5, 0) * self.grid_length)
+        round_score = base_score + time_bonus + ratio_bonus
+        self.score += round_score
+        entries = [
+            ("punkty bazowe", base_score),
+            ("bonus za czas", time_bonus),
+            ("bonus za skuteczność", ratio_bonus)
+        ]
+
+    def end_game(self):
+        raise NotImplementedError
 
     @property
-    def board(self):
+    def status_bar(self):
+        return self._status_bar
+
+    @status_bar.setter
+    def status_bar(self, value):
+        self._status_bar = value
+        self.status_bar.set_score(self.score)
+        self.status_bar.set_lives(self.lives)
+
+
+    @property
+    def boad(self):
         return self._board
 
     @board.setter
     def board(self, value):
         self._board = value
-
-    @property
-    def status(self):
-        return self._status
-
-    @status.setter
-    def status(self, value):
-        self._status = value
-        self.status.set_score(self.score)
-        self.status.set_lives(self.lives)
