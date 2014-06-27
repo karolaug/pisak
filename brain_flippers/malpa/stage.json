@@ -1,0 +1,32 @@
+[
+    {
+	"id": "status_bar",
+        "type": "BrainMalpaStatusBar",
+        "x-expand": true
+    },
+    {
+	"id": "game_board",
+	"type": "BrainMomentaryButtonGrid",
+	"x-expand": true
+    },
+    {
+	"id": "logic",
+        "type": "BrainMalpaLogic",
+        "status-bar": "status_bar",
+        "board": "game_board"
+    },
+    {
+	"id": "main_box",
+	"type": "PisakBoxLayout",
+	"orientation": "vertical",
+        "x-expand": true,
+        "y-expand": true,
+	"children": ["status_bar", "game_board"]
+	    
+    },
+    {
+        "id": "main",
+        "type": "PisakBinLayout",
+        "children": ["main_box", "logic"]
+    }
+]
