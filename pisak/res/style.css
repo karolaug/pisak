@@ -2,10 +2,12 @@
 /* different properties for different types*/
 
 MxButton {
-  background-color: rgb(255, 0, 0);
+  background-color: rgb(255, 255, 255);
   fixed-position-set: True;
-  some-other-property: foo-bar-bar;
-  fixed-x: 100.0;
+}
+
+BrainMomentaryButton {
+  background-color: rgb(255, 0, 0);
 }
 
 PisakSpellerButton {
