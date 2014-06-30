@@ -5,8 +5,9 @@ from PIL import Image
 
 from pisak import switcher_app
 from brain_flippers.puzzle.photo import Photo
-from random import Random
-import os.path
+from random import Random, choice
+import os.path 
+from os import getenv
 
 class PuzzleBoard(Clutter.Actor):
     __gtype_name__ = "BrainPuzzleBoard"
@@ -17,7 +18,13 @@ class PuzzleBoard(Clutter.Actor):
     
     BASE_PATH = os.path.split(__file__)[0]
     SCRIPT_PATH = os.path.join(BASE_PATH, "stage.json")
-    IMAGE_PATH = os.path.join(BASE_PATH, "paisaje-wallpaper-1920x1080.jpg")
+    IMAGES_PATH = os.path.join(getenv('HOME'), 'Pictures')
+    try:
+        IMAGES = [image for image in os.listdir(IMAGES_PATH) if os.path.splitext(image)[-1] == '.jpg']
+        BASE_PATH = IMAGES_PATH
+    except FileNotFoundError:
+        print('It appears you do not have such a directory: {}'.format(IMAGES_PATH))
+        IMAGES = ["paisaje-wallpaper-1920x1080.jpg"]
     PLAYER_LIFE_UNICHAR = u"\u2764"
     NR_PARTS = [4, 9, 16, 25, 36, 100]
 
@@ -45,7 +52,7 @@ class PuzzleBoard(Clutter.Actor):
         self.script.load_from_file(self.SCRIPT_PATH)
         self.view_actor = self.script.get_object("main")
         self.image = self.script.get_object("image")
-        self.photo = Photo(self.IMAGE_PATH)
+        self.photo = Photo(os.path.join(self.BASE_PATH, choice(self.IMAGES)))
         self.photo.rect_div(self.NR_PARTS[level%len(self.NR_PARTS)])
         self.photo.next_square()
         self.buttons = [self.script.get_object("button{}".format(i)) 
