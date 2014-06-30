@@ -10,7 +10,8 @@ class Photo(object):
         self.resize()
         self.mask = Image.new('1', self.image.size)
         shade = Image.new('RGB', self.image.size, 'grey')
-        self.shaded = Image.blend(self.image, shade, 0.7)
+        self.shaded = Image.blend(self.image, shade, 0.9)
+        self.shaded_less = Image.blend(self.image, shade, 0.5)
         self.maskDraw = ImageDraw.Draw(self.mask)
 
     def resize(self, size=(600, 600)):
@@ -39,8 +40,10 @@ class Photo(object):
             self.square = self.work_parts.pop(0)
             (left, upper), (right, lower) = self.square
             self.part_image = self.image.crop((left, upper, right, lower))
+            self.unshaded = Image.composite(self.image, self.shaded_less, 
+                                            self.mask)
             self.maskDraw.rectangle(self.square, fill=255)
-            self.unshaded = Image.composite(self.image, self.shaded, 
+            self.unshaded = Image.composite(self.unshaded, self.shaded, 
                                             self.mask)
             self.unshadedDraw = ImageDraw.Draw(self.unshaded)
             self.unshadedDraw.rectangle(self.square, outline=(255, 0, 0))
