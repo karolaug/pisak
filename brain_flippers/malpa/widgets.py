@@ -97,7 +97,10 @@ class Logic(Clutter.Actor, PropertyAdapter):
     __gproperties__ = {
         "board": (MomentaryButtonGrid.__gtype__, "", "", 
                   GObject.PARAM_WRITABLE),
-        "status-bar": (StatusBar.__gtype__, "", "", GObject.PARAM_READWRITE)
+        "status-bar": (StatusBar.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "game-screen": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "menu-screen": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "end-screen": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
     }
 
     def __init__(self):
@@ -105,6 +108,10 @@ class Logic(Clutter.Actor, PropertyAdapter):
         self.set_fixed_position_set(True)  # bypass layout manager
         self.status_bar = None
         self.board = None
+        self.end_screen = None
+        self.menu_screen = None
+        self.game_screen = None
+        self.script = Clutter.Script()
         self.connect("notify::mapped", self._initialize_game)
 
     def _initialize_game(self, *args):
@@ -133,6 +140,9 @@ class Logic(Clutter.Actor, PropertyAdapter):
             self._start_round()
         else:
             self.end_game()
+
+    def _load_json(self):
+        self.script.load_from_file
 
     def next_round(self):
         self.success_count += 1
@@ -185,3 +195,27 @@ class Logic(Clutter.Actor, PropertyAdapter):
     @board.setter
     def board(self, value):
         self._board = value
+
+    @property
+    def end_screen(self):
+        return self._end_screen
+
+    @end_screen.setter
+    def end_screen(self, value):
+        self._end_screen = value
+
+    @property
+    def menu_screen(self):
+        return self._menu_screen
+
+    @menu_screen.setter
+    def menu_screen(self, value):
+        self._menu_screen = value
+
+    @property
+    def game_screen(self):
+        return self._game_screen
+
+    @game_screen.setter
+    def game_screen(self, value):
+        self._game_screen = value
