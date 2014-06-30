@@ -68,8 +68,14 @@ class StatusBar(Clutter.Actor):
     }
     def __init__(self):
         super().__init__()
-        self.score_display = Mx.Label()
+        self.layout = Clutter.BoxLayout()
+        self.layout.set_orientation(Clutter.Orientation(0))
+        self.layout.set_spacing(100)
+        self.set_layout_manager(self.layout)
         self.lives_display = Mx.Label()
+        self.score_display = Mx.Label()
+        self.score_display.set_size(100, 50)
+        self.lives_display.set_size(100, 50)
         self.add_child(self.score_display)
         self.add_child(self.lives_display)
         
@@ -80,7 +86,7 @@ class StatusBar(Clutter.Actor):
     @lives.setter
     def lives(self, value):
         self._lives = value
-        self.lives_display.set_text(str(value))
+        self.lives_display.set_text(''.join(["Życie: ", value * u"\u2764"]))
 
     @property
     def score(self):
@@ -89,7 +95,7 @@ class StatusBar(Clutter.Actor):
     @score.setter
     def score(self, value):
         self._score = value
-        self.score_display.set_text(str(value))
+        self.score_display.set_text(''.join(["Punkty: ", str(value)]))
 
 class Logic(Clutter.Actor, PropertyAdapter):
     __gtype_name__ = "BrainMalpaLogic"
@@ -116,28 +122,37 @@ class Logic(Clutter.Actor, PropertyAdapter):
 
     def _initialize_game(self, *args):
         self.score = 0
-        self.lives = 3
+        self.lives = 4
         self.success_count = 0
-        self.trials = 0
         self.status_bar.score = self.score
         self.status_bar.lives = self.lives
         self.grid_length = 3
         self._start_round()
 
-    def _start_round(self):
+    def _start_round(self, reverse=False):
         self.board.remove_all_children()
-        self.board.init_buttons(4)
+        self.board.init_buttons(self.grid_length)
         for button in self.board.buttons:
             button.connect("clicked", self.check_value)
-        self.button_values = (value for value in range(1, self.board.count))
+        if reverse:
+            self.button_values = (value for value in 
+                                  range(self.board.count, 0, -1))
+        else:
+            self.button_values = (value for value in 
+                                  range(1, self.board.count+1))
         self.button_to_be_clicked = next(self.button_values)
         self.start_time = time.time()
-        self.trials += 1
 
     def _finish_round(self, *args):
         self.grid_length += 1
-        if self.grid_length < 13:
+        change = 5
+        if self.success_count < change:
             self._start_round()
+        elif self.success_count == change:
+            self.grid_length = 3
+            self._start_round(reverse=True)
+        elif self.success_count > change and self.success_count < 7:
+            self._start_round(reverse=True)
         else:
             self.end_game()
 
@@ -168,7 +183,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
         solving_time = time.time() - self.start_time
         base_score = self.grid_length * 2
         time_bonus = max(int((self.grid_length * 2 - solving_time) * 3), 0)
-        ratio_bonus = int(max((self.success_count / self.trials) - 0.5, 0) * self.grid_length)
+        ratio_bonus = int(max(self.success_count - 0.5, 0) * self.grid_length)
         round_score = base_score + time_bonus + ratio_bonus
         self.score += round_score
         entries = [
@@ -176,6 +191,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
             ("bonus za czas", time_bonus),
             ("bonus za skuteczność", ratio_bonus)
         ]
+        self.status_bar.score = self.score
 
     def end_game(self):
         raise NotImplementedError
