@@ -7,7 +7,8 @@
     {
 	"id": "game_board",
 	"type": "BrainMomentaryButtonGrid",
-	"x-expand": true
+	"x-expand": true,
+	"y-expand": true
     },
     {
 	"id": "logic",
@@ -22,7 +23,6 @@
         "x-expand": true,
         "y-expand": true,
 	"children": ["status_bar", "game_board"]
-	    
     },
     {
         "id": "main",

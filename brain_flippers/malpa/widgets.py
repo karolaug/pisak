@@ -6,6 +6,7 @@ import random
 import itertools
 from gi.overrides import GObject
 from pisak.widgets import PropertyAdapter
+import time
 
 class MomentaryButton(Mx.Button):
     __gtype_name__ = "BrainMomentaryButton"
@@ -31,14 +32,25 @@ class MomentaryButtonGrid(Clutter.Actor):
     def __init__(self):
         super().__init__()
         self.layout = Clutter.GridLayout()
+        self.layout.set_column_homogeneous(True)
+        self.layout.set_row_homogeneous(True)
+        self.layout.set_row_spacing(5)
+        self.layout.set_column_spacing(5)
         self.set_layout_manager(self.layout)
     
     def init_buttons(self, count):
         self.count = count
         self.buttons = []
-        self.positions = random.sample(self.POSITION_LIST, self.count) 
-        for pos, number in zip(self.positions, range(1, self.count+1)):
-            button = MomentaryButton(number)
+        self.positions = random.sample(self.POSITION_LIST, self.count)
+        numbers = list(range(1, self.count+1))
+        random.shuffle(numbers)
+        for pos in self.POSITION_LIST:
+            if pos in self.positions:
+                number = numbers.pop()
+                button = MomentaryButton(number)
+            else:
+                button = Mx.Button()
+                button.set_disabled(True)
             self.buttons.append(button)
             self.layout.attach(button, pos[0], pos[1], 1, 1)
 
@@ -97,9 +109,11 @@ class Logic(Clutter.Actor, PropertyAdapter):
 
     def _initialize_game(self, *args):
         self.score = 0
+        self.lives = 3
         self.success_count = 0
         self.trials = 0
         self.status_bar.score = self.score
+        self.status_bar.lives = self.lives
         self.grid_length = 3
         self._start_round()
 
@@ -110,7 +124,9 @@ class Logic(Clutter.Actor, PropertyAdapter):
             button.connect("clicked", self.check_value)
         self.button_values = (value for value in range(1, self.board.count))
         self.button_to_be_clicked = next(self.button_values)
-    
+        self.start_time = time.time()
+        self.trials += 1
+
     def _finish_round(self, *args):
         self.grid_length += 1
         if self.grid_length < 13:
@@ -127,8 +143,8 @@ class Logic(Clutter.Actor, PropertyAdapter):
         value_clicked = button.number
         if value_clicked == self.button_to_be_clicked:
             try:
-                self.Button_to_be_clicked = next(self.button_values)
-                button.set_label(value.clicked)
+                self.button_to_be_clicked = next(self.button_values)
+                button.set_label(str(value_clicked))
             except StopIteration:
                 self.next_round()
         else:
@@ -139,7 +155,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
                 self._start_round()
 
     def feedback_good(self):
-        solving_time = time.time() - self.stimulus.stop_time
+        solving_time = time.time() - self.start_time
         base_score = self.grid_length * 2
         time_bonus = max(int((self.grid_length * 2 - solving_time) * 3), 0)
         ratio_bonus = int(max((self.success_count / self.trials) - 0.5, 0) * self.grid_length)
