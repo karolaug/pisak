@@ -3,7 +3,10 @@
 
 MxButton {
   background-color: rgb(255, 255, 255);
-  fixed-position-set: True;
+}
+
+MxButton:disabled {
+  border-image: none;
 }
 
 BrainMomentaryButton {
