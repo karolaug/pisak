@@ -28,7 +28,6 @@ class LauncherStage(Clutter.Stage):
         view_path, prepare = self.views.get(name)
         self.script = Clutter.Script()
         self.script.load_from_file(view_path)
-        print(self.script.list_objects())
         prepare(self, self.script, data)
         main_actor = self.script.get_object("main")
         self.remove_all_children()

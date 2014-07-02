@@ -149,16 +149,20 @@ class Logic(Clutter.Actor, PropertyAdapter):
 
     def _finish_round(self, *args):
         self.grid_length += 1
-        change = 5
+        change = 1
         if self.success_count < change:
             self._start_round()
         elif self.success_count == change:
             self.grid_length = 3
-            self._start_round(reverse=True)
+            self.board.remove_all_children()
+            rule_change_info = Clutter.Text()
+            info = "Zmiana zasad gry, teraz należy wybierać przyciski od największego do najmniejszego."
+            rule_change_info.set_text(info)
+            self.board.add_child(rule_change_info)
+            Clutter.threads_add_timeout(0, 1000, self._start_round(reverse=True))
         elif self.success_count > change and self.success_count < 7:
             self._start_round(reverse=True)
-        else:
-            self.emit("finished")
+        else:            self.emit("finished")
 
     def _load_json(self):
         self.script.load_from_file
