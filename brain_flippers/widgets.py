@@ -1,7 +1,9 @@
 from gi.repository import Clutter, GObject, Mx, Gst, ClutterGst
 from pisak.widgets import PropertyAdapter
 
-class PuzzleButton(Clutter.Actor):
+from pisak.widgets import PropertyAdapter
+
+class PuzzleButton(Clutter.Actor, PropertyAdapter):
     __gtype_name__ = "BrainPuzzleButton"
     __gsignals__ = {
         "activate": (
@@ -15,17 +17,23 @@ class PuzzleButton(Clutter.Actor):
              "label on the key",
              "label displayed on the key",
              "",
-             GObject.PARAM_READWRITE)
+             GObject.PARAM_READWRITE),
+         "label_font": (
+             GObject.TYPE_STRING,
+             "font of the label",
+             "font name of the label",
+             "",
+             GObject.PARAM_READWRITE),
     }
 
     def __init__(self):
         super().__init__()
-        self.r, self.g, self.b, self.a = 0.21, 0.69, 0.87, 0.5
+        self.r, self.g, self.b, self.a = 0.21, 0.69, 0.87, 1
+        self._init_label_entry()
         self.label_font = "Sans 20"
         self.hilite_duration = 1000
         self.set_layout_manager(Clutter.BinLayout())
         self._init_canvas()
-        self._init_label_entry()
         self.set_reactive(True)
         self.connect("button-press-event", self.fire_activate)
         self.connect("touch-event", self.fire_activate)
@@ -41,7 +49,6 @@ class PuzzleButton(Clutter.Actor):
         self.label_entry = Clutter.Text()
         color = Clutter.Color.new(self.r*255, self.g*255, self.b*255, 255)
         self.label_entry.set_color(color)
-        self.label_entry.set_font_name(self.label_font)
         self.add_child(self.label_entry)
 
     def update_canvas(self, canvas, context, w, h):
@@ -56,14 +63,17 @@ class PuzzleButton(Clutter.Actor):
         context.stroke()
         return True
 
-    def _update_label(self):
-        self.label_entry.set_text(self.label)
-
-    def set_label(self, label):
-        self.label = label
+    def set_label(self, value):
+        self.label = value
 
     def get_label(self):
         return self.label
+
+    def set_label_font(self, value):
+        self.label_font = value
+
+    def get_label_font(self):
+        return self.label_font
 
     @property
     def label(self):
@@ -72,27 +82,16 @@ class PuzzleButton(Clutter.Actor):
     @label.setter
     def label(self, value):
         self._label = value
-        self._update_label()
+        self.label_entry.set_text(self.label)
 
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name.replace("-", "_"))
+    @property
+    def label_font(self):
+        return self._label_font
 
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name.replace("-", "_"))
+    @label_font.setter
+    def label_font(self, value):
+        self._label_font = value
+        self.label_entry.set_font_name(self.label_font)
 
     def fire_activate(self, source, event):
         if isinstance(event, Clutter.TouchEvent):
@@ -102,11 +101,12 @@ class PuzzleButton(Clutter.Actor):
         self.hilite_on()
 
     def hilite_on(self):
-        effect = Clutter.BlurEffect.new()
-        self.add_effect_with_name("hilite", effect)
-        Clutter.threads_add_timeout(0, self.hilite_duration, self.hilite_off, None)
+        if not self.get_effect("hilite"):
+            effect = Clutter.BlurEffect.new()
+            self.add_effect_with_name("hilite", effect)
+            Clutter.threads_add_timeout(0, self.hilite_duration, self.hilite_off, None)
 
-    def hilite_off(self, data):
+    def hilite_off(self, *args):
         self.remove_effect_by_name("hilite")
 
 

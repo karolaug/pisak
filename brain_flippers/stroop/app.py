@@ -1,3 +1,20 @@
+"""
+Main module of the stroop game application. The whole gui part of the game,
+at least for now, is divided into three classes, that is: so called stage-
+main class responsible for switching the main views and organizing communication
+between them, with methods which names begin with enter- they introduce
+new views, adjust- they make all the neccessary gui adjustments like setting
+appropriate info messages, button labels etc and enable- they take buttons
+or the whole views from dedicated jsons and connect signals to them;
+game- class that runs the proper game, used as an object by the main game json,
+switching colors and rules changed views by itself, counts time and points,
+sends game end signal when the game is over; and finally tutorial- class
+responsible for the whole tutorial part, used as an object by the main tutorial
+json, switches between three views, sends the tutorial end signal when the tutorial is over.
+All used parameters are declared at the beginning of the module or very close to
+the beginning of a proper class.
+"""
+
 import sys
 import os.path
 import random
@@ -10,7 +27,7 @@ from brain_flippers import widgets
 
 import pisak.layout  # @UnusedImport
 
-WELCOME_TEXT = "WITAJ W GRZE STROOP."
+WELCOME_TEXT = "WITAJ W GRZE STROOP"
 INDEX_FINGER_ICON_PATH = "brain_flippers/stroop/index_finger.png"
 PLAYER_LIFE_UNICHAR = u"\u2764"
 VIEW_PATHS = {
@@ -69,13 +86,16 @@ class BrainStroopGame(Clutter.Actor):
         self.level = 0
         self.mode = 0
         self.lap = 0
-        self.player_score = 0
+        self.levels = 3
         self.color_repetition = 2
+        self.laps_per_mode = self.color_repetition * len(COLORS_MAP)
+        self.player_score = 0
         self.player_clock = 0
+        self.player_correct_answers = 0
+        self.player_errors = 0
         self.player_clock_quantum = 1000
         self.player_clock_ticking = False
-        self.levels = 1
-        self.laps_per_mode = 8
+        self.player_score_coeff = 10
         self.player_lives = 4
         self.player_lives_left = self.player_lives
         self.rules_changed_view_idle = 2000
@@ -106,6 +126,12 @@ class BrainStroopGame(Clutter.Actor):
         color_text_entry.set_text(self.color_names_chain.pop(0))
         color_text_entry.set_color(self.color_values_chain.pop(0))
 
+    def enable_color_view(self):
+        for field in self.script.get_object("color_fields").get_children():
+            field.connect("button-press-event", self.on_player_choice)
+            field.connect("touch-event", self.on_player_choice)
+            field.set_reactive(True)
+
     def update_player_clock(self, *args):
         self.player_clock += 1
         if self.player_clock_ticking:
@@ -117,11 +143,6 @@ class BrainStroopGame(Clutter.Actor):
         life_panel = self.script.get_object("life_panel")
         for life in range(self.player_lives_left):
             life_panel.insert_unichar(PLAYER_LIFE_UNICHAR)
-        
-    def enable_color_view(self):
-        for field in self.script.get_object("color_fields").get_children():
-            field.connect("button-press-event", self.on_player_choice)
-            field.set_reactive(True)
 
     def enter_rules_changed_view(self):
         self.player_clock_ticking = False
@@ -136,59 +157,57 @@ class BrainStroopGame(Clutter.Actor):
         start_button = self.script.get_object("start_button")
         start_button.connect("activate", self.enter_colors_view)
 
-    """def on_idle_timeout(self):
-        self.lap += 1
-        if self.lap == self.laps_per_mode:
-
-         elif self.lap < self.laps_per_mode:
-            self.adjust_colors_view()"""
-
     def on_player_choice(self, field, event):
+        if isinstance(event, Clutter.TouchEvent):
+            if event.type != 13:  # touch-begin type of event
+                return
+        self.lap += 1
+        field_color = field.get_background_color()
         if self.mode == 0:
-            field_color = field.get_background_color()
-            text_color = self.script.get_object("color_text").get_color()
-            if Clutter.Color.equal(field_color, text_color):
-                self.lap += 1
-                if self.lap == self.laps_per_mode:
-                    self.lap = 0
-                    self.mode = 1
-                    self.enter_rules_changed_view()
-                elif self.lap < self.laps_per_mode:
-                    self.adjust_colors_view()
-            else:
-                self.on_life_loss()
+            requested_color = self.script.get_object("color_text").get_color()
         elif self.mode == 1:
-            field_color = field.get_background_color()
-            color_name = COLORS_MAP[self.script.get_object("color_text").get_text()]
-            if Clutter.Color.equal(field_color, color_name):
-                self.lap += 1
-                if self.lap == self.laps_per_mode:
-                    self.lap = 0
-                    self.mode = 0
-                    self.level += 1
-                    if self.level == self.levels:
-                        self.end_game()
-                    elif self.level < self.levels:
-                        self.enter_rules_changed_view()
-                elif self.lap < self.laps_per_mode:
-                    self.adjust_colors_view()
-            else:
-                self.on_life_loss()
+            requested_color = COLORS_MAP[self.script.get_object("color_text").get_text()]
+        if Clutter.Color.equal(field_color, requested_color):
+            self.on_correct_answer()
+        else:
+            self.on_life_loss()
 
+    def on_correct_answer(self):
+        self.player_correct_answers += 1
+        self.move_on()
+        
     def on_life_loss(self):
-        life_panel = self.script.get_object("life_panel")
+        self.player_errors += 1
         self.player_lives_left -= 1
+        life_panel = self.script.get_object("life_panel")
         life_panel.set_text(life_panel.get_text()[:-1])
         if not self.player_lives_left:
             self.end_game()
+        else:
+            self.move_on()
 
+    def move_on(self):
+        if self.lap == self.laps_per_mode:
+            self.lap = 0
+            if self.mode == 0:
+                self.mode = 1
+            elif self.mode == 1:
+                self.mode = 0
+                self.level += 1
+                if self.level == self.levels:
+                    self.end_game()
+                    return
+            self.enter_rules_changed_view()
+        elif self.lap < self.laps_per_mode:
+            self.adjust_colors_view()
+                        
     def end_game(self):
         self.calculate_player_score()
         self.emit("game_end")
 
     def calculate_player_score(self):
-        self.player_score = self.player_clock
-
+        self.player_score = self.player_score_coeff * self.player_correct_answers / (1+self.player_errors) / (1+self.player_clock)
+            
 
 class BrainStroopTutorial(Clutter.Actor):
     __gtype_name__ = "BrainStroopTutorial"
@@ -199,8 +218,7 @@ class BrainStroopTutorial(Clutter.Actor):
     def __init__(self):
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
-        self.view_num = 0
-        self.views = 3
+        self._init_parameters()
         self._load_script()
         self._init_index_finger()
         self.reload_view()
@@ -211,43 +229,56 @@ class BrainStroopTutorial(Clutter.Actor):
         view_actor = self.script.get_object("main")
         self.add_child(view_actor)
 
+    def _init_parameters(self):
+        self.index_finger_width = 100
+        self.index_finger_height = 120
+        self.view_num = 0
+        self.views = 3
+
     def _init_index_finger(self):
         self.index_finger = Mx.Image()
         self.index_finger.set_from_file(INDEX_FINGER_ICON_PATH)
+        self.index_finger.set_scale_mode(1)  # fit scale mode
+        self.index_finger.set_size(self.index_finger_width, self.index_finger_height)
 
     def reload_view(self):
-        self.enable_view()
         self.adjust_view()
+        self.enable_view()
 
     def adjust_view(self):
         info_text = self.script.get_object("info_text")
         info_text.set_text(TUTORIAL_TEXT[str(self.view_num)])
         if self.view_num == 0:
-            color_text = self.script.get_object("color_text")
-            color_text.set_color(COLORS_MAP["czerwony"])
-            color_text.set_text("żółty")
-            next_button = self.script.get_object("next_button")
-            next_button.set_label("DALEJ")
+            self.color_text = self.script.get_object("color_text")
+            self.color_text.set_color(COLORS_MAP["czerwony"])
+            self.color_text.set_text("żółty")
+            self.next_button = self.script.get_object("next_button")
+            self.next_button.set_label("DALEJ")
         elif self.view_num == 1:
-            self.script.get_object("red").add_child(self.index_finger)
-            next_button = self.script.get_object("next_button")
-            next_button.set_label("DALEJ")
+            self.next_button.hilite_off()
+            self.allocate_index_finger(self.script.get_object("red"))
         elif self.view_num == 2:
+            self.next_button.hilite_off()
+            self.next_button.set_label("WYJDŹ")
             self.script.get_object("red").remove_child(self.index_finger)
-            self.script.get_object("green").add_child(self.index_finger)
-            color_text = self.script.get_object("color_text")
-            color_text.set_color(COLORS_MAP["zielony"])
-            color_text.set_text("czerwony")
-            next_button = self.script.get_object("next_button")
-            next_button.set_label("WYJDŹ")
+            self.allocate_index_finger(self.script.get_object("green"))
+            self.color_text.set_color(COLORS_MAP["zielony"])
+            self.color_text.set_text("czerwony")
             
     def enable_view(self):
-        next_button = self.script.get_object("next_button")
         if self.view_num == 0:
-            next_button.connect("activate", self.next_page)
+            self.next_button.connect("activate", self.next_page)
         elif self.view_num == 2:
-            next_button.disconnect_by_func(self.next_page)
-            next_button.connect("activate", self.end_tutorial)
+            self.next_button.disconnect_by_func(self.next_page)
+            self.next_button.connect("activate", self.end_tutorial)
+
+    def allocate_index_finger(self, relative_field):
+        self.index_finger.clear_constraints()
+        relative_field.set_layout_manager(Clutter.BinLayout())
+        relative_field.add_child(self.index_finger)
+        relative_y = relative_field.get_height()/3
+        bind_y = Clutter.BindConstraint.new(relative_field, Clutter.BindCoordinate.Y, relative_y)
+        self.index_finger.add_constraint(bind_y)
 
     def end_tutorial(self, *args):
         self.emit("tutorial-end")
@@ -332,7 +363,7 @@ class BrainStroopStage(Clutter.Stage):
 
     def adjust_player_success_view(self, game_outcome):
         score_entry = self.script.get_object("player_score_value")
-        score = game_outcome.player_score
+        score = round(game_outcome.player_score, 2)
         score_entry.set_text(str(score))
         average_score = score_manager.get_average_ever("stroop")
         if average_score:
@@ -352,7 +383,7 @@ class BrainStroopStage(Clutter.Stage):
                     item.connect("activate", self.save_score)
                     item.connect_after("activate", self.enter_high_scores_view, "today")
         try_again_button = self.script.get_object("try_again")
-        try_again_button.connect("activate", self.enter_game_view)
+        try_again_button.connect("activate", self.enter_main_menu_view)
         best_today_button = self.script.get_object("best_today")
         if score_manager.get_best_today("stroop"):
             best_today_button.connect("activate", self.enter_high_scores_view, "today")
@@ -396,7 +427,7 @@ class BrainStroopStage(Clutter.Stage):
 
     def adjust_player_fail_view(self, game_outcome):
         player_score_entry = self.script.get_object("player_score_value")
-        player_score = game_outcome.player_score
+        player_score = round(game_outcome.player_score, 2)
         player_score_entry.set_text(str(player_score))
         average_score = score_manager.get_average_ever("stroop")
         if average_score:
@@ -407,7 +438,7 @@ class BrainStroopStage(Clutter.Stage):
         
     def enable_player_fail_view(self):
         try_again_button = self.script.get_object("try_again")
-        try_again_button.connect("activate", self.enter_game_view)
+        try_again_button.connect("activate", self.enter_main_menu_view)
         best_today_button = self.script.get_object("best_today")
         best_today_button.connect("activate", self.enter_high_scores_view, "today")
         best_ever_button = self.script.get_object("best_ever")
