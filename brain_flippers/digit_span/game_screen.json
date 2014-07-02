@@ -5,15 +5,6 @@
         "x-expand": true
     },
     {
-        "id": "logic",
-        "type": "BrainDigitSpanLogic",
-        "status-bar": "status_bar",
-        "code-display": "display",
-        "keypad": "keyboard",
-        "stimulus": "stimulus",
-        "score-summary": "score_summary"
-    },
-    {
         "id": "main",
         "type": "PisakBinLayout",
         "children": ["stimulus",  "score_summary", "fail_feedback", "main_box", "logic"]
@@ -59,8 +50,21 @@
     },
     {
         "id": "fail_feedback",
-        "type": "BrainVideoFeedback",
+        "type": "BrainTextFeedback",
+        "text": "Błędny kod",
+        "visible": false,
+        "background-color": "green",
         "x-expand": true,
         "y-expand": true
+    },
+    {
+        "id": "logic",
+        "type": "BrainDigitSpanLogic",
+        "status-bar": "status_bar",
+        "code-display": "display",
+        "keypad": "keyboard",
+        "stimulus": "stimulus",
+        "score-summary": "score_summary",
+        "fail-feedback": "fail_feedback"
     }
 ]

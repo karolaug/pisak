@@ -1,4 +1,5 @@
 from gi.repository import Clutter, GObject, Mx, Gst, ClutterGst
+from pisak.widgets import PropertyAdapter
 
 from pisak.widgets import PropertyAdapter
 
@@ -109,15 +110,24 @@ class PuzzleButton(Clutter.Actor, PropertyAdapter):
         self.remove_effect_by_name("hilite")
 
 
-class ScoreSummary(Clutter.Actor):
+class Dismissable(Clutter.Actor):
+    __gsignals__ = {
+        "dismissed": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+
+    def __init__(self):
+        super().__init__()
+
+    def dismiss(self, *args):
+        self.hide()
+        self.emit("dismissed")
+
+
+class ScoreSummary(Dismissable):
     """
     Actor which allow displaying unified score summaries
     """
     __gtype_name__ = "BrainScoreSummary"
-
-    __gsignals__ = {    
-        "dismissed": (GObject.SIGNAL_RUN_FIRST, None, ())
-    }
 
     def __init__(self):
         super().__init__()
@@ -131,16 +141,15 @@ class ScoreSummary(Clutter.Actor):
     def _init_elements(self):
         self.dismiss_button = Mx.Button()
         self.dismiss_button.set_label(">")
-        self.dismiss_button.connect("clicked", self._dismiss)
+        self.dismiss_button.connect("clicked", self.dismiss)
         self.grid = Clutter.Actor()
         self.grid_layout = Clutter.GridLayout()
         self.grid.set_layout_manager(self.grid_layout)
         self.add_child(self.grid)
-    
-    def _dismiss(self, *args):
-        self.hide()
+
+    def dismiss(self, *args):
+        super().dismiss(*args)
         self.grid.remove_all_children()
-        self.emit("dismissed")
 
     def display_score(self, entries, total_score):
         """
@@ -167,29 +176,71 @@ class ScoreSummary(Clutter.Actor):
         self.show()
 
 
+class TextFeedback(Dismissable, PropertyAdapter):
+    __gtype_name__ = "BrainTextFeedback"
+
+    __gproperties__ = {
+        "text": (GObject.TYPE_STRING, "", "", "", GObject.PARAM_READWRITE),
+        "color": (Clutter.Color.__gtype__, "", "", GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.layout = Clutter.BinLayout()
+        self.set_layout_manager(self.layout)
+
+        self.box = Clutter.Actor()
+        self.box.set_layout_manager(Clutter.BoxLayout())
+        self.add_actor(self.box)
+
+        self.label = Mx.Label()
+        self.box.add_actor(self.label)
+
+        self.dismiss_button = Mx.Button.new_with_label(">")
+        self.dismiss_button.connect("clicked", self.dismiss)
+        self.box.add_actor(self.dismiss_button)
+
+    def display(self):
+        self.show()
+
+    @property
+    def text(self):
+        return self.label.get_text()
+
+    @text.setter
+    def text(self, value):
+        self.label.set_text(value)
+
+    @property
+    def color(self):
+        return self.label.get_clutter_text().get_color()
+
+    @color.setter
+    def color(self, value):
+        self.label.get_clutter_text().set_color(value)
+
+
 class VideoFeedback(Clutter.Actor):
     __gtype_name__ = "BrainVideoFeedback"
-    
+
     __gsignals__ = {    
         "dismissed": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
-    
-    def init(self):
+
+    def __init__(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        
-        self.video_texture = ClutterGst.VideoTexture()
-        self.video_texture.set_x_expand(True)
-        self.video_texture.set_y_expand(True)
+        ClutterGst.init()
+        self.video_texture = ClutterGst.VideoTexture(**{"disable-slicing": True})
+        #self.video_texture.set_x_expand(True)
+        #self.video_texture.set_y_expand(True)
         self.add_child(self.video_texture)
-        
+
         descriptor = "playbin uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm"
         self.pipeline = Gst.parse_launch(descriptor)
-        
+
         self.clutter_sink = Gst.ElementFactory.make("autocluttersink")
         self.clutter_sink.set_property("texture", self.video_texture)
         self.pipeline.set_property("video-sink", self.clutter_sink)
-        
-        #self.uri_source.link(self.clutter_sink)
-        self.uri_source.set_state(Gst.State.PLAYING)
-        #self.clutter_sink.set_state(Gst.State.PLAYING)
+
+        self.pipeline.set_state(Gst.State.PLAYING)
