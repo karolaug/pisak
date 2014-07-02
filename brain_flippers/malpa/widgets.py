@@ -160,9 +160,10 @@ class Logic(Clutter.Actor, PropertyAdapter):
             rule_change_info.set_text(info)
             self.board.add_child(rule_change_info)
             Clutter.threads_add_timeout(0, 1000, self._start_round, True)
-        elif self.success_count > change and self.success_count < 7:
+        elif self.success_count > change and self.success_count < 2*change:
             self._start_round(reverse=True)
-        else:            self.emit("finished")
+        else:
+            self.emit("finished")
 
     def _load_json(self):
         self.script.load_from_file

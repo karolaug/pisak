@@ -30,7 +30,7 @@ def prepare_help_view(script, data):
 
 def prepare_result_view(stage, script, data):
     score = data.get("score")
-    score_message = "BLAH BLAH {}".format(score)
+    score_message = "Twój wynik to {}\n Gratulacje!".format(score)
     message_label = script.get_object("consolation")
     message_label.set_text(score_message)
 
