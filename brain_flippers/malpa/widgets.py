@@ -109,6 +109,10 @@ class Logic(Clutter.Actor, PropertyAdapter):
         "end-screen": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
     }
 
+    __gsignals__ = {
+        "finished": (GObject.SIGNAL_RUN_FIRST, None, [])
+    }
+
     def __init__(self):
         super().__init__()
         self.set_fixed_position_set(True)  # bypass layout manager
@@ -154,7 +158,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
         elif self.success_count > change and self.success_count < 7:
             self._start_round(reverse=True)
         else:
-            self.end_game()
+            self.emit("finished")
 
     def _load_json(self):
         self.script.load_from_file
@@ -175,7 +179,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
         else:
             self.status_bar.lives -= 1
             if self.status_bar.lives == 0:
-                self.end_game()
+                self.emit("finished")
             else:
                 self._start_round()
 
@@ -192,9 +196,6 @@ class Logic(Clutter.Actor, PropertyAdapter):
             ("bonus za skuteczność", ratio_bonus)
         ]
         self.status_bar.score = self.score
-
-    def end_game(self):
-        raise NotImplementedError
 
     @property
     def status_bar(self):
