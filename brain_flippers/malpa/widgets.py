@@ -70,12 +70,10 @@ class StatusBar(Clutter.Actor):
         super().__init__()
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation(0))
-        self.layout.set_spacing(100)
+        self.layout.set_spacing(200)
         self.set_layout_manager(self.layout)
         self.lives_display = Mx.Label()
         self.score_display = Mx.Label()
-        self.score_display.set_size(100, 50)
-        self.lives_display.set_size(100, 50)
         self.add_child(self.score_display)
         self.add_child(self.lives_display)
         
@@ -157,6 +155,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
             self.board.remove_all_children()
             rule_change_info = Clutter.Text()
             info = "Zmiana zasad gry, teraz należy wybierać przyciski od największego do najmniejszego."
+            rule_change_info.set_text(Clutter.Color("white"))
             rule_change_info.set_text(info)
             self.board.add_child(rule_change_info)
             Clutter.threads_add_timeout(0, 1000, self._start_round, True)

@@ -52,7 +52,7 @@ MALPA_APP = {
     },
     "initial-view": "menu",
     "initial-data": None,
-    "background-color": "#006"
+    "background-color": "000000"
 }
 
 
