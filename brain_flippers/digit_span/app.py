@@ -33,7 +33,9 @@ def prepare_help_view(script, data):
 def prepare_top_result_view(stage, script, data):
     score_logic = script.get_object("logic")
     score_logic.game_score = data.get("score") 
-    score_logic.game_name = data.get("digit_span")
+    score_logic.game_name = "digit_span"
+    keyboard_panel = script.get_object("keyboard_panel")
+    score_logic.keyboard = keyboard_panel
 
 def prepare_meh_result_view(stage, script, data):
     score = data.get("score")
