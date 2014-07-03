@@ -1,7 +1,6 @@
 from gi.repository import Clutter, GObject, Mx, Gst, ClutterGst
 from pisak.widgets import PropertyAdapter
-
-from pisak.widgets import PropertyAdapter
+from brain_flippers import score_manager
 
 class PuzzleButton(Clutter.Actor, PropertyAdapter):
     __gtype_name__ = "BrainPuzzleButton"
@@ -244,3 +243,114 @@ class VideoFeedback(Clutter.Actor):
         self.pipeline.set_property("video-sink", self.clutter_sink)
 
         self.pipeline.set_state(Gst.State.PLAYING)
+
+
+class TopResultLogic(Clutter.Actor, PropertyAdapter):
+    __gtype_name__ = "BrainTopResultLogic"
+
+    __gproperties__ = {
+        "keyboard": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "player-score": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "average-score": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "player-name": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE)}
+
+    def __init__(self):
+        super().__init__()
+        self.set_fixed_position_set(True)
+        self._player_score = None
+        self._player_name = None
+        self._total_average_score = None
+        
+        self.typed_player_name = ""
+
+    @property
+    def game_score(self):
+        return self._game_score
+
+    @game_score.setter
+    def game_score(self, value):
+        self._game_score = value
+        if self.player_score:
+            self.player_score.set_text(str(value))
+
+    @property
+    def game_name(self):
+        return self._game_name
+
+    @game_name.setter
+    def game_name(self, value):
+        self._game_name = value
+        self._update_average_score()
+
+    def _update_average_score(self):
+        if self.total_average_score:
+            game_average = score_manager.get_average_ever(self.game_name)
+            self.total_average_score.set_text(str(game_average))
+    
+    @property
+    def typed_player_name(self):
+        return self._typed_player_name
+    
+    @typed_player_name.setter
+    def typed_player_name(self, value):
+        self._typed_player_name = value
+        if self.player_name:
+            self._update_player_name()
+    
+    def _update_player_name(self):
+        if self.typed_player_name == "":
+            self.player_name.set_text("_ _")
+        elif len(self.typed_player_name) == 1:
+            self.player_name.set_text(self.typed_player_name + " _")
+        else:
+            name = self.typed_player_name
+            self.player_name.set_text("{} {}".format(name[0], name[1]))
+
+    # GObject properties
+
+    @property
+    def keyboard(self):
+        return self._keyboard
+
+    @keyboard.setter
+    def keyboard(self, value):
+        self._keyboard = value
+        self._connect_keyboard()
+    
+    def _connect_keyboard(self):
+        to_scan = [self.keyboard]
+        while (len(to_scan) > 0):
+            current = to_scan.pop()
+            if isinstance(current, PuzzleButton):
+                current.connect("activate", self._type_letter)
+            else:
+                to_scan.extend(current.get_children())
+    
+    def _type_letter(self, source):
+        if len(self.typed_player_name) < 2:
+            self.typed_player_name = self.typed_player_name + source.get_label()
+
+    @property
+    def player_score(self):
+        return self._player_score
+
+    @player_score.setter
+    def player_score(self, value):
+        self._player_score = value
+
+    @property
+    def total_average_score(self):
+        return self._total_average_score
+
+    @total_average_score.setter
+    def total_average_score(self, value):
+        self._total_average_score = value
+
+    @property
+    def player_name(self):
+        return self._player_name
+
+    @player_name.setter
+    def player_name(self, value):
+        self._player_name = value
+        self._update_player_name()
