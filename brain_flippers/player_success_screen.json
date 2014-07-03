@@ -455,7 +455,8 @@
         "type": "BrainTopResultLogic",
         "player-score": "player_score_value",
         "total-average-score": "average_score_value",
-        "player-name": "name"
+        "player-name": "name",
+        "back-button": "try_again"
     }
 ]
                                 

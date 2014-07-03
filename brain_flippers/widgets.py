@@ -255,6 +255,10 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
         "player-name": (Clutter.Text.__gtype__, "", "", GObject.PARAM_READWRITE),
         "back-button": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
     }
+    
+    __gsignals__ = {
+        "finished": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
 
     def __init__(self):
         super().__init__()
@@ -370,3 +374,16 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
     def player_name(self, value):
         self._player_name = value
         self._update_player_name()
+
+    @property
+    def back_button(self):
+        return self._back_button
+
+    @back_button.setter
+    def back_button(self, value):
+        self._back_button = value
+        value.connect("activate", self._finish)
+
+    def _finish(self, *args):
+        score_manager.add_record(
+            self.game_name, self.typed_player_name, self.game_score)

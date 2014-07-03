@@ -31,11 +31,15 @@ def prepare_help_view(script, data):
 
 
 def prepare_top_result_view(stage, script, data):
+    def back_to_menu(*args):
+        stage.load_view("menu", None)
+
     score_logic = script.get_object("logic")
     score_logic.game_score = data.get("score") 
     score_logic.game_name = "digit_span"
     keyboard_panel = script.get_object("keyboard_panel")
     score_logic.keyboard = keyboard_panel
+    score_logic.connect("finished", back_to_menu)
 
 def prepare_meh_result_view(stage, script, data):
     score = data.get("score")
