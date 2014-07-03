@@ -1,7 +1,7 @@
 '''
 Module with app-specific code for Digit Span game.
 '''
-from brain_flippers import launcher
+from brain_flippers import launcher, score_manager
 import os.path
 
 def prepare_menu_view(stage, script, data):
@@ -17,9 +17,11 @@ def prepare_game_view(stage, script, data):
     logic = script.get_object("logic")
     
     def show_results(*args):
-        data = {"score": logic.score, "game": "sejf"}
-        
-        stage.load_view("result", data)
+        data = {"score": logic.score, "game": "digit_span"}
+        if score_manager.is_top_ten("digit_span", logic.score):
+            stage.load_view("result_top", data)
+        else:
+            stage.load_view("result_meh", data)
     
     logic.connect("finished", show_results)
 
@@ -28,12 +30,16 @@ def prepare_help_view(script, data):
     pass
 
 
-def prepare_result_view(stage, script, data):
-    score = data.get("score")
-    score_message = "BLAH BLAH {}".format(score)
-    message_label = script.get_object("consolation")
-    message_label.set_text(score_message)
+def prepare_top_result_view(stage, script, data):
+    score_logic = script.get_object("logic")
+    score_logic.game_score = data.get("score") 
+    score_logic.game_name = data.get("digit_span")
 
+def prepare_meh_result_view(stage, script, data):
+    score = data.get("score")
+    score_message = str(score)
+    message_label = script.get_object("player_score_value")
+    message_label.set_text(score_message)
 
 def prepare_top_list_view(script, data):
     pass
@@ -47,7 +53,8 @@ DIGIT_SPAN_APP = {
         "menu": (fix_path("../menu_screen.json"), prepare_menu_view),
         "game": (fix_path("game_screen.json"), prepare_game_view),
         "help": ("/dev/null", prepare_help_view),
-        "result": ("../player_death_screen.json", prepare_result_view),
+        "result_top": ("../player_success_screen.json", prepare_top_result_view),
+        "result_meh": ("../player_fail_screen.json", prepare_meh_result_view),
         "top_list": ("/dev/null", prepare_top_list_view)
     },
     "initial-view": "menu",
