@@ -24,6 +24,7 @@
     },
     {
         "id": "keyboard",
+        "y-expand": true,
         "type": "BrainNumpad",
         "x-expand": true
     },

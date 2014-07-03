@@ -21,7 +21,6 @@ class Numpad(Clutter.Actor):
         self.layout.set_column_homogeneous(True)
         self.layout.set_row_homogeneous(True)
         self.set_layout_manager(self.layout)
-        self.all_clicked = []
         self.init_buttons()
 
     def init_buttons(self):
