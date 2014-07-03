@@ -387,3 +387,4 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
     def _finish(self, *args):
         score_manager.add_record(
             self.game_name, self.typed_player_name, self.game_score)
+        self.emit("finished")
