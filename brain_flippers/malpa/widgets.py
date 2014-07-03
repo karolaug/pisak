@@ -70,12 +70,10 @@ class StatusBar(Clutter.Actor):
         super().__init__()
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation(0))
-        self.layout.set_spacing(100)
+        self.layout.set_spacing(200)
         self.set_layout_manager(self.layout)
         self.lives_display = Mx.Label()
         self.score_display = Mx.Label()
-        self.score_display.set_size(100, 50)
-        self.lives_display.set_size(100, 50)
         self.add_child(self.score_display)
         self.add_child(self.lives_display)
         
@@ -107,6 +105,10 @@ class Logic(Clutter.Actor, PropertyAdapter):
         "game-screen": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
         "menu-screen": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
         "end-screen": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
+    }
+
+    __gsignals__ = {
+        "finished": (GObject.SIGNAL_RUN_FIRST, None, [])
     }
 
     def __init__(self):
@@ -145,16 +147,22 @@ class Logic(Clutter.Actor, PropertyAdapter):
 
     def _finish_round(self, *args):
         self.grid_length += 1
-        change = 5
+        change = 4
         if self.success_count < change:
             self._start_round()
         elif self.success_count == change:
             self.grid_length = 3
-            self._start_round(reverse=True)
-        elif self.success_count > change and self.success_count < 7:
+            self.board.remove_all_children()
+            rule_change_info = Clutter.Text()
+            info = "Zmiana zasad gry, teraz należy wybierać przyciski od największego do najmniejszego."
+            rule_change_info.set_text(Clutter.Color("white"))
+            rule_change_info.set_text(info)
+            self.board.add_child(rule_change_info)
+            Clutter.threads_add_timeout(0, 1000, self._start_round, True)
+        elif self.success_count > change and self.success_count < 2*change:
             self._start_round(reverse=True)
         else:
-            self.end_game()
+            self.emit("finished")
 
     def _load_json(self):
         self.script.load_from_file
@@ -175,7 +183,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
         else:
             self.status_bar.lives -= 1
             if self.status_bar.lives == 0:
-                self.end_game()
+                self.emit("finished")
             else:
                 self._start_round()
 
@@ -192,9 +200,6 @@ class Logic(Clutter.Actor, PropertyAdapter):
             ("bonus za skuteczność", ratio_bonus)
         ]
         self.status_bar.score = self.score
-
-    def end_game(self):
-        raise NotImplementedError
 
     @property
     def status_bar(self):
