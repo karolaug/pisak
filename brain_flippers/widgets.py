@@ -250,18 +250,28 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
 
     __gproperties__ = {
         "keyboard": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
-        "player-score": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
-        "average-score": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
-        "player-name": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE)}
+        "player-score": (Clutter.Text.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "total-average-score": (Clutter.Text.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "player-name": (Clutter.Text.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "back-button": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
+    }
 
     def __init__(self):
         super().__init__()
         self.set_fixed_position_set(True)
+        self._keyboard = None
         self._player_score = None
         self._player_name = None
         self._total_average_score = None
+        self._connected = False
         
+        self.game_score = None
         self.typed_player_name = ""
+        self.connect("notify::mapped", self._on_ready)
+
+    def _on_ready(self, *args):
+        if self.keyboard:
+            self._connect_keyboard()
 
     @property
     def game_score(self):
@@ -271,7 +281,10 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
     def game_score(self, value):
         self._game_score = value
         if self.player_score:
-            self.player_score.set_text(str(value))
+            self._update_player_score()
+
+    def _update_player_score(self):
+        self.player_score.set_text(str(self.game_score))
 
     @property
     def game_name(self):
@@ -315,9 +328,11 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
     @keyboard.setter
     def keyboard(self, value):
         self._keyboard = value
-        self._connect_keyboard()
     
     def _connect_keyboard(self):
+        if self._connected:
+            return
+        self._connected = True
         to_scan = [self.keyboard]
         while (len(to_scan) > 0):
             current = to_scan.pop()
@@ -337,6 +352,7 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
     @player_score.setter
     def player_score(self, value):
         self._player_score = value
+        self._update_player_score()
 
     @property
     def total_average_score(self):

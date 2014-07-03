@@ -1,13 +1,5 @@
 [
     {
-        "id": "logic",
-        "type": "BrainTopResultLogic",
-        "keyboard": "keyboard_panel",
-        "player-score": "player_score_value",
-        "total-average-score": "average_score_value",
-        "player-name": "name"
-    },
-    {
         "id": "main",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
@@ -20,7 +12,6 @@
         "margin-right": 20,
         "children":
             [
-                "logic",
                 {
                     "id": "player_score",
                     "type": "PisakBoxLayout",
@@ -455,9 +446,17 @@
                             "label-font": "Courier 12"
                         }
                     ]
-                }
+                },
+                "logic"
             ]
-        }
+        },
+    {
+        "id": "logic",
+        "type": "BrainTopResultLogic",
+        "player-score": "player_score_value",
+        "total-average-score": "average_score_value",
+        "player-name": "name"
+    }
 ]
                                 
                     

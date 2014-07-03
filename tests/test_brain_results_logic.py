@@ -42,10 +42,13 @@ class TestResultLogic(unittest.TestCase):
     def test_score(self):
         logic = brain_flippers.widgets.TopResultLogic()
         player_score = Clutter.Text()
-        score = 42
+        score_1 = 42
+        score_2 = 9001
+        logic.game_score = score_1  # set value
         logic.player_score = player_score  # set text box
-        logic.game_score = score  # set value
-        self.assertEqual(str(score), player_score.get_text())
+        self.assertEqual(str(score_1), player_score.get_text())
+        logic.game_score = score_2  # set other value
+        self.assertEqual(str(score_2), player_score.get_text())
 
 
 if __name__ == "__main__":
