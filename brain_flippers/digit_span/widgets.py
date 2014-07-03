@@ -139,6 +139,9 @@ class Stimulus(Clutter.Actor):
     def __init__(self):
         super().__init__()
         self.stop_time = None
+        self._code = None
+        self._reversed = None
+        self._index = None
         self._init_layout()
         self._init_elements()
         
@@ -150,16 +153,38 @@ class Stimulus(Clutter.Actor):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
     
-    def show_code(self, code):
-        self.show()
-        self._code = code
+    def show_code(self, code, is_reversed):
+        self._reversed = is_reversed
+        self._code = list(reversed(code)) if is_reversed else code
         self._index = 0
+        
+        self._show_direction()
+        self.show()
+        Clutter.threads_add_timeout(0, 2000, self._show_digits, None)
+    
+    def _show_direction(self):
+        if self._reversed:
+            label = "Zapamiętaj kod w odwrotnej kolejności"
+        else:
+            label = "Zapamiętaj kod"
+        self.digit_label.set_text(label)
+        self.digit_label.show()
+        Clutter.threads_add_timeout(0, 1950, self._hide_label, None)
+    
+    def _show_digits(self, data):
         self._show_digit()
         Clutter.threads_add_timeout(0, 1200, self._show_next_digit, None)
+        return False
     
     def _show_digit(self):
         digit_text = str(self._code[self._index])
         self.digit_label.set_text(digit_text)
+        self.digit_label.show()
+        Clutter.threads_add_timeout(0, 1050, self._hide_label, None)
+    
+    def _hide_label(self, data):
+        self.digit_label.hide()
+        return False
     
     def _show_next_digit(self, data):
         self._index += 1
@@ -209,11 +234,12 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.fail_feedback.connect("dismissed", self._finish_round)
 
     def _start_round(self):
+        self.reversed = random.choice([True, False])
         self.code = self.generate_code(self.code_length)
         self.entered_code = []
         self.code_display.clear()
         self._key_handle = self.keypad.connect("digit", self._keypad_digit)
-        self.stimulus.show_code(self.code)
+        self.stimulus.show_code(self.code, self.reversed)
     
     def _finish_round(self, *args):
         if self.success_count / self.trials <= 0.5:
