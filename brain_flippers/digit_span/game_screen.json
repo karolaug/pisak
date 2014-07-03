@@ -44,7 +44,7 @@
     {
         "id": "score_summary",
         "type": "BrainScoreSummary",
-        "background-color": "white",
+        "background-color": "gray",
         "visible": false,
         "x-expand": true,
         "y-expand": true
@@ -54,7 +54,7 @@
         "type": "BrainTextFeedback",
         "text": "Błędny kod",
         "visible": false,
-        "background-color": "green",
+        "background-color": "gray",
         "x-expand": true,
         "y-expand": true
     },

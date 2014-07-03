@@ -189,7 +189,9 @@ class TextFeedback(Dismissable, PropertyAdapter):
         self.set_layout_manager(self.layout)
 
         self.box = Clutter.Actor()
-        self.box.set_layout_manager(Clutter.BoxLayout())
+        self.box_layout = Clutter.BoxLayout()
+        self.box_layout.set_orientation(Clutter.Orientation.VERTICAL)
+        self.box.set_layout_manager(self.box_layout)
         self.add_actor(self.box)
 
         self.label = Mx.Label()
