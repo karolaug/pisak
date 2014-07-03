@@ -1,7 +1,7 @@
 import time
 import sqlite3
 
-DATABASE = "brain_flippers/scores.db"
+DATABASE = "/home/piwaniuk/scores.db"
 
 def _get_today_date():
     return time.strftime("%Y-%m-%d")
@@ -54,3 +54,11 @@ def get_average_ever(game):
     response = _query_db(query)
     if response:
         return response[0][0]
+
+
+def is_top_ten(game, score):
+    top_ten = get_best_today(game)
+    if top_ten:
+        return score > min(0, *[score for (_name, score) in top_ten])
+    else:
+        return score > 0
