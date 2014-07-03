@@ -224,9 +224,17 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
             self._start_round()
 
     def _keypad_digit(self, keypad, digit):
+        # update view
         self.entered_code.append(digit)
         self.code_display.append(digit)
-        if len(self.code) <= len(self.entered_code):
+        # check code
+        finish_round = False
+        if self.code[:len(self.entered_code)] != self.entered_code:
+            finish_round = True
+        elif len(self.code) <= len(self.entered_code):
+            finish_round = True
+        # feedback
+        if finish_round: 
             self.keypad.disconnect(self._key_handle)
             self.trials += 1
             if self.code == self.entered_code:
