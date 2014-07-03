@@ -389,30 +389,6 @@
                                             "height": "40"
                                         }
                                     ]
-                            },
-                            {
-                                "id": "row_5",
-                                "type": "PisakBoxLayout",
-                                "spacing": 20,
-                                "children":
-                                    [
-                                        {
-                                            "id": "row_5_1",
-                                            "type": "BrainPuzzleButton",
-                                            "width": 200,
-                                            "height": 50,
-                                            "label": "SKASUJ",
-                                            "label-font": "Courier 30"
-                                        },
-                                        {
-                                            "id": "row_5_2",
-                                            "type": "BrainPuzzleButton",
-                                            "width": 200,
-                                            "height": 50,
-                                            "label": "ZAPISZ",
-                                            "label-font": "Courier 30"
-                                        }
-                                    ]
                             }
                         ]                
                 },
@@ -426,23 +402,7 @@
                             "type": "BrainPuzzleButton",
                             "width": 250,
                             "height": 100,
-                            "label": "SPRÓBUJ JESZCZE RAZ",
-                            "label-font": "Courier 12"
-                        },
-                        {
-                            "id": "best_today",
-                            "type": "BrainPuzzleButton",
-                            "width": "250",
-                            "height": "100",
-                            "label": "WYNIKI Z DZIŚ",
-                            "label-font": "Courier 12"
-                        },
-                        {
-                            "id": "best_ever",
-                            "type": "BrainPuzzleButton",
-                            "width": "250",
-                            "height": "100",
-                            "label": "WYNIKI Z WYSTAWY",
+                            "label": "POWRÓT",
                             "label-font": "Courier 12"
                         }
                     ]
