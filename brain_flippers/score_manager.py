@@ -1,13 +1,21 @@
 import time
 import sqlite3
+from os import getenv
+import os.path
 
-DATABASE = "/home/piwaniuk/scores.db"
+home = getenv('HOME')
+DATABASE = os.path.join(home, 'scores.db')
 
 def _get_today_date():
     return time.strftime("%Y-%m-%d")
 
 def _query_db(query, values=None):
-    conn = sqlite3.connect(DATABASE)
+    try:
+        conn = sqlite3.connect(DATABASE)
+    except sqlite3.OperationalError:
+        f = open(DATABASE, 'w')
+        f.close()
+        conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
     if values:
         cur.execute(query, values)
