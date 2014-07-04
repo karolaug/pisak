@@ -1,38 +1,48 @@
 '''
 Widgets specific to Bomba game
 '''
-from gi.repository import Clutter, Mx
+from gi.repository import Clutter, Mx, GObject
 import time
 import brain_flippers.widgets
+import pisak.widgets
+import random
+from pisak import res
 
 
 class GraphicalCountdown(Clutter.Actor):
     __gtype_name__ = "BrainGraphicalCountdown"
-    
+
     COUNTDOWN_IMAGES = [
-        None, "bomba_01.jpg", "bomba_02.jpg", "bomba_03.jpg",
-        "bomba_04.jpg", "bomba_05.jpg", "bomba_06.jpg", "bomba_07.jpg",
-        "bomba_08.jpg", "bomba_09.jpg", "bomba_10.jpg"
+        None, "bomba/bomba_01.jpg", "bomba/bomba_02.jpg",
+        "bomba/bomba_03.jpg", "bomba/bomba_04.jpg", "bomba/bomba_05.jpg",
+        "bomba/bomba_06.jpg", "bomba/bomba_07.jpg", "bomba/bomba_08.jpg",
+        "bomba/bomba_09.jpg", "bomba/bomba_10.jpg"
     ]
-    
-    BUTTON_IMAGE = "bomba_guzik.jpg"
-    
-    
+
+    BUTTON_IMAGE = "bomba/bomba_guzik.jpg"
+
     def __init__(self):
         super().__init__()
-    
+
+        self.layout = Clutter.BinLayout()
+        self.set_layout_manager(self.layout)
+
+        self.image = Mx.Image()
+        self.add_child(self.image)
+
     def start_countdown(self, hide_on):
         self._time_left = 10
         self._hide_on = hide_on
         self._interrupted = False
         self.show()
+        self._set_image(self.COUNTDOWN_IMAGES[self._time_left])
         self.start_time = time.time()
         Clutter.threads_add_timeout(0, 1000, self._tick, None)
-        
+
     def hide(self):
         self.hide()
         self.interrupted = True
-    
+
     def _tick(self, data):
         self._time_left -= 1
         if self._interrupted:
@@ -41,30 +51,33 @@ class GraphicalCountdown(Clutter.Actor):
             return False
         if self._time_left == self._hide_on:
             image = self.BUTTON_IMAGE
+            self._set_image(image)
+            return False
         else:
             image = self.COUNTDOWN_IMAGES[self._time_left]
-        self._set_image(image)
-        return True
+            self._set_image(image)
+            return True
 
     def _set_image(self, image):
-        raise NotImplementedError()
+        path = res.get(image)
+        self.image.set_from_file(path)
 
 
 class TimingFeedback(brain_flippers.widgets.TextFeedback):
     __gtype_name__ = "BrainTimingFeedback"
-    
+
     SUCCESS_MESSAGE = "Udało Ci się rozbroić bombę"
     FAILURE_MESSAGE = "Niestety, buchnąłeś bombę" 
-    
+
     def __init__(self):
         super().__init__()
-    
+
     def success(self, time_difference):
         self.show_feedback(self.FAILURE_MESSAGE, time_difference)
-    
+
     def failrue(self, time_difference):
         self.show_feedback(self.FAILURE_MESSAGE, time_difference)
-    
+
     def show_feedback(self, message, time_difference):
         self.text = message + "\n" + str(time_difference)
         self.show()
@@ -100,5 +113,60 @@ class Status(Clutter.Actor):
         self.lives_display.set_text(lives_text)
 
 
-class Logic(Clutter.Actor):
+class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "BrainBombaLogic" 
+
+    __gsignals__ = {}
+
+    __gproperties__ = {
+        "status": (Status.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "countdown": (GraphicalCountdown.__gtype__, "", "",
+            GObject.PARAM_READWRITE),
+        "feedback": (
+            brain_flippers.widgets.Dismissable.__gtype__, "", "",
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.set_fixed_position_set(True)
+
+        self.score = 0
+        self.lives = 3
+
+        self.connect("notify::mapped", self._ready)
+
+    def _ready(self, *args):
+        self._initialize_game()
+
+    def _initialize_game(self):
+        self._start_round()
+
+    def _start_round(self):
+        self.hide_on = random.choice([8, 7, 6, 5, 4, 3, 2])
+        self.countdown.start_countdown(self.hide_on)
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, value):
+        self._status = value
+        value.update_status(self.score, self.lives)
+
+    @property
+    def countdown(self):
+        return self._countdown
+
+    @countdown.setter
+    def countdown(self, value):
+        self._countdown = value
+
+    @property
+    def feedback(self):
+        return self._feedback
+
+    @feedback.setter
+    def feedback(self, value):
+        self._feedback = value
