@@ -13,6 +13,7 @@ import pisak.speller.widgets # @UnusedImport
 import brain_flippers.widgets  # @UnusedImport
 import brain_flippers.digit_span.widgets  # @UnusedImport
 import brain_flippers.malpa.widgets  # @UnusedImport
+import brain_flippers.bomba.widgets  # @UnusedImport
 
 
 class ButtonApp(switcher_app.Application):
