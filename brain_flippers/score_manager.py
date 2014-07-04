@@ -1,7 +1,10 @@
 import time
 import sqlite3
+from os import getenv
+import os.path
 
-DATABASE = "/home/piwaniuk/scores.db"
+home = getenv('HOME')
+DATABASE = os.path.join(home, 'pisak_scores.db')
 
 def _get_today_date():
     return time.strftime("%Y-%m-%d")
