@@ -1,0 +1,30 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBoxLayout",
+        "children": ["status", "game_panel", "logic"]
+    },
+    {
+        "id": "status",
+        "type": "BrainBombaStatus"
+    },
+    {
+        "id": "game_panel",
+        "type": "PisakBinLayout",
+        "children": ["counter", "feedback"]
+    },
+    {
+        "id":  "counter",
+        "type": "BrainGraphicalCountdown",
+        "visible": false
+    },
+    {
+        "id": "feedback",
+        "type": "BrainTimingFeedback",
+        "visible": false
+    },
+    {
+        "id": "logic",
+        "type": "BrainBombaLogic"
+    }
+]
