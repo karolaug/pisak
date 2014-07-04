@@ -83,6 +83,13 @@ class TimingFeedback(brain_flippers.widgets.TextFeedback):
         self.show()
 
 
+class Button(Clutter.Actor):
+    __gtype_name__ = "BrainBombaButton"
+
+    def __init__(self):
+        super().__init__()
+
+
 class Status(Clutter.Actor):
     __gtype_name__ = "BrainBombaStatus"
 
