@@ -2,7 +2,8 @@
     {
         "id": "main",
         "type": "PisakBoxLayout",
-        "children": ["status", "game_panel", "logic"]
+        "orientation": "vertical",
+        "children": ["game_panel", "logic"]
     },
     {
         "id": "status",
@@ -25,6 +26,9 @@
     },
     {
         "id": "logic",
-        "type": "BrainBombaLogic"
+        "type": "BrainBombaLogic",
+        "status": "status",
+        "countdown": "counter",
+        "feedback": "feedback"
     }
 ]
