@@ -39,6 +39,8 @@ class ButtonApp(switcher_app.Application):
         stage.set_layout_manager(Clutter.BinLayout())
         main_actor = script.get_object("main")
         stage.add_child(main_actor)
+        stage.set_size(1366, 768)
+        stage.set_fullscreen(True)
         return stage
 
 
