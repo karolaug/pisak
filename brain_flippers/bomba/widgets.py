@@ -1,7 +1,7 @@
 '''
 Widgets specific to Bomba game
 '''
-from gi.repository import Clutter
+from gi.repository import Clutter, Mx
 import time
 import brain_flippers.widgets
 
@@ -68,3 +68,37 @@ class TimingFeedback(brain_flippers.widgets.TextFeedback):
     def show_feedback(self, message, time_difference):
         self.text = message + "\n" + str(time_difference)
         self.show()
+
+
+class Status(Clutter.Actor):
+    __gtype_name__ = "BrainBombaStatus"
+
+    def __init__(self):
+        super().__init__()
+        self._init_layout()
+        self._init_elements()
+
+    def _init_layout(self):
+        self.layout = Clutter.BoxLayout()
+        self.set_layout_manager(self.layout)
+
+    def _init_elements(self):
+        self.score_display = Mx.Label()
+        self.add_child(self.score_display)
+
+        self.lives_display = Mx.Label()
+        self.add_child(self.lives_display)
+
+        self.exit_button = Mx.Button.new_with_label("Wyjście")
+        self.add_child(self.exit_button)
+
+    def update_status(self, score, lives):
+        score_text = "PUNKTY: {}".format(score)
+        self.score_display.set_text(score_text)
+
+        lives_text = "♥" * lives
+        self.lives_display.set_text(lives_text)
+
+
+class Logic(Clutter.Actor):
+    __gtype_name__ = "BrainBombaLogic" 
