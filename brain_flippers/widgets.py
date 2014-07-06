@@ -228,7 +228,7 @@ class VideoFeedback(Clutter.Actor):
         "dismissed": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
 
-    def __init__(self):
+    def __init__(self, movie_to_be_played, play=False):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         ClutterGst.init()
@@ -237,14 +237,18 @@ class VideoFeedback(Clutter.Actor):
         #self.video_texture.set_y_expand(True)
         self.add_child(self.video_texture)
 
-        descriptor = "playbin uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm"
-        self.pipeline = Gst.parse_launch(descriptor)
+        #descriptor = "playbin uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm"
+        #self.pipeline = Gst.parse_launch(descriptor)
+        #
+        #self.clutter_sink = Gst.ElementFactory.make("autocluttersink")
+        #self.clutter_sink.set_property("texture", self.video_texture)
+        #self.pipeline.set_property("video-sink", self.clutter_sink)
 
-        self.clutter_sink = Gst.ElementFactory.make("autocluttersink")
-        self.clutter_sink.set_property("texture", self.video_texture)
-        self.pipeline.set_property("video-sink", self.clutter_sink)
-
-        self.pipeline.set_state(Gst.State.PLAYING)
+        #self.pipeline.set_state(Gst.State.PLAYING)
+        self.video_texture.set_filename(movie_to_be_played)
+        if play:
+            self.video_texture.set_playing(True)
+        
 
 
 class TopResultLogic(Clutter.Actor, PropertyAdapter):
