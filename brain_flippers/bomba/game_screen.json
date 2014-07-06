@@ -11,18 +11,18 @@
     },
     {
         "id": "game_panel",
-        "type": "PisakBinLayout",
-        "children": ["counter", "feedback"]
+        "type": "PisakBoxLayout",
+	"orientation": "vertical",
+        "children": ["status", "counter", "feedback"]
     },
     {
         "id":  "counter",
-        "type": "BrainGraphicalCountdown",
-        "visible": false
+        "type": "BrainGraphicalCountdown"
     },
     {
         "id": "feedback",
         "type": "BrainTimingFeedback",
-        "visible": false
+	"visible": false
     },
     {
         "id": "logic",
