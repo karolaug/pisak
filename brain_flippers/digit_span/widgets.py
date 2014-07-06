@@ -4,6 +4,7 @@ Widgets dedicated for Safe game
 from gi.repository import Mx, Clutter, GObject
 import pisak.widgets
 from brain_flippers import widgets
+from brain_flippers.malpa.widgets import StatusLabel
 import random
 import time
 
@@ -41,7 +42,7 @@ class Numpad(Clutter.Actor):
         self.emit("digit", int(button.get_label()))
 
 
-class Code(Mx.Label, pisak.widgets.PropertyAdapter):
+class Code(StatusLabel, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "BrainSafeCode"
     __gproperties__ = {"base_code_length": (GObject.TYPE_INT64,
                                             "code length",
@@ -115,7 +116,7 @@ class Statusbar(Clutter.Actor):
         self.set_layout_manager(self.layout)
 
     def _init_elements(self):
-        self.score_text = Mx.Label()
+        self.score_text = StatusLabel()
         self.add_actor(self.score_text)
 
         self.exit_button = Mx.Button()
@@ -145,7 +146,7 @@ class Stimulus(Clutter.Actor):
         self._init_elements()
         
     def _init_elements(self):
-        self.digit_label = Mx.Label()
+        self.digit_label = StatusLabel()
         self.add_child(self.digit_label)
     
     def _init_layout(self):
