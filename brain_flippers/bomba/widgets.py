@@ -8,7 +8,6 @@ import pisak.widgets
 import random
 from pisak import res
 
-
 class GraphicalCountdown(Clutter.Actor):
     __gtype_name__ = "BrainGraphicalCountdown"
 
@@ -19,7 +18,9 @@ class GraphicalCountdown(Clutter.Actor):
         "bomba/bomba_09.jpg", "bomba/bomba_10.jpg"
     ]
 
-    BUTTON_IMAGE = "bomba/bomba_guzik.jpg"
+    BOMBA_IMAGE = "bomba/bomba.jpg"
+
+    TIME = 10
 
     def __init__(self):
         super().__init__()
@@ -29,28 +30,22 @@ class GraphicalCountdown(Clutter.Actor):
 
         self.image = Mx.Image()
         self.add_child(self.image)
+        self.button = Button()
+        self.button.set_size(200, 200)
+        self.button.set_position(800, 500)
+        self.add_child(self.button)
 
     def start_countdown(self, hide_on):
-        self._time_left = 10
+        self._time_left = self.TIME
         self._hide_on = hide_on
-        self._interrupted = False
-        self.show()
         self._set_image(self.COUNTDOWN_IMAGES[self._time_left])
         self.start_time = time.time()
         Clutter.threads_add_timeout(0, 1000, self._tick, None)
 
-    def hide(self):
-        self.hide()
-        self.interrupted = True
-
     def _tick(self, data):
         self._time_left -= 1
-        if self._interrupted:
-            return False
-        if self._time_left == 0:
-            return False
-        if self._time_left == self._hide_on:
-            image = self.BUTTON_IMAGE
+        if self._time_left <= self._hide_on:
+            image = self.BOMBA_IMAGE
             self._set_image(image)
             return False
         else:
@@ -66,16 +61,16 @@ class GraphicalCountdown(Clutter.Actor):
 class TimingFeedback(brain_flippers.widgets.TextFeedback):
     __gtype_name__ = "BrainTimingFeedback"
 
-    SUCCESS_MESSAGE = "Udało Ci się rozbroić bombę"
+    SUCCESS_MESSAGE = "Udało Ci się rozbroić bombę"
     FAILURE_MESSAGE = "Niestety, buchnąłeś bombę" 
 
     def __init__(self):
         super().__init__()
 
     def success(self, time_difference):
-        self.show_feedback(self.FAILURE_MESSAGE, time_difference)
+        self.show_feedback(self.SUCCESS_MESSAGE, time_difference)
 
-    def failrue(self, time_difference):
+    def failure(self, time_difference):
         self.show_feedback(self.FAILURE_MESSAGE, time_difference)
 
     def show_feedback(self, message, time_difference):
@@ -83,7 +78,7 @@ class TimingFeedback(brain_flippers.widgets.TextFeedback):
         self.show()
 
 
-class Button(Clutter.Actor):
+class Button(Mx.Button):
     __gtype_name__ = "BrainBombaButton"
 
     def __init__(self):
@@ -119,11 +114,8 @@ class Status(Clutter.Actor):
         lives_text = "♥" * lives
         self.lives_display.set_text(lives_text)
 
-
 class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "BrainBombaLogic" 
-
-    __gsignals__ = {}
 
     __gproperties__ = {
         "status": (Status.__gtype__, "", "", GObject.PARAM_READWRITE),
@@ -140,6 +132,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
 
         self.score = 0
         self.lives = 3
+        self.successes = 0
 
         self.connect("notify::mapped", self._ready)
 
@@ -148,10 +141,36 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
 
     def _initialize_game(self):
         self._start_round()
-
-    def _start_round(self):
+    
+    def _start_round(self, *args):
+        self.interrupted = False
+        self.countdown.image.show()
         self.hide_on = random.choice([8, 7, 6, 5, 4, 3, 2])
         self.countdown.start_countdown(self.hide_on)
+
+    def interrupt(self, button):
+        self.interrupted = True
+        self.elpased = round(time.time() - self.countdown.start_time)
+        self.countdown.image.hide()
+        if self.elpased == self.countdown.TIME:
+            self.success()
+        else:
+            self.failure()
+        self.status.update_status(self.score, self.lives)
+
+    def success(self):
+        self.score += self.hide_on * 10
+        self.successes += 1
+        self.feedback.success(round(time.time() - self.countdown.start_time, 1))
+        
+    def failure(self):
+        self.lives -= 1
+        if not self.lives:
+            self.end_game
+        self.feedback.failure(round(time.time() - self.countdown.start_time, 1))
+
+    def end_game(self):
+        raise NotImplementedError
 
     @property
     def status(self):
@@ -168,6 +187,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
 
     @countdown.setter
     def countdown(self, value):
+        value.button.connect("clicked", self.interrupt)
         self._countdown = value
 
     @property
@@ -177,3 +197,4 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     @feedback.setter
     def feedback(self, value):
         self._feedback = value
+        self.feedback.dismiss_button.connect("clicked", self._start_round)
