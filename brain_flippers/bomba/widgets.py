@@ -117,6 +117,9 @@ class Status(Clutter.Actor):
 class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "BrainBombaLogic" 
 
+    __gsignals__ = {
+        "finished": (GObject.SIGNAL_RUN_FIRST, None, [])}
+
     __gproperties__ = {
         "status": (Status.__gtype__, "", "", GObject.PARAM_READWRITE),
         "countdown": (GraphicalCountdown.__gtype__, "", "",
@@ -166,11 +169,11 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     def failure(self):
         self.lives -= 1
         if not self.lives:
-            self.end_game
+            self.end_game()
         self.feedback.failure(round(time.time() - self.countdown.start_time, 1))
 
     def end_game(self):
-        raise NotImplementedError
+        self.emit("finished")
 
     @property
     def status(self):

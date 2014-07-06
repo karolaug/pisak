@@ -10,6 +10,7 @@ import pisak.widgets  # @UnusedImport
 import brain_flippers.widgets  # @UnusedImport
 import brain_flippers.digit_span.widgets  # @UnusedImport
 import brain_flippers.malpa.widgets # @UnusedImport
+import brain_flippers.bomba.widgets # @UnusedImport
 
 class LauncherStage(Clutter.Stage):
     def __init__(self, context, descriptor):
