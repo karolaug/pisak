@@ -57,6 +57,12 @@ class MomentaryButtonGrid(Clutter.Actor):
     def clear(self):
         self.remove_all_children()
 
+class StatusLabel(Mx.Label):
+    __gtype_name__ = "BrainMalpaStatusLabel"
+
+    def __init__(self):
+        super().__init__()
+
 class StatusBar(Clutter.Actor):
     __gtype_name__ = "BrainMalpaStatusBar"
     
@@ -72,8 +78,8 @@ class StatusBar(Clutter.Actor):
         self.layout.set_orientation(Clutter.Orientation(0))
         self.layout.set_spacing(200)
         self.set_layout_manager(self.layout)
-        self.lives_display = Mx.Label()
-        self.score_display = Mx.Label()
+        self.lives_display = StatusLabel()
+        self.score_display = StatusLabel()
         self.add_child(self.score_display)
         self.add_child(self.lives_display)
         
