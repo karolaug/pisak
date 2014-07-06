@@ -1,12 +1,20 @@
 /* JSON part*/
 /* different properties for different types*/
 
-MxButton {
-  background-color: rgb(255, 255, 255);
-}
-
 MxButton:disabled {
   border-image: none;
+}
+
+BrainBombaButton {
+  border-image: url('bomba/button.png');
+}
+
+BrainBombaButton:hover {
+  border-image: url('bomba/button_on.png');
+}
+
+BrainBombaButton:clicked {
+  border-image: url('bomba/button_on.png');
 }
 
 BrainMomentaryButton {
@@ -16,7 +24,7 @@ BrainMomentaryButton {
   font-size: 50;
 }
 
-MxLabel {
+BrainMalpaStatusLabel {
   color: #ffffff;
   font-size: 50;
   font-weight: bold;
