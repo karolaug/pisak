@@ -1,0 +1,19 @@
+[
+    {
+	"id": "main",
+	"type": "PisakBoxLayout",
+	"orientation": "vertical",
+	"spacing": 50,
+	"children": ["movie", "back_button"]
+    },
+    {
+	"id": "movie",
+	"type": "BrainVideoFeedback",
+	"path": "../../pisak/res/malpa/chimp.mp4"
+    },
+    {
+	"id": "back_button",
+	"type": "MxButton",
+	"label": "Menu"
+    }
+]

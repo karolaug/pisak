@@ -12,6 +12,8 @@ def prepare_menu_view(stage, script, data):
     game_button = script.get_object("start_button")
     game_button.connect("activate", lambda *_: stage.load_view("game", None))
 
+    help_button = script.get_object("tutorial_button")
+    help_button.connect("activate", lambda *_: stage.load_view("help", None))
 
 def prepare_game_view(stage, script, data):
     logic = script.get_object("logic")
@@ -24,9 +26,12 @@ def prepare_game_view(stage, script, data):
     logic.connect("finished", show_results)
 
 
-def prepare_help_view(script, data):
-    pass
-
+def prepare_help_view(stage, script, data):
+    back_button = script.get_object("back_button")
+    back_button.connect("clicked", lambda *_: stage.load_view("menu", None))
+    
+    movie = script.get_object("movie")
+    movie.video_texture.set_playing(True)
 
 def prepare_result_view(stage, script, data):
     score = data.get("score")
@@ -46,7 +51,7 @@ MALPA_APP = {
     "views": {
         "menu": (fix_path("../menu_screen.json"), prepare_menu_view),
         "game": (fix_path("stage.json"), prepare_game_view),
-        "help": ("/dev/null", prepare_help_view),
+        "help": (fix_path("movie.json"), prepare_help_view),
         "result": ("../player_death_screen.json", prepare_result_view),
         "top_list": ("/dev/null", prepare_top_list_view)
     },

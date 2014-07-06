@@ -221,14 +221,17 @@ class TextFeedback(Dismissable, PropertyAdapter):
         self.label.get_clutter_text().set_color(value)
 
 
-class VideoFeedback(Clutter.Actor):
+class VideoFeedback(Clutter.Actor, PropertyAdapter):
     __gtype_name__ = "BrainVideoFeedback"
 
     __gsignals__ = {    
         "dismissed": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
 
-    def __init__(self, movie_to_be_played, play=False):
+    __gproperties__ = {
+        "path": (GObject.TYPE_STRING, "", "", "", GObject.PARAM_READWRITE)}
+
+    def __init__(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         ClutterGst.init()
@@ -245,10 +248,15 @@ class VideoFeedback(Clutter.Actor):
         #self.pipeline.set_property("video-sink", self.clutter_sink)
 
         #self.pipeline.set_state(Gst.State.PLAYING)
-        self.video_texture.set_filename(movie_to_be_played)
-        if play:
-            self.video_texture.set_playing(True)
-        
+
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, value):
+        self._path = value
+        self.video_texture.set_filename(value)
 
 
 class TopResultLogic(Clutter.Actor, PropertyAdapter):
