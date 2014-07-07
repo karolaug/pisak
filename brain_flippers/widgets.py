@@ -402,3 +402,41 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
         score_manager.add_record(
             self.game_name, self.typed_player_name, self.game_score)
         self.emit("finished")
+
+
+class TopResultsList(Clutter.Actor, PropertyAdapter):
+    __gtype_name__ = "BrainTopResultsList"
+
+    __gproperties___ = {
+        "game": (GObject.TYPE_STRING, "", "", "", GObject.PARAM_READWRITE),
+        "only-today": (GObject.TYPE_BOOLEAN, "", "", False, GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.layout = Clutter.GridLayout()
+        self.set_layout_manager(self.layout)
+
+    @property
+    def game(self):
+        return self._game
+
+    @game.setter
+    def game(self, value):
+        self._game = value
+
+    @property
+    def only_today(self):
+        return self._only_today
+
+    @only_today.setter
+    def only_today(self, value):
+        self._only_today = value
+
+    def generate_results(self):
+        """
+        Query results based on widget settings. It must be called to display
+        results.
+        """
+        # TODO: implement
+        pass
