@@ -13,7 +13,7 @@
         "id": "game_panel",
         "type": "PisakBoxLayout",
 	"orientation": "vertical",
-        "children": ["status", "counter", "feedback"]
+        "children": ["status", "counter", "feedback", "video_feedback"]
     },
     {
         "id":  "counter",
@@ -25,10 +25,17 @@
 	"visible": false
     },
     {
+	"id": "video_feedback",
+	"type": "BrainMalpaVideo",
+	"path": "../../pisak/res/bomba/bum.mp4",
+	"visible": false
+    },
+    {
         "id": "logic",
         "type": "BrainBombaLogic",
         "status": "status",
         "countdown": "counter",
-        "feedback": "feedback"
+        "feedback": "feedback",
+	"video-feedback": "video_feedback"
     }
 ]

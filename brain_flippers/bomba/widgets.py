@@ -44,8 +44,6 @@ class GraphicalCountdown(Clutter.Actor):
 
     def _tick(self, data):
         self._time_left -= 1
-        if self.interrupted:
-            return False
         if self._time_left <= self._hide_on:
             image = self.BOMBA_IMAGE
             self._set_image(image)
@@ -79,6 +77,15 @@ class TimingFeedback(brain_flippers.widgets.TextFeedback):
         self.text = message + "\n" + str(time_difference)
         self.show()
 
+
+class VideoFeedback(brain_flippers.widgets.VideoFeedback):
+    __gtype_name__ = "BrainMalpaVideo"
+
+    def __init__(self):
+        super().__init__()
+
+    def play(self):
+        self.video_texture.set_playing(True)
 
 class Button(Mx.Button):
     __gtype_name__ = "BrainBombaButton"
@@ -128,7 +135,9 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
             GObject.PARAM_READWRITE),
         "feedback": (
             brain_flippers.widgets.Dismissable.__gtype__, "", "",
-            GObject.PARAM_READWRITE)
+            GObject.PARAM_READWRITE),
+        "video_feedback": (
+            VideoFeedback.__gtype__, "", "", GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
@@ -147,15 +156,13 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     def _initialize_game(self):
         self._start_round()
     
-    def _start_round(self, *args):
-        self.interrupted = False
+    def _start_round(self):
+        self.video_feedback.dismiss()
         self.countdown.image.show()
         self.hide_on = random.choice([8, 7, 6, 5, 4, 3, 2])
         self.countdown.start_countdown(self.hide_on)
 
     def interrupt(self, button):
-        self.interrupted = True
-        self.countdown.interrupted = self.interrupted
         self.elpased = round(time.time() - self.countdown.start_time)
         self.countdown.image.hide()
         if self.elpased == self.countdown.TIME:
@@ -171,9 +178,17 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         
     def failure(self):
         self.lives -= 1
-        if not self.lives:
-            self.end_game()
         self.feedback.failure(round(time.time() - self.countdown.start_time, 1))
+        self.video_feedback.show()
+        self.video_feedback.play()
+
+    def what_next(self, *args):
+        if self.lives == 0:
+            self.video_feedback.video_texture.set_playing(False)
+            self.video_feedback.unparent()
+            self.end_game()
+        else:
+            self._start_round()
 
     def end_game(self):
         self.emit("finished")
@@ -203,4 +218,12 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     @feedback.setter
     def feedback(self, value):
         self._feedback = value
-        self.feedback.dismiss_button.connect("clicked", self._start_round)
+        self.feedback.dismiss_button.connect("clicked", self.what_next)
+
+    @property
+    def video_feedback(self):
+        return self._video_feedback
+
+    @video_feedback.setter
+    def video_feedback(self, value):
+        self._video_feedback = value

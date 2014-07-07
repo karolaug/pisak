@@ -235,19 +235,14 @@ class VideoFeedback(Clutter.Actor, PropertyAdapter):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         ClutterGst.init()
-        self.video_texture = ClutterGst.VideoTexture(**{"disable-slicing": True})
-        #self.video_texture.set_x_expand(True)
-        #self.video_texture.set_y_expand(True)
+        self.video_texture = ClutterGst.VideoTexture(**{"disable-slicing": 
+                                                        True})
         self.add_child(self.video_texture)
 
-        #descriptor = "playbin uri=http://docs.gstreamer.com/media/sintel_trailer-480p.webm"
-        #self.pipeline = Gst.parse_launch(descriptor)
-        #
-        #self.clutter_sink = Gst.ElementFactory.make("autocluttersink")
-        #self.clutter_sink.set_property("texture", self.video_texture)
-        #self.pipeline.set_property("video-sink", self.clutter_sink)
-
-        #self.pipeline.set_state(Gst.State.PLAYING)
+    def dismiss(self):
+        self.video_texture.set_playing(False)
+        self.video_texture.set_progress(0.0)
+        self.hide()
 
     @property
     def path(self):
