@@ -12,6 +12,7 @@
         "margin-right": 50,
         "children":
             [
+                "logic",
                 {
                     "id": "player_score",
                     "type": "PisakBoxLayout",
@@ -69,27 +70,19 @@
                             "height": 100,
                             "label": "SPRÓBUJ JESZCZE RAZ",
                             "label-font": "Courier 15"
-                        },
-                        {
-                            "id": "best_today",
-                            "type": "BrainPuzzleButton",
-                            "width": "300",
-                            "height": "100",
-                            "label": "WYNIKI Z DZIŚ",
-                            "label-font": "Courier 15"
-                        },
-                        {
-                            "id": "best_ever",
-                            "type": "BrainPuzzleButton",
-                            "width": "300",
-                            "height": "100",
-                            "label": "WYNIKI Z WYSTAWY",
-                            "label-font": "Courier 15"
                         }
                     ]
                 }
             ]
-        }
+        },
+    {
+        "id": "logic",
+        "type": "BrainTopResultLogic",
+        "player-score": "player_score_value",
+        "total-average-score": "average_score_value",
+        "player-name": "name",
+        "back-button": "try_again"
+    }
 ]
                                 
                     

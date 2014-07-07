@@ -27,6 +27,7 @@ def prepare_game_view(stage, script, data):
 
 
 def prepare_help_view(script, data):
+    # TODO: connect a view
     pass
 
 
@@ -42,12 +43,17 @@ def prepare_top_result_view(stage, script, data):
     score_logic.connect("finished", back_to_menu)
 
 def prepare_meh_result_view(stage, script, data):
-    score = data.get("score")
-    score_message = str(score)
-    message_label = script.get_object("player_score_value")
-    message_label.set_text(score_message)
+    def back_to_menu(*args):
+        stage.load_view("menu", None)
+
+    score_logic = script.get_object("logic")
+    score_logic.game_score = data.get("score")
+    score_logic.game_name = "digit_span"
+    score_logic.connect("finished", back_to_menu)
+
 
 def prepare_top_list_view(script, data):
+    # TODO: connect a view
     pass
 
 
