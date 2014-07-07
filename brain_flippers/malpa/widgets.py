@@ -8,6 +8,13 @@ from gi.overrides import GObject
 from pisak.widgets import PropertyAdapter
 import time
 
+class ChangeRules(Mx.Label):
+    __gtype_name__ = "BrainMalpaChangeRules"
+
+    def __init__(self):
+        super().__init__()
+        
+
 class MomentaryButton(Mx.Button):
     __gtype_name__ = "BrainMomentaryButton"
 
@@ -125,6 +132,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
         self.end_screen = None
         self.menu_screen = None
         self.game_screen = None
+        self.changed = False
         self.script = Clutter.Script()
         self.connect("notify::mapped", self._initialize_game)
 
@@ -137,12 +145,12 @@ class Logic(Clutter.Actor, PropertyAdapter):
         self.grid_length = 3
         self._start_round()
 
-    def _start_round(self, reverse=False):
+    def _start_round(self):
         self.board.remove_all_children()
         self.board.init_buttons(self.grid_length)
         for button in self.board.buttons:
             button.connect("clicked", self.check_value)
-        if reverse:
+        if self.changed:
             self.button_values = (value for value in 
                                   range(self.board.count, 0, -1))
         else:
@@ -150,24 +158,29 @@ class Logic(Clutter.Actor, PropertyAdapter):
                                   range(1, self.board.count+1))
         self.button_to_be_clicked = next(self.button_values)
         self.start_time = time.time()
+        return False
 
     def _finish_round(self, *args):
+        print(self.success_count)
         self.grid_length += 1
         change = 4
         if self.success_count < change:
             self._start_round()
         elif self.success_count == change:
+            self.changed = True
             self.grid_length = 3
             self.board.remove_all_children()
-            rule_change_info = Clutter.Text()
-            info = "Zmiana zasad gry, teraz należy wybierać przyciski od największego do najmniejszego."
-            rule_change_info.set_text(Clutter.Color("white"))
+            rule_change_info = ChangeRules()
+            info = "Zmiana zasad gry!!!\n\nTeraz należy wybierać przyciski\n\nod największego do najmniejszego."
             rule_change_info.set_text(info)
+            rule_change_info.set_x_align(1)
+            rule_change_info.set_y_align(1)
             self.board.add_child(rule_change_info)
-            Clutter.threads_add_timeout(0, 1000, self._start_round, True)
+            Clutter.threads_add_timeout(0, 3500, self._start_round)
         elif self.success_count > change and self.success_count < 2*change:
-            self._start_round(reverse=True)
+            self._start_round()
         else:
+            self.board.unparent()
             self.emit("finished")
 
     def _load_json(self):
