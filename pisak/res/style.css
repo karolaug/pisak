@@ -5,6 +5,12 @@ MxButton:disabled {
   border-image: none;
 }
 
+BrainMalpaChangeRules {
+  color: #ffffff;
+  font-size: 30;
+  font-weight: bold;
+}
+
 BrainBombaButton {
   border-image: url('bomba/button.png');
 }
@@ -18,7 +24,7 @@ BrainBombaButton:clicked {
 }
 
 BrainMomentaryButton {
-  color: #ffffff;
+  color: #000000;
   background-color: rgb(0, 0, 0);
   font-weight: bold;
   font-size: 50;
