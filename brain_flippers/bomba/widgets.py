@@ -44,6 +44,8 @@ class GraphicalCountdown(Clutter.Actor):
 
     def _tick(self, data):
         self._time_left -= 1
+        if self.interrupted:
+            return False
         if self._time_left <= self._hide_on:
             image = self.BOMBA_IMAGE
             self._set_image(image)
@@ -153,6 +155,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
 
     def interrupt(self, button):
         self.interrupted = True
+        self.countdown.interrupted = self.interrupted
         self.elpased = round(time.time() - self.countdown.start_time)
         self.countdown.image.hide()
         if self.elpased == self.countdown.TIME:
