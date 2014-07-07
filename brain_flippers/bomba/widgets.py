@@ -38,12 +38,17 @@ class GraphicalCountdown(Clutter.Actor):
     def start_countdown(self, hide_on):
         self._time_left = self.TIME
         self._hide_on = hide_on
+        self._interrupted = False
         self._set_image(self.COUNTDOWN_IMAGES[self._time_left])
         self.start_time = time.time()
         Clutter.threads_add_timeout(0, 1000, self._tick, None)
 
     def _tick(self, data):
         self._time_left -= 1
+        if self._interrupted:
+            return False
+        if self._time_left == 0:
+            return False
         if self._time_left <= self._hide_on:
             image = self.BOMBA_IMAGE
             self._set_image(image)
@@ -163,6 +168,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.countdown.start_countdown(self.hide_on)
 
     def interrupt(self, button):
+        self.countdown.interrupt = True
         self.elpased = round(time.time() - self.countdown.start_time)
         self.countdown.image.hide()
         if self.elpased == self.countdown.TIME:
@@ -186,6 +192,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         if self.lives == 0:
             self.video_feedback.video_texture.set_playing(False)
             self.video_feedback.unparent()
+            self.countdown.unparent()
             self.end_game()
         else:
             self._start_round()
