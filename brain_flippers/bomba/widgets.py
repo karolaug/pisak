@@ -36,7 +36,6 @@ class GraphicalCountdown(Clutter.Actor):
         self.add_child(self.button)
 
     def start_countdown(self, hide_on):
-        self.interrupted = False
         self._time_left = self.TIME
         self._hide_on = hide_on
         self._set_image(self.COUNTDOWN_IMAGES[self._time_left])
