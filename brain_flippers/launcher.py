@@ -30,9 +30,13 @@ class LauncherStage(Clutter.Stage):
         self.script = Clutter.Script()
         self.script.load_from_file(view_path)
         prepare(self, self.script, data)
+        children = self.get_children()
         main_actor = self.script.get_object("main")
-        self.remove_all_children()
-        self.add_child(main_actor)
+        if children:
+            old_child = children[0]
+            self.replace_child(old_child, main_actor)
+        else:
+            self.add_child(main_actor)
 
 
 def run(descriptor):
