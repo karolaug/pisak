@@ -36,8 +36,8 @@ def prepare_help_view(stage, script, data):
 def prepare_result_view(stage, script, data):
     score = data.get("score")
     score_message = "Twój wynik to {}\n Gratulacje!".format(score)
-    message_label = script.get_object("consolation")
-    message_label.set_text(score_message)
+    label = script.get_object("consolation")
+    label.set_text(score_message)
 
 
 def prepare_top_list_view(script, data):
@@ -52,7 +52,7 @@ MALPA_APP = {
         "menu": (fix_path("../menu_screen.json"), prepare_menu_view),
         "game": (fix_path("stage.json"), prepare_game_view),
         "help": (fix_path("movie.json"), prepare_help_view),
-        "result": ("../player_death_screen.json", prepare_result_view),
+        "result": (fix_path("../player_death_screen.json"), prepare_result_view),
         "top_list": ("/dev/null", prepare_top_list_view)
     },
     "initial-view": "menu",
