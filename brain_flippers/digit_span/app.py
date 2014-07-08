@@ -65,8 +65,8 @@ DIGIT_SPAN_APP = {
         "menu": (fix_path("../menu_screen.json"), prepare_menu_view),
         "game": (fix_path("game_screen.json"), prepare_game_view),
         "help": ("/dev/null", prepare_help_view),
-        "result_top": ("../player_success_screen.json", prepare_top_result_view),
-        "result_meh": ("../player_fail_screen.json", prepare_meh_result_view),
+        "result_top": (fix_path("../player_success_screen.json"), prepare_top_result_view),
+        "result_meh": (fix_path("../player_fail_screen.json"), prepare_meh_result_view),
         "top_list": ("/dev/null", prepare_top_list_view)
     },
     "initial-view": "menu",
