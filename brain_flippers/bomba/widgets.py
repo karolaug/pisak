@@ -66,8 +66,8 @@ class GraphicalCountdown(Clutter.Actor):
 class TimingFeedback(brain_flippers.widgets.TextFeedback):
     __gtype_name__ = "BrainTimingFeedback"
 
-    SUCCESS_MESSAGE = "Udało Ci się rozbroić bombę"
-    FAILURE_MESSAGE = "Niestety, buchnąłeś bombę" 
+    SUCCESS_MESSAGE = "Udało Ci się rozbroić bombę!\n"
+    FAILURE_MESSAGE = "Niestety, buchnąłeś bombę!\n" 
 
     def __init__(self):
         super().__init__()
@@ -79,7 +79,7 @@ class TimingFeedback(brain_flippers.widgets.TextFeedback):
         self.show_feedback(self.FAILURE_MESSAGE, time_difference)
 
     def show_feedback(self, message, time_difference):
-        self.text = message + "\n" + str(time_difference)
+        self.text = message + "\nUpłyneło " + str(time_difference) + "sek. od włączenia zegara."
         self.show()
 
 
@@ -109,23 +109,24 @@ class Status(Clutter.Actor):
 
     def _init_layout(self):
         self.layout = Clutter.BoxLayout()
+        self.layout.set_spacing(100)
         self.set_layout_manager(self.layout)
 
     def _init_elements(self):
-        self.score_display = Mx.Label()
+        self.score_display = brain_flippers.widgets.FeedbackLabel()
         self.add_child(self.score_display)
 
-        self.lives_display = Mx.Label()
+        self.lives_display = brain_flippers.widgets.FeedbackLabel()
         self.add_child(self.lives_display)
 
-        self.exit_button = Mx.Button.new_with_label("Wyjście")
-        self.add_child(self.exit_button)
+        #self.exit_button = Mx.Button.new_with_label("Wyjście")
+        #self.add_child(self.exit_button)
 
     def update_status(self, score, lives):
-        score_text = "PUNKTY: {}".format(score)
+        score_text = "PUNKTY: {} ".format(score)
         self.score_display.set_text(score_text)
 
-        lives_text = "♥" * lives
+        lives_text = "Życie: " + "♥" * lives
         self.lives_display.set_text(lives_text)
 
 class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
@@ -168,7 +169,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.countdown.start_countdown(self.hide_on)
 
     def interrupt(self, button):
-        self.countdown.interrupt = True
+        self.countdown._interrupted = True
         self.elpased = round(time.time() - self.countdown.start_time)
         self.countdown.image.hide()
         if self.elpased == self.countdown.TIME:
@@ -197,7 +198,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         else:
             self._start_round()
 
-    def end_game(self):
+    def end_game(self, *args):
         self.emit("finished")
 
     @property
@@ -208,6 +209,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     def status(self, value):
         self._status = value
         value.update_status(self.score, self.lives)
+        #value.exit_button.connect("clicked", self.end_game)
 
     @property
     def countdown(self):
@@ -225,7 +227,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     @feedback.setter
     def feedback(self, value):
         self._feedback = value
-        self.feedback.dismiss_button.connect("clicked", self.what_next)
+        value.dismiss_button.connect("clicked", self.what_next)
 
     @property
     def video_feedback(self):

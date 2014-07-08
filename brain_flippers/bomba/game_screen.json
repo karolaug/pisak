@@ -1,8 +1,7 @@
 [
     {
         "id": "main",
-        "type": "PisakBoxLayout",
-        "orientation": "vertical",
+        "type": "PisakBinLayout",
         "children": ["game_panel", "logic"]
     },
     {

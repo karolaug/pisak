@@ -47,6 +47,9 @@ def prepare_meh_result_view(stage, script, data):
     message_label = script.get_object("player_score_value")
     message_label.set_text(score_message)
 
+    button = script.get_object("try_again")
+    button.connect("activate", lambda *_: stage.load_view("game", None))
+
 def prepare_top_list_view(script, data):
     pass
 
@@ -65,7 +68,7 @@ BOMBA_APP = {
     },
     "initial-view": "menu",
     "initial-data": None,
-    "background-color": "#006"
+    "background-color": "#000000"
 }
 
 
