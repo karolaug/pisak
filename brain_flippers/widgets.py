@@ -2,6 +2,18 @@ from gi.repository import Clutter, GObject, Mx, Gst, ClutterGst
 from pisak.widgets import PropertyAdapter
 from brain_flippers import score_manager
 
+class Consolation(Mx.Label):
+    __gtype_name__ = "BrainConsolation"
+
+    def __init__(self):
+        super().__init__()
+
+class TryAgain(Mx.Button):
+    __gytpe_name__ = "BrainTryAgain"
+
+    def __init__(self):
+        super().__init__()
+
 class PuzzleButton(Clutter.Actor, PropertyAdapter):
     __gtype_name__ = "BrainPuzzleButton"
     __gsignals__ = {
@@ -121,6 +133,11 @@ class Dismissable(Clutter.Actor):
         self.hide()
         self.emit("dismissed")
 
+class DismissButton(Mx.Button):
+    __gtype_name__ = "BrainDismissButton"
+
+    def __init__(self):
+        super().__init__()
 
 class ScoreSummary(Dismissable):
     """
@@ -138,7 +155,7 @@ class ScoreSummary(Dismissable):
         self.set_layout_manager(self.layout)
 
     def _init_elements(self):
-        self.dismiss_button = Mx.Button()
+        self.dismiss_button = DismissButton()
         self.dismiss_button.set_label(">")
         self.dismiss_button.connect("clicked", self.dismiss)
         self.grid = Clutter.Actor()
@@ -174,6 +191,11 @@ class ScoreSummary(Dismissable):
         self.grid_layout.attach(self.dismiss_button, 0, row + 6, 2, 1)
         self.show()
 
+class FeedbackLabel(Mx.Label):
+    __gtype_name__ = "BrainFeedbackLabel"
+
+    def __init__(self):
+        super().__init__()
 
 class TextFeedback(Dismissable, PropertyAdapter):
     __gtype_name__ = "BrainTextFeedback"
@@ -194,7 +216,7 @@ class TextFeedback(Dismissable, PropertyAdapter):
         self.box.set_layout_manager(self.box_layout)
         self.add_actor(self.box)
 
-        self.label = Mx.Label()
+        self.label = FeedbackLabel()
         self.box.add_actor(self.label)
 
         self.dismiss_button = Mx.Button.new_with_label(">")
