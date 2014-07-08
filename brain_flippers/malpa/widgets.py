@@ -161,7 +161,6 @@ class Logic(Clutter.Actor, PropertyAdapter):
         return False
 
     def _finish_round(self, *args):
-        print(self.success_count)
         self.grid_length += 1
         change = 4
         if self.success_count < change:
