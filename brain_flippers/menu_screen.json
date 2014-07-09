@@ -37,7 +37,7 @@
                                 "label-font": "Courier 30",
                 		"width": 300,
                 		"height": 100
-            		},
+            		}/*,
             		{
                 		"id": "score_table_button",
                 		"type": "BrainPuzzleButton",
@@ -45,7 +45,7 @@
                                 "label-font": "Courier 20",
                 		"width": 300,
                 		"height": 100
-            		}
+            		}*/
 		]
 	    }
         ]
