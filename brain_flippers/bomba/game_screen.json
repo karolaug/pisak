@@ -5,14 +5,15 @@
         "children": ["game_panel", "logic"]
     },
     {
-        "id": "status",
-        "type": "BrainBombaStatus"
+        "id": "game_panel",
+        "type": "PisakBinLayout",
+        "children": ["status", "counter", "feedback", "video_feedback"]
     },
     {
-        "id": "game_panel",
-        "type": "PisakBoxLayout",
-	"orientation": "vertical",
-        "children": ["status", "counter", "feedback", "video_feedback"]
+        "id": "status",
+        "type": "BrainBombaStatus",
+	"y" : 0,
+	"x" : 300
     },
     {
         "id":  "counter",
