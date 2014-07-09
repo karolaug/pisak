@@ -39,6 +39,8 @@ def prepare_result_view(stage, script, data):
     label = script.get_object("consolation")
     label.set_text(score_message)
 
+    backButton = script.get_object("backButton")
+    backButton.connect("clicked", lambda *_: stage.load_view("menu", None))
 
 def prepare_top_list_view(script, data):
     pass
