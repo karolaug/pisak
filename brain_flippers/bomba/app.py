@@ -1,5 +1,5 @@
 '''
-Module with app-specific code for Digit Span game.
+Module with app-specific code for Bomba game.
 '''
 from brain_flippers import launcher, score_manager
 import os.path
@@ -11,6 +11,10 @@ def prepare_menu_view(stage, script, data):
     
     game_button = script.get_object("start_button")
     game_button.connect("activate", lambda *_: stage.load_view("game", None))
+
+    help_button = script.get_object("tutorial_button")
+    help_button.connect("activate", lambda *_: stage.load_view("help", None))
+
 
 
 def prepare_game_view(stage, script, data):
@@ -26,8 +30,13 @@ def prepare_game_view(stage, script, data):
     logic.connect("finished", show_results)
 
 
-def prepare_help_view(script, data):
-    pass
+def prepare_help_view(stage, script, data):
+    text = script.get_object("text")
+    tuto = "W grze tej masz oszacować moment,\nw którym na zegarze bomby wybije 00:00\ni wtedy wcisnąć czerwony guzik."
+    text.set_text(tuto)
+
+    backButton = script.get_object("backButton")
+    backButton.connect("clicked", lambda *_: stage.load_view("menu", None))
 
 
 def prepare_top_result_view(stage, script, data):
@@ -61,7 +70,7 @@ BOMBA_APP = {
     "views": {
         "menu": (fix_path("../menu_screen.json"), prepare_menu_view),
         "game": (fix_path("game_screen.json"), prepare_game_view),
-        "help": ("/dev/null", prepare_help_view),
+        "help": (fix_path("tutorial.json"), prepare_help_view),
         "result_top": (fix_path("../player_success_screen.json"), prepare_top_result_view),
         "result_meh": (fix_path("../player_fail_screen.json"), prepare_meh_result_view),
         "top_list": ("/dev/null", prepare_top_list_view)
