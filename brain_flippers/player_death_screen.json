@@ -10,7 +10,8 @@
         "margin-right": 100,
         "layout-manager":
             {
-                "type": "ClutterBinLayout"
+                "type": "ClutterBoxLayout",
+		"orientation": "vertical"
             },
         "children":
             [
@@ -24,7 +25,14 @@
                     "font-name": "Sans 50",
                     "line-wrap": true,
                     "text": "Zastąp mnie tekstem właściwym dla danej gry."
-                }
+                },
+		{
+		    "id": "backButton",
+		    "type": "MxButton",
+		    "label": "Spróbuj jeszcze raz!",
+		    "width": 200,
+		    "height": 200
+		}
             ]
     }
 ]
