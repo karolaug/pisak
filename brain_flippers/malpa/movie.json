@@ -14,6 +14,8 @@
     {
 	"id": "back_button",
 	"type": "MxButton",
-	"label": "Menu"
+	"label": "Menu",
+	"width": 150,
+	"height": 75
     }
 ]
