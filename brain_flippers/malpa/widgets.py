@@ -29,6 +29,7 @@ class MomentaryButton(Mx.Button):
 
     def _cover(self):
         self.set_label("*")
+        return False
 
 
 class MomentaryButtonGrid(Clutter.Actor):
@@ -201,6 +202,7 @@ class Logic(Clutter.Actor, PropertyAdapter):
         else:
             self.status_bar.lives -= 1
             if self.status_bar.lives == 0:
+                self.board.unparent()
                 self.emit("finished")
             else:
                 self._start_round()
