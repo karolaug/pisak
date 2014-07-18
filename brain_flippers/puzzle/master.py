@@ -151,7 +151,7 @@ class PuzzleBoard(Clutter.Actor):
         error_coeff = 10
         level_coeff = self.player_clock + limit/5
         formula = limit - self.player_clock - error_coeff*self.player_errors + level_coeff*self.level
-        self.player_score = round(formula, 2)
+        self.player_score = int(formula)
 
     def update_player_clock(self, source):
         if self.player_clock_ticking:

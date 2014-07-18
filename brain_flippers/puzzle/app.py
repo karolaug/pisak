@@ -81,7 +81,8 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
 
     def enable_welcome_view(self):
         start_button = self.script.get_object("start_button")
-        start_button.connect("activate", self.enter_game_view)
+        if start_button:
+            start_button.connect("activate", self.enter_game_view)
 
     def enter_game_view(self, *args):
         self.load_view_from_script("game_screen")
@@ -123,7 +124,7 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
         average_score = score_manager.get_average_ever("puzzle")
         if average_score:
             average_score_entry = self.script.get_object("average_score_value")
-            average_score_entry.set_text(str(round(average_score, 2)))
+            average_score_entry.set_text(str(int(average_score)))
         else:
             self.script.get_object("average_score").hide()
 
@@ -138,17 +139,20 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
                     item.connect("activate", self.save_score)
                     item.connect_after("activate", self.enter_high_scores_view, "today")
         try_again_button = self.script.get_object("try_again")
-        try_again_button.connect("activate", self.enter_game_view)
+        if try_again_button:
+            try_again_button.connect("activate", self.enter_game_view)
         best_today_button = self.script.get_object("best_today")
-        if score_manager.get_best_today("puzzle"):
-            best_today_button.connect("activate", self.enter_high_scores_view, "today")
-        else:
-            best_today_button.hide()
+        if best_today_button:
+            if score_manager.get_best_today("puzzle"):
+                best_today_button.connect("activate", self.enter_high_scores_view, "today")
+            else:
+                best_today_button.hide()
         best_ever_button = self.script.get_object("best_ever")
-        if score_manager.get_best_ever("puzzle"):
-            best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
-        else:
-            best_ever_button.hide()
+        if best_ever_button:
+            if score_manager.get_best_ever("puzzle"):
+                best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
+            else:
+                best_ever_button.hide()
             
     def type_name(self, button):
         name_entry = self.script.get_object("name")
@@ -156,6 +160,9 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
         if "_" in name:
             letter = button.label
             name_entry.set_text(name.replace("_", letter, 1))
+        if self.script.get_object("name").get_text().replace(" ", "").isalpha():
+            self.save_score()
+            self.enter_high_scores_view(None, "today")
 
     def delete_name_char(self, *args):
         name_entry = self.script.get_object("name")
@@ -187,17 +194,20 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
         average_score = score_manager.get_average_ever("puzzle")
         if average_score:
             average_score_entry = self.script.get_object("average_score_value")
-            average_score_entry.set_text(str(round(average_score, 2)))
+            average_score_entry.set_text(str(int(average_score)))
         else:
             self.script.get_object("average_score").hide()
         
     def enable_player_fail_view(self):
         try_again_button = self.script.get_object("try_again")
-        try_again_button.connect("activate", self.enter_game_view)
+        if try_again_button:
+            try_again_button.connect("activate", self.enter_game_view)
         best_today_button = self.script.get_object("best_today")
-        best_today_button.connect("activate", self.enter_high_scores_view, "today")
+        if best_today_button:
+            best_today_button.connect("activate", self.enter_high_scores_view, "today")
         best_ever_button = self.script.get_object("best_ever")
-        best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
+        if best_ever_button:
+            best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
 
     def enter_high_scores_view(self, source, request):
         self.load_view_from_script("high_scores")
@@ -212,20 +222,21 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
             db_records = score_manager.get_best_ever("puzzle")
             self.script.get_object("title").set_text("WYNIKI Z KIEDYKOLWIEK")
         best_score_entry = self.script.get_object("best_score_value")
-        best_score_entry.set_text(str(db_records[0][1]))
+        best_score_entry.set_text(str(int(db_records[0][1])))
         score_table = self.script.get_object("score_table")
         for idx, row in enumerate(score_table.get_children()):
             name_entry = row.get_children()[1]
             score_entry = row.get_children()[2]
             if idx < len(db_records):
                 name_entry.set_text(db_records[idx][0])
-                score_entry.set_text(str(db_records[idx][1]))
+                score_entry.set_text(str(int(db_records[idx][1])))
             else:
                 row.hide()
 
     def enable_high_scores_view(self):
         exit_button = self.script.get_object("exit_button")
-        exit_button.connect("activate", self.enter_welcome_view)
+        if exit_button:
+            exit_button.connect("activate", self.enter_welcome_view)
 
     
 class BrainPuzzleApp(switcher_app.Application):
