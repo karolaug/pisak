@@ -48,6 +48,9 @@ COLORS_MAP = {
     "niebieski": Clutter.Color.from_string("#0000FF")[1]
 }
 RULES_CHANGED_TEXT = {
+    "-1": "REAGUJ NA NA KOLOR SŁÓW\n"
+          "WYBIERAJĄC ODPOWIEDNIE POLA.\n"
+          "IGNORUJ ICH ZNACZENIE.",
     "0": "UWAGA! ZMIANA REGUŁ GRY!\n"
          "REAGUJ NA NA KOLOR SŁÓW\n"
          "WYBIERAJĄC ODPOWIEDNIE POLA.\n"
@@ -80,7 +83,7 @@ class BrainStroopGame(Clutter.Actor):
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
         self._init_parameters()
-        self.enter_colors_view()
+        self.enter_initial_view()
 
     def _init_parameters(self):
         self.level = 0
@@ -109,12 +112,34 @@ class BrainStroopGame(Clutter.Actor):
         view_actor = self.script.get_object("main")
         self.add_child(view_actor)
 
+    def enter_initial_view(self):
+        self._load_view_from_script("rules_changed")
+        self.adjust_initial_view()
+        self.enable_initial_view()
+        
+    def adjust_initial_view(self):
+        self.script.get_object("info_text").set_text(RULES_CHANGED_TEXT["-1"])
+
+    def enable_initial_view(self):
+        start_button = self.script.get_object("start_button")
+        start_button.connect("activate", self.enter_colors_view)
+        
     def enter_colors_view(self, *args):
         self._load_view_from_script("colors")
         self.color_values_chain = self.color_repetition * list(COLORS_MAP.values())
         self.color_names_chain = self.color_repetition * list(COLORS_MAP.keys())
         random.shuffle(self.color_values_chain)
         random.shuffle(self.color_names_chain)
+        forbidden_chain = True
+        while forbidden_chain:
+            forbidden_chain = False
+            for idx in (range(len(self.color_values_chain)-1)):
+                cond_1 = self.color_values_chain[idx] == self.color_values_chain[idx+1]
+                cond_2 = self.color_names_chain[idx] == self.color_names_chain[idx+1]
+                if cond_1 and cond_2:
+                    self.color_values_chain[idx-1], self.color_values_chain[idx] = self.color_values_chain[idx], self.color_values_chain[idx-1]
+                    forbidden_chain = True
+                    break
         self.display_player_life_panel()
         self.adjust_colors_view()
         self.enable_color_view()
@@ -206,7 +231,7 @@ class BrainStroopGame(Clutter.Actor):
         self.emit("game_end")
 
     def calculate_player_score(self):
-        self.player_score = self.player_score_coeff * self.player_correct_answers / (1+self.player_errors) / (1+self.player_clock)
+        self.player_score = int(self.player_score_coeff * self.player_correct_answers / (1+self.player_errors) / (1+self.player_clock))
             
 
 class BrainStroopTutorial(Clutter.Actor):
@@ -319,15 +344,20 @@ class BrainStroopStage(Clutter.Stage):
         welcome_text.set_text(WELCOME_TEXT)
         high_scores = score_manager.get_best_ever("stroop")
         if not high_scores:
-            self.script.get_object("score_table_button").hide()
-
+            score_table_button = self.script.get_object("score_table_button")
+            if score_table_button:
+                score_table_button.hide()
+        
     def enable_main_menu_view(self):
         start_button = self.script.get_object("start_button")
-        start_button.connect("activate", self.enter_game_view)
+        if start_button:
+            start_button.connect("activate", self.enter_game_view)
         tutorial_button = self.script.get_object("tutorial_button")
-        tutorial_button.connect("activate", self.enter_tutorial_view)
+        if tutorial_button:
+            tutorial_button.connect("activate", self.enter_tutorial_view)
         high_scores_button = self.script.get_object("score_table_button")
-        high_scores_button.connect("activate", self.enter_high_scores_view, "ever")
+        if high_scores_button:
+            high_scores_button.connect("activate", self.enter_high_scores_view, "ever")
 
     def enter_tutorial_view(self, *args):
         self._load_view_from_script("tutorial")
@@ -363,12 +393,12 @@ class BrainStroopStage(Clutter.Stage):
 
     def adjust_player_success_view(self, game_outcome):
         score_entry = self.script.get_object("player_score_value")
-        score = round(game_outcome.player_score, 2)
+        score = game_outcome.player_score
         score_entry.set_text(str(score))
         average_score = score_manager.get_average_ever("stroop")
         if average_score:
             average_score_entry = self.script.get_object("average_score_value")
-            average_score_entry.set_text(str(round(average_score, 2)))
+            average_score_entry.set_text(str(int(average_score)))
         else:
             self.script.get_object("average_score").hide()
 
@@ -383,17 +413,20 @@ class BrainStroopStage(Clutter.Stage):
                     item.connect("activate", self.save_score)
                     item.connect_after("activate", self.enter_high_scores_view, "today")
         try_again_button = self.script.get_object("try_again")
-        try_again_button.connect("activate", self.enter_main_menu_view)
+        if try_again_button:
+            try_again_button.connect("activate", self.enter_main_menu_view)
         best_today_button = self.script.get_object("best_today")
-        if score_manager.get_best_today("stroop"):
-            best_today_button.connect("activate", self.enter_high_scores_view, "today")
-        else:
-            best_today_button.hide()
+        if best_today_button:
+            if score_manager.get_best_today("stroop"):
+                best_today_button.connect("activate", self.enter_high_scores_view, "today")
+            else:
+                best_today_button.hide()
         best_ever_button = self.script.get_object("best_ever")
-        if score_manager.get_best_ever("stroop"):
-            best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
-        else:
-            best_ever_button.hide()
+        if best_ever_button:
+            if score_manager.get_best_ever("stroop"):
+                best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
+            else:
+                best_ever_button.hide()
             
     def type_name(self, button):
         name_entry = self.script.get_object("name")
@@ -401,6 +434,9 @@ class BrainStroopStage(Clutter.Stage):
         if "_" in name:
             letter = button.label
             name_entry.set_text(name.replace("_", letter, 1))
+        if self.script.get_object("name").get_text().replace(" ", "").isalpha():
+            self.save_score()
+            self.enter_high_scores_view(None, "today")
 
     def delete_name_char(self, *args):
         name_entry = self.script.get_object("name")
@@ -427,22 +463,25 @@ class BrainStroopStage(Clutter.Stage):
 
     def adjust_player_fail_view(self, game_outcome):
         player_score_entry = self.script.get_object("player_score_value")
-        player_score = round(game_outcome.player_score, 2)
+        player_score = int(game_outcome.player_score)
         player_score_entry.set_text(str(player_score))
         average_score = score_manager.get_average_ever("stroop")
         if average_score:
             average_score_entry = self.script.get_object("average_score_value")
-            average_score_entry.set_text(str(round(average_score, 2)))
+            average_score_entry.set_text(str(int(average_score)))
         else:
             self.script.get_object("average_score").hide()
         
     def enable_player_fail_view(self):
         try_again_button = self.script.get_object("try_again")
-        try_again_button.connect("activate", self.enter_main_menu_view)
+        if try_again_button:
+            try_again_button.connect("activate", self.enter_main_menu_view)
         best_today_button = self.script.get_object("best_today")
-        best_today_button.connect("activate", self.enter_high_scores_view, "today")
+        if best_today_button:
+            best_today_button.connect("activate", self.enter_high_scores_view, "today")
         best_ever_button = self.script.get_object("best_ever")
-        best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
+        if best_ever_button:
+            best_ever_button.connect("activate", self.enter_high_scores_view, "ever")
 
     def enter_high_scores_view(self, source, request):
         self._load_view_from_script("high_scores")
@@ -457,20 +496,21 @@ class BrainStroopStage(Clutter.Stage):
             db_records = score_manager.get_best_ever("stroop")
             self.script.get_object("title").set_text("WYNIKI Z KIEDYKOLWIEK")
         best_score_entry = self.script.get_object("best_score_value")
-        best_score_entry.set_text(str(db_records[0][1]))
+        best_score_entry.set_text(str(int(db_records[0][1])))
         score_table = self.script.get_object("score_table")
         for idx, row in enumerate(score_table.get_children()):
             name_entry = row.get_children()[1]
             score_entry = row.get_children()[2]
             if idx < len(db_records):
                 name_entry.set_text(db_records[idx][0])
-                score_entry.set_text(str(db_records[idx][1]))
+                score_entry.set_text(str(int(db_records[idx][1])))
             else:
                 row.hide()
 
     def enable_high_scores_view(self):
         exit_button = self.script.get_object("exit_button")
-        exit_button.connect("activate", self.enter_main_menu_view)
+        if exit_button:
+            exit_button.connect("activate", self.enter_main_menu_view)
     
 
 class BrainStroopApp(switcher_app.Application):
