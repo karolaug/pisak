@@ -1,6 +1,88 @@
+/* JSON part*/
+/* different properties for different types*/
+
 MxButton {
   background-color: rgb(255, 0, 0);
   fixed-position-set: True;
   some-other-property: foo-bar-bar;
   fixed-x: 100.0;
+}
+
+PisakSpellerButton {
+    
+}
+
+PisakSpellerText {
+
+}
+
+PisakSpellerKey {
+    font-size: 30;
+}
+
+PisakSpellerPrediction {
+
+}
+
+PisakProgressBar {
+
+}
+
+PisakBoxLayout {
+
+}
+
+/*SVG part*/
+/*
+Jakob Jenkov
+http://tutorials.jenkov.com/svg/svg-and-css.html
+
+CSS Shape
+
+fill -> Sets fill color of the shape.
+fill-opacity -> Sets fill opacity of the shape.
+fill-rule -> Sets fill rule of the shape.
+marker -> Sets marker used along the lines (edges) of this shape.
+marker-start -> Sets start marker used along the lines (edges) of this shape.
+marker-mid -> Sets mid marker used along the lines (edges) of this shape.
+marker-end -> Sets end marker used along the lines (edges) of this shape.
+stroke -> Sets the stroke (line) color used to draw the outline of this shape.
+stroke-dasharray -> Sets the stroke (line) dashing used to draw the outline of this shape.
+stroke-dashoffset -> Sets the stroke (line) dash offset used to draw the outline of this shape.
+stroke-linecap -> Sets the stroke (line) line cap used to draw the outline of this shape. Valid values are round, butt and square.
+stroke-miterlimit -> Sets the stroke (line) miter limit used to draw the outline of this shape.
+stroke-opacity -> Sets the stroke (line) opacity used to draw the outline of this shape.
+stroke-width -> Sets the stroke (line) width used to draw the outline of this shape.
+text-rendering -> Sets the text-rendering used to draw the outline of this shape.
+
+CSS Gradient
+
+stop-color -> Sets the stop color used in a stop element used in a gradient.
+stop-opacity -> Sets the stop opacity used in a stop element used in a gradient.
+*/
+/*svg { - commented out, does not work with rsvg 2.40.2-1
+width: 100%;
+height: 100%
+}*/ 
+
+#l1 {
+fill: green;
+opacity: 1;
+stroke: deepskyblue;
+}
+
+#l2 {
+
+}
+
+#l3 {
+
+}
+
+#l4 {
+
+}
+
+#l5 {
+
 }

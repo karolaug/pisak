@@ -29,6 +29,8 @@ class ButtonStage(Clutter.Stage):
 
         pixbuf = svg.get_pixbuf()
 
+        pixbuf = pixbuf.scale_simple(100, 100, 3)
+
         self.icon.set_from_data(pixbuf.get_pixels(),Cogl.PixelFormat.RGBA_8888, pixbuf.get_width(), pixbuf.get_height(), pixbuf.get_rowstride())
 
         self.add_child(self.button)

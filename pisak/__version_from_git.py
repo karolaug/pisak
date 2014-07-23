@@ -61,7 +61,7 @@ def version():
         return __git_describe(pisak_dir).decode('utf-8')
     else:
         try:
-            ver = pkg_resources.resource_string('pisak', 'version').rstrip()
+            ver = pkg_resources.resource_string('pisak', 'version').rstrip()  # @UndefinedVariable
             return ver.decode('utf-8')
         except:
             return ''

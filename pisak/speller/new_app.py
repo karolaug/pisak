@@ -2,9 +2,11 @@ import sys
 
 from gi.repository import Clutter, Mx
 
-from pisak import switcher_app
-from pisak.speller import widgets  # # @UnusedImport
+from pisak import switcher_app, signals
+from pisak.speller import widgets
+
 import pisak.layout  # @UnusedImport
+import pisak.scanning  # @UnusedImport
 
 
 class Dispatcher(object):
@@ -40,7 +42,10 @@ class Dispatcher(object):
             "special_chars": self.special_chars,
             "text_to_speech": self.text_to_speech,
             "backspace": self.backspace,
-            "space": self.space
+            "space": self.space,
+            "nav_left": self.nav_left,
+            "nav_right": self.nav_right,
+            "undo": self.undo
         }
         
     def _connect_menu_buttons(self):
@@ -132,10 +137,18 @@ class Dispatcher(object):
 
     def space(self, source):
         self.text_field.type_text(" ")
-        
+
+    def nav_left(self, source):
+        raise NotImplementedError
+
+    def nav_right(self, source):
+        raise NotImplementedError
+
+    def undo(self, source):
+        raise NotImplementedError
 
 class PisakSpellerStage(Clutter.Stage):
-    STYLESHEET_PATH = "pisak/speller/speller_stylesheet.css"
+    STYLESHEET_PATH = "speller_stylesheet.css"
     
     def __init__(self, context):
         super().__init__()
@@ -145,11 +158,11 @@ class PisakSpellerStage(Clutter.Stage):
         self._init_dispatcher()
 
     def _load_script(self):
-        Mx.Button() # workaround for GI loader
         self.script = Clutter.Script()
         self.script.load_from_file(SCRIPT_PATH)
+        self.script.connect_signals_full(signals.python_connect)
         self.view_actor = self.script.get_object("main")
-        self.set_layout_manager(Clutter.BoxLayout())
+        self.set_layout_manager(Clutter.BinLayout())
         self.add_child(self.view_actor)
 
     def _load_stylesheet(self):
@@ -165,6 +178,7 @@ class PisakSpellerApp(switcher_app.Application):
     """
     def create_stage(self, argv):
         stage = PisakSpellerStage(self.context)
+        stage.set_size(1366, 768)
         stage.set_fullscreen(True)
         return stage
     
