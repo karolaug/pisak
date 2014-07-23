@@ -32,7 +32,19 @@ def resolve_handler(handler_name):
     if callable(function):
         return function
     else:
-        raise "Specified handler is not a function"
+        raise Exception("Specified handler is not a function")
+
+
+def connect_function(gobject, signal, target, flags, function):
+    if target is not None:
+        if GObject.ConnectFlags.AFTER == flags:
+            gobject.connect_object_after(signal, function, target)
+        else:
+            gobject.connect_object(signal, function, target)
+    elif GObject.ConnectFlags.AFTER == flags:
+        gobject.connect_after(signal, function)
+    else:
+        gobject.connect(signal, function)
 
 
 def python_connect(script, gobject, signal, handler, target, flags):
@@ -41,13 +53,46 @@ def python_connect(script, gobject, signal, handler, target, flags):
     ClutterScript.connect_signals_full
     """
     function = resolve_handler(handler)
-    if target is not None:
-        if GObject.ConnectFlags.AFTER == flags:
-            gobject.connect_object_after(signal, function, target)
-        else:
-            gobject.connect_object(signal, function, target)
+    connect_function(gobject, signal, target, flags, function)
+
+
+_HANDLER_MAP = {}
+
+def resolve_registered(handler):
+    """
+    Resolve registered function
+    """
+    function = _HANDLER_MAP.get(handler)
+    if function is not None:
+        return function
     else:
-        if GObject.ConnectFlags.AFTER == flags:
-            gobject.connect_after(signal, function)
-        else:
-            gobject.connect(signal, function)
+        raise Exception("No such function: " + handler)
+
+
+def register_function(handler, function):
+    """
+    Registers a function as handler
+    """
+    if callable(function):
+        _HANDLER_MAP[handler] = function
+    else:
+        raise Exception("Not a function", function)
+
+
+def registered_handler(handler_name):
+    """
+    Decorator
+    """
+    def f_reg(function):
+        register_function(handler_name, function)
+        return function
+    return f_reg
+
+
+def connect_registered(script, gobject, signal, handler, target, flags):
+    """
+    Alternate implementation of signal connector. Uses only registered
+    functions instead of introspection.
+    """
+    function = resolve_registered(handler)
+    connect_function(gobject, signal, target, flags, function)
