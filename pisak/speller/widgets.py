@@ -11,12 +11,6 @@ from pisak.res import dims
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
     __gproperties__ = {
-        "speller_function": (
-            GObject.TYPE_STRING,
-            "speller function",
-            "speller function",
-            "noop",
-            GObject.PARAM_READWRITE),
         "text": (
             GObject.TYPE_STRING,
             "label default text",
@@ -47,14 +41,6 @@ class Button(pisak.widgets.Button):
         self.set_label(self.alternative_text)
 
     @property
-    def speller_function(self):
-        return self._speller_function
-
-    @speller_function.setter
-    def speller_function(self, value):
-        self._speller_function = str(value)
-
-    @property
     def text(self):
         return self._text
 
@@ -69,27 +55,9 @@ class Button(pisak.widgets.Button):
     @alternative_text.setter
     def alternative_text(self, value):
         self._alternative_text = str(value)
-
-    @property
-    def ratio_width(self):
-        return self._ratio_width
-
-    @ratio_width.setter
-    def ratio_width(self, value):
-        self._ratio_width = value
-        self.set_width(unit.w(value))
-
-    @property
-    def ratio_height(self):
-        return self._ratio_height
-
-    @ratio_height.setter
-    def ratio_height(self, value):
-        self._ratio_height = value
-        self.set_height(unit.h(value))
         
 
-class Text(Mx.Label):
+class Text(Mx.Label, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
@@ -191,26 +159,6 @@ class Text(Mx.Label):
     def ratio_height(self, value):
         self._ratio_height = value
         self.set_height(unit.h(value))
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name.replace("-", "_"))
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name.replace("-", "_"))
         
 
 class Key(pisak.widgets.Button):
@@ -317,24 +265,6 @@ class Key(pisak.widgets.Button):
     def target(self, value):
         self._target = value
 
-    @property
-    def ratio_width(self):
-        return self._ratio_width
-
-    @ratio_width.setter
-    def ratio_width(self, value):
-        self._ratio_width = value
-        self.set_width(unit.w(value))
-
-    @property
-    def ratio_height(self):
-        return self._ratio_height
-
-    @ratio_height.setter
-    def ratio_height(self, value):
-        self._ratio_height = value
-        self.set_height(unit.h(value))
-
 
 class Prediction(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerPrediction"
@@ -411,21 +341,3 @@ class Prediction(pisak.widgets.Button):
     @order_num.setter
     def order_num(self, value):
         self._order_num = value
-
-    @property
-    def ratio_width(self):
-        return self._ratio_width
-
-    @ratio_width.setter
-    def ratio_width(self, value):
-        self._ratio_width = value
-        self.set_width(unit.w(value))
-
-    @property
-    def ratio_height(self):
-        return self._ratio_height
-
-    @ratio_height.setter
-    def ratio_height(self, value):
-        self._ratio_height = value
-        self.set_height(unit.h(value))
