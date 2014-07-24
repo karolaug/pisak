@@ -25,7 +25,7 @@ def exit_app(*args):
 def undo(*args):
     raise NotImplementedError
 
-@signals.registered_handler("speller/nav_right") 
+@signals.registered_handler("speller/nav_right")
 def nav_right(text_box):
     text_box.move_cursor_forward()
 
@@ -116,3 +116,7 @@ def switch_label(button):
         button.set_alternative_label()
     elif current_label == button.alternative_text:
         button.set_default_label()
+
+@signals.registered_handler("speller/switch_icon")
+def switch_icon(button):
+    raise NotImplementedError
