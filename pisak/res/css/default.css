@@ -1,81 +1,88 @@
-// Template
+/* JSON part*/
+/* different properties for different types*/
 
-template {
-    background-color: #FFFFFF;
-    font-family: "Lucida Console", Monaco, monospace;
-    color: #000000;
-    font-size: 12px;
+MxButton {
+  background-color: rgb(255, 0, 0);
+  fixed-position-set: True;
+  some-other-property: foo-bar-bar;
+  fixed-x: 100.0;
 }
 
-
-// Every graphical element should be defined here (progress bar, fonts and color for
-// pagecount etc.
-
-
-
-
-
-
-
-// Buttons
-// Standard button is inactive, then it becomes active and after that it can be pressed.
-// Pressed button has inactive, active and pressed params.
-// Each button can be set up individually using its id in the system
-
-
-#button inactive {
-    font-size: 12px;
-    background-color: #000000;
+PisakSpellerButton {
+    
 }
 
-
-
-#button active {
-    background-color: #00FF00;
+PisakSpellerText {
 
 }
 
-#button pressed {
-    some-kinda-shadow: 13;
-    background-color: #0000FF;
+PisakSpellerKey {
+    font-size: 30;
 }
 
-
-//Seperate color schema for quit button
-#button quit active {
-    background-color: #FF0000;
+PisakSpellerPrediction {
 
 }
 
-
-
-// Icons
-// Behavior is the same as for buttons.
-// Each icon should have up to 5 additional colors that can be managed globally
-// or individually. Thease colors CAN be used to set some graphical accents that
-// can be managed from global or userspace CSS.
-
-
-#icon inactive {
+PisakProgressBar {
 
 }
 
-#icon active {
+PisakBoxLayout {
 
 }
 
-#icon pressed {
+/*SVG part*/
+/*
+Jakob Jenkov
+http://tutorials.jenkov.com/svg/svg-and-css.html
+
+CSS Shape
+
+fill -> Sets fill color of the shape.
+fill-opacity -> Sets fill opacity of the shape.
+fill-rule -> Sets fill rule of the shape.
+marker -> Sets marker used along the lines (edges) of this shape.
+marker-start -> Sets start marker used along the lines (edges) of this shape.
+marker-mid -> Sets mid marker used along the lines (edges) of this shape.
+marker-end -> Sets end marker used along the lines (edges) of this shape.
+stroke -> Sets the stroke (line) color used to draw the outline of this shape.
+stroke-dasharray -> Sets the stroke (line) dashing used to draw the outline of this shape.
+stroke-dashoffset -> Sets the stroke (line) dash offset used to draw the outline of this shape.
+stroke-linecap -> Sets the stroke (line) line cap used to draw the outline of this shape. Valid values are round, butt and square.
+stroke-miterlimit -> Sets the stroke (line) miter limit used to draw the outline of this shape.
+stroke-opacity -> Sets the stroke (line) opacity used to draw the outline of this shape.
+stroke-width -> Sets the stroke (line) width used to draw the outline of this shape.
+text-rendering -> Sets the text-rendering used to draw the outline of this shape.
+
+CSS Gradient
+
+stop-color -> Sets the stop color used in a stop element used in a gradient.
+stop-opacity -> Sets the stop opacity used in a stop element used in a gradient.
+*/
+/*svg { - commented out, does not work with rsvg 2.40.2-1
+width: 100%;
+height: 100%
+}*/ 
+
+#l1 {
+fill: green;
+opacity: 1;
+stroke: deepskyblue;
+}
+
+#l2 {
 
 }
 
-#icon accent1 {
+#l3 {
 
 }
 
-#icon accent2 {
+#l4 {
 
 }
 
-#icon accent3 {
+#l5 {
 
 }
