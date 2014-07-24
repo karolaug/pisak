@@ -40,6 +40,13 @@ class Button(pisak.widgets.Button):
     def set_alternative_label(self):
         self.set_label(self.alternative_text)
 
+    def switch_label(self):
+        current_label = self.get_label()
+        if current_label in (self.alternative_text, None):
+            self.set_default_label()
+        elif current_label == self.text:
+            self.set_alternative_label()
+
     @property
     def text(self):
         return self._text
@@ -243,10 +250,13 @@ class Key(pisak.widgets.Button):
         self.set_label(self.get_label().swapcase())
 
     def set_swap_special_label(self):
-        if self.get_label() == self.text:
-            self.set_special_label()
-        elif self.get_label() == self.special_text:
-            self.set_default_label()
+        try:
+            if self.get_label() == self.text:
+                self.set_special_label()
+            elif self.get_label() == self.special_text:
+                self.set_default_label()
+        except AttributeError:
+            return None
 
     def set_special_label(self):
         self.set_label(self.special_text)
