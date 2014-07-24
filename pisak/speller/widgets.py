@@ -242,6 +242,12 @@ class Key(pisak.widgets.Button):
     def set_swap_caps_label(self):
         self.set_label(self.get_label().swapcase())
 
+    def set_swap_special_label(self):
+        if self.get_label() == self.text:
+            self.set_special_label()
+        elif self.get_label() == self.special_text:
+            self.set_default_label()
+
     def set_special_label(self):
         self.set_label(self.special_text)
 
