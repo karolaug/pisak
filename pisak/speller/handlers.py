@@ -27,7 +27,7 @@ def undo(*args):
 
 @signals.registered_handler("speller/nav_right") 
 def nav_right(text_box):
-    text_box.move_cursor_foreward()
+    text_box.move_cursor_forward()
 
 @signals.registered_handler("speller/nav_left") 
 def nav_left(text_box):

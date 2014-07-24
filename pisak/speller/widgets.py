@@ -142,9 +142,9 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         self.delete_text(start_pos, end_pos)
         self.type_text(text)
 
-    def move_cursor_foreward(self):
+    def move_cursor_forward(self):
         """
-        Move cursor one position foreward
+        Move cursor one position forward
         """
         current_position = self.clutter_text.get_cursor_position()
         if current_position < self.get_text_length():
