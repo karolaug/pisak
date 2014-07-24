@@ -16,7 +16,7 @@ class PisakSpellerStage(Clutter.Stage):
         super().__init__()
         self.context = context
         self._load_script()
-        self._load_stylesheet()
+        #self._load_stylesheet()
 
     def _load_script(self):
         self.script = Clutter.Script()
