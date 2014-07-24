@@ -142,6 +142,22 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         self.delete_text(start_pos, end_pos)
         self.type_text(text)
 
+    def move_cursor_foreward(self):
+        """
+        Move cursor one position foreward
+        """
+        current_position = self.clutter_text.get_cursor_position()
+        if current_position < self.get_text_length():
+            self.clutter_text.set_cursor_position(current_position+1)
+
+    def move_cursor_backward(self):
+        """
+        Move cursor one position backward
+        """
+        current_position = self.clutter_text.get_cursor_position()
+        if current_position > 0:
+            self.clutter_text.set_cursor_position(current_position-1)
+
     @property
     def ratio_width(self):
         return self._ratio_width

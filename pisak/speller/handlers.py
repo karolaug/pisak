@@ -21,17 +21,17 @@ def go_to_main_menu(main_menu_group):
 def exit_app(*args):
     raise NotImplementedError
 
-@signals.registered_handler("speller/undo") 
+@signals.registered_handler("speller/undo")
 def undo(*args):
     raise NotImplementedError
 
 @signals.registered_handler("speller/nav_right") 
 def nav_right(text_box):
-    raise NotImplementedError
+    text_box.move_cursor_foreward()
 
 @signals.registered_handler("speller/nav_left") 
 def nav_left(text_box):
-    raise NotImplementedError
+    text_box.move_cursor_backward()
 
 @signals.registered_handler("speller/save") 
 def save(text_box):
