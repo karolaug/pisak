@@ -118,13 +118,7 @@ def swap_caps_chars(keyboard_panel):
 
 @signals.registered_handler("speller/switch_label")
 def switch_label(button):
-    current_label = button.get_label()
-    if not current_label:
-        button.set_default_label()
-    elif current_label == button.text:
-        button.set_alternative_label()
-    elif current_label == button.alternative_text:
-        button.set_default_label()
+    button.switch_label()
 
 @signals.registered_handler("speller/switch_icon")
 def switch_icon(button):
