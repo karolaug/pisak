@@ -8,14 +8,15 @@ import cairo
 class PropertyAdapter(object):
 
     def find_attribute(self, name):
-        name  = self.repair_prop_name(name)
+        name  = self._repair_prop_name(name)
         for relative in self.__class__.mro():
             attribute = relative.__dict__.get(name)
             if attribute:
                 break
         return attribute
 
-    def repair_prop_name(self, name):
+    @staticmethod
+    def _repair_prop_name(name):
         if '-' in name:
             name = name.replace('-', '_')
         return name
@@ -495,7 +496,8 @@ class PagedTileView(Clutter.Actor):
         self.page_actor = None
         self.items = []
         self.page_interval = None
-        self.pages_current, self.pages_old = set(), set()
+        self.pages_current = set()
+        self.pages_old = set()
         self.tile_handler = None
         self._init_tiles()
         self._paginate_items()
