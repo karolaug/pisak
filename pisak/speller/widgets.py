@@ -5,7 +5,6 @@ from gi.repository import Mx, GObject, Pango
 
 from pisak import unit
 import pisak.widgets
-from pisak.res import dims
 
 
 class Button(pisak.widgets.Button):
@@ -331,13 +330,13 @@ class Prediction(pisak.widgets.Button):
     def follow_target(self):
         if self.target:
             text_field = self.target.clutter_text
-            text_field.connect("text-changed", self.update_button)
+            #text_field.connect("text-changed", self.update_button)
 
     def stop_following_target(self):
         try:
             if self.target:
                 text_field = self.target.clutter_text
-                text_field.disconnect_by_func("text-changed", self.update_button)
+                #text_field.disconnect_by_func("text-changed", self.update_button)
         except AttributeError:
             return None
             
