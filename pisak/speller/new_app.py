@@ -8,6 +8,9 @@ from pisak.speller import widgets
 import pisak.layout  # @UnusedImport
 import pisak.scanning  # @UnusedImport
 
+import pisak.handlers  # @UnusedImport
+import pisak.speller.handlers  # @UnusedImport
+
 
 class PisakSpellerStage(Clutter.Stage):
     STYLESHEET_PATH = "speller_stylesheet.css"
