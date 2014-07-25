@@ -28,7 +28,14 @@ class Strategy(GObject.GObject):
         Selects currently highlighted element.
         """
         element = self.get_current_element()
-        element.emit("clicked")
+        if isinstance(element, Group):
+            print("SELECT GROUP")
+            self.group.stop_cycle()
+            element.start_cycle()
+        elif isinstance(element, Mx.Button):
+            element.emit("clicked")
+        else:
+            raise Exception("Unsupported selection")
 
     def get_current_element(self):
         """
@@ -104,9 +111,12 @@ class Group(Clutter.Actor):
                 to_scan.extend(current.get_children())
     
     def start_cycle(self):
-        stage = self.get_stage()
-        stage.set_key_focus(self)
+        self.get_stage().set_key_focus(self)
         self.strategy.start()
+
+    def stop_cycle(self):
+        self.get_stage().set_key_focus(None)
+        self.strategy.stop()
 
     @staticmethod
     def key_release(source, event):
@@ -162,11 +172,11 @@ class RowStrategy(Strategy):
 
     @group.setter
     def group(self, value):
-        if self.group is not None:
-            self.group.disconnect("allocation-changed")
+        #if self.group is not None:
+        #    self.group.disconnect_by_function("allocation-changed". self.update_rows)
         self._group = value
-        if self.group is not None:
-            self.group.connect("allocation-changed", self.update_rows)
+        #if self.group is not None:
+        #    self.group.connect("allocation-changed", self.update_rows)
 
     def update_rows(self, *args):
         selection = self._subgroups[self.index]
@@ -196,7 +206,7 @@ class RowStrategy(Strategy):
 
     def compute_sequence(self):
         subgroups = list(self.group.get_subgroups())
-        key_function = lambda a: a.get_transformed_position()[1]
+        key_function = lambda a: list(reversed(a.get_transformed_position()))
         subgroups.sort(key=key_function)
         self._subgroups = subgroups
 
@@ -206,6 +216,19 @@ class RowStrategy(Strategy):
         self._expose_next()
         self.timeout_token = object()
         Clutter.threads_add_timeout(0, self.interval, self.cycle_timeout, self.timeout_token)
+
+    def stop(self):
+        self.timeout_token = None
+        self._stop_cycle()
+
+    def _stop_cycle(self):
+        if self.index is not None:
+            selection = self._subgroups[self.index]
+            if isinstance(selection, Mx.Stylable):
+                selection.set_style_pseudo_class("")
+            elif isinstance(selection, Group):
+                selection.disable_hilite()
+            self.index = (self.index + 1) % len(self._subgroups)
 
     def _expose_next(self):
         if self.index is not None:
@@ -218,8 +241,6 @@ class RowStrategy(Strategy):
         else:
             self.index = 0
         selection = self._subgroups[self.index]
-        print(selection.get_id())
-        print(selection.get_transformed_position(), selection.get_size())
         if isinstance(selection, Mx.Stylable):
             selection.set_style_pseudo_class("hover")
         elif isinstance(selection, Group):
