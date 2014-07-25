@@ -488,7 +488,9 @@
         "id": "keyboard_row_1",
         "type": "PisakBoxLayout",
         "spacing": 10,
-        "children": ["key_1_10", "key_1_9", "key_1_8", "key_1_7", "key_1_6", "key_1_5", "key_1_4", "key_1_3", "key_1_2", "key_1_1"]
+        "children": [
+            "key_1_10", "key_1_9", "key_1_8", "key_1_7", "key_1_6",
+            "key_1_5", "key_1_4", "key_1_3", "key_1_2", "key_1_1"]
     },
     {
         "id": "key_1_1",
@@ -586,7 +588,9 @@
         "id": "keyboard_row_2",
         "type": "PisakBoxLayout",
         "spacing": 10,
-        "children": ["key_2_10", "key_2_9", "key_2_8", "key_2_7", "key_2_6", "key_2_5", "key_2_4", "key_2_3", "key_2_2", "key_2_1"]
+        "children": [
+            "key_2_10", "key_2_9", "key_2_8", "key_2_7", "key_2_6",
+            "key_2_5", "key_2_4", "key_2_3", "key_2_2", "key_2_1"]
    },
     {
         "id": "key_2_1",
@@ -685,7 +689,9 @@
         "id": "keyboard_row_3",
         "type": "PisakBoxLayout",
         "spacing": 10,
-        "children": ["key_3_10", "key_3_9", "key_3_8", "key_3_7", "key_3_6", "key_3_5", "key_3_4", "key_3_3", "key_3_2", "key_3_1"]
+        "children": [
+            "key_3_10", "key_3_9", "key_3_8", "key_3_7", "key_3_6",
+            "key_3_5", "key_3_4", "key_3_3", "key_3_2", "key_3_1"]
     },
     {
         "id": "key_3_1",
