@@ -13,7 +13,9 @@
                            "handler": "general/start_group"
                        }
                    ],
-        "children": ["main_box", "background_box"]
+        "children": [
+                        "main_box", "background_box"
+                    ]
     },
     {
         "id": "background_box",
@@ -28,12 +30,16 @@
         "y-expand": true,
         "orientation": "horizontal",
         "spacing" : 10,
-        "children": ["main_panel", "prediction_panel", "speller_menu"]
+        "children": [
+                        "main_panel", "prediction_panel", "speller_menu"
+                    ]
     },
     {
         "id": "speller_menu",
         "type": "PisakScanningGroup",
-        "children": ["speller_menu_box"]
+        "children": [
+                        "speller_menu_box"
+                    ]
     },
     {
         "id": "speller_menu_box",
@@ -43,8 +49,10 @@
         "y-expand": true,
         "spacing": 10,
         "children": [
-            "button_9", "button_8", "button_7", "button_6", "button_5",
-            "button_4", "button_3", "button_2", "button_1"]
+                        "button_9", "button_8", "button_7", "button_6",
+                        "button_5","button_4", "button_3", "button_2",
+                        "button_1"
+                    ]
     },
     {
         "id": "button_1",
@@ -217,7 +225,9 @@
     {
         "id": "prediction_panel",
         "type": "PisakScanningGroup",
-        "children": ["prediction_panel_box"]
+        "children": [
+                        "prediction_panel_box"
+                    ]
     },
     {
         "id": "prediction_panel_box",
@@ -226,7 +236,9 @@
         "y-align": "start",
         "y-expand": true,
         "spacing": 10,
-        "children": ["prediction_3", "prediction_2", "prediction_1"]
+        "children": [
+                        "prediction_3", "prediction_2", "prediction_1"
+                    ]
     },
     {
         "id": "prediction_1",
@@ -258,14 +270,18 @@
     {
         "id": "main_panel",
         "type": "PisakScanningGroup",
-        "children": ["main_panel_box"]
+        "children": [
+                        "main_panel_box"
+                    ]
     },
     {
         "id": "main_panel_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
         "spacing": 10,
-        "children": ["keyboard_panel", "keyboard_menu", "text_box"]
+        "children": [
+                        "keyboard_panel", "keyboard_menu", "text_box"
+                    ]
     },
     {
         "id": "text_box",
@@ -280,11 +296,12 @@
         "type": "PisakBoxLayout",
         "spacing": 10,
         "children": [
-            "keyboard_menu_button_10", "keyboard_menu_button_9",
-            "keyboard_menu_button_8", "keyboard_menu_button_7",
-            "keyboard_menu_button_6", "keyboard_menu_button_5",
-            "keyboard_menu_button_4", "keyboard_menu_button_3",
-            "keyboard_menu_button_2", "keyboard_menu_button_1"]
+                        "keyboard_menu_button_10", "keyboard_menu_button_9",
+                        "keyboard_menu_button_8", "keyboard_menu_button_7",
+                        "keyboard_menu_button_6", "keyboard_menu_button_5",
+                        "keyboard_menu_button_4", "keyboard_menu_button_3",
+                        "keyboard_menu_button_2", "keyboard_menu_button_1"
+                    ]
     },
     {
         "id": "keyboard_menu_button_1",
@@ -482,15 +499,19 @@
         "orientation": "vertical",
         "y-align": "end",
         "spacing": 10,
-        "children": ["keyboard_row_3", "keyboard_row_2", "keyboard_row_1"]
+        "children": [
+                        "keyboard_row_3", "keyboard_row_2", "keyboard_row_1"
+                    ]
     },
     {
         "id": "keyboard_row_1",
         "type": "PisakBoxLayout",
         "spacing": 10,
         "children": [
-            "key_1_10", "key_1_9", "key_1_8", "key_1_7", "key_1_6",
-            "key_1_5", "key_1_4", "key_1_3", "key_1_2", "key_1_1"]
+                        "key_1_10", "key_1_9", "key_1_8", "key_1_7",
+                        "key_1_6", "key_1_5", "key_1_4", "key_1_3",
+                        "key_1_2", "key_1_1"
+                    ]
     },
     {
         "id": "key_1_1",
@@ -589,8 +610,10 @@
         "type": "PisakBoxLayout",
         "spacing": 10,
         "children": [
-            "key_2_10", "key_2_9", "key_2_8", "key_2_7", "key_2_6",
-            "key_2_5", "key_2_4", "key_2_3", "key_2_2", "key_2_1"]
+                        "key_2_10", "key_2_9", "key_2_8", "key_2_7",
+                        "key_2_6", "key_2_5", "key_2_4", "key_2_3",
+                        "key_2_2", "key_2_1"
+                    ]
    },
     {
         "id": "key_2_1",
@@ -690,8 +713,10 @@
         "type": "PisakBoxLayout",
         "spacing": 10,
         "children": [
-            "key_3_10", "key_3_9", "key_3_8", "key_3_7", "key_3_6",
-            "key_3_5", "key_3_4", "key_3_3", "key_3_2", "key_3_1"]
+                        "key_3_10", "key_3_9", "key_3_8", "key_3_7",
+                        "key_3_6", "key_3_5", "key_3_4", "key_3_3",
+                        "key_3_2", "key_3_1"
+                    ]
     },
     {
         "id": "key_3_1",
