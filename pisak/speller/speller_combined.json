@@ -302,6 +302,16 @@
     },
     {
         "id": "keyboard_menu",
+        "type": "PisakScanningGroup",
+        "children": ["keyboard_menu_box"],
+        "strategy": {
+            "id": "keyboard_menu_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800
+        }
+    },
+    {
+        "id": "keyboard_menu_box",
         "type": "PisakBoxLayout",
         "spacing": 10,
         "children": [
@@ -514,6 +524,16 @@
     },
     {
         "id": "keyboard_row_1",
+        "type": "PisakScanningGroup",
+        "children": ["keyboard_row_1_box"],
+        "strategy": {
+            "id": "keyboard_row_1_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800
+        }
+    },
+    {
+        "id": "keyboard_row_1_box",
         "type": "PisakBoxLayout",
         "spacing": 10,
         "children": [
@@ -616,6 +636,16 @@
     },
     {
         "id": "keyboard_row_2",
+        "type": "PisakScanningGroup",
+        "children": ["keyboard_row_2_box"],
+        "strategy": {
+            "id": "keyboard_row_2_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800
+        }
+    },
+    {
+        "id": "keyboard_row_2_box",
         "type": "PisakBoxLayout",
         "spacing": 10,
         "children": [
@@ -716,9 +746,19 @@
         "target": "text_box",
         "ratio-width": 0.06,
         "ratio-height": 0.09
-    },     
+    },
     {
         "id": "keyboard_row_3",
+        "type": "PisakScanningGroup",
+        "children": ["keyboard_row_3_box"],
+        "strategy": {
+            "id": "keyboard_row_3_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800
+        }
+    },
+    {
+        "id": "keyboard_row_3_box",
         "type": "PisakBoxLayout",
         "spacing": 10,
         "children": [
