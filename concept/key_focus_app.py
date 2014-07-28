@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-from gi.repository import Clutter, Mx
+from gi.repository import Clutter
 
 
-class MyButton(Mx.Button):
+class MyButton(Clutter.Actor):
     def __init__(self):
         super().__init__()
-        self.set_label("Dont'click")
+        #self.set_label("Dont'click")
+        self.set_background_color(Clutter.Color.new(64, 192, 64, 255))
+        self.set_size(100, 100)
         self.connect("key-release-event", self.key_release)
     
     def key_release(self, *args):
