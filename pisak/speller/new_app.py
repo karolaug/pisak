@@ -53,9 +53,9 @@ if __name__ == "__main__":
               )
     try:
         SCRIPT_PATH = {
-            "row": "pisak/speller/speller_row.json",
-            "column": "pisak/speller/speller_column.json",
-            "combined": "pisak/speller/speller_combined.json"
+            "row": "speller_row.json",
+            "column": "speller_column.json",
+            "combined": "speller_combined.json"
             }[sys.argv[1]]
         PisakSpellerApp(sys.argv).main()
     except IndexError:

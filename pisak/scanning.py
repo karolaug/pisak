@@ -2,6 +2,8 @@
 Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx
+import sys
+import traceback
 
 
 class Strategy(GObject.GObject):
@@ -34,6 +36,7 @@ class Strategy(GObject.GObject):
             element.start_cycle()
         elif isinstance(element, Mx.Button):
             element.emit("clicked")
+            self.group.stop_cycle()
         else:
             raise Exception("Unsupported selection")
 
@@ -64,7 +67,8 @@ class Group(Clutter.Actor):
         self._strategy = None
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
-        self.connect("key-release-event", self.key_release)
+        # handle only when active
+        # self.connect("key-release-event", self.key_release)
 
     @property
     def strategy(self):
@@ -111,17 +115,23 @@ class Group(Clutter.Actor):
                 to_scan.extend(current.get_children())
     
     def start_cycle(self):
+        print("START GROUP", self.get_id())
+        self._handler_token = self.connect("key-release-event", self.key_release)
         self.get_stage().set_key_focus(self)
         self.strategy.start()
 
     def stop_cycle(self):
         self.get_stage().set_key_focus(None)
+        self.disconnect(self._handler_token)
         self.strategy.stop()
 
     @staticmethod
     def key_release(source, event):
+        print("FOCUS", source.get_stage().get_key_focus() != source)
+        print("KEY EVENT", source.get_id())
         if event.unicode_value == ' ':
             source.strategy.select()
+        return False
 
     def enable_hilite(self):
         #for s in self.get_subgroups():
