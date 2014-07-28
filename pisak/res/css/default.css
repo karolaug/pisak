@@ -8,6 +8,10 @@ MxButton {
   fixed-x: 100.0;
 }
 
+PisakSpellerButton MxImage {
+  background-color: rgb(0, 255, 0);
+}
+
 PisakSpellerButton {
     
 }
