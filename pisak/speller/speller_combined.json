@@ -33,7 +33,12 @@
     {
         "id": "speller_menu",
         "type": "PisakScanningGroup",
-        "children": ["speller_menu_box"]
+        "children": ["speller_menu_box"],
+        "strategy": {
+            "id": "menu_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800
+        }
     },
     {
         "id": "speller_menu_box",
@@ -217,7 +222,12 @@
     {
         "id": "prediction_panel",
         "type": "PisakScanningGroup",
-        "children": ["prediction_panel_box"]
+        "children": ["prediction_panel_box"],
+        "strategy": {
+            "id": "prediction_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800
+        }
     },
     {
         "id": "prediction_panel_box",
@@ -258,7 +268,12 @@
     {
         "id": "main_panel",
         "type": "PisakScanningGroup",
-        "children": ["main_panel_box"]
+        "children": ["main_panel_box"],
+        "strategy": {
+            "id": "main_panel_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800
+        }
     },
     {
         "id": "main_panel_box",
