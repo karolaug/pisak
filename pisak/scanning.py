@@ -31,12 +31,17 @@ class Strategy(GObject.GObject):
         element = self.get_current_element()
         if isinstance(element, Group):
             self.group.stop_cycle()
+            element.parent_group = self.group
             element.start_cycle()
         elif isinstance(element, Mx.Button):
             element.emit("clicked")
-            self.group.stop_cycle()
+            self.unwind()
         else:
             raise Exception("Unsupported selection")
+
+    def unwind(self):
+        self.group.stop_cycle()
+        self.group.parent_group.start_cycle()
 
     def get_current_element(self):
         """
@@ -126,7 +131,7 @@ class Group(Clutter.Actor):
     def key_release(source, event):
         if event.unicode_value == ' ':
             source.strategy.select()
-        return False
+        return True
 
     def enable_hilite(self):
         for s in self.get_subgroups():
@@ -260,7 +265,7 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
             self._expose_next()
             return True
         else:
-            self._stop_cycle()
+            self.unwind()
             return False
 
     def get_current_element(self):
