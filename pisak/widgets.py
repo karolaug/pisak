@@ -1,6 +1,7 @@
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import os.path
 from pisak import switcher_app, unit, res
+from pisak.layout import Box
 import collections
 from pisak.res import colors, dims
 import cairo
@@ -119,20 +120,10 @@ class Button(Mx.Button, PropertyAdapter):
         self.read_svg()
         self.set_image()
         
-        orientation = {"left" : (0, 0), #1 - pos, #2 - orien(0 - HOR, 1 VER)
-                       "right" : (1, 0), "top" : (0, 1), "bottom" : (1, 1)}
-        icon_pos = self.get_icon_position().value_nick
-
-        self.box2 = Mx.BoxLayout()
-
-        self.box2.set_x_expand(True)
-        self.box2.set_x_align(Clutter.ActorAlign(3))
-        self.box2.add_actor(self.image, 0)
-
-        self.box.add_actor(self.box2, 1)
-
+        self.box.add_actor(self.image, 1)
 
     def custom_content(self):
+        self.set_icon_visible(False)
         children = self.get_children()
         if len(children) == 1:
             self.box = children[0]
