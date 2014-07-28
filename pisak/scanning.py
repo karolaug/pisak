@@ -2,6 +2,7 @@
 Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx
+import pisak.widgets
 
 
 class Strategy(GObject.GObject):
@@ -128,23 +129,21 @@ class Group(Clutter.Actor):
         return False
 
     def enable_hilite(self):
-        #for s in self.get_subgroups():
-        #    if isinstance(s, Mx.Stylable):
-        #        s.set_style_pseudo_class("hover")
-        #    elif isinstance(s, Group):
-        #        s.enable_hilite()
-        self.set_background_color(Clutter.Color.new(128, 128, 128, 255))
+        for s in self.get_subgroups():
+            if isinstance(s, Mx.Stylable):
+                s.set_style_pseudo_class("hover")
+            elif isinstance(s, Group):
+                s.enable_hilite()
 
     def disable_hilite(self):
-        #for s in self.get_subgroups():
-        #    if isinstance(s, Mx.Stylable):
-        #        s.set_style_pseudo_class("hover")
-        #    elif isinstance(s, Group):
-        #        s.enable_hilite()
-        self.set_background_color(Clutter.Color.new(0, 0, 0, 0))
+        for s in self.get_subgroups():
+            if isinstance(s, Mx.Stylable):
+                s.set_style_pseudo_class("")
+            elif isinstance(s, Group):
+                s.disable_hilite()
 
 
-class RowStrategy(Strategy):
+class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "PisakRowStrategy"
 
     __gproperties__ = {
@@ -152,6 +151,12 @@ class RowStrategy(Strategy):
             GObject.TYPE_UINT,
             "", "",
             0, GObject.G_MAXUINT, 1000,
+            GObject.PARAM_READWRITE),
+        ""
+        "max-cycle-count": (
+            GObject.TYPE_INT,
+            "", "",
+            -1, GObject.G_MAXINT, 2,
             GObject.PARAM_READWRITE)
     }
 
@@ -159,6 +164,7 @@ class RowStrategy(Strategy):
         self._group = None
         super().__init__()
         self.interval = 1000
+        self._max_cycle_count = 2
         self._buttons = []
         self.timeout_token = None
 
@@ -169,6 +175,14 @@ class RowStrategy(Strategy):
     @interval.setter
     def interval(self, value):
         self._interval = int(value)
+
+    @property
+    def max_cycle_count(self):
+        return self._max_cycle_count
+
+    @max_cycle_count.setter
+    def max_cycle_count(self, value):
+        self._max_cycle_count = int(value)
 
     @property
     def group(self):
@@ -188,26 +202,6 @@ class RowStrategy(Strategy):
             selection.set_style_pseudo_class("")
         self.compute_sequence()
 
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name)
-
     def compute_sequence(self):
         subgroups = list(self.group.get_subgroups())
         key_function = lambda a: list(reversed(a.get_transformed_position()))
@@ -217,6 +211,7 @@ class RowStrategy(Strategy):
     def start(self):
         self.compute_sequence()
         self.index = None
+        self._cycle_count = 0
         self._expose_next()
         self.timeout_token = object()
         Clutter.threads_add_timeout(0, self.interval, self.cycle_timeout, self.timeout_token)
@@ -232,7 +227,6 @@ class RowStrategy(Strategy):
                 selection.set_style_pseudo_class("")
             elif isinstance(selection, Group):
                 selection.disable_hilite()
-            self.index = (self.index + 1) % len(self._subgroups)
 
     def _expose_next(self):
         if self.index is not None:
@@ -248,10 +242,15 @@ class RowStrategy(Strategy):
         if isinstance(selection, Mx.Stylable):
             selection.set_style_pseudo_class("hover")
         elif isinstance(selection, Group):
+            #Clutter.threads_enter()
             selection.enable_hilite()
+            #Clutter.threads_leave()
+        if self.index == len(self._subgroups) - 1:
+            self._cycle_count += 1
 
     def _has_next(self):
-        return True
+        return (self.max_cycle_count == -1) or \
+            (self._cycle_count < self.max_cycle_count)
 
     def cycle_timeout(self, token):
         if self.timeout_token != token:
