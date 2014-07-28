@@ -15,7 +15,8 @@ def start_group(source, *args):
     """
     Start scanning group
     """
-    source.start_cycle()
+    if source.get_property("mapped"):
+        source.start_cycle()
 
 @signals.registered_handler("general/exit") 
 def exit_app(source, *args):
