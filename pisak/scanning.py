@@ -2,8 +2,6 @@
 Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx
-import sys
-import traceback
 
 
 class Strategy(GObject.GObject):
@@ -31,7 +29,6 @@ class Strategy(GObject.GObject):
         """
         element = self.get_current_element()
         if isinstance(element, Group):
-            print("SELECT GROUP")
             self.group.stop_cycle()
             element.start_cycle()
         elif isinstance(element, Mx.Button):
@@ -115,7 +112,6 @@ class Group(Clutter.Actor):
                 to_scan.extend(current.get_children())
     
     def start_cycle(self):
-        print("START GROUP", self.get_id())
         self._handler_token = self.connect("key-release-event", self.key_release)
         self.get_stage().set_key_focus(self)
         self.strategy.start()
@@ -127,8 +123,6 @@ class Group(Clutter.Actor):
 
     @staticmethod
     def key_release(source, event):
-        print("FOCUS", source.get_stage().get_key_focus() != source)
-        print("KEY EVENT", source.get_id())
         if event.unicode_value == ' ':
             source.strategy.select()
         return False
