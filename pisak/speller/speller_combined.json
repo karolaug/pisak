@@ -221,14 +221,15 @@
         "ratio-width": 0.16,
         "ratio-height": 0.09,
         "icon-size": 50,
-        "label": "START",
+        "label": "WYJŚCIE",
         
         "icon-name": "start",
         "spacing": 10,
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/exit"
+                           "handler": "speller/exit",
+                           "object": "main"
                        }
                    ]
     },

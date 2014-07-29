@@ -20,8 +20,8 @@ def go_to_main_menu(main_menu_group):
     main_menu_group.start_cycle()
 
 @signals.registered_handler("speller/exit")
-def exit_app(*args):
-    raise NotImplementedError
+def exit_app(app):
+    app.get_stage().destroy()
 
 @signals.registered_handler("speller/undo")
 def undo(*args):
@@ -64,7 +64,8 @@ def new_document(text_box):
 @signals.registered_handler("speller/text_to_speech")
 def text_to_speech(text_box):
     text = text_box.get_text()
-    subprocess.call(["milena_say", text])
+    if text:
+        subprocess.call(["milena_say", text])
 
 @signals.registered_handler("speller/backspace")
 def backspace(text_box):
