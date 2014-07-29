@@ -28,7 +28,7 @@ SCRIPT_PATHS = {
 
 class PisakSpellerStage(Clutter.Stage):
     STYLESHEET_PATH = _local_get("speller_stylesheet.css")
-    
+
     def __init__(self, context, script_path):
         super().__init__()
         self.context = context
@@ -58,6 +58,7 @@ class PisakSpellerApp(switcher_app.Application):
         stage.set_size(1366, 768)
         stage.set_fullscreen(True)
         return stage
+
 
 def usage():
     print("Usage: new_app.py VARIANT")
