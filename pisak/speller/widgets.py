@@ -164,6 +164,12 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         if current_position > 0:
             self.clutter_text.set_cursor_position(current_position-1)
 
+    def move_to_new_line(self):
+        """
+        Move to new line
+        """
+        self.type_text("\n")
+
     @property
     def ratio_width(self):
         return self._ratio_width

@@ -304,8 +304,8 @@
         "id": "text_box",
         "type": "PisakSpellerText",
         "x-align": "start",
-        "x-expand": true,
-        "y-expand": true,
+        "ratio-width": 0.658,
+        "ratio-height": 0.57,
         "background-color": "lightgrey"
     },
     {
@@ -472,7 +472,8 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/undo"
+                           "handler": "speller/new_line",
+                           "object": "text_box"
                        }
                    ]
     },

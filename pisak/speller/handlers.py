@@ -74,6 +74,10 @@ def backspace(text_box):
 @signals.registered_handler("speller/space")
 def space(text_box):
     text_box.type_text(" ")
+    
+@signals.registered_handler("speller/new_line")
+def new_line(text_box):
+    text_box.move_to_new_line()
 
 @signals.registered_handler("speller/default_chars")
 def default_chars(keyboard_item):
