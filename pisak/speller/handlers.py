@@ -88,13 +88,12 @@ def special_chars(keyboard_item):
             special_chars(sub_item)
 
 @signals.registered_handler("speller/swap_special_chars")
-def swap_special_chars(keyboard_panel):
-    for item in keyboard_panel.get_children():
-        if not isinstance(item, widgets.Key):
-            for sub_item in item.get_children():
-                sub_item.set_swap_special_label()
-        else:
-            item.set_swap_special_label()
+def swap_special_chars(keyboard_item):
+    if isinstance(keyboard_item, widgets.Key):
+        keyboard_item.set_swap_special_label()
+    else:
+        for sub_item in keyboard_item.get_children():
+            swap_special_chars(sub_item)
 
 @signals.registered_handler("speller/swap_altgr_chars")
 def swap_altgr_chars(keyboard_item):
