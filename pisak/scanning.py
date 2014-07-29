@@ -2,6 +2,7 @@
 Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx
+import pisak.widgets
 
 
 class Strategy(GObject.GObject):
@@ -28,7 +29,19 @@ class Strategy(GObject.GObject):
         Selects currently highlighted element.
         """
         element = self.get_current_element()
-        element.emit("clicked")
+        if isinstance(element, Group):
+            self.group.stop_cycle()
+            element.parent_group = self.group
+            element.start_cycle()
+        elif isinstance(element, Mx.Button):
+            element.emit("clicked")
+            self.unwind()
+        else:
+            raise Exception("Unsupported selection")
+
+    def unwind(self):
+        self.group.stop_cycle()
+        self.group.parent_group.start_cycle()
 
     def get_current_element(self):
         """
@@ -57,7 +70,8 @@ class Group(Clutter.Actor):
         self._strategy = None
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
-        self.connect("key-release-event", self.key_release)
+        # handle only when active
+        # self.connect("key-release-event", self.key_release)
 
     @property
     def strategy(self):
@@ -90,7 +104,7 @@ class Group(Clutter.Actor):
             return attribute.fget(self)
         else:
             raise ValueError("No such property", spec.name)
-    
+
     def get_subgroups(self):
         '''
         Generator of all subgroups of the group.
@@ -104,17 +118,37 @@ class Group(Clutter.Actor):
                 to_scan.extend(current.get_children())
     
     def start_cycle(self):
-        stage = self.get_stage()
-        stage.set_key_focus(self)
+        self._handler_token = self.connect("key-release-event", self.key_release)
+        self.get_stage().set_key_focus(self)
         self.strategy.start()
+
+    def stop_cycle(self):
+        self.get_stage().set_key_focus(None)
+        self.disconnect(self._handler_token)
+        self.strategy.stop()
 
     @staticmethod
     def key_release(source, event):
         if event.unicode_value == ' ':
             source.strategy.select()
+        return True
+
+    def enable_hilite(self):
+        for s in self.get_subgroups():
+            if isinstance(s, Mx.Stylable):
+                s.set_style_pseudo_class("hover")
+            elif isinstance(s, Group):
+                s.enable_hilite()
+
+    def disable_hilite(self):
+        for s in self.get_subgroups():
+            if isinstance(s, Mx.Stylable):
+                s.set_style_pseudo_class("")
+            elif isinstance(s, Group):
+                s.disable_hilite()
 
 
-class RowStrategy(Strategy):
+class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "PisakRowStrategy"
 
     __gproperties__ = {
@@ -122,6 +156,12 @@ class RowStrategy(Strategy):
             GObject.TYPE_UINT,
             "", "",
             0, GObject.G_MAXUINT, 1000,
+            GObject.PARAM_READWRITE),
+        ""
+        "max-cycle-count": (
+            GObject.TYPE_INT,
+            "", "",
+            -1, GObject.G_MAXINT, 2,
             GObject.PARAM_READWRITE)
     }
 
@@ -129,6 +169,7 @@ class RowStrategy(Strategy):
         self._group = None
         super().__init__()
         self.interval = 1000
+        self._max_cycle_count = 2
         self._buttons = []
         self.timeout_token = None
 
@@ -141,66 +182,80 @@ class RowStrategy(Strategy):
         self._interval = int(value)
 
     @property
+    def max_cycle_count(self):
+        return self._max_cycle_count
+
+    @max_cycle_count.setter
+    def max_cycle_count(self, value):
+        self._max_cycle_count = int(value)
+
+    @property
     def group(self):
         return self._group
 
     @group.setter
     def group(self, value):
-        if self.group is not None:
-            self.group.disconnect("allocation-changed")
+        #if self.group is not None:
+        #    self.group.disconnect_by_function("allocation-changed". self.update_rows)
         self._group = value
-        if self.group is not None:
-            self.group.connect("allocation-changed", self.update_rows)
+        #if self.group is not None:
+        #    self.group.connect("allocation-changed", self.update_rows)
 
     def update_rows(self, *args):
+        selection = self._subgroups[self.index]
+        if isinstance(selection, Mx.Stylable):
+            selection.set_style_pseudo_class("")
         self.compute_sequence()
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name)
 
     def compute_sequence(self):
         subgroups = list(self.group.get_subgroups())
-        subgroups.sort(key=Clutter.Actor.get_y)
+        key_function = lambda a: list(reversed(a.get_transformed_position()))
+        subgroups.sort(key=key_function)
         self._subgroups = subgroups
 
     def start(self):
         self.compute_sequence()
         self.index = None
+        self._cycle_count = 0
         self._expose_next()
         self.timeout_token = object()
         Clutter.threads_add_timeout(0, self.interval, self.cycle_timeout, self.timeout_token)
+
+    def stop(self):
+        self.timeout_token = None
+        self._stop_cycle()
+
+    def _stop_cycle(self):
+        if self.index is not None:
+            selection = self._subgroups[self.index]
+            if isinstance(selection, Mx.Stylable):
+                selection.set_style_pseudo_class("")
+            elif isinstance(selection, Group):
+                selection.disable_hilite()
 
     def _expose_next(self):
         if self.index is not None:
             selection = self._subgroups[self.index]
             if isinstance(selection, Mx.Stylable):
                 selection.set_style_pseudo_class("")
+            elif isinstance(selection, Group):
+                selection.disable_hilite()
             self.index = (self.index + 1) % len(self._subgroups)
         else:
             self.index = 0
         selection = self._subgroups[self.index]
         if isinstance(selection, Mx.Stylable):
             selection.set_style_pseudo_class("hover")
+        elif isinstance(selection, Group):
+            #Clutter.threads_enter()
+            selection.enable_hilite()
+            #Clutter.threads_leave()
+        if self.index == len(self._subgroups) - 1:
+            self._cycle_count += 1
 
     def _has_next(self):
-        return True
+        return (self.max_cycle_count == -1) or \
+            (self._cycle_count < self.max_cycle_count)
 
     def cycle_timeout(self, token):
         if self.timeout_token != token:
@@ -210,7 +265,7 @@ class RowStrategy(Strategy):
             self._expose_next()
             return True
         else:
-            self._stop_cycle()
+            self.unwind()
             return False
 
     def get_current_element(self):

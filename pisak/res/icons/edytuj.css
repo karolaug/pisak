@@ -1,8 +1,9 @@
 svg {
-height: 40px;
-width: 40px
+fill: dark;
+opacity: 1;
+stroke: dark;
 }
-
+/*
 #RACZKA {
 fill: green;
 opacity: 1;
@@ -30,4 +31,4 @@ stroke: red}
 
 #W4 {
 fill: plum;
-stroke: red}
+stroke: red}*/

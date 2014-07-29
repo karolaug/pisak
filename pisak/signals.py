@@ -3,7 +3,6 @@ Implementation of signal connecting strategy for ClutterScript.
 '''
 import sys
 
-import pisak.handlers  # @UnusedImport
 from gi.repository import GObject
 
 
@@ -17,6 +16,7 @@ def resolve_name(handler_name):
     """
     Resolve python name to python value in current namespace
     """
+    import pisak.handlers  # @UnusedImport
     name_parts = handler_name.split('.')
     current = BASE_NAMESPACE
     for part in name_parts:

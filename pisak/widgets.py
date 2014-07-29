@@ -1,6 +1,7 @@
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import os.path
 from pisak import switcher_app, unit, res
+from pisak.layout import Box
 import collections
 from pisak.res import colors, dims
 import cairo
@@ -70,9 +71,11 @@ class Button(Mx.Button, PropertyAdapter):
 
     def _connect_signals(self):
         self.connect("clicked", self.click_activate)
-        self.connect("enter-event", lambda *_: self.hilite_on())
-        self.connect("leave-event", lambda *_: self.hilite_off())
+        #self.connect("enter-event", lambda *_: self.hilite_on())
+        #self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
+        self.connect("notify::style-pseudo-class", 
+                     lambda *_: self.change_icon_white())
         self.set_reactive(True)
 
     @property
@@ -110,22 +113,17 @@ class Button(Mx.Button, PropertyAdapter):
     @spacing.setter
     def spacing(self, value):
         self._spacing = value
-        self.box.set_spacing(value)
+        #self.box.set_spacing(value)
 
     def set_icon(self):
         self.custom_content()
         self.read_svg()
         self.set_image()
         
-        orientation = {"left" : (0, 0), #1 - pos, #2 - orien(0 - HOR, 1 VER)
-                       "right" : (1, 0), "top" : (0, 1), "bottom" : (1, 1)}
-        icon_pos = self.get_icon_position().value_nick
-
-        self.box.set_orientation(orientation[icon_pos][1])
-        self.box.add_actor(self.image, orientation[icon_pos][0])
-
+        self.box.add_actor(self.image, 1)
 
     def custom_content(self):
+        self.set_icon_visible(False)
         children = self.get_children()
         if len(children) == 1:
             self.box = children[0]
@@ -175,21 +173,50 @@ class Button(Mx.Button, PropertyAdapter):
                 self.image.set_scale(icon_size * 10 / image_size[1],
                                      icon_size * 10/ image_size[0])
 
+    def set_image_white(self):
+        handle = Rsvg.Handle()
+        svg_path = ''.join([os.path.join(res.PATH,'icons',
+                                         self.icon_name), '_white', '.svg'])
+        self.svg_white = handle.new_from_file(svg_path)
+        icon_size = self.get_icon_size()
+        pixbuf = self.svg_white.get_pixbuf()
+        if icon_size:
+            pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+        self.image.set_from_data(pixbuf.get_pixels(),
+                                 Cogl.PixelFormat.RGBA_8888, 
+                                 pixbuf.get_width(), 
+                                 pixbuf.get_height(), 
+                                 pixbuf.get_rowstride())
+
+
+    def change_icon_white(self):
+        try:
+            if self.style_pseudo_class_contains("hover"):
+                self.set_image_white()
+            else:
+                pixbuf = self.svg.get_pixbuf()
+                icon_size = self.get_icon_size()
+                if icon_size:
+                    pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+                    self.image.set_from_data(pixbuf.get_pixels(),
+                                             Cogl.PixelFormat.RGBA_8888, 
+                                             pixbuf.get_width(), 
+                                             pixbuf.get_height(), 
+                                             pixbuf.get_rowstride())
+        except AttributeError:
+            pass
+            
     def hilite_off(self):
-        self.background_color = colors.offBACK
-        self.foreground_color = colors.offFORE
+        self.style_pseudo_class_remove("hover")
     
     def hilite_on(self):
-        self.background_color = colors.onBACK
-        self.foreground_color = colors.onFORE
+        self.style_pseudo_class_add("hover")
 
     def select_on(self):
-        self.background_color = colors.selBACK
-        self.foreground_color = colors.selFORE
+        self.style_pseudo_class_add("active")
 
     def inactivate(self):
-        self.background_color = colors.offBACK
-        self.foreground_color = colors.offFORE
+        self.style_pseudo_class_remove("active")
     
     def click_activate(self, source):
         self.select_on()

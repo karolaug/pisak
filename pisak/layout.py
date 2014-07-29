@@ -50,6 +50,7 @@ class Box(Clutter.Actor):
         else:
             return self.layout.get_property(spec.name)
 
+
 class Bin(Clutter.Actor):
     __gtype_name__ = "PisakBinLayout"
     
@@ -77,4 +78,3 @@ class Bin(Clutter.Actor):
             return attribute.fget(self)
         else:
             return self.layout.get_property(spec.name)
-    
