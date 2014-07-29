@@ -1,0 +1,7 @@
+PisakViewerProgressBar {
+  border-image: url('progress_bar_background.png');
+}
+
+PisakViewerProgressBar MxProgressBarFill {
+  border-image: url('progress_bar_fill.png');
+}
