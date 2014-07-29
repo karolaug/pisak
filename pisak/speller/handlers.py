@@ -1,3 +1,5 @@
+import os
+
 from pisak import signals
 from pisak.speller import widgets
 
@@ -61,7 +63,8 @@ def new_document(text_box):
 
 @signals.registered_handler("speller/text_to_speech")
 def text_to_speech(text_box):
-    raise NotImplementedError
+    text = text_box.get_text()
+    os.system("milena_say " + text)
 
 @signals.registered_handler("speller/backspace")
 def backspace(text_box):
