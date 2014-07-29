@@ -305,7 +305,9 @@
         "x-align": "start",
         "x-expand": true,
         "y-expand": true,
-        "background-color": "lightgrey"
+	"ratio-width": 0.7,
+	"ratio-height": 0.55,
+        "background-color": "white"
     },
     {
         "id": "keyboard_menu",
