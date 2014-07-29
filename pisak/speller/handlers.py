@@ -1,4 +1,4 @@
-import os
+import subprocess
 
 from pisak import signals
 from pisak.speller import widgets
@@ -64,7 +64,7 @@ def new_document(text_box):
 @signals.registered_handler("speller/text_to_speech")
 def text_to_speech(text_box):
     text = text_box.get_text()
-    os.system("milena_say " + text)
+    subprocess.call(["milena_say", text])
 
 @signals.registered_handler("speller/backspace")
 def backspace(text_box):
