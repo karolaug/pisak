@@ -396,7 +396,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },
@@ -417,7 +417,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },
@@ -439,7 +439,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },

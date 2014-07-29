@@ -250,10 +250,10 @@ class Key(pisak.widgets.Button):
 
     def set_swap_special_label(self):
         try:
-            if self.get_label() == self.text:
-                self.set_special_label()
-            elif self.get_label() == self.special_text:
+            if self.get_label() == self.special_text:
                 self.set_default_label()
+            else:
+                self.set_special_label()
         except AttributeError:
             return None
 
