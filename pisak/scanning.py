@@ -157,7 +157,6 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
             "", "",
             0, GObject.G_MAXUINT, 1000,
             GObject.PARAM_READWRITE),
-        ""
         "max-cycle-count": (
             GObject.TYPE_INT,
             "", "",
