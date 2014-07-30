@@ -61,8 +61,7 @@
     {
         "id": "button_1",
         "type": "PisakSpellerButton",
-        "text": "KLAWIATURA",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.16,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -80,7 +79,7 @@
         "id": "button_2",
         "type": "PisakSpellerButton",
         "text": "PREDYKCJA",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.16,
         "ratio-height": 0.09,
         "icon-size": 50,
