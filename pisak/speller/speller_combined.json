@@ -150,7 +150,6 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "WCZYTAJ",
-        
         "icon-name": "wczytaj",
         "spacing": 10,
         "signals": [
@@ -170,7 +169,6 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "WYŚLIJ",
-        
         "icon-name": "wyslij",
         "spacing": 10,
         "signals": [
@@ -190,7 +188,6 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "DRUKUJ",
-        
         "icon-name": "drukuj",
         "spacing": 10,
         "signals": [
@@ -210,7 +207,6 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "NOWY",
-        
         "icon-name": "nowy_dokument",
         "spacing": 10,
         "signals": [
@@ -230,8 +226,7 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "WYJŚCIE",
-        
-        "icon-name": "start",
+        "icon-name": "wyjdz",
         "spacing": 10,
         "signals": [
                        {
@@ -258,9 +253,12 @@
         "y-align": "end",
         "y-expand": true,
         "spacing": 10,
-        "children": [
-                        "prediction_1", "prediction_2", "prediction_3", "prediction_header"
-                    ]
+        "children": 
+	[
+            "prediction_9", "prediction_8", "prediction_7","prediction_6", 
+	    "prediction_5", "prediction_4","prediction_3", "prediction_2", 
+	    "prediction_1", "prediction_header"
+        ]
     },
     {
 	"id": "prediction_header",
@@ -270,9 +268,9 @@
     {
         "id": "prediction_1",
         "type": "PisakSpellerPrediction",
-        "order-num": 3,
+        "order-num": 1,
         "target": "text_box",
-        "label": "PREDYKCJA 3",
+        "label": "PREDYKCJA 1",
         "ratio-width": 0.15,
         "ratio-height": 0.09
     },  
@@ -288,9 +286,63 @@
     {
         "id": "prediction_3",
         "type": "PisakSpellerPrediction",
-        "order-num": 1,
+        "order-num": 3,
         "target": "text_box",
-        "label": "PREDYKCJA 1",
+        "label": "PREDYKCJA 3",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },
+    {
+        "id": "prediction_4",
+        "type": "PisakSpellerPrediction",
+        "order-num": 4,
+        "target": "text_box",
+        "label": "PREDYKCJA 4",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },  
+    {
+        "id": "prediction_5",
+        "type": "PisakSpellerPrediction",
+        "order-num": 5,
+        "target": "text_box",
+        "label": "PREDYKCJA 5",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },
+    {
+        "id": "prediction_6",
+        "type": "PisakSpellerPrediction",
+        "order-num": 6,
+        "target": "text_box",
+        "label": "PREDYKCJA 6",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },
+    {
+        "id": "prediction_7",
+        "type": "PisakSpellerPrediction",
+        "order-num": 7,
+        "target": "text_box",
+        "label": "PREDYKCJA 7",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },  
+    {
+        "id": "prediction_8",
+        "type": "PisakSpellerPrediction",
+        "order-num": 8,
+        "target": "text_box",
+        "label": "PREDYKCJA 8",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },
+    {
+        "id": "prediction_9",
+        "type": "PisakSpellerPrediction",
+        "order-num": 9,
+        "target": "text_box",
+        "label": "PREDYKCJA 9",
         "ratio-width": 0.15,
         "ratio-height": 0.09
     },
