@@ -1,0 +1,42 @@
+[
+    {
+	"id": "main",
+	"type": "PisakBoxLayout",
+	"x-expand": true,
+	"y-expand": true,
+	"orientation": "horizontal",
+	"spacing": 10,
+	"x-align": "center",
+	"children" :["background_box", "button"]
+    },
+    {
+	"id": "background_box",
+	"type": "PisakBackgroundPattern",
+	"x-expand": true,
+	"y-expand": true
+    },
+    {
+	"id": "button_guts",
+	"type": "PisakBoxLayout",
+	"orientation": "horizontal",
+	"spacing": 10,
+	"children" :["label", "image"]
+    },
+    {
+	"id": "button",
+	"type": "MxButton",
+	"children": ["button_guts"],
+	"width": 300,
+	"height": 70,
+	"x-align": "start"
+    },
+    {
+	"id": "label",
+	"type": "MxLabel",
+	"text": "Nice one!"
+    },
+    {
+	"id": "image",
+	"type": "MxImage"
+    }
+]
