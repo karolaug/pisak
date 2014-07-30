@@ -66,7 +66,6 @@
         "type": "PisakSpellerButton",
         "text": "KLAWIATURA",
 	"x-align": "start",
-	"y-align": "bottom",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -85,7 +84,6 @@
         "type": "PisakSpellerButton",
         "text": "PREDYKCJA",
 	"x-align": "start",
-	"y-align": "bottom",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -226,14 +224,15 @@
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
-        "label": "START",
+        "label": "WYJŚCIE",
         
         "icon-name": "start",
         "spacing": 10,
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/exit"
+                           "handler": "speller/exit",
+                           "object": "main"
                        }
                    ]
     },
@@ -250,7 +249,6 @@
     {
         "id": "prediction_panel_box",
         "type": "PisakBoxLayout",
-	"y-align": "bottom",
         "orientation": "vertical",
         "y-align": "end",
         "y-expand": true,
@@ -404,7 +402,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },
@@ -425,7 +423,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },
@@ -447,7 +445,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },

@@ -9,60 +9,8 @@ import pisak.widgets
 
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
-    __gproperties__ = {
-        "text": (
-            GObject.TYPE_STRING,
-            "label default text",
-            "text displayed on the button",
-            "noop",
-            GObject.PARAM_READWRITE),
-        "alternative_text": (
-            GObject.TYPE_STRING,
-            "alternative label text",
-            "alternative text displayed on the button",
-            "?",
-            GObject.PARAM_READWRITE)
-    }
-    
-    def __init__(self):
-        super().__init__()
-        #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("notify::text", self._set_initial_label)
 
-    def _set_initial_label(self, source, spec):
-        self.set_default_label()
-        self.disconnect_by_func(self._set_initial_label)
-
-    def set_default_label(self):
-        self.set_label(self.text)
-
-    def set_alternative_label(self):
-        self.set_label(self.alternative_text)
-
-    def switch_label(self):
-        current_label = self.get_label()
-        if current_label in (self.alternative_text, None):
-            self.set_default_label()
-        elif current_label == self.text:
-            self.set_alternative_label()
-
-    @property
-    def text(self):
-        return self._text
-
-    @text.setter
-    def text(self, value):
-        self._text = str(value)
-
-    @property
-    def alternative_text(self):
-        return self._alternative_text
-
-    @alternative_text.setter
-    def alternative_text(self, value):
-        self._alternative_text = str(value)
         
-
 class Text(Mx.Label, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
@@ -164,6 +112,12 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         if current_position > 0:
             self.clutter_text.set_cursor_position(current_position-1)
 
+    def move_to_new_line(self):
+        """
+        Move to new line
+        """
+        self.type_text("\n")
+
     @property
     def ratio_width(self):
         return self._ratio_width
@@ -250,10 +204,10 @@ class Key(pisak.widgets.Button):
 
     def set_swap_special_label(self):
         try:
-            if self.get_label() == self.text:
-                self.set_special_label()
-            elif self.get_label() == self.special_text:
+            if self.get_label() == self.special_text:
                 self.set_default_label()
+            else:
+                self.set_special_label()
         except AttributeError:
             return None
 

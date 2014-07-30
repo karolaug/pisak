@@ -53,23 +53,44 @@ class Button(Mx.Button, PropertyAdapter):
     }
     
     __gproperties__ = {
-        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
-                        GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
-                         GObject.PARAM_READWRITE),
-        "icon_name": (GObject.TYPE_STRING, "blank", "name of the icon displayed on the button", "blank", GObject.PARAM_READWRITE),
-        "spacing": (GObject.TYPE_INT64, "space between icon and text",
-                    "space between icon and text", 0, 1000, 100, 
-                    GObject.PARAM_READWRITE)
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0,
+            1., 0, GObject.PARAM_READWRITE),
+        "text": (
+            GObject.TYPE_STRING, "label default text",
+            "text displayed on the button", "noop",
+            GObject.PARAM_READWRITE),
+        "alternative_text": (
+            GObject.TYPE_STRING,
+            "alternative label text",
+            "alternative text displayed on the button",
+            "?", GObject.PARAM_READWRITE),
+        "icon_name": (
+            GObject.TYPE_STRING, "blank",
+            "name of the icon displayed on the button",
+            "blank", GObject.PARAM_READWRITE),
+        "alternative_icon_name":(
+            GObject.TYPE_STRING, "blank",
+            "name of the aternative icon displayed on the button",
+            "blank", GObject.PARAM_READWRITE),
+        "spacing": (
+            GObject.TYPE_INT64, "space between icon and text",
+            "space between icon and text", 0, 1000, 100, 
+            GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
         super().__init__()
         self.properties = {}
         self.selection_time = 1000
+        self.current_icon = None
         self._connect_signals()
 
     def _connect_signals(self):
+        self.connect("notify::text", self._set_initial_label)
         self.connect("clicked", self.click_activate)
         #self.connect("enter-event", lambda *_: self.hilite_on())
         #self.connect("leave-event", lambda *_: self.hilite_off())
@@ -95,6 +116,22 @@ class Button(Mx.Button, PropertyAdapter):
     def ratio_height(self, value):
         self._ratio_height = value
         self.set_height(unit.h(value))
+
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        self._text = str(value)
+
+    @property
+    def alternative_text(self):
+        return self._alternative_text
+
+    @alternative_text.setter
+    def alternative_text(self, value):
+        self._alternative_text = str(value)
     
     @property
     def icon_name(self):
@@ -107,6 +144,14 @@ class Button(Mx.Button, PropertyAdapter):
             self.set_icon()
 
     @property
+    def alternative_icon_name(self):
+        return self._alternative_icon_name
+    
+    @alternative_icon_name.setter
+    def alternative_icon_name(self, value):
+        self._alternative_icon_name = value
+
+    @property
     def spacing(self):
         return self._spacing
 
@@ -114,6 +159,26 @@ class Button(Mx.Button, PropertyAdapter):
     def spacing(self, value):
         self._spacing = value
         #self.box.set_spacing(value)
+
+    def _set_initial_label(self, source, spec):
+        self.set_default_label()
+        self.disconnect_by_func(self._set_initial_label)
+
+    def set_default_label(self):
+        self.set_label(self.text)
+
+    def set_alternative_label(self):
+        self.set_label(self.alternative_text)
+
+    def switch_label(self):
+        current_label = self.get_label()
+        if current_label in (self.alternative_text, None):
+            self.set_default_label()
+        elif current_label == self.text:
+            self.set_alternative_label()
+
+    def switch_icon(self):
+        raise NotImplementedError
 
     def set_icon(self):
         self.custom_content()

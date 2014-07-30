@@ -1,3 +1,5 @@
+import subprocess
+
 from pisak import signals
 from pisak.speller import widgets
 
@@ -18,8 +20,8 @@ def go_to_main_menu(main_menu_group):
     main_menu_group.start_cycle()
 
 @signals.registered_handler("speller/exit")
-def exit_app(*args):
-    raise NotImplementedError
+def exit_app(app):
+    app.get_stage().destroy()
 
 @signals.registered_handler("speller/undo")
 def undo(*args):
@@ -61,7 +63,9 @@ def new_document(text_box):
 
 @signals.registered_handler("speller/text_to_speech")
 def text_to_speech(text_box):
-    raise NotImplementedError
+    text = text_box.get_text()
+    if text:
+        subprocess.call(["milena_say", text])
 
 @signals.registered_handler("speller/backspace")
 def backspace(text_box):
@@ -70,6 +74,10 @@ def backspace(text_box):
 @signals.registered_handler("speller/space")
 def space(text_box):
     text_box.type_text(" ")
+    
+@signals.registered_handler("speller/new_line")
+def new_line(text_box):
+    text_box.move_to_new_line()
 
 @signals.registered_handler("speller/default_chars")
 def default_chars(keyboard_item):
@@ -88,13 +96,12 @@ def special_chars(keyboard_item):
             special_chars(sub_item)
 
 @signals.registered_handler("speller/swap_special_chars")
-def swap_special_chars(keyboard_panel):
-    for item in keyboard_panel.get_children():
-        if not isinstance(item, widgets.Key):
-            for sub_item in item.get_children():
-                sub_item.set_swap_special_label()
-        else:
-            item.set_swap_special_label()
+def swap_special_chars(keyboard_item):
+    if isinstance(keyboard_item, widgets.Key):
+        keyboard_item.set_swap_special_label()
+    else:
+        for sub_item in keyboard_item.get_children():
+            swap_special_chars(sub_item)
 
 @signals.registered_handler("speller/swap_altgr_chars")
 def swap_altgr_chars(keyboard_item):
@@ -118,4 +125,4 @@ def switch_label(button):
 
 @signals.registered_handler("speller/switch_icon")
 def switch_icon(button):
-    raise NotImplementedError
+    button.switch_icon()
