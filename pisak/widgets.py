@@ -53,11 +53,10 @@ class Button(Mx.Button, PropertyAdapter):
     }
     
     __gproperties__ = {
-        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
-                        GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
-                         GObject.PARAM_READWRITE),
+        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
         "icon_name": (GObject.TYPE_STRING, "blank", "name of the icon displayed on the button", "blank", GObject.PARAM_READWRITE),
+        "alternative_icon_name": (GObject.TYPE_STRING, "blank", "name of the aternative icon displayed on the button", "blank", GObject.PARAM_READWRITE),
         "spacing": (GObject.TYPE_INT64, "space between icon and text",
                     "space between icon and text", 0, 1000, 100, 
                     GObject.PARAM_READWRITE)
@@ -67,6 +66,7 @@ class Button(Mx.Button, PropertyAdapter):
         super().__init__()
         self.properties = {}
         self.selection_time = 1000
+        self.current_icon = None
         self._connect_signals()
 
     def _connect_signals(self):
@@ -107,6 +107,14 @@ class Button(Mx.Button, PropertyAdapter):
             self.set_icon()
 
     @property
+    def alternative_icon_name(self):
+        return self._alternative_icon_name
+    
+    @alternative_icon_name.setter
+    def alternative_icon_name(self, value):
+        self._alternative_icon_name = value
+
+    @property
     def spacing(self):
         return self._spacing
 
@@ -114,6 +122,9 @@ class Button(Mx.Button, PropertyAdapter):
     def spacing(self, value):
         self._spacing = value
         #self.box.set_spacing(value)
+
+    def switch_icon(self):
+        raise NotImplementedError
 
     def set_icon(self):
         self.custom_content()

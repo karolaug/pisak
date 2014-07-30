@@ -125,4 +125,4 @@ def switch_label(button):
 
 @signals.registered_handler("speller/switch_icon")
 def switch_icon(button):
-    raise NotImplementedError
+    button.switch_icon()
