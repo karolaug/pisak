@@ -19,16 +19,32 @@
 	"id": "button_guts",
 	"type": "PisakBoxLayout",
 	"orientation": "horizontal",
-	"spacing": 10,
-	"children" :["label", "image"]
+	"children" :["button_guts_right", "button_guts_left"]
+    },
+    {
+	"id": "button_guts_left",
+	"type": "PisakBoxLayout",
+	"orientation": "horizontal",
+	"width": 150,
+	"height": 70,
+	"children" :["label"]
+    },
+    {
+	"id": "button_guts_right",
+	"type": "PisakBoxLayout",
+	"orientation": "horizontal",
+	"width": 150,
+	"height": 70,
+	"x-align": "end",
+	"background-color": "green",
+	"children" :["image"]
     },
     {
 	"id": "button",
 	"type": "MxButton",
 	"children": ["button_guts"],
 	"width": 300,
-	"height": 70,
-	"x-align": "start"
+	"height": 70
     },
     {
 	"id": "label",
