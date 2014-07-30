@@ -29,7 +29,6 @@ class PisakSpellerStage(Clutter.Stage):
         self.image = self.script.get_object("image")
         self.image.set_from_file(os.path.join(res.PATH, "jagoda.jpg"))
         self.image.set_scale_mode(2)
-        self.image.set_size(50, 30)
         self.set_layout_manager(Clutter.BinLayout())
         self.add_child(self.view_actor)
 
