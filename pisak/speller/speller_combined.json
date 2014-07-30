@@ -29,6 +29,9 @@
         "type": "PisakBoxLayout",
         "x-expand": true,
         "y-expand": true,
+	"margin-bottom": 20,
+	"margin-right": 20,
+	"margin-top": 20,
         "orientation": "horizontal",
         "spacing" : 10,
         "children": [
@@ -49,7 +52,7 @@
         "id": "speller_menu_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
-        "y-align": "start",
+	"y-align": "end",
         "y-expand": true,
         "spacing": 10,
         "children": [
@@ -61,8 +64,10 @@
     {
         "id": "button_1",
         "type": "PisakSpellerButton",
-        "x-align": "start",
-        "ratio-width": 0.16,
+        "text": "KLAWIATURA",
+	"x-align": "start",
+	"y-align": "bottom",
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "LITERY",
@@ -79,8 +84,9 @@
         "id": "button_2",
         "type": "PisakSpellerButton",
         "text": "PREDYKCJA",
-        "x-align": "start",
-        "ratio-width": 0.16,
+	"x-align": "start",
+	"y-align": "bottom",
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "PREDYKCJA",
@@ -98,7 +104,7 @@
         "type": "PisakSpellerButton",
         "text": "PRZECZYTAJ",
 	"x-align": "start",
-        "ratio-width": 0.16,
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "CZYTAJ",
@@ -117,7 +123,7 @@
         "type": "PisakSpellerButton",
         "text": "ZAPISZ",
 	"x-align": "start",
-        "ratio-width": 0.16,
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "ZAPISZ",
@@ -137,7 +143,7 @@
         "type": "PisakSpellerButton",
         "text": "WCZYTAJ",
 	"x-align": "start",
-        "ratio-width": 0.16,
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "WCZYTAJ",
@@ -157,7 +163,7 @@
         "type": "PisakSpellerButton",
         "text": "WYŚLIJ",
 	"x-align": "start",
-        "ratio-width": 0.16,
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "WYŚLIJ",
@@ -177,7 +183,7 @@
         "type": "PisakSpellerButton",
         "text": "DRUKUJ",
 	"x-align": "start",
-        "ratio-width": 0.16,
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "DRUKUJ",
@@ -197,7 +203,7 @@
         "type": "PisakSpellerButton",
         "text": "NOWY DOKUMENT",
 	"x-align": "start",
-        "ratio-width": 0.16,
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "NOWY",
@@ -217,7 +223,7 @@
         "type": "PisakSpellerButton",
         "text": "PANEL STARTOWY",
 	"x-align": "start",
-        "ratio-width": 0.16,
+        "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "START",
@@ -244,12 +250,13 @@
     {
         "id": "prediction_panel_box",
         "type": "PisakBoxLayout",
+	"y-align": "bottom",
         "orientation": "vertical",
-        "y-align": "start",
+        "y-align": "end",
         "y-expand": true,
         "spacing": 10,
         "children": [
-                        "prediction_3", "prediction_2", "prediction_1"
+                        "prediction_1", "prediction_2", "prediction_3"
                     ]
     },
     {
@@ -258,7 +265,7 @@
         "order-num": 3,
         "target": "text_box",
         "label": "PREDYKCJA 3",
-        "ratio-width": 0.16,
+        "ratio-width": 0.15,
         "ratio-height": 0.09
     },  
     {
@@ -267,7 +274,7 @@
         "order-num": 2,
         "target": "text_box",
         "label": "PREDYKCJA 2",
-        "ratio-width": 0.16,
+        "ratio-width": 0.15,
         "ratio-height": 0.09
     },
     {
@@ -276,7 +283,7 @@
         "order-num": 1,
         "target": "text_box",
         "label": "PREDYKCJA 1",
-        "ratio-width": 0.16,
+        "ratio-width": 0.15,
         "ratio-height": 0.09
     },
     {
@@ -304,7 +311,9 @@
         "x-align": "start",
         "x-expand": true,
         "y-expand": true,
-        "background-color": "lightgrey"
+	"ratio-width": 0.6,
+	"ratio-height": 0.535,
+        "background-color": "white"
     },
     {
         "id": "keyboard_menu",
@@ -332,7 +341,7 @@
         "id": "keyboard_menu_button_1",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "predykcja",
@@ -348,7 +357,7 @@
         "id": "keyboard_menu_button_2",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "spacja",
@@ -365,7 +374,7 @@
         "id": "keyboard_menu_button_3",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "backspace",
@@ -382,7 +391,7 @@
         "id": "keyboard_menu_button_4",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "wielkie_litery",
@@ -403,7 +412,7 @@
         "id": "keyboard_menu_button_5",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "polskie",
@@ -425,7 +434,7 @@
         "type": "PisakSpellerButton",
         "text": " ",
         "alternative-text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "specjalne",
@@ -446,7 +455,7 @@
         "id": "keyboard_menu_button_7",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "funkcje",
@@ -462,7 +471,7 @@
         "id": "keyboard_menu_button_8",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "cofnij",
@@ -478,7 +487,7 @@
         "id": "keyboard_menu_button_9",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "nav_left",
@@ -495,7 +504,7 @@
         "id": "keyboard_menu_button_10",
         "type": "PisakSpellerButton",
         "text": " ",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09,
         "icon-size": 50,
         "icon-name": "nav_right",
@@ -544,7 +553,7 @@
         "text": "Q",
         "special-text": ",",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -553,7 +562,7 @@
         "text": "W",
         "special-text": ".",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -563,7 +572,7 @@
         "altgr-text": "Ę",
         "special-text": ";",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -572,7 +581,7 @@
         "text": "R",
         "special-text": ":",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -581,7 +590,7 @@
         "text": "T",
         "special-text": "\"",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -590,7 +599,7 @@
         "text": "Y",
         "special-text": "/",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -599,7 +608,7 @@
         "text": "U",
         "special-text": "\\",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -608,7 +617,7 @@
         "text": "I",
         "special-text": "&",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -618,7 +627,7 @@
         "altgr-text": "Ó",
         "special-text": "*",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -627,7 +636,7 @@
         "text": "P",
         "special-text": "%",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -657,7 +666,7 @@
         "altgr-text": "Ą",
         "special-text": "?",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -667,7 +676,7 @@
         "altgr-text": "Ś",
         "special-text": "!",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -676,7 +685,7 @@
         "text": "D",
         "special-text": "@",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -685,7 +694,7 @@
         "text": "F",
         "special-text": "(",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -694,7 +703,7 @@
         "text": "G",
         "special-text": ")",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -703,7 +712,7 @@
         "text": "H",
         "special-text": "[",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -712,7 +721,7 @@
         "text": "J",
         "special-text": "]",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -721,7 +730,7 @@
         "text": "K",
         "special-text": "+",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -731,7 +740,7 @@
         "altgr-text": "Ł",
         "special-text": "-",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -740,7 +749,7 @@
         "text": "CH",
         "special-text": "=",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -770,7 +779,7 @@
         "altgr-text": "Ż",
         "special-text": "1",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -780,7 +789,7 @@
         "altgr-text": "Ź",
         "special-text": "2",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -790,7 +799,7 @@
         "altgr-text": "Ć",
         "special-text": "3",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -799,7 +808,7 @@
         "text": "V",
         "special-text": "4",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -808,7 +817,7 @@
         "text": "B",
         "special-text": "5",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -818,7 +827,7 @@
         "altgr-text": "Ń",
         "special-text": "6",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -827,7 +836,7 @@
         "text": "M",
         "special-text": "7",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -836,7 +845,7 @@
         "text": "CZ",
         "special-text": "8",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -845,7 +854,7 @@
         "text": "SZ",
         "special-text": "9",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     },
     {
@@ -854,7 +863,7 @@
         "text": "RZ",
         "special-text": "0",
         "target": "text_box",
-        "ratio-width": 0.06,
+        "ratio-width": 0.055,
         "ratio-height": 0.09
     }
 ]

@@ -9,7 +9,7 @@ MxButton {
 }
 
 PisakSpellerButton MxImage {
-  background-color: rgb(0, 255, 0);
+
 }
 
 PisakSpellerButton {
@@ -21,7 +21,7 @@ PisakSpellerText {
 }
 
 PisakSpellerKey {
-    font-size: 30;
+  font-size: 20;
 }
 
 PisakSpellerPrediction {
