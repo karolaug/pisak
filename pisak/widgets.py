@@ -42,6 +42,34 @@ class PropertyAdapter(object):
         else:
             raise ValueError("No such property", spec.name)
 
+class Header(Mx.Image, PropertyAdapter):
+
+    __gtype_name__ = "PisakMenuHeader"
+
+    __gproperties__ = {
+        "name": (GObject.TYPE_STRING, None, None, "funkcjenapis", 
+                 GObject.PARAM_READWRITE)}
+
+    def __init__(self):
+        super().__init__()
+        self.handle = Rsvg.Handle()
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+        svg_path = os.path.join(res.PATH, 'icons', 
+                                ''.join([self.name, ".svg"]))
+        self.svg = self.handle.new_from_file(svg_path)
+        pixbuf = self.svg.get_pixbuf()
+        self.set_from_data(pixbuf.get_pixels(),
+                           Cogl.PixelFormat.RGBA_8888, 
+                           pixbuf.get_width(), 
+                           pixbuf.get_height(), 
+                           pixbuf.get_rowstride())
 
 class Button(Mx.Button, PropertyAdapter):
     """

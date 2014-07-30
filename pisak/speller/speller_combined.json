@@ -49,6 +49,11 @@
         }
     },
     {
+	"id": "menu_header",
+	"type": "PisakMenuHeader",
+	"name": "funkcjenapis"
+    },
+    {
         "id": "speller_menu_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
@@ -58,7 +63,7 @@
         "children": [
                         "button_9", "button_8", "button_7", "button_6",
                         "button_5","button_4", "button_3", "button_2",
-                        "button_1"
+                        "button_1", "menu_header"
                     ]
     },
     {
@@ -254,8 +259,13 @@
         "y-expand": true,
         "spacing": 10,
         "children": [
-                        "prediction_1", "prediction_2", "prediction_3"
+                        "prediction_1", "prediction_2", "prediction_3", "prediction_header"
                     ]
+    },
+    {
+	"id": "prediction_header",
+	"type": "PisakMenuHeader",
+	"name": "predykcjanapis"
     },
     {
         "id": "prediction_1",
