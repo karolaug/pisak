@@ -53,15 +53,33 @@ class Button(Mx.Button, PropertyAdapter):
     }
     
     __gproperties__ = {
-        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "text": (GObject.TYPE_STRING, "label default text", "text displayed on the button", "noop", GObject.PARAM_READWRITE),
-        "alternative_text": ( GObject.TYPE_STRING, "alternative label text", "alternative text displayed on the button", "?", GObject.PARAM_READWRITE),
-        "icon_name": (GObject.TYPE_STRING, "blank", "name of the icon displayed on the button", "blank", GObject.PARAM_READWRITE),
-        "alternative_icon_name": (GObject.TYPE_STRING, "blank", "name of the aternative icon displayed on the button", "blank", GObject.PARAM_READWRITE),
-        "spacing": (GObject.TYPE_INT64, "space between icon and text",
-                    "space between icon and text", 0, 1000, 100, 
-                    GObject.PARAM_READWRITE)
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0,
+            1., 0, GObject.PARAM_READWRITE),
+        "text": (
+            GObject.TYPE_STRING, "label default text",
+            "text displayed on the button", "noop",
+            GObject.PARAM_READWRITE),
+        "alternative_text": (
+            GObject.TYPE_STRING,
+            "alternative label text",
+            "alternative text displayed on the button",
+            "?", GObject.PARAM_READWRITE),
+        "icon_name": (
+            GObject.TYPE_STRING, "blank",
+            "name of the icon displayed on the button",
+            "blank", GObject.PARAM_READWRITE),
+        "alternative_icon_name":(
+            GObject.TYPE_STRING, "blank",
+            "name of the aternative icon displayed on the button",
+            "blank", GObject.PARAM_READWRITE),
+        "spacing": (
+            GObject.TYPE_INT64, "space between icon and text",
+            "space between icon and text", 0, 1000, 100, 
+            GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
