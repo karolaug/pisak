@@ -17,7 +17,7 @@ PisakSpellerButton {
 }
 
 PisakSpellerText {
-
+  border-image: url("../tlo_pola_tekstowego.png")
 }
 
 PisakSpellerKey {

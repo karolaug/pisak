@@ -27,6 +27,7 @@
     {                                                                                                          
         "id": "main_box",
         "type": "PisakBoxLayout",
+        "x-align": "start",
         "x-expand": true,
         "y-expand": true,
         "margin-bottom": 20,
@@ -50,6 +51,11 @@
         }
     },
     {
+        "id": "menu_header",
+        "type": "PisakMenuHeader",
+        "name": "funkcjenapis"
+    },
+    {
         "id": "speller_menu_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
@@ -59,7 +65,7 @@
         "children": [
                         "button_9", "button_8", "button_7", "button_6",
                         "button_5","button_4", "button_3", "button_2",
-                        "button_1"
+                        "button_1", "menu_header"
                     ]
     },
     {
@@ -67,7 +73,6 @@
         "type": "PisakSpellerButton",
         "text": "KLAWIATURA",
         "x-align": "start",
-        "y-align": "bottom",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -87,7 +92,6 @@
         "type": "PisakSpellerButton",
         "text": "PREDYKCJA",
         "x-align": "start",
-        "y-align": "bottom",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -150,7 +154,6 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "WCZYTAJ",
-        
         "icon-name": "wczytaj",
         "spacing": 10,
         "signals": [
@@ -170,7 +173,6 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "WYŚLIJ",
-        
         "icon-name": "wyslij",
         "spacing": 10,
         "signals": [
@@ -190,7 +192,6 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "DRUKUJ",
-        
         "icon-name": "drukuj",
         "spacing": 10,
         "signals": [
@@ -210,7 +211,6 @@
         "ratio-height": 0.09,
         "icon-size": 50,
         "label": "NOWY",
-        
         "icon-name": "nowy_dokument",
         "spacing": 10,
         "signals": [
@@ -229,14 +229,14 @@
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
-        "label": "START",
-        
-        "icon-name": "start",
+        "label": "WYJŚCIE",
+        "icon-name": "wyjdz",
         "spacing": 10,
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/exit"
+                           "handler": "speller/exit",
+                           "object": "main"
                        }
                    ]
     },
@@ -255,21 +255,28 @@
     {
         "id": "prediction_panel_box",
         "type": "PisakBoxLayout",
-        "y-align": "bottom",
         "orientation": "vertical",
         "y-align": "end",
         "y-expand": true,
         "spacing": 10,
-        "children": [
-                        "prediction_1", "prediction_2", "prediction_3"
-                    ]
+        "children": 
+        [
+            "prediction_9", "prediction_8", "prediction_7","prediction_6", 
+            "prediction_5", "prediction_4","prediction_3", "prediction_2", 
+            "prediction_1", "prediction_header"
+        ]
+    },
+    {
+        "id": "prediction_header",
+        "type": "PisakMenuHeader",
+        "name": "predykcjanapis"
     },
     {
         "id": "prediction_1",
         "type": "PisakSpellerPrediction",
-        "order-num": 3,
+        "order-num": 1,
         "target": "text_box",
-        "label": "PREDYKCJA 3",
+        "label": "PREDYKCJA 1",
         "ratio-width": 0.15,
         "ratio-height": 0.09
     },  
@@ -285,9 +292,63 @@
     {
         "id": "prediction_3",
         "type": "PisakSpellerPrediction",
-        "order-num": 1,
+        "order-num": 3,
         "target": "text_box",
-        "label": "PREDYKCJA 1",
+        "label": "PREDYKCJA 3",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },
+    {
+        "id": "prediction_4",
+        "type": "PisakSpellerPrediction",
+        "order-num": 4,
+        "target": "text_box",
+        "label": "PREDYKCJA 4",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },  
+    {
+        "id": "prediction_5",
+        "type": "PisakSpellerPrediction",
+        "order-num": 5,
+        "target": "text_box",
+        "label": "PREDYKCJA 5",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },
+    {
+        "id": "prediction_6",
+        "type": "PisakSpellerPrediction",
+        "order-num": 6,
+        "target": "text_box",
+        "label": "PREDYKCJA 6",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },
+    {
+        "id": "prediction_7",
+        "type": "PisakSpellerPrediction",
+        "order-num": 7,
+        "target": "text_box",
+        "label": "PREDYKCJA 7",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },  
+    {
+        "id": "prediction_8",
+        "type": "PisakSpellerPrediction",
+        "order-num": 8,
+        "target": "text_box",
+        "label": "PREDYKCJA 8",
+        "ratio-width": 0.15,
+        "ratio-height": 0.09
+    },
+    {
+        "id": "prediction_9",
+        "type": "PisakSpellerPrediction",
+        "order-num": 9,
+        "target": "text_box",
+        "label": "PREDYKCJA 9",
         "ratio-width": 0.15,
         "ratio-height": 0.09
     },
@@ -412,7 +473,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },
@@ -433,7 +494,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },
@@ -455,7 +516,7 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/switch_label"
+                           "handler": "speller/switch_icon"
                        }
                    ]
     },
