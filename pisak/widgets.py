@@ -212,18 +212,22 @@ class Button(Mx.Button, PropertyAdapter):
         self.custom_content()
         self.read_svg()
         self.set_image()
-        
-        self.box.add_actor(self.image, 1)
+
+        text_length = len(self.get_label())
+        if text_length == 1:
+            pass
+        else:
+            self.space.set_width(self.get_width() - text_length*24 - self.image.get_width())
+
+        self.box.add_child(self.space)
+        self.box.add_child(self.image)
 
     def custom_content(self):
         self.set_icon_visible(False)
-        children = self.get_children()
-        if len(children) == 1:
-            self.box = children[0]
-        else:
-            text = 'It appears that Button has custom content already: {}.' 
-            print(text.format(children))
+        self.box = Box()
+        self.space = Clutter.Actor()
 
+        self.get_children()[0].add_actor(self.box, 1)
 
     def read_svg(self):
         try:

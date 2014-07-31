@@ -27,6 +27,7 @@
     {                                                                                                          
         "id": "main_box",
         "type": "PisakBoxLayout",
+	"x-align": "start",
         "x-expand": true,
         "y-expand": true,
 	"margin-bottom": 20,
