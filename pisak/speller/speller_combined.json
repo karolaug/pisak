@@ -29,9 +29,9 @@
         "type": "PisakBoxLayout",
         "x-expand": true,
         "y-expand": true,
-	"margin-bottom": 20,
-	"margin-right": 20,
-	"margin-top": 20,
+        "margin-bottom": 20,
+        "margin-right": 20,
+        "margin-top": 20,
         "orientation": "horizontal",
         "spacing" : 10,
         "children": [
@@ -45,14 +45,15 @@
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
-            "interval": 800
+            "interval": 800,
+            "max-cycle-count": -1
         }
     },
     {
         "id": "speller_menu_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
-	"y-align": "end",
+        "y-align": "end",
         "y-expand": true,
         "spacing": 10,
         "children": [
@@ -65,8 +66,8 @@
         "id": "button_1",
         "type": "PisakSpellerButton",
         "text": "KLAWIATURA",
-	"x-align": "start",
-	"y-align": "bottom",
+        "x-align": "start",
+        "y-align": "bottom",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -74,18 +75,19 @@
         "icon-name": "klawiatura",
         "spacing": 10,
         "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/go_to_keyboard"
-                       }
-                   ]
+			{
+				"name": "clicked",
+				"handler": "scanning/set_pending_group",
+				"object": "main_panel"
+			}
+		]
     },
     {
         "id": "button_2",
         "type": "PisakSpellerButton",
         "text": "PREDYKCJA",
-	"x-align": "start",
-	"y-align": "bottom",
+        "x-align": "start",
+        "y-align": "bottom",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -93,17 +95,18 @@
         "icon-name": "predykcja",
         "spacing": 10,
         "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/go_to_prediction"
-                       }
-                   ]
+            {
+                "name": "clicked",
+                "handler": "scanning/set_pending_group",
+                "object": "prediction_panel"
+            }
+        ]
     },
     {
         "id": "button_3",
         "type": "PisakSpellerButton",
         "text": "PRZECZYTAJ",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -122,7 +125,7 @@
         "id": "button_4",
         "type": "PisakSpellerButton",
         "text": "ZAPISZ",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -142,7 +145,7 @@
         "id": "button_5",
         "type": "PisakSpellerButton",
         "text": "WCZYTAJ",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -162,7 +165,7 @@
         "id": "button_6",
         "type": "PisakSpellerButton",
         "text": "WYŚLIJ",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -182,7 +185,7 @@
         "id": "button_7",
         "type": "PisakSpellerButton",
         "text": "DRUKUJ",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -202,7 +205,7 @@
         "id": "button_8",
         "type": "PisakSpellerButton",
         "text": "NOWY DOKUMENT",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -222,7 +225,7 @@
         "id": "button_9",
         "type": "PisakSpellerButton",
         "text": "PANEL STARTOWY",
-	"x-align": "start",
+        "x-align": "start",
         "ratio-width": 0.2,
         "ratio-height": 0.09,
         "icon-size": 50,
@@ -244,13 +247,15 @@
         "strategy": {
             "id": "prediction_group_strategy",
             "type": "PisakRowStrategy",
-            "interval": 800
+            "interval": 800,
+            "max-cycle-count": -1,
+            "unwind-to": "main_panel"
         }
     },
     {
         "id": "prediction_panel_box",
         "type": "PisakBoxLayout",
-	"y-align": "bottom",
+        "y-align": "bottom",
         "orientation": "vertical",
         "y-align": "end",
         "y-expand": true,
@@ -293,7 +298,8 @@
         "strategy": {
             "id": "main_panel_group_strategy",
             "type": "PisakRowStrategy",
-            "interval": 800
+            "interval": 800,
+            "max-cycle-count": -1
         }
     },
     {
@@ -311,8 +317,8 @@
         "x-align": "start",
         "x-expand": true,
         "y-expand": true,
-	"ratio-width": 0.6,
-	"ratio-height": 0.535,
+        "ratio-width": 0.6,
+        "ratio-height": 0.535,
         "background-color": "white"
     },
     {
@@ -322,7 +328,8 @@
         "strategy": {
             "id": "keyboard_menu_group_strategy",
             "type": "PisakRowStrategy",
-            "interval": 800
+            "interval": 800,
+            "unwind-to": "main_panel"
         }
     },
     {
@@ -347,11 +354,12 @@
         "icon-name": "predykcja",
         "spacing": 0,
         "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/go_to_prediction"
-                       }
-                   ]
+            {
+                "name": "clicked",
+                "handler": "scanning/set_pending_group",
+                "object": "prediction_panel"
+            }
+        ]
     },
     {
         "id": "keyboard_menu_button_2",
@@ -461,11 +469,12 @@
         "icon-name": "funkcje",
         "spacing": 0,
         "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/go_to_main_menu"
-                       }
-                   ]
+            {
+                "name": "clicked",
+                "handler": "scanning/set_pending_group",
+                "object": "speller_menu"
+            }
+        ]
     },
     {
         "id": "keyboard_menu_button_8",
@@ -534,7 +543,8 @@
         "strategy": {
             "id": "keyboard_row_1_group_strategy",
             "type": "PisakRowStrategy",
-            "interval": 800
+            "interval": 800,
+            "unwind-to": "main_panel"
         }
     },
     {
@@ -646,7 +656,8 @@
         "strategy": {
             "id": "keyboard_row_2_group_strategy",
             "type": "PisakRowStrategy",
-            "interval": 800
+            "interval": 800,
+            "unwind-to": "main_panel"
         }
     },
     {
@@ -658,7 +669,7 @@
                         "key_2_6", "key_2_5", "key_2_4", "key_2_3",
                         "key_2_2", "key_2_1"
                     ]
-   },
+    },
     {
         "id": "key_2_1",
         "type": "PisakSpellerKey",
@@ -759,7 +770,8 @@
         "strategy": {
             "id": "keyboard_row_3_group_strategy",
             "type": "PisakRowStrategy",
-            "interval": 800
+            "interval": 800,
+            "unwind-to": "main_panel"
         }
     },
     {
