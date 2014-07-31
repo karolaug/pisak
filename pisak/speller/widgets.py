@@ -3,6 +3,7 @@ Definitions of widgets specific to speller applet
 '''
 from gi.repository import Mx, GObject, Pango
 
+from pisak.speller.prediction import predictor
 from pisak import unit
 import pisak.widgets
 
@@ -251,14 +252,64 @@ class Key(pisak.widgets.Button):
         self._target = value
 
 
+class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
+    __gtype_name__ = "PisakSpellerDictionary"
+    __gsignals__ = {
+        "content_update":(
+            GObject.SIGNAL_RUN_FIRST, None, ()),
+    }
+    __gproperties__ = {
+        "target": (
+            Text.__gtype__,
+            "target to follow",
+            "id of text box to follow",
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.content = []
+
+    def get_suggestion(self, accuracy_level):
+        if accuracy_level < len(self.content): 
+            return self.content[accuracy_level]
+        
+    def _update_content(self, *args):
+        string = self.target.get_endmost_string()
+        self.content = predictor.get_predictions(string)
+        self.emit("content-update")
+
+    def _follow_target(self):
+        if self.target:
+            text_field = self.target.clutter_text
+            text_field.connect("text-changed", self._update_content)
+
+    def _stop_following_target(self):
+        try:
+            if self.target:
+                text_field = self.target.clutter_text
+                text_field.disconnect_by_func("text-changed", self._update_content)
+        except AttributeError:
+            return None
+
+    @property
+    def target(self):
+        return self._target
+
+    @target.setter
+    def target(self, value):
+        self._stop_following_target()
+        self._target = value
+        self._follow_target()
+        
+
 class Prediction(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerPrediction"
     __gproperties__ = {
         "dictionary": (
-            GObject.TYPE_STRING,
+            Dictionary.__gtype__,
             "prediction dictionary",
-            "path to source of prediction words",
-            "",
+            "dictionary to get the suggested words from",
             GObject.PARAM_READWRITE),
         "order_num": (
             GObject.TYPE_INT,
@@ -277,29 +328,31 @@ class Prediction(pisak.widgets.Button):
 
     def __init__(self):
         super().__init__()
-        self.target = None
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("activate", self.on_activate)
+        self.connect("activate", self._on_activate)
 
-    def follow_target(self):
-        if self.target:
-            text_field = self.target.clutter_text
-            #text_field.connect("text-changed", self.update_button)
+    def _on_activate(self, source):
+        label = self.get_label()
+        if label and self.target:
+            self.target.replace_endmost_string(label)
 
-    def stop_following_target(self):
+    def _update_button(self, source):
+        new_label = self.dictionary.get_suggestion(self.order_num-1)
+        if new_label:
+            self.set_label(new_label)
+        else:
+            self.set_label("")
+
+    def _follow_dictionary(self):
+        if self.dictionary:
+            self.dictionary.connect("content-update", self._update_button)
+
+    def _stop_following_dictionary(self):
         try:
-            if self.target:
-                text_field = self.target.clutter_text
-                #text_field.disconnect_by_func("text-changed", self.update_button)
+            if self.dictionary:
+                self.dictionary.disconnect_by_func("text-changed", self._update_button)
         except AttributeError:
             return None
-            
-    def on_activate(self, source):
-        if self.target:
-            self.target.replace_endmost_string(self.get_label())
-
-    def update_button(self, source):
-        raise NotImplementedError
 
     @property
     def dictionary(self):
@@ -307,7 +360,9 @@ class Prediction(pisak.widgets.Button):
 
     @dictionary.setter
     def dictionary(self, value):
+        self._stop_following_dictionary()
         self._dictionary = value
+        self._follow_dictionary()
 
     @property
     def target(self):
@@ -315,9 +370,7 @@ class Prediction(pisak.widgets.Button):
 
     @target.setter
     def target(self, value):
-        self.stop_following_target()
         self._target = value
-        self.follow_target()
 
     @property
     def order_num(self):
