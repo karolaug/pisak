@@ -1,0 +1,58 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBinLayout",
+        "children": ["button", "background_box"],
+        "x-align": "start",
+        "x-expand": false
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundPattern"
+    },
+    {
+        "id": "button_guts",
+        "type": "PisakBoxLayout",
+        "orientation": "horizontal",
+        "x-expand": false,
+        "width": 300,
+        "children": ["button_guts_right", "button_guts_left"]
+    },
+    {
+        "id": "button_guts_left",
+        "type": "PisakBoxLayout",
+        "orientation": "horizontal",
+        "height": 70,
+        "children": ["label"]
+    },
+    {
+        "id": "button_guts_right",
+        "type": "PisakBoxLayout",
+        "orientation": "horizontal",
+        "height": 70,
+        "background-color": "green",
+        "x-expand": true,
+        "x-align": "end",
+        "children": ["image"]
+    },
+    {
+        "id": "button",
+        "type": "MxButton",
+        "children": ["button_guts"],
+        "x-expand": false,
+        "width": 300,
+        "height": 70,
+        "background-color": "gray"
+    },
+    {
+        "id": "label",
+        "type": "MxLabel",
+        "text": "Nice one!"
+    },
+    {
+        "id": "image",
+        "type": "MxImage",
+        "width": 48,
+        "height": 36
+    }
+]

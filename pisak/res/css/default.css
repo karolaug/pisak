@@ -8,16 +8,20 @@ MxButton {
   fixed-x: 100.0;
 }
 
+PisakSpellerButton MxImage {
+
+}
+
 PisakSpellerButton {
     
 }
 
 PisakSpellerText {
-
+  border-image: url("../tlo_pola_tekstowego.png")
 }
 
 PisakSpellerKey {
-    font-size: 30;
+  font-size: 20;
 }
 
 PisakSpellerPrediction {

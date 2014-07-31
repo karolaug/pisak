@@ -1,0 +1,69 @@
+PisakSpellerText{
+    font-size: 50;
+    font-family: serif;
+    color: black;
+}
+
+PisakSpellerButton{
+    color: black;
+    font-size: 20;
+    font-family: serif;
+    border-image: url("rest_button.png") 5;
+}
+
+PisakSpellerButton:hover{
+    color: white;
+    font-size: 20;
+    font-family: serif;
+    border-image: url("hover_button.png");
+}
+
+PisakSpellerButton:active{
+    color: white;
+    font-size: 20;
+    font-family: serif;
+    border-image: url("active_button.png");
+}
+
+PisakSpellerKey{
+    color: black;
+    font-size: 35;
+    font-family: serif;
+    border-image: url("rest_button.png") 5;
+}
+
+PisakSpellerKey:hover{
+    color: white;
+    font-size: 35;
+    font-family: serif;
+    border-image: url("hover_button.png");
+}
+
+PisakSpellerKey:active{
+    color: white;
+    font-size: 35;
+    font-family: serif;
+    border-image: url("active_button.png");
+}
+
+PisakSpellerPrediction{
+    color: black;
+    font-size: 20;
+    font-family: serif;
+    border-image: url("rest_button.png") 5;
+}
+
+PisakSpellerPrediction:hover{
+    color: white;
+    font-size: 20;
+    font-family: serif;
+    border-image: url("hover_button.png");
+}
+
+PisakSpellerPrediction:active{
+    color: white;
+    font-size: 20;
+    font-family: serif;
+    border-image: url("active_button.png");
+}
+

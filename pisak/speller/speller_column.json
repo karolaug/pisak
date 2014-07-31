@@ -1,7 +1,7 @@
 [
     {
-        "id": "speller_view",
-        "type": "MxBoxLayout",
+        "id": "main",
+        "type": "PisakBoxLayout",
         "x-expand": true,
         "y-expand": true,
         "margin-top": 10,
@@ -12,7 +12,7 @@
         "children": [
             {
                 "id": "speller_menu",
-                "type": "MxBoxLayout",
+                "type": "PisakBoxLayout",
                 "x-align": "center",
                 "y-align": "start",
                 "x-expand": true,
@@ -21,331 +21,376 @@
                 "spacing": 10,
                 "children": [
                     {
-                        "id": "delete",
+                        "id": "button_1",
                         "type": "PisakSpellerButton",
-                        "speller_function": "delete",
-                        "label": "skasuj",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "backspace",
+                        "text": "SKASUJ",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "polish_chars",
+                        "id": "button_2",
                         "type": "PisakSpellerButton",
-                        "speller_function": "polish_chars",
-                        "label": "polskie znaki",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "swap_altgr_chars",
+                        "text": "POLSKIE ZNAKI",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "caps_lock",
+                        "id": "button_3",
                         "type": "PisakSpellerButton",
-                        "speller_function": "caps_lock",
-                        "label": "caps lock",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "swap_caps_chars",
+                        "text": "CAPS LOCK",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "special_chars",
+                        "id": "button_4",
                         "type": "PisakSpellerButton",
-                        "speller_function": "special_chars",
-                        "label": "znaki specjalne",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "special_chars",
+                        "text": "ZNAKI SPECJALNE",
+                        "alternative-text": "ZWYKŁE ZNAKI",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "save",
+                        "id": "button_5",
                         "type": "PisakSpellerButton",
-                        "speller_function": "save",
-                        "label": "zapisz",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "save",
+                        "text": "ZAPISZ",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "load",
+                        "id": "button_6",
                         "type": "PisakSpellerButton",
-                        "speller_function": "load",
-                        "label": "wczytaj",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "load",
+                        "text": "WCZYTAJ",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "send",
+                        "id": "button_7",
                         "type": "PisakSpellerButton",
-                        "speller_function": "send",
-                        "label": "wyślij",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "send",
+                        "text": "WYŚLIJ",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "print",
+                        "id": "button_8",
                         "type": "PisakSpellerButton",
-                        "speller_function": "print",
-                        "label": "wyślij",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "print",
+                        "text": "DRUKUJ",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
                         "id": "back_to_main",
                         "type": "PisakSpellerButton",
-                        "speller_function": "back_to_main",
-                        "label": "panel główny",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09
+                        "speller-function": "exit",
+                        "text": "PANEL GŁÓWNY",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     }
                 ]
             },
             {
-                "id": "speller_keyboard",
-                "type": "MxBoxLayout",
+                "id": "keyboard_panel",
+                "type": "PisakBoxLayout",
                 "x-expand": true,
                 "y-expand": true,
                 "spacing": 10,
                 "children": [
                     {
-                        "id": "first_column",
-                        "type": "MxBoxLayout",
+                        "id": "keyboard_column_1",
+                        "type": "PisakBoxLayout",
                         "orientation": "vertical",
                         "spacing": 10,
                         "children": [
                             {
-                                "id": "A",
+                                "id": "key_1_1",
                                 "type": "PisakSpellerKey",
                                 "text": "A",
-                                "alt_text": "Ą",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ą",
+                                "special-text": "?",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "B",
+                                "id": "key_1_2",
                                 "type": "PisakSpellerKey",
                                 "text": "B",
-                                "alt_text": "B",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+				"special-text": "5",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "C",
+                                "id": "key_1_3",
                                 "type": "PisakSpellerKey",
                                 "text": "C",
-                                "alt_text": "Ć",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ć",
+				"special-text": "3",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "D",
+                                "id": "key_1_4",
                                 "type": "PisakSpellerKey",
                                 "text": "D",
-                                "alt_text": "D",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "@",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                                
                             },
                             {
-                                "id": "E",
+                                "id": "key_1_5",
                                 "type": "PisakSpellerKey",
                                 "text": "E",
-                                "alt_text": "Ę",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ę",
+                                "special-text": ";",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "F",
+                                "id": "key_1_6",
                                 "type": "PisakSpellerKey",
                                 "text": "F",
-                                "alt_text": "F",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "(",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "G",
+                                "id": "key_1_7",
                                 "type": "PisakSpellerKey",
                                 "text": "G",
-                                "alt_text": "G",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": ")",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "H",
+                                "id": "key_1_8",
                                 "type": "PisakSpellerKey",
                                 "text": "H",
-                                "alt_text": "H",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "[",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "I",
+                                "id": "key_1_9",
                                 "type": "PisakSpellerKey",
                                 "text": "I",
-                                "alt_text": "I",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "&",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                                
                             }
                         ]
                     },
                     {
-                        "id": "second_column",
-                        "type": "MxBoxLayout",
+                        "id": "keyboard_column_2",
+                        "type": "PisakBoxLayout",
                         "orientation": "vertical",
                         "spacing": 10,
                         "children": [
                             {
-                                "id": "J",
+                                "id": "key_2_1",
                                 "type": "PisakSpellerKey",
                                 "text": "J",
-                                "alt_text": "J",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "]",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                                
                             },
                             {
-                                "id": "K",
+                                "id": "key_2_2",
                                 "type": "PisakSpellerKey",
                                 "text": "K",
-                                "alt_text": "K",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "+",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "L",
+                                "id": "key_2_3",
                                 "type": "PisakSpellerKey",
                                 "text": "L",
-                                "alt_text": "Ł",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ł",
+                                "special-text": "-",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "M",
+                                "id": "key_2_4",
                                 "type": "PisakSpellerKey",
                                 "text": "M",
-                                "alt_text": "M",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "7",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                                
                             },
                             {
-                                "id": "N",
+                                "id": "key_2_5",
                                 "type": "PisakSpellerKey",
                                 "text": "N",
-                                "alt_text": "Ń",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ń",
+                                "special-text": "6",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "O",
+                                "id": "key_2_6",
                                 "type": "PisakSpellerKey",
                                 "text": "O",
-                                "alt_text": "Ó",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ó",
+                                "special-text": "*",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                                
                             },
                             {
-                                "id": "P",
+                                "id": "key_2_7",
                                 "type": "PisakSpellerKey",
                                 "text": "P",
-                                "alt_text": "P",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "%",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                                
                             },
                             {
-                                "id": "R",
+                                "id": "key_2_8",
                                 "type": "PisakSpellerKey",
                                 "text": "R",
-                                "alt_text": "R",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": ":",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "S",
+                                "id": "key_2_9",
                                 "type": "PisakSpellerKey",
                                 "text": "S",
-                                "alt_text": "Ś",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ś",
+                                "special-text": "!",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             }
                         ]
                     },
                     {
-                        "id": "third_column",
-                        "type": "MxBoxLayout",
+                        "id": "keyboard_column_3",
+                        "type": "PisakBoxLayout",
                         "orientation": "vertical",
                         "spacing": 10,
                         "children": [
                             {
-                                "id": "T",
+                                "id": "key_3_1",
                                 "type": "PisakSpellerKey",
                                 "text": "T",
-                                "alt_text": "T",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "\"",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "U",
+                                "id": "key_3_2",
                                 "type": "PisakSpellerKey",
                                 "text": "U",
-                                "alt_text": "U",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "\\",
+				"target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "W",
+                                "id": "key_3_3",
                                 "type": "PisakSpellerKey",
                                 "text": "W",
-                                "alt_text": "W",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": ".",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "X",
+                                "id": "key_3_4",
                                 "type": "PisakSpellerKey",
                                 "text": "X",
-                                "alt_text": "Ź",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ź",
+                                "special-text": "2",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                                
                             },
                             {
-                                "id": "Y",
+                                "id": "key_3_5",
                                 "type": "PisakSpellerKey",
                                 "text": "Y",
-                                "alt_text": "Y",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "/",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                                
                             },
                             {
-                                "id": "Z",
+                                "id": "key_3_6",
                                 "type": "PisakSpellerKey",
                                 "text": "Z",
-                                "alt_text": "Ż",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "altgr-text": "Ż",
+                                "special-text": "1",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             },
                             {
-                                "id": "RZ",
-                                "type": "PisakSpellerKey",
-                                "text": "SZ",
-                                "alt_text": "SZ",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
-                            },
-                            {
-                                "id": "SZ",
-                                "type": "PisakSpellerKey",
-                                "text": "SZ",
-                                "alt_text": "SZ",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
-                            }
-                            {
-                                "id": "CZ",
+                                "id": "key_3_7",
                                 "type": "PisakSpellerKey",
                                 "text": "CZ",
-                                "alt_text": "CZ",
-                                "ratio_width": 0.08,
-                                "ratio_height": 0.09
+                                "special-text": "8",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                            },
+                            {
+                                "id": "key_3_8",
+                                "type": "PisakSpellerKey",
+                                "text": "SZ",
+                                "special-text": "9",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
+                            }
+                            {
+                                "id": "key_3_9",
+                                "type": "PisakSpellerKey",
+                                "text": "RZ",
+                                "special-text": "0",
+                                "target": "text_box",
+                                "ratio-width": 0.08,
+                                "ratio-height": 0.09
                             }
                         ]
                     }
                 ]
             },
             {
-                "id": "speller_prediction",
-                "type": "MxBoxLayout",
+                "id": "prediction_panel",
+                "type": "PisakBoxLayout",
                 "x-align": "center",
                 "y-align": "start",
                 "x-expand": true,
@@ -354,31 +399,41 @@
                 "spacing": 10,
                 "children": [
                     {
-                        "id": "prediction1",
+                        "id": "prediction_1",
                         "type": "PisakSpellerPrediction",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09,
-                        "label": "predykcja 1"
+			"order-num": 3,
+			"target": "text_box",
+			"label": "PREDYKCJA 3",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "prediction2",
+                        "id": "prediction_2",
                         "type": "PisakSpellerPrediction",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09,
-                        "label": "predykcja 2"
+			"order-num": 2,
+			"target": "text_box",
+			"label": "PREDYKCJA 2",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     },
                     {
-                        "id": "prediction3",
+                        "id": "prediction_3",
                         "type": "PisakSpellerPrediction",
-                        "ratio_width": 0.16,
-                        "ratio_height": 0.09,
-                        "label": "predykcja 3"
+			"order-num": 1,
+			"target": "text_box",
+			"label": "PREDYKCJA 1",
+                        "ratio-width": 0.16,
+                        "ratio-height": 0.09
                     }
                 ]
             },
             {
-                "id": "speller_text",
-                "type": "PisakSpellerText"
+                "id": "text_box",
+                "type": "PisakSpellerText",
+                "x-align": "start",
+                "x-expand": true,
+                "y-expand": true,
+                "background-color": "lightgray"
             }
         ]
     }
