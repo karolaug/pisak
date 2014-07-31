@@ -34,8 +34,15 @@ class Strategy(GObject.GObject):
             element.parent_group = self.group
             element.start_cycle()
         elif isinstance(element, Mx.Button):
+            self.group.stop_cycle()
+            # set potential next group
+            self.group.get_stage().pending_group = self.unwind_to
             element.emit("clicked")
-            self.unwind()
+            # launch next group
+            if self.group.get_stage().pending_group:
+                self.group.get_stage().pending_group.start_cycle()
+            else:
+                self.group.start_cycle()
         else:
             raise Exception("Unsupported selection")
 
@@ -161,6 +168,10 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
             GObject.TYPE_INT,
             "", "",
             -1, GObject.G_MAXINT, 2,
+            GObject.PARAM_READWRITE),
+        "unwind-to": (
+            Group.__gtype__,
+            "", "",
             GObject.PARAM_READWRITE)
     }
 
@@ -170,6 +181,7 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
         self.interval = 1000
         self._max_cycle_count = 2
         self._buttons = []
+        self._unwind_to = None
         self.timeout_token = None
 
     @property
@@ -187,6 +199,14 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
     @max_cycle_count.setter
     def max_cycle_count(self, value):
         self._max_cycle_count = int(value)
+
+    @property
+    def unwind_to(self):
+        return self._unwind_to
+
+    @unwind_to.setter
+    def unwind_to(self, value):
+        self._unwind_to = value
 
     @property
     def group(self):
