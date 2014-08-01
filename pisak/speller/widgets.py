@@ -12,6 +12,85 @@ class Button(pisak.widgets.Button):
 
         
 class Text(Mx.Label, pisak.widgets.PropertyAdapter):
+    class Insertion(object):
+        def __init__(self, pos, value):
+            self.pos = pos
+            self.value = value
+
+        def apply(self, text):
+            text.clutter_text.insert_text(self.value, self.pos)
+
+        def revert(self, text):
+            end = self.pos + len(self.value)
+            text.clutter_text.delete_text(self.pos, end)
+
+        def compose(self, operation):
+            if isinstance(operation, Text.Insertion):
+                consecutive = self.pos + len(self.value) == operation.pos
+                compatible = self.value[-1].isspace() or \
+                    not operation.value[0].isspace()
+                if consecutive and compatible:
+                    self.value = self.value + operation.value
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+        def __str__(self):
+            return "+ {} @ {}".format(self.value, self.pos)
+
+    class Deletion(object):
+        def __init__(self, pos, value):
+            self.pos = pos
+            self.value = value
+
+        def apply(self, text):
+            end = self.pos + len(self.value)
+            text.clutter_text.delete_text(self.pos, end)
+
+        def revert(self, text):
+            text.clutter_text.insert_text(self.pos, self.value)
+
+        def compose(self, operation): 
+            if isinstance(operation, Text.Deletion):
+                consecutive = operation.pos + len(operation.value) == self.pos
+                compatible = operation.value[-1].isspace() or \
+                    not self.value[0].isspace()
+                if consecutive and compatible:
+                    self.pos = operation.pos
+                    self.value = operation.value + self.value
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+        def __str__(self):
+            return "- {} @ {}".format(self.value, self.pos)
+
+    class Replacement(object):
+        def __init__(self, pos, before, after):
+            self.pos = pos
+            self.before = before
+            self.after = after
+
+        def _replace(self, text, before, after):
+            text.clutter_text.delete_text(self.pos, self.pos + len(before))
+            text.clutter_text.insert_text(self.pos, after)
+
+        def apply(self, text):
+            self._replace(text, self.before, self.after)
+
+        def revert(self, text):
+            self._replace(text)
+
+        def compose(self):
+            return False
+
+        def __str__(self):
+            return "{} -> {} @ {}".format(self.before, self.after, self.pos)
+
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
@@ -20,9 +99,17 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
     
     def __init__(self):
         super().__init__()
+        self.history = []
         self.clutter_text = self.get_clutter_text()
         self._set_text_params()
-
+    
+    def add_operation(self, operation):
+        #if type(operation) != type(self.history[-1]):
+        if len(self.history) == 0 or (not self.history[-1].compose(operation)):
+            self.history.append(operation)
+        operation.apply(self)
+        print(list(map(str, self.history)))
+        
     def _set_text_params(self):
         self.clutter_text.set_line_wrap(True)
         self.clutter_text.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
@@ -44,21 +131,29 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         Append the given text to the text buffer
         @param text string passed after a user's actions
         """
-        self.clutter_text.insert_text(text, -1)
+        operation = Text.Insertion(self.get_text_length(), text)
+        self.add_operation(operation)
 
     def type_unicode_char(self, char):
         """
         Append the given unicode character to the text buffer
         @param char unicode character in the form of unicode escape sequence
-        """    
-        self.clutter_text.insert_unichar(char)
+        :deprecated:
+        """ 
+        # TODO: remove
+        operation = Text.Insertion(self.get_text_length(), char)
+        self.add_operation(operation)
 
     def delete_char(self):
         """
         Delete the endmost single character
         """
         pos = self.get_text_length() - 1
-        self.clutter_text.delete_text(pos, pos+1)
+        text = self.get_text()[-1]
+        operation = Text.Deletion(pos, text)
+        self.add_operation(operation)
+        
+        #self.clutter_text.delete_text(pos, pos+1)
 
     def delete_text(self, start_pos, end_pos):
         """
@@ -72,7 +167,8 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         """
         Clear the entire text buffer
         """
-        self.clutter_text.set_text(None)
+        operation = Text.Deletion(0, self.get_text())
+        self.add_operation(operation)
 
     def get_endmost_string(self):
         """
@@ -84,7 +180,7 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         end_pos = len(text.rstrip())
         return text[start_pos : end_pos]
 
-    def replace_endmost_string(self, text):
+    def replace_endmost_string(self, text_after):
         """
         Look for the first string of characters with no whitespaces starting
         from the end of the text buffer and replace it with the given text
@@ -92,9 +188,12 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         """
         current_text = self.get_text()
         start_pos = current_text.rstrip().rfind(' ') + 1
-        end_pos = self.get_text_length()
-        self.delete_text(start_pos, end_pos)
-        self.type_text(text)
+        #end_pos = self.get_text_length()
+        text_before = current_text[start_pos : -1]
+        operation = Text.Replacement(start_pos, text_before, text_after)
+        self.add_operation(operation)
+        #self.delete_text(start_pos, end_pos)
+        #self.type_text(text)
 
     def move_cursor_forward(self):
         """
