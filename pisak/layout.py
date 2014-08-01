@@ -52,15 +52,15 @@ class Box(Clutter.Actor, PropertyAdapter):
         super().__init__()
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
-        self.layout.connect("notify::orientation", self._set_ratio_spacing)
+        self.layout.connect("notify::orientation", self._set_px_spacing)
 
-    def _set_ratio_spacing(self, *args):
+    def _set_px_spacing(self, *args):
         if hasattr(self, "ratio_spacing"):
             if self.layout.get_orientation() == Clutter.Orientation.HORIZONTAL:
                 px_spacing = unit.w(self.ratio_spacing)
             elif self.layout.get_orientation() == Clutter.Orientation.VERTICAL:
                 px_spacing = unit.h(self.ratio_spacing)
-            self.layout.set_spacing(px_spacing)
+            self.spacing = px_spacing
 
     @property
     def orientation(self):
@@ -87,7 +87,7 @@ class Box(Clutter.Actor, PropertyAdapter):
     @ratio_spacing.setter
     def ratio_spacing(self, value):
         self._ratio_spacing = value
-        self._set_ratio_spacing()
+        self._set_px_spacing()
 
     @property
     def ratio_margin_bottom(self):
