@@ -5,6 +5,8 @@ layout parameters are proxied to internal layout manager.
 '''
 from gi.repository import Clutter, GObject
 
+from pisak.widgets import PropertyAdapter
+
 
 class Box(Clutter.Actor):
     """
@@ -22,6 +24,30 @@ class Box(Clutter.Actor):
             GObject.TYPE_UINT,
             "", "",
             0, GObject.G_MAXUINT, 0,
+            GObject.PARAM_READWRITE),
+        "ratio_spacing": (
+            GObject.TYPE_FLOAT,
+            None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_spacing": (
+            GObject.TYPE_FLOAT,
+            None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_margin_bottom": (
+            GObject.TYPE_FLOAT,
+            None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_margin_top": (
+            GObject.TYPE_FLOAT,
+            None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_margin_right": (
+            GObject.TYPE_FLOAT,
+            None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_margin_left": (
+            GObject.TYPE_FLOAT,
+            None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
     }
     
