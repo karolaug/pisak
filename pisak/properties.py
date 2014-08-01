@@ -23,3 +23,13 @@ class PropertyAdapter(object):
             attribute.fset(self, value)
         else:
             raise ValueError("No such property", spec.name)
+
+    def do_get_property(self, spec):
+        """
+        Introspect object properties and get the value.
+        """
+        attribute = self.find_attribute(spec.name)
+        if attribute is not None and isinstance(attribute, property):
+            return attribute.fget(self)
+        else:
+            raise ValueError("No such property", spec.name)
