@@ -2,7 +2,6 @@
 /* different properties for different types*/
 
 MxButton {
-  background-color: rgb(255, 0, 0);
   fixed-position-set: True;
   some-other-property: foo-bar-bar;
   fixed-x: 100.0;

@@ -217,7 +217,8 @@ class Button(Mx.Button, PropertyAdapter):
         if text_length == 1:
             pass
         else:
-            self.space.set_width(self.get_width() - text_length*24 - self.image.get_width())
+            pass
+            #self.space.set_width(self.get_width() - 200 - self.image.get_width())
 
         self.box.add_child(self.space)
         self.box.add_child(self.image)
