@@ -21,6 +21,11 @@ class Box(Clutter.Actor, PropertyAdapter):
             "", "",
             "horizontal",
             GObject.PARAM_READWRITE),
+        "homogeneous": (
+            GObject.TYPE_BOOLEAN,
+            "whether children should be homo",
+            "children homogeneous", False,
+            GObject.PARAM_READWRITE),
         "spacing": (
             GObject.TYPE_UINT,
             "", "",
@@ -70,6 +75,15 @@ class Box(Clutter.Actor, PropertyAdapter):
     def orientation(self, value):
         self._orientation = value
         self.layout.set_orientation(value)
+
+    @property
+    def homogeneous(self):
+        return self._homogeneous
+
+    @homogeneous.setter
+    def homogeneous(self, value):
+        self._homogeneous = value
+        self.layout.set_homogeneous(value)
 
     @property
     def spacing(self):
