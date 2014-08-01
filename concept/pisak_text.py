@@ -16,7 +16,14 @@ class TextStage(Clutter.Stage):
         self.text.set_reactive(True)
         self.text.set_editable(True)
 
-        self.layout = Clutter.BinLayout()
+        self.pos = Clutter.Text()
+
+        self.pos.set_text(''.join(["Kursor na pozycji: ", 
+                                   str(self.text.get_cursor_position())]))
+
+        self.layout = Clutter.BoxLayout()
+        self.layout.set_orientation(Clutter.Orientation.VERTICAL)
+        self.add_child(self.pos)
         self.add_child(self.text)
         self.set_layout_manager(self.layout)
 
@@ -24,6 +31,8 @@ class TextStage(Clutter.Stage):
 
     def onKeyPress(self, event, button):
         self.text.insert_text("k", self.text.get_cursor_position())
+        self.pos.set_text(''.join(["Kursor na pozycji: ", 
+                                   str(self.text.get_cursor_position())]))
 
 class TextApp(object):
     def __init__(self):
