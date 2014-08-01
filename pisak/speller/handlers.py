@@ -24,8 +24,8 @@ def exit_app(app):
     app.get_stage().destroy()
 
 @signals.registered_handler("speller/undo")
-def undo(*args):
-    raise NotImplementedError
+def undo(text_box, *args):
+    text_box.revert_operation()
 
 @signals.registered_handler("speller/nav_right")
 def nav_right(text_box):

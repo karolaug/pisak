@@ -50,7 +50,7 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
             text.clutter_text.delete_text(self.pos, end)
 
         def revert(self, text):
-            text.clutter_text.insert_text(self.pos, self.value)
+            text.clutter_text.insert_text(self.value, self.pos)
 
         def compose(self, operation): 
             if isinstance(operation, Text.Deletion):
@@ -104,11 +104,14 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         self._set_text_params()
     
     def add_operation(self, operation):
-        #if type(operation) != type(self.history[-1]):
         if len(self.history) == 0 or (not self.history[-1].compose(operation)):
             self.history.append(operation)
         operation.apply(self)
-        print(list(map(str, self.history)))
+    
+    def revert_operation(self):
+        if len(self.history) > 0:
+            operation = self.history.pop()
+            operation.revert(self)
         
     def _set_text_params(self):
         self.clutter_text.set_line_wrap(True)

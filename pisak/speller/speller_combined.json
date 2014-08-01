@@ -549,7 +549,8 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/undo"
+                           "handler": "speller/undo",
+                           "object": "text_box"
                        }
                    ]
     },
