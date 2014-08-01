@@ -6,10 +6,9 @@ layout parameters are proxied to internal layout manager.
 from gi.repository import Clutter, GObject
 
 from pisak import unit
-from pisak.properties import PropertyAdapter
 
 
-class Box(Clutter.Actor, PropertyAdapter):
+class Box(Clutter.Actor):
     """
     Arranges children in single line using BoxLayout.
     """
@@ -57,7 +56,6 @@ class Box(Clutter.Actor, PropertyAdapter):
         super().__init__()
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
-        self.layout.connect("notify::orientation", self._set_px_spacing)
 
     def _set_px_spacing(self, *args):
         if hasattr(self, "ratio_spacing"):
@@ -65,35 +63,17 @@ class Box(Clutter.Actor, PropertyAdapter):
                 px_spacing = unit.w(self.ratio_spacing)
             elif self.layout.get_orientation() == Clutter.Orientation.VERTICAL:
                 px_spacing = unit.h(self.ratio_spacing)
-            self.spacing = px_spacing
-
+            self.layout.set_spacing(px_spacing)
+        
     @property
     def orientation(self):
-        return self._orientation
+        return self.layout.get_orientation()
 
     @orientation.setter
     def orientation(self, value):
-        self._orientation = value
         self.layout.set_orientation(value)
+        self._set_px_spacing()
 
-    @property
-    def homogeneous(self):
-        return self._homogeneous
-
-    @homogeneous.setter
-    def homogeneous(self, value):
-        self._homogeneous = value
-        self.layout.set_homogeneous(value)
-
-    @property
-    def spacing(self):
-        return self._spacing
-
-    @spacing.setter
-    def spacing(self, value):
-        self._spacing = value
-        self.layout.set_spacing(value)
-        
     @property
     def ratio_spacing(self):
         return self._ratio_spacing
@@ -105,42 +85,58 @@ class Box(Clutter.Actor, PropertyAdapter):
 
     @property
     def ratio_margin_bottom(self):
-        return self._ratio_margin_bottom
+        return
 
     @ratio_margin_bottom.setter
     def ratio_margin_bottom(self, value):
-        self._ratio_margin_bottom = value
         self.set_margin_bottom(unit.h(value))
 
     @property
     def ratio_margin_top(self):
-        return self._ratio_margin_top
+        return
 
     @ratio_margin_top.setter
     def ratio_margin_top(self, value):
-        self._ratio_margin_top = value
         self.set_margin_top(unit.h(value))
 
     @property
     def ratio_margin_right(self):
-        return self._ratio_margin_right
+        return
 
     @ratio_margin_right.setter
     def ratio_margin_right(self, value):
-        self._ratio_margin_right = value
         self.set_margin_right(unit.w(value))
 
     @property
     def ratio_margin_left(self):
-        return self._ratio_margin_left
+        return
 
     @ratio_margin_left.setter
     def ratio_margin_left(self, value):
-        self._ratio_margin_left = value
         self.set_margin_left(unit.w(value))
 
+    def do_set_property(self, spec, value):
+        """
+        Introspect object properties and set the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
+        if attribute is not None and isinstance(attribute, property):
+            attribute.fset(self, value)
+        else:
+            self.layout.set_property(spec.name, value)
 
-class Bin(Clutter.Actor, PropertyAdapter):
+    def do_get_property(self, spec):
+        """
+        Introspect object properties and get the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
+        if attribute is not None and isinstance(attribute, property):
+            return attribute.fget(self)
+        else:
+            self.layout.get_property(spec.name)
+
+
+class Bin(Clutter.Actor):
     __gtype_name__ = "PisakBinLayout"
     __gproperties__ = {
         "ratio_margin_bottom": (
@@ -168,36 +164,52 @@ class Bin(Clutter.Actor, PropertyAdapter):
 
     @property
     def ratio_margin_bottom(self):
-        return self._ratio_margin_bottom
+        return
 
     @ratio_margin_bottom.setter
     def ratio_margin_bottom(self, value):
-        self._ratio_margin_bottom = value
         self.set_margin_bottom(unit.h(value))
 
     @property
     def ratio_margin_top(self):
-        return self._ratio_margin_top
+        return
 
     @ratio_margin_top.setter
     def ratio_margin_top(self, value):
-        self._ratio_margin_top = value
         self.set_margin_top(unit.h(value))
 
     @property
     def ratio_margin_right(self):
-        return self._ratio_margin_right
+        return
 
     @ratio_margin_right.setter
     def ratio_margin_right(self, value):
-        self._ratio_margin_right = value
         self.set_margin_right(unit.w(value))
 
     @property
     def ratio_margin_left(self):
-        return self._ratio_margin_left
+        return
 
     @ratio_margin_left.setter
     def ratio_margin_left(self, value):
-        self._ratio_margin_left = value
         self.set_margin_left(unit.w(value))
+
+    def do_set_property(self, spec, value):
+        """
+        Introspect object properties and set the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
+        if attribute is not None and isinstance(attribute, property):
+            attribute.fset(self, value)
+        else:
+            self.layout.set_property(spec.name, value)
+
+    def do_get_property(self, spec):
+        """
+        Introspect object properties and get the value.
+        """
+        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
+        if attribute is not None and isinstance(attribute, property):
+            return attribute.fget(self)
+        else:
+            self.layout.get_property(spec.name)
