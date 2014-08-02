@@ -2,7 +2,10 @@
 Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx
+
+from pisak import properties
 import pisak.widgets
+
 
 
 class Strategy(GObject.GObject):
@@ -155,7 +158,7 @@ class Group(Clutter.Actor):
                 s.disable_hilite()
 
 
-class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
+class RowStrategy(Strategy, properties.PropertyAdapter):
     __gtype_name__ = "PisakRowStrategy"
 
     __gproperties__ = {
