@@ -3,7 +3,7 @@ Definitions of widgets specific to speller applet
 '''
 from gi.repository import Mx, GObject, Pango
 
-from pisak import unit
+from pisak import unit, properties
 import pisak.widgets
 
 
@@ -11,7 +11,7 @@ class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
 
         
-class Text(Mx.Label, pisak.widgets.PropertyAdapter):
+class Text(Mx.Label, properties.PropertyAdapter):
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),

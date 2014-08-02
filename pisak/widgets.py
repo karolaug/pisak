@@ -4,12 +4,12 @@ import os.path
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
 
-from pisak import switcher_app, unit, res
+from pisak import switcher_app, unit, res, properties
 from pisak.layout import Box
 from pisak.res import colors, dims
-from pisak.properties import PropertyAdapter
 
-class Header(Mx.Image, PropertyAdapter):
+
+class Header(Mx.Image, properties.PropertyAdapter):
 
     __gtype_name__ = "PisakMenuHeader"
 
@@ -38,7 +38,7 @@ class Header(Mx.Image, PropertyAdapter):
                            pixbuf.get_height(), 
                            pixbuf.get_rowstride())
 
-class Button(Mx.Button, PropertyAdapter):
+class Button(Mx.Button, properties.PropertyAdapter):
     """
     Generic Pisak button widget with label and icon.
     """
