@@ -4,8 +4,6 @@ Classes for defining scanning in JSON layouts
 from gi.repository import Clutter, GObject, Mx
 
 from pisak import properties
-import pisak.widgets
-
 
 
 class Strategy(GObject.GObject):
