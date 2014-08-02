@@ -113,7 +113,8 @@ class Button(Mx.Button, PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.properties = {}
-        self.selection_time = 1000
+        self.on_select_hilite_pattern = ["active", "hover", "active", ""]
+        self.on_select_hilite_period = 100
         self.current_icon = None
         self._connect_signals()
 
@@ -315,10 +316,16 @@ class Button(Mx.Button, PropertyAdapter):
 
     def inactivate(self):
         self.style_pseudo_class_remove("active")
+
+    def on_select_hilite(self):
+        hilite_stage = self._on_select_hilite_pattern.pop(0)
+        self.set_style_pseudo_class(hilite_stage)
+        if self._on_select_hilite_pattern:
+            return True
     
     def click_activate(self, source):
-        self.select_on()
-        Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
+        self._on_select_hilite_pattern = list(self.on_select_hilite_pattern)
+        Clutter.threads_add_timeout(0, self.on_select_hilite_period, self.on_select_hilite)
         self.emit("activate")
 
 
