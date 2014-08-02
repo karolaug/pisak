@@ -85,36 +85,40 @@ class Box(Clutter.Actor):
 
     @property
     def ratio_margin_bottom(self):
-        return
+        return self._ratio_margin_bottom
 
     @ratio_margin_bottom.setter
     def ratio_margin_bottom(self, value):
+        self._ratio_margin_bottom = value
         self.set_margin_bottom(unit.h(value))
 
     @property
     def ratio_margin_top(self):
-        return
+        return self._ratio_margin_top
 
     @ratio_margin_top.setter
     def ratio_margin_top(self, value):
+        self._ratio_margin_top = value
         self.set_margin_top(unit.h(value))
 
     @property
     def ratio_margin_right(self):
-        return
+        return self._ratio_margin_right
 
     @ratio_margin_right.setter
     def ratio_margin_right(self, value):
+        self._ratio_margin_right = value
         self.set_margin_right(unit.w(value))
 
     @property
     def ratio_margin_left(self):
-        return
+        return self._ratio_margin_left
 
     @ratio_margin_left.setter
     def ratio_margin_left(self, value):
+        self._ratio_margin_left = value
         self.set_margin_left(unit.w(value))
-
+    
     def do_set_property(self, spec, value):
         """
         Introspect object properties and set the value.
@@ -164,34 +168,38 @@ class Bin(Clutter.Actor):
 
     @property
     def ratio_margin_bottom(self):
-        return
+        return self._ratio_margin_bottom
 
     @ratio_margin_bottom.setter
     def ratio_margin_bottom(self, value):
+        self._ratio_margin_bottom = value
         self.set_margin_bottom(unit.h(value))
 
     @property
     def ratio_margin_top(self):
-        return
+        return self._ratio_margin_top
 
     @ratio_margin_top.setter
     def ratio_margin_top(self, value):
+        self._ratio_margin_top = value
         self.set_margin_top(unit.h(value))
 
     @property
     def ratio_margin_right(self):
-        return
+        return self._ratio_margin_right
 
     @ratio_margin_right.setter
     def ratio_margin_right(self, value):
+        self._ratio_margin_right = value
         self.set_margin_right(unit.w(value))
 
     @property
     def ratio_margin_left(self):
-        return
+        return self._ratio_margin_left
 
     @ratio_margin_left.setter
     def ratio_margin_left(self, value):
+        self._ratio_margin_left = value
         self.set_margin_left(unit.w(value))
 
     def do_set_property(self, spec, value):
