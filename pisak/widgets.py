@@ -112,7 +112,7 @@ class Button(Mx.Button, PropertyAdapter):
             GObject.TYPE_STRING,
             "hilite pattern",
             "progression of hilite states invoked"
-            "by button selection separated with hyphen",
+            "by button selection separated with hyphens",
             "active-", GObject.PARAM_READWRITE),
         "on_select_hilite_duration": (
             GObject.TYPE_UINT, "hilite duration",
@@ -352,8 +352,8 @@ class Button(Mx.Button, PropertyAdapter):
     
     def on_click_activate(self, source):
         self._on_select_hilite_pattern_parsed = self.on_select_hilite_pattern.split("-")
-        duration = int( self.on_select_hilite_duration / len(self._on_select_hilite_pattern_parsed) )
-        Clutter.threads_add_timeout(0, duration, self.on_select_hilite)
+        phase_duration = int( self.on_select_hilite_duration / len(self._on_select_hilite_pattern_parsed) )
+        Clutter.threads_add_timeout(0, phase_duration, self.on_select_hilite)
         self.emit("activate")
 
 
