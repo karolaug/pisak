@@ -136,10 +136,7 @@ def previous_chars_on_select(keyboard_item, keyboard_panel=None):
     if not keyboard_panel:
         keyboard_panel = keyboard_item
     if isinstance(keyboard_item, widgets.Key):
-        try:
-            keyboard_item.disconnect_by_func(previous_chars)
-        except TypeError:
-            keyboard_item.connect_object("clicked", previous_chars, keyboard_panel)
+        keyboard_item.connect_object("clicked", previous_chars, keyboard_panel)
     else:
         for sub_item in keyboard_item.get_children():
             previous_chars_on_select(sub_item, keyboard_panel)

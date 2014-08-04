@@ -289,11 +289,13 @@ class Key(pisak.widgets.Button):
             self.set_label(self.previous_text)
 
     def set_default_label(self):
-        self._cache_previous_text()
+        if self.get_label() != self.default_text:
+            self._cache_previous_text()
         self.set_label(self.default_text)
 
     def set_special_label(self):
-        self._cache_previous_text()
+        if self.get_label() != self.special_text:
+            self._cache_previous_text()
         self.set_label(self.special_text)
         
     def set_swap_altgr_label(self):
