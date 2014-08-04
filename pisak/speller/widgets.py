@@ -269,6 +269,7 @@ class Key(pisak.widgets.Button):
 
     def __init__(self):
         super().__init__()
+        self.previous_text = None
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self.on_activate)
         self.connect("notify::text", self._set_initial_label)
@@ -277,8 +278,20 @@ class Key(pisak.widgets.Button):
         self.set_default_label()
         self.disconnect_by_func(self._set_initial_label)
 
+    def cache_previous_label(self):
+        self.previous_text = self.get_label()
+
+    def set_previous_label(self):
+        if self.previous_text:
+            self.set_label(self.previous_text)
+
     def set_default_label(self):
+        self.cache_previous_label()
         self.set_label(self.text)
+
+    def set_special_label(self):
+        self.cache_previous_label()
+        self.set_label(self.special_text)
         
     def set_swap_altgr_label(self):
         label = self.get_label()
@@ -302,19 +315,18 @@ class Key(pisak.widgets.Button):
             return None
 
     def set_swap_caps_label(self):
-        self.set_label(self.get_label().swapcase())
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.swapcase())
 
     def set_swap_special_label(self):
         try:
             if self.get_label() == self.special_text:
-                self.set_default_label()
+                self.set_previous_label()
             else:
                 self.set_special_label()
         except AttributeError:
             return None
-
-    def set_special_label(self):
-        self.set_label(self.special_text)
 
     def on_activate(self, source):
         if self.target:
