@@ -26,7 +26,13 @@ _CONFIG_PARSER.read(_CONFIG_FILE)
 
 def get_predictions(string):
     callback = CallbackClass(string)
-    return pressagio.Pressagio(callback, _CONFIG_PARSER).predict()
+    predictions = pressagio.Pressagio(callback, _CONFIG_PARSER).predict()
+    if string[0].isupper():
+        predictions = [p[0].upper() + p[1:] for p in predictions]
+    if string in predictions:
+        predictions.remove(string)
+    print(string, predictions)
+    return predictions
 
 
 class CallbackClass(pressagio.callback.Callback):
