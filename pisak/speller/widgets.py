@@ -278,55 +278,61 @@ class Key(pisak.widgets.Button):
         self.set_default_label()
         self.disconnect_by_func(self._set_initial_label)
 
-    def _cache_previous_text(self, text_to_cache=None):
-        if text_to_cache:
+    def _cache_previous_text(self, text_to_cache):
+        if not self.previous_text:
             self.previous_text = text_to_cache
-        else:
-            self.previous_text = self.get_label()
-
+        
     def set_previous_label(self):
         if self.previous_text:
             self.set_label(self.previous_text)
+            self.previous_text = None
 
     def set_default_label(self):
-        if self.get_label() != self.default_text:
-            self._cache_previous_text()
+        self._cache_previous_text(self.get_label())
         self.set_label(self.default_text)
 
     def set_special_label(self):
-        if self.get_label() != self.special_text:
-            self._cache_previous_text()
+        self._cache_previous_text(self.get_label())
         self.set_label(self.special_text)
 
     def set_caps_label(self):
-        label = self.get_label()
-        if label.isalpha():
-            if label != label.upper():
-                self._cache_previous_text()
-            self.set_label(label.upper())
+        old_label = self.get_label()
+        self._cache_previous_text(old_label)
+        if old_label.isalpha():
+            self.set_label(old_label.upper())
+
+    def set_lower_label(self):
+        old_label = self.get_label()
+        self._cache_previous_text(old_label)
+        if old_label.isalpha():
+            self.set_label(old_label.lower())
 
     def set_altgr_label(self):
-        label = self.get_label()
-        if label.isalpha() and hasattr(self.altgr_text):
-            if label.islower():
-                self.set_label(self.altgr_text.lower())
-            else:
-                self.set_label(self.atgr_text)
+        try:
+            old_label = self.get_label()
+            self._cache_previous_text(old_label)
+            if old_label.isalpha():
+                if old_label.islower():
+                    self.set_label(self.altgr_text.lower())
+                elif old_label.isupper():
+                    self.set_label(self.altgr_text.upper())
+        except AttributeError:
+            return None
         
     def set_swap_altgr_label(self):
-        self._cache_previous_text()
-        label = self.get_label()
         try:
-            if self.altgr_text.lower() == label.lower():
-                if label.islower():
+            old_label = self.get_label()
+            self._cache_previous_text(old_label)
+            if self.altgr_text.lower() == old_label.lower():
+                if old_label.islower():
                     # from lowercase altgr to lowercase default
                     self.set_label(self.default_text.lower())
                 else:
                     # from uppercase altgr to (uppercase) default
                     self.set_label(self.default_text)
-            else:     
-                if label.isalpha() and self.altgr_text:
-                    if label.islower():
+            else:
+                if old_label.isalpha() and self.altgr_text:
+                    if old_label.islower():
                         # from lowercase default to lowercase altgr
                         self.set_label(self.altgr_text.swapcase())
                     else:
@@ -336,16 +342,15 @@ class Key(pisak.widgets.Button):
             return None
 
     def set_swap_caps_label(self):
-        self._cache_previous_text()
-        label = self.get_label()
-        if label.isalpha():
-            self.set_label(label.swapcase())
+        old_label = self.get_label()
+        self._cache_previous_text(old_label)
+        if old_label.isalpha():
+            self.set_label(old_label.swapcase())
 
     def set_swap_special_label(self):
         try:
             if self.get_label() == self.special_text:
                 self.set_previous_label()
-                self._cache_previous_text(self.special_text)
             else:
                 self.set_special_label()
         except AttributeError:

@@ -95,6 +95,30 @@ def special_chars(keyboard_item):
         for sub_item in keyboard_item.get_children():
             special_chars(sub_item)
 
+@signals.registered_handler("speller/altgr_chars")
+def altgr_chars(keyboard_item):
+    if isinstance(keyboard_item, widgets.Key):
+        keyboard_item.set_altgr_label()
+    else:
+        for sub_item in keyboard_item.get_children():
+            altgr_chars(sub_item)
+
+@signals.registered_handler("speller/caps_chars")
+def caps_chars(keyboard_item):
+    if isinstance(keyboard_item, widgets.Key):
+        keyboard_item.set_caps_label()
+    else:
+        for sub_item in keyboard_item.get_children():
+            caps_chars(sub_item)
+
+@signals.registered_handler("speller/lower_chars")
+def lower_chars(keyboard_item):
+    if isinstance(keyboard_item, widgets.Key):
+        keyboard_item.set_lower_label()
+    else:
+        for sub_item in keyboard_item.get_children():
+            lower_chars(sub_item)
+
 @signals.registered_handler("speller/previous_chars")
 def previous_chars(keyboard_item):
     if isinstance(keyboard_item, widgets.Key):

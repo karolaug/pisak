@@ -470,10 +470,6 @@
                            "name": "clicked",
                            "handler": "speller/swap_caps_chars",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/switch_icon"
                        }
                    ]
     },
@@ -491,10 +487,6 @@
                            "name": "clicked",
                            "handler": "speller/swap_altgr_chars",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/switch_icon"
                        }
                    ]
     },
@@ -513,10 +505,6 @@
                            "name": "clicked",
                            "handler": "speller/special_chars",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/switch_icon"
                        },
                        {
                            "name": "clicked",
