@@ -67,3 +67,8 @@ PisakSpellerPrediction:active{
     border-image: url("active_button.png");
 }
 
+MxButton:scanning {
+    color: #ccc;
+    border-image: url("active_button.png");
+}
+
