@@ -332,7 +332,6 @@ class Key(pisak.widgets.Button):
                 self.set_previous_label()
                 self._cache_previous_text(self.special_text)
             else:
-                self._cache_previous_text()
                 self.set_special_label()
         except AttributeError:
             return None
