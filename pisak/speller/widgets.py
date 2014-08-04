@@ -329,15 +329,15 @@ class Key(pisak.widgets.Button):
                     self.set_label(self.default_text.lower())
                 else:
                     # from uppercase altgr to (uppercase) default
-                    self.set_label(self.default_text)
+                    self.set_label(self.default_text.upper())
             else:
                 if old_label.isalpha() and self.altgr_text:
                     if old_label.islower():
                         # from lowercase default to lowercase altgr
-                        self.set_label(self.altgr_text.swapcase())
+                        self.set_label(self.altgr_text.lower())
                     else:
                         # from (uppercase) default to uppercase altgr
-                        self.set_label(self.altgr_text)
+                        self.set_label(self.altgr_text.upper())
         except AttributeError:
             return None
 

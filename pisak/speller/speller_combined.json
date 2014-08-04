@@ -503,7 +503,7 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/special_chars",
+                           "handler": "speller/swap_special_chars",
                            "object": "keyboard_panel"
                        },
                        {
