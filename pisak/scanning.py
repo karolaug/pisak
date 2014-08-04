@@ -60,7 +60,7 @@ class Strategy(GObject.GObject):
         raise NotImplementedError("Incomplete strategy implementation")
 
 
-class Group(Clutter.Actor):
+class Group(Clutter.Actor, pisak.widgets.PropertyAdapter):
     """
     Container for grouping widgets for scanning purposes.
     """
@@ -70,11 +70,16 @@ class Group(Clutter.Actor):
         "strategy": (
             Strategy.__gtype__,
             "", "",
+            GObject.PARAM_READWRITE),
+        "scanning-hilite": (
+            GObject.TYPE_BOOLEAN,
+            "", "", False,
             GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
         self._strategy = None
+        self._scanning_hilite = False
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
         # handle only when active
@@ -91,26 +96,16 @@ class Group(Clutter.Actor):
         self._strategy = value
         if self.strategy is not None:
             self.strategy.group = self
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name)
+    
+    @property
+    def scanning_hilite(self):
+        return self._scanning_hilite
+    
+    @scanning_hilite.setter
+    def scanning_hilite(self, value):
+        self._scanning_hilite = value
+        if not value:
+            self.disable_scan_hilite("scanning")
 
     def get_subgroups(self):
         '''
@@ -127,13 +122,15 @@ class Group(Clutter.Actor):
     def start_cycle(self):
         self._handler_token = self.connect("key-release-event", self.key_release)
         self.get_stage().set_key_focus(self)
-        self.enable_scan_hilite()
+        if self.scanning_hilite:
+            self.enable_scan_hilite()
         self.strategy.start()
 
     def stop_cycle(self):
         self.get_stage().set_key_focus(None)
         self.disconnect(self._handler_token)
-        self.disable_scan_hilite()
+        if self.scanning_hilite:
+            self.disable_scan_hilite()
         self.strategy.stop()
 
     @staticmethod
