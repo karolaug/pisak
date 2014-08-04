@@ -31,7 +31,6 @@ def get_predictions(string):
         predictions = [p[0].upper() + p[1:] for p in predictions]
     if string in predictions:
         predictions.remove(string)
-    print(string, predictions)
     return predictions
 
 
