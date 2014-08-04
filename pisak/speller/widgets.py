@@ -104,14 +104,13 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         self._set_text_params()
     
     def add_operation(self, operation):
-        if len(self.history) == 0 or (not self.history[-1].compose(operation)):
+        if len(self.history) == 0 or not self.history[-1].compose(operation):
             self.history.append(operation)
         operation.apply(self)
     
     def revert_operation(self):
         if len(self.history) > 0:
-            operation = self.history.pop()
-            operation.revert(self)
+            self.history.pop().revert(self)
         
     def _set_text_params(self):
         self.clutter_text.set_line_wrap(True)
