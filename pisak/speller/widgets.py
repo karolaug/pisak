@@ -278,8 +278,11 @@ class Key(pisak.widgets.Button):
         self.set_default_label()
         self.disconnect_by_func(self._set_initial_label)
 
-    def _cache_previous_text(self):
-        self.previous_text = self.get_label()
+    def _cache_previous_text(self, text_to_cache=None):
+        if text_to_cache:
+            self.previous_text = text_to_cache
+        else:
+            self.previous_text = self.get_label()
 
     def set_previous_label(self):
         if self.previous_text:
@@ -294,6 +297,7 @@ class Key(pisak.widgets.Button):
         self.set_label(self.special_text)
         
     def set_swap_altgr_label(self):
+        self._cache_previous_text()
         label = self.get_label()
         try:
             if self.altgr_text.lower() == label.lower():
@@ -315,6 +319,7 @@ class Key(pisak.widgets.Button):
             return None
 
     def set_swap_caps_label(self):
+        self._cache_previous_text()
         label = self.get_label()
         if label.isalpha():
             self.set_label(label.swapcase())
@@ -323,7 +328,9 @@ class Key(pisak.widgets.Button):
         try:
             if self.get_label() == self.special_text:
                 self.set_previous_label()
+                self._cache_previous_text(self.special_text)
             else:
+                self._cache_previous_text()
                 self.set_special_label()
         except AttributeError:
             return None
@@ -331,7 +338,7 @@ class Key(pisak.widgets.Button):
     def on_activate(self, source):
         if self.target:
             self.target.type_text(self.get_label())
-
+        
     @property
     def default_text(self):
         return self._default_text

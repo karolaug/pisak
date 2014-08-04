@@ -95,6 +95,18 @@ def special_chars(keyboard_item):
         for sub_item in keyboard_item.get_children():
             special_chars(sub_item)
 
+@signals.registered_handler("speller/previous_chars")
+def previous_chars(keyboard_item):
+    if isinstance(keyboard_item, widgets.Key):
+        keyboard_item.set_previous_label()
+        try:
+            keyboard_item.disconnect_by_func(previous_chars)
+        except TypeError:
+            return None
+    else:
+        for sub_item in keyboard_item.get_children():
+            previous_chars(sub_item)
+
 @signals.registered_handler("speller/swap_special_chars")
 def swap_special_chars(keyboard_item):
     if isinstance(keyboard_item, widgets.Key):
@@ -118,6 +130,19 @@ def swap_caps_chars(keyboard_item):
     else:
         for sub_item in keyboard_item.get_children():
             swap_caps_chars(sub_item)
+
+@signals.registered_handler("speller/previous_chars_on_select")
+def previous_chars_on_select(keyboard_item, keyboard_panel=None):
+    if not keyboard_panel:
+        keyboard_panel = keyboard_item
+    if isinstance(keyboard_item, widgets.Key):
+        try:
+            keyboard_item.disconnect_by_func(previous_chars)
+        except TypeError:
+            keyboard_item.connect_object("clicked", previous_chars, keyboard_panel)
+    else:
+        for sub_item in keyboard_item.get_children():
+            previous_chars_on_select(sub_item, keyboard_panel)
 
 @signals.registered_handler("speller/switch_label")
 def switch_label(button):

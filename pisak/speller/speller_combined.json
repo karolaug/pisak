@@ -511,12 +511,18 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/swap_special_chars",
+                           "handler": "speller/special_chars",
                            "object": "keyboard_panel"
                        },
                        {
                            "name": "clicked",
                            "handler": "speller/switch_icon"
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/previous_chars_on_select",
+                           "object": "keyboard_panel"
+
                        }
                    ]
     },
