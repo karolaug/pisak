@@ -75,6 +75,22 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         """
         self.clutter_text.set_text(None)
 
+
+    def get_endmost_triplet(self):
+        """
+        Look for and return the first three-word string of characters with no commas
+        starting from the end of the text buffer
+        """
+
+        text = self.get_text()
+        last_sentence_list = text.rstrip().split('.')[-1].split()	
+        start_pos = -len(last_sentence_list[-1]) #negative start pos, counted from the end of the sting
+        if len(last_sentence_list) >= 2:
+            start_pos -= len(last_sentence_list[-2]) + 1
+        if len(last_sentence_list) >= 3:
+            start_pos -= len(last_sentence_list[-3]) + 2
+        return text.rstrip()[start_pos:]
+
     def get_endmost_string(self):
         """
         Look for and return the first string of characters with no whitespaces
@@ -84,6 +100,8 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         start_pos = text.rstrip().rfind(' ') + 1
         end_pos = len(text.rstrip())
         return text[start_pos : end_pos]
+
+
 
     def replace_endmost_string(self, text):
         """
@@ -275,7 +293,7 @@ class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
             return self.content[accuracy_level]
         
     def _update_content(self, *args):
-        string = self.target.get_endmost_string()
+        string = self.target.get_endmost_triplet()
         self.content = predictor.get_predictions(string)
         self.emit("content-update")
 
