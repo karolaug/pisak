@@ -234,7 +234,7 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
     def update_rows(self, *args):
         selection = self._subgroups[self.index]
         if isinstance(selection, Mx.Stylable):
-            selection.set_style_pseudo_class("")
+            selection.style_pseudo_class_remove("hover")
         self.compute_sequence()
 
     def compute_sequence(self):
@@ -267,7 +267,7 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
         if self.index is not None:
             selection = self._subgroups[self.index]
             if isinstance(selection, Mx.Stylable):
-                selection.set_style_pseudo_class("")
+                selection.style_pseudo_class_remove("hover")
             elif isinstance(selection, Group):
                 selection.disable_hilite()
             self.index = (self.index + 1) % len(self._subgroups)
