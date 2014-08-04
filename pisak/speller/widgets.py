@@ -242,7 +242,7 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
 class Key(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerKey"
     __gproperties__ = {
-        "text": (
+        "default_text": (
             GObject.TYPE_STRING,
             "key default text",
             "string appended to a text",
@@ -272,13 +272,13 @@ class Key(pisak.widgets.Button):
         self.previous_text = None
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self.on_activate)
-        self.connect("notify::text", self._set_initial_label)
+        self.connect("notify::default-text", self._set_initial_label)
 
     def _set_initial_label(self, source, spec):
         self.set_default_label()
         self.disconnect_by_func(self._set_initial_label)
 
-    def _cache_previous_label(self):
+    def _cache_previous_text(self):
         self.previous_text = self.get_label()
 
     def set_previous_label(self):
@@ -286,11 +286,11 @@ class Key(pisak.widgets.Button):
             self.set_label(self.previous_text)
 
     def set_default_label(self):
-        self._cache_previous_label()
-        self.set_label(self.text)
+        self._cache_previous_text()
+        self.set_label(self.default_text)
 
     def set_special_label(self):
-        self._cache_previous_label()
+        self._cache_previous_text()
         self.set_label(self.special_text)
         
     def set_swap_altgr_label(self):
@@ -299,10 +299,10 @@ class Key(pisak.widgets.Button):
             if self.altgr_text.lower() == label.lower():
                 if label.islower():
                     # from lowercase altgr to lowercase default
-                    self.set_label(self.text.lower())
+                    self.set_label(self.default_text.lower())
                 else:
                     # from uppercase altgr to (uppercase) default
-                    self.set_label(self.text)
+                    self.set_label(self.default_text)
             else:     
                 if label.isalpha() and self.altgr_text:
                     if self.get_label().islower():
@@ -333,12 +333,12 @@ class Key(pisak.widgets.Button):
             self.target.type_text(self.get_label())
 
     @property
-    def text(self):
-        return self._text
+    def default_text(self):
+        return self._default_text
 
-    @text.setter
-    def text(self, value):
-        self._text = str(value)
+    @default_text.setter
+    def default_text(self, value):
+        self._default_text = str(value)
 
     @property
     def altgr_text(self):
