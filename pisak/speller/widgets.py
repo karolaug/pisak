@@ -297,6 +297,21 @@ class Key(pisak.widgets.Button):
         if self.get_label() != self.special_text:
             self._cache_previous_text()
         self.set_label(self.special_text)
+
+    def set_caps_label(self):
+        label = self.get_label()
+        if label.isalpha():
+            if label != label.upper():
+                self._cache_previous_text()
+            self.set_label(label.upper())
+
+    def set_altgr_label(self):
+        label = self.get_label()
+        if label.isalpha() and hasattr(self.altgr_text):
+            if label.islower():
+                self.set_label(self.altgr_text.lower())
+            else:
+                self.set_label(self.atgr_text)
         
     def set_swap_altgr_label(self):
         self._cache_previous_text()
@@ -311,7 +326,7 @@ class Key(pisak.widgets.Button):
                     self.set_label(self.default_text)
             else:     
                 if label.isalpha() and self.altgr_text:
-                    if self.get_label().islower():
+                    if label.islower():
                         # from lowercase default to lowercase altgr
                         self.set_label(self.altgr_text.swapcase())
                     else:
