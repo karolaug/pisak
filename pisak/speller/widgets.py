@@ -288,7 +288,7 @@ class Key(pisak.widgets.Button):
         while self.undo_chain:
             operation = self.undo_chain.pop()
             if callable(operation) and operation in self.allowed_undos:
-                operation()
+                operation(self)
         
     def set_pre_special_label(self):
         if self.pre_special_text:
