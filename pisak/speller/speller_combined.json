@@ -43,6 +43,7 @@
         "id": "speller_menu",
         "type": "PisakScanningGroup",
         "children": ["speller_menu_box"],
+        "scanning-hilite": true,
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
@@ -244,6 +245,7 @@
         "id": "prediction_panel",
         "type": "PisakScanningGroup",
         "children": ["prediction_panel_box"],
+        "scanning-hilite": true,
         "strategy": {
             "id": "prediction_group_strategy",
             "type": "PisakRowStrategy",
@@ -356,6 +358,7 @@
         "id": "main_panel",
         "type": "PisakScanningGroup",
         "children": ["main_panel_box"],
+        "scanning-hilite": true,
         "strategy": {
             "id": "main_panel_group_strategy",
             "type": "PisakRowStrategy",
@@ -391,6 +394,7 @@
         "id": "keyboard_menu",
         "type": "PisakScanningGroup",
         "children": ["keyboard_menu_box"],
+        "scanning-hilite": true,
         "strategy": {
             "id": "keyboard_menu_group_strategy",
             "type": "PisakRowStrategy",
@@ -607,6 +611,7 @@
         "id": "keyboard_row_1",
         "type": "PisakScanningGroup",
         "children": ["keyboard_row_1_box"],
+        "scanning-hilite": true,
         "strategy": {
             "id": "keyboard_row_1_group_strategy",
             "type": "PisakRowStrategy",
@@ -720,6 +725,7 @@
         "id": "keyboard_row_2",
         "type": "PisakScanningGroup",
         "children": ["keyboard_row_2_box"],
+        "scanning-hilite": true,
         "strategy": {
             "id": "keyboard_row_2_group_strategy",
             "type": "PisakRowStrategy",
@@ -834,6 +840,7 @@
         "id": "keyboard_row_3",
         "type": "PisakScanningGroup",
         "children": ["keyboard_row_3_box"],
+        "scanning-hilite": true,
         "strategy": {
             "id": "keyboard_row_3_group_strategy",
             "type": "PisakRowStrategy",
