@@ -7,6 +7,8 @@ from pisak.speller.prediction import predictor
 from pisak import unit
 import pisak.widgets
 
+import threading
+
 
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
@@ -83,13 +85,18 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         """
 
         text = self.get_text()
+        start_pos = None
         last_sentence_list = text.rstrip().split('.')[-1].split()	
-        start_pos = -len(last_sentence_list[-1]) #negative start pos, counted from the end of the sting
+        if len(last_sentence_list) >= 1:         
+            start_pos = -len(last_sentence_list[-1]) #negative start pos, counted from the end of the sting
         if len(last_sentence_list) >= 2:
             start_pos -= len(last_sentence_list[-2]) + 1
         if len(last_sentence_list) >= 3:
             start_pos -= len(last_sentence_list[-3]) + 2
-        return text.rstrip()[start_pos:]
+        if start_pos is not None:        
+            return text.rstrip()[start_pos:]
+        else:
+            return ' '
 
     def get_endmost_string(self):
         """
