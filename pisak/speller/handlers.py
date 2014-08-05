@@ -256,3 +256,10 @@ def switch_label(button):
 @signals.registered_handler("speller/switch_icon")
 def switch_icon(button):
     button.switch_icon()
+
+def _find_and_get_keys(keyboard_item, keys_bag):
+    if isinstance(keyboard_item, widgets.Key):
+        keys_bag.append(keyboard_item)
+    else:
+        for sub_item in keyboard_item.get_children():
+            _find_and_get_keys(sub_item)
