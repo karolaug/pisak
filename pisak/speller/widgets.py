@@ -269,7 +269,9 @@ class Key(pisak.widgets.Button):
 
     def __init__(self):
         super().__init__()
-        self.previous_text = None
+        self.pre_special_text = None
+        self.undo_chain = []
+        self.allowed_undos = set()
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self.on_activate)
         self.connect("notify::default-text", self._set_initial_label)
@@ -278,61 +280,62 @@ class Key(pisak.widgets.Button):
         self.set_default_label()
         self.disconnect_by_func(self._set_initial_label)
 
-    def _cache_previous_text(self, text_to_cache):
-        if not self.previous_text:
-            self.previous_text = text_to_cache
+    def _cache_pre_special_text(self, text_to_cache):
+        if not self.pre_special_text:
+            self.pre_special_text = text_to_cache
+
+    def undo_label(self):
+        while self.undo_chain:
+            operation = self.undo_chain.pop()
+            if callable(operation) and operation in self.allowed_undos:
+                operation()
         
-    def set_previous_label(self):
-        if self.previous_text:
-            self.set_label(self.previous_text)
-            self.previous_text = None
+    def set_pre_special_label(self):
+        if self.pre_special_text:
+            self.set_label(self.pre_special_text)
+            self.pre_special_text = None
 
     def set_default_label(self):
-        self._cache_previous_text(self.get_label())
         self.set_label(self.default_text)
 
     def set_special_label(self):
-        self._cache_previous_text(self.get_label())
+        self._cache_pre_special_text(self.get_label())
         self.set_label(self.special_text)
 
     def set_caps_label(self):
-        old_label = self.get_label()
-        self._cache_previous_text(old_label)
-        if old_label.isalpha():
-            self.set_label(old_label.upper())
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.upper())
 
     def set_lower_label(self):
-        old_label = self.get_label()
-        self._cache_previous_text(old_label)
-        if old_label.isalpha():
-            self.set_label(old_label.lower())
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.lower())
 
     def set_altgr_label(self):
         try:
-            old_label = self.get_label()
-            self._cache_previous_text(old_label)
-            if old_label.isalpha():
-                if old_label.islower():
+            label = self.get_label()
+            if label.isalpha():
+                if label.islower():
                     self.set_label(self.altgr_text.lower())
-                elif old_label.isupper():
+                elif label.isupper():
                     self.set_label(self.altgr_text.upper())
         except AttributeError:
             return None
         
     def set_swap_altgr_label(self):
         try:
-            old_label = self.get_label()
-            self._cache_previous_text(old_label)
-            if self.altgr_text.lower() == old_label.lower():
-                if old_label.islower():
+            label = self.get_label()
+            if self.altgr_text.lower() == label.lower():
+                if label.islower():
                     # from lowercase altgr to lowercase default
                     self.set_label(self.default_text.lower())
                 else:
                     # from uppercase altgr to (uppercase) default
                     self.set_label(self.default_text.upper())
             else:
-                if old_label.isalpha() and self.altgr_text:
-                    if old_label.islower():
+                if label.isalpha() and self.altgr_text:
+                    if label.islower():
                         # from lowercase default to lowercase altgr
                         self.set_label(self.altgr_text.lower())
                     else:
@@ -342,15 +345,14 @@ class Key(pisak.widgets.Button):
             return None
 
     def set_swap_caps_label(self):
-        old_label = self.get_label()
-        self._cache_previous_text(old_label)
-        if old_label.isalpha():
-            self.set_label(old_label.swapcase())
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.swapcase())
 
     def set_swap_special_label(self):
         try:
             if self.get_label() == self.special_text:
-                self.set_previous_label()
+                self.set_pre_special_label()
             else:
                 self.set_special_label()
         except AttributeError:
