@@ -1,10 +1,11 @@
 import subprocess
+import os
 
-from pisak import signals
+from pisak import res, signals
 from pisak.speller import widgets
 
 MODEL = {
-        "document": "concept/sample.txt"
+        "document": os.path.join(res.PATH, "sample.txt")
     }
 
 @signals.registered_handler("speller/go_to_keyboard")
