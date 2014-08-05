@@ -46,6 +46,9 @@ def w(v):
 def h(v):
     return v * Gdk.Screen.height()
 
+def pt_to_px(pt):
+    return pt * SCREEN_DPMM
+
 if __name__ == '__main__':
     msg = 'Your screen size in mm is {} x {}, in pixels {} x {} which gives {} DPI.'
     print(msg.format(getattr(size_mm, 'width'), getattr(size_mm, 'height'),
