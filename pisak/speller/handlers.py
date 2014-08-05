@@ -44,10 +44,13 @@ def save(text_box):
 
 @signals.registered_handler("speller/load")
 def load(text_box):
-    with open(MODEL["document"], "r") as file:
-        text = file.read()
-    text_box.clear_all()
-    text_box.type_text(text)
+    try:
+        with open(MODEL["document"], "r") as file:
+            text = file.read()
+        text_box.clear_all()
+        text_box.type_text(text)
+    except FileNotFoundError:
+        return None
 
 @signals.registered_handler("speller/print")
 def print_doc(text_box):
