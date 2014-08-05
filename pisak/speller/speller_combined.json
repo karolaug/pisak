@@ -364,12 +364,17 @@
         }
     },
     {
+	"id": "CursoredText",
+	"type": "PisakCursorGroup",
+	"children": ["text_box"]
+    },
+    {
         "id": "main_panel_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
         "spacing": 10,
         "children": [
-                        "keyboard_panel", "keyboard_menu", "text_box"
+                        "keyboard_panel", "keyboard_menu", "CursoredText"
                     ]
     },
     {

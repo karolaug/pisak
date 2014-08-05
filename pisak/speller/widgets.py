@@ -1,16 +1,73 @@
 '''
 Definitions of widgets specific to speller applet
 '''
-from gi.repository import Mx, GObject, Pango
+from gi.repository import Clutter, Mx, GObject, Pango
 
 from pisak import unit
 import pisak.widgets
 
-
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
 
+class CursorGroup(Clutter.Actor):
+    __gtype_name__ = "PisakCursorGroup"
+
+    def __init__(self):
+        super().__init__()
+        self.layout = Clutter.BinLayout()
+        self.set_layout_manager(self.layout)
+        self.connect("notify::mapped", self.init_content)
+    
+    def init_content(self, *args):
+        self.text = [i for i in self.get_children() 
+                     if type(i) == Text][0]
+        self.init_cursor()
+        self.text.clutter_text.connect('cursor_changed', self.move_cursor)
+
+    def init_cursor(self):
+        font_name = self.text.clutter_text.get_font_name()
+        for i in font_name.split():
+            try:
+                self.cursor_height = unit.pt_to_px(int(i))
+            except ValueError:
+                if 'px' in i:
+                    self.cursor_height = int(i.strip('px'))
+                else:
+                    pass
+        print(self.cursor_height)
+        self.cursor = Cursor((5, self.cursor_height))
+        self.cursor.set_depth(10)
+        self.add_child(self.cursor)
+        self.cursor.set_x(0)
+        self.cursor.set_y(0)
         
+    def move_cursor(self, event):
+        cursor_pos = self.text.clutter_text.get_cursor_position()
+        coords = self.text.clutter_text.position_to_coords(cursor_pos)
+        self.cursor.set_x(coords[1])
+        self.cursor.set_y(coords[2])
+
+class Cursor(Clutter.Actor):
+    def __init__(self, size):
+        super().__init__()
+
+        self.width = size[0]
+        self.height = size[1]
+        self.set_size(self.width, self.height)
+
+        self.canvas = Clutter.Canvas()
+        self.canvas.set_size(self.width, self.height)
+        self.canvas.connect('draw', self.draw)
+        self.canvas.invalidate()
+        self.set_content(self.canvas)
+
+    @staticmethod
+    def draw(canvas, context, width, height):
+        context.set_source_rgb(0, 0, 0)
+        context.rectangle(0, 0, width, height)
+        context.fill()
+        return True
+    
 class Text(Mx.Label, pisak.widgets.PropertyAdapter):
     class Insertion(object):
         def __init__(self, pos, value):
@@ -94,15 +151,16 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE)
-    }
+        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE)}
     
     def __init__(self):
         super().__init__()
         self.history = []
         self.clutter_text = self.get_clutter_text()
         self._set_text_params()
-    
+        self.clutter_text.set_reactive(True)
+        self.clutter_text.set_editable(True)
+
     def add_operation(self, operation):
         if len(self.history) == 0 or (not self.history[-1].compose(operation)):
             self.history.append(operation)
