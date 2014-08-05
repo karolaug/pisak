@@ -34,7 +34,7 @@ class CursorGroup(Clutter.Actor):
                     self.cursor_height = int(i.strip('px'))
                 else:
                     pass
-        print(self.cursor_height)
+        self.cursor_height = round(self.cursor_height)
         self.cursor = Cursor((5, self.cursor_height))
         self.cursor.set_depth(10)
         self.add_child(self.cursor)
