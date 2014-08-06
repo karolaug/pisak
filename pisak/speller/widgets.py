@@ -269,8 +269,11 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
         Move cursor one position backward
         """
         current_position = self.clutter_text.get_cursor_position()
+        text_length = self.get_text_length()
         if current_position > 0:
             self.clutter_text.set_cursor_position(current_position-1)
+        elif current_position == -1 and text_length > 0:
+            self.clutter_text.set_cursor_position(text_length-1)
 
     def move_to_new_line(self):
         """
