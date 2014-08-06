@@ -1,48 +1,15 @@
-from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
-import os.path
-from pisak import switcher_app, unit, res
-from pisak.layout import Box
 import collections
-from pisak.res import colors, dims
+import os.path
+
+from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
 
-class PropertyAdapter(object):
+from pisak import switcher_app, unit, res, properties
+from pisak.layout import Box
+from pisak.res import colors, dims
 
-    def find_attribute(self, name):
-        name  = self._repair_prop_name(name)
-        for relative in self.__class__.mro():
-            attribute = relative.__dict__.get(name)
-            if attribute:
-                break
-        return attribute
 
-    @staticmethod
-    def _repair_prop_name(name):
-        if '-' in name:
-            name = name.replace('-', '_')
-        return name
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.find_attribute(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.find_attribute(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name)
-
-class Header(Mx.Image, PropertyAdapter):
+class Header(Mx.Image, properties.PropertyAdapter):
 
     __gtype_name__ = "PisakMenuHeader"
 
@@ -71,7 +38,7 @@ class Header(Mx.Image, PropertyAdapter):
                            pixbuf.get_height(), 
                            pixbuf.get_rowstride())
 
-class Button(Mx.Button, PropertyAdapter):
+class Button(Mx.Button, properties.PropertyAdapter):
     """
     Generic Pisak button widget with label and icon.
     """
