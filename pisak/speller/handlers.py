@@ -1,11 +1,7 @@
 import subprocess
 
 from pisak import signals
-from pisak.speller import widgets
-
-MODEL = {
-        "document": "concept/sample.txt"
-    }
+from pisak.speller import widgets, database_agent
 
 @signals.registered_handler("speller/go_to_keyboard")
 def go_to_keyboard(keyboard_group):
@@ -38,13 +34,21 @@ def nav_left(text_box):
 @signals.registered_handler("speller/save")
 def save(text_box):
     text = text_box.get_text()
+    name_length = 20
+    name = text.strip()[:name_length] + "..."
+    database_agent.insert_text_file(name)
+    file_path = database_agent.get_text_file_path(name)
     if text:
-        with open(MODEL["document"], "w") as file:
+        with open(file_path, "w") as file:
             file.write(text)
+    
 
 @signals.registered_handler("speller/load")
 def load(text_box):
-    with open(MODEL["document"], "r") as file:
+    files = database_agent.get_text_files()
+    if files:
+        file_path = files[-1][0]
+    with open(file_path, "r") as file:
         text = file.read()
     text_box.clear_all()
     text_box.type_text(text)
