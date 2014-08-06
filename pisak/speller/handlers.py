@@ -36,8 +36,7 @@ def save(text_box):
     text = text_box.get_text()
     name_length = 20
     name = text.strip()[:name_length] + "..."
-    database_agent.insert_text_file(name)
-    file_path = database_agent.get_text_files()[-1][0]
+    file_path = database_agent.insert_text_file(name)
     if text:
         with open(file_path, "w") as file:
             file.write(text)
