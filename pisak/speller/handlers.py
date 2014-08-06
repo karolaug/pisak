@@ -37,21 +37,20 @@ def save(text_box):
     name_length = 20
     name = text.strip()[:name_length] + "..."
     database_agent.insert_text_file(name)
-    file_path = database_agent.get_text_file_path(name)
+    file_path = database_agent.get_text_files()[-1][0]
     if text:
         with open(file_path, "w") as file:
             file.write(text)
     
-
 @signals.registered_handler("speller/load")
 def load(text_box):
     files = database_agent.get_text_files()
     if files:
         file_path = files[-1][0]
-    with open(file_path, "r") as file:
-        text = file.read()
-    text_box.clear_all()
-    text_box.type_text(text)
+        with open(file_path, "r") as file:
+            text = file.read()
+        text_box.clear_all()
+        text_box.type_text(text)
 
 @signals.registered_handler("speller/print")
 def print_doc(text_box):
