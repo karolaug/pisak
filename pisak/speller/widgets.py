@@ -199,7 +199,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 class Key(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerKey"
     __gproperties__ = {
-        "text": (
+        "default_text": (
             GObject.TYPE_STRING,
             "key default text",
             "string appended to a text",
@@ -226,64 +226,106 @@ class Key(pisak.widgets.Button):
 
     def __init__(self):
         super().__init__()
+        self.pre_special_text = None
+        self.undo_chain = []
+        self.allowed_undos = set()
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self.on_activate)
-        self.connect("notify::text", self._set_initial_label)
+        self.connect("notify::default-text", self._set_initial_label)
 
     def _set_initial_label(self, source, spec):
         self.set_default_label()
         self.disconnect_by_func(self._set_initial_label)
 
+    def _cache_pre_special_text(self, text_to_cache):
+        if not self.pre_special_text:
+            self.pre_special_text = text_to_cache
+
+    def undo_label(self):
+        while self.undo_chain:
+            operation = self.undo_chain.pop()
+            if callable(operation) and operation in self.allowed_undos:
+                operation(self)
+        
+    def set_pre_special_label(self):
+        if self.pre_special_text:
+            self.set_label(self.pre_special_text)
+            self.pre_special_text = None
+
     def set_default_label(self):
-        self.set_label(self.text)
+        self.set_label(self.default_text)
+
+    def set_special_label(self):
+        self._cache_pre_special_text(self.get_label())
+        self.set_label(self.special_text)
+
+    def set_caps_label(self):
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.upper())
+
+    def set_lower_label(self):
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.lower())
+
+    def set_altgr_label(self):
+        try:
+            label = self.get_label()
+            if label.isalpha():
+                if label.islower():
+                    self.set_label(self.altgr_text.lower())
+                elif label.isupper():
+                    self.set_label(self.altgr_text.upper())
+        except AttributeError:
+            return None
         
     def set_swap_altgr_label(self):
-        label = self.get_label()
         try:
+            label = self.get_label()
             if self.altgr_text.lower() == label.lower():
                 if label.islower():
                     # from lowercase altgr to lowercase default
-                    self.set_label(self.text.lower())
+                    self.set_label(self.default_text.lower())
                 else:
                     # from uppercase altgr to (uppercase) default
-                    self.set_label(self.text)
-            else:     
+                    self.set_label(self.default_text.upper())
+            else:
                 if label.isalpha() and self.altgr_text:
-                    if self.get_label().islower():
+                    if label.islower():
                         # from lowercase default to lowercase altgr
-                        self.set_label(self.altgr_text.swapcase())
+                        self.set_label(self.altgr_text.lower())
                     else:
                         # from (uppercase) default to uppercase altgr
-                        self.set_label(self.altgr_text)
+                        self.set_label(self.altgr_text.upper())
         except AttributeError:
             return None
 
     def set_swap_caps_label(self):
-        self.set_label(self.get_label().swapcase())
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.swapcase())
 
     def set_swap_special_label(self):
         try:
             if self.get_label() == self.special_text:
-                self.set_default_label()
+                self.set_pre_special_label()
             else:
                 self.set_special_label()
         except AttributeError:
             return None
 
-    def set_special_label(self):
-        self.set_label(self.special_text)
-
     def on_activate(self, source):
         if self.target:
             self.target.type_text(self.get_label())
-
+        
     @property
-    def text(self):
-        return self._text
+    def default_text(self):
+        return self._default_text
 
-    @text.setter
-    def text(self, value):
-        self._text = str(value)
+    @default_text.setter
+    def default_text(self, value):
+        self._default_text = str(value)
 
     @property
     def altgr_text(self):
