@@ -2,14 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+import configparser
 
 import pressagio.callback
 import pressagio
-
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
 
 
 _PATH = os.path.abspath(os.path.split(__file__)[0])
