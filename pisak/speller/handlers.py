@@ -45,7 +45,7 @@ def save(text_box):
 def load(text_box):
     files = database_agent.get_text_files()
     if files:
-        file_path = files[-1][0]
+        file_path = files[-1]["path"]
         with open(file_path, "r") as file:
             text = file.read()
         text_box.clear_all()

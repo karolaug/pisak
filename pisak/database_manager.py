@@ -27,6 +27,7 @@ CONST_APP = {
 class DatabaseConnector(object):
     def __init__(self):
         self._open_connection()
+        self.conn.row_factory = sqlite3.Row
 
     def _open_connection(self):
         self.conn = sqlite3.connect(DATABASE_PATH,
