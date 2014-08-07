@@ -3,6 +3,7 @@ import subprocess
 from pisak import signals
 from pisak.speller import widgets, database_agent
 
+
 @signals.registered_handler("speller/go_to_keyboard")
 def go_to_keyboard(keyboard_group):
     keyboard_group.start_cycle()
@@ -51,6 +52,13 @@ def load(text_box):
         text_box.clear_all()
         text_box.type_text(text)
 
+@signals.registered_handler("speller/show_load_pop_up")
+def show_load_pop_up(load_pop_up):
+    pop_up = load_pop_up
+    text_files = database_agent.get_text_files()
+    pop_up.generate_content(text_files)
+    pop_up.on_screen()
+    
 @signals.registered_handler("speller/print")
 def print_doc(text_box):
     raise NotImplementedError

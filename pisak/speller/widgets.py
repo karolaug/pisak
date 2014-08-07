@@ -3,8 +3,9 @@ Definitions of widgets specific to speller applet
 '''
 from gi.repository import Clutter, Mx, GObject, Pango
 
-from pisak import unit
+from pisak import unit, layout, properties
 import pisak.widgets
+
 
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
@@ -489,3 +490,60 @@ class Prediction(pisak.widgets.Button):
     @order_num.setter
     def order_num(self, value):
         self._order_num = value
+
+
+class LoadPopUpBox(layout.Box, properties.PropertyAdapter):
+    __gtype_name__ = "PisakSpellerLoadPopUpBox"
+    __gproperties__ = {
+        "background_scene" : (
+            Clutter.Actor.__gtype__,
+            "background scene",
+            "scene to show pop up on",
+            GObject.PARAM_READWRITE),
+        "target": (
+            Text.__gtype__,
+            "text inserting target",
+            "id of text box to insert text",
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+
+    @property
+    def target(self):
+        return self._target
+
+    @target.setter
+    def target(self, value):
+        self._target = value
+
+    @property
+    def background_scene(self):
+        return self._background_scene
+
+    @background_scene.setter
+    def background_scene(self, value):
+        self._background_scene = value
+
+    def on_screen(self):
+        self.background_scene.stop_cycle()
+        self.background_scene.add_child(self.get_parent())
+
+    def generate_content(self, text_files):
+        for file in text_files:
+            b = Button()
+            b.set_label(file["name"])
+            self.add_child(b)
+            b.connect("clicked", self._on_select, file["path"])
+
+    def _on_select(self, button, path):
+        with open(path, "r") as file:
+            text = file.read()
+        self.target.clear_all()
+        self.target.type_text(text)
+        self._close()
+        
+    def _close(self):
+        self.background_scene.remove_child(self.get_parent())
+        self.background_scene.start_cycle()

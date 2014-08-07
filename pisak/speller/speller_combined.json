@@ -24,6 +24,31 @@
         "x-expand": true,
         "y-expand": true
     },
+    {
+        "id": "load_pop_up",
+        "type": "PisakScanningGroup",
+        "strategy": {
+                        "type": "PisakRowStrategy",
+                        "interval": 800,
+                        "max-cycle-count": -1
+                    },
+        "signals": [
+                       {
+                           "name": "notify::mapped",
+                           "handler": "general/start_group"
+                       }
+                   ],
+        "children": ["load_pop_up_box"]
+    },
+    {
+        "id": "load_pop_up_box",
+        "type": "PisakSpellerLoadPopUpBox",
+        "target": "text_box",
+        "background-scene": "main",
+        "ratio-width": 0.6,
+        "ratio-height": 0.5,
+        "background-color": "light blue"
+    },
     {                                                                                                          
         "id": "main_box",
         "type": "PisakBoxLayout",
@@ -160,8 +185,8 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/load",
-                           "object": "text_box"
+                           "handler": "speller/show_load_pop_up",
+			   "object": "load_pop_up_box"
                        }
                    ]
     },
