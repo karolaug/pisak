@@ -56,6 +56,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         self._set_text_params()
         self.clutter_text.set_reactive(True)
         self.clutter_text.set_editable(True)
+        self.line = 0
 
     def add_operation(self, operation):
         if len(self.history) == 0 or (not self.history[-1].compose(operation)):
@@ -170,6 +171,41 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self.clutter_text.set_cursor_position(current_position-1)
         elif current_position == -1 and text_length > 0:
             self.clutter_text.set_cursor_position(text_length-1)
+
+    def move_line_up(self):
+        """
+        Move cursor one line up
+        """
+        
+        layout = self.clutter_text.get_layout()
+        text = self.get_text()
+        cursor_pos = self.clutter_text.get_cursor_position()
+        if cursor_pos == 0:
+            index_ = 0
+        else:
+            index_ = len(text)
+
+        line_no, x = layout.index_to_line_x(index_, 0)
+
+        line_no -= 1
+        if line_no < 0:
+            return False
+
+        if x_pos != -1:
+            x = x_pos
+
+        layout_line = layout.get_line_readonly(line_no)
+        if !layout_line:
+            return False
+
+        index_, trailing = layout.x_to_index(layout_line, x)
+
+        pos = 
+
+    def move_line_down(self):
+        """
+        Move cursor one line down
+        """
 
     def move_to_new_line(self):
         """
