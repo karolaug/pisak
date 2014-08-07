@@ -305,7 +305,7 @@ class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
         string = self.target.get_endmost_triplet()
         self.emit("processing-on")
         self.content = predictor.get_predictions(string)
-        self.emit("content-update")
+        #self.emit("content-update")
 
     def _follow_target(self):
         if self.target:
@@ -359,6 +359,7 @@ class Prediction(pisak.widgets.Button):
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self._on_activate)
         self.idle_icon_name = "hourglass"
+        self.idle_icon_size = 50
 
     def _on_activate(self, source):
         label = self.get_label()
@@ -381,7 +382,8 @@ class Prediction(pisak.widgets.Button):
             self.set_disabled(True)
 
     def _button_idle(self, source):
-        self.set_label("")
+        self.set_label(" ")
+        self.icon_size = self.idle_icon_size
         self.icon_name = self.idle_icon_name
         self.set_disabled(True)
 

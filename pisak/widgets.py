@@ -209,19 +209,25 @@ class Button(Mx.Button, PropertyAdapter):
         raise NotImplementedError
 
     def set_icon(self):
-        self.custom_content()
-        self.read_svg()
-        self.set_image()
+        try:
+            if self.box in self.get_children()[0].get_children():
+                self.get_children()[0].remove_actor(self.box)
+        except AttributeError:
+            pass
+        if self.icon_name:        
+            self.custom_content()
+            self.read_svg()
+            self.set_image()
 
-        text_length = len(self.get_label())
-        if text_length == 1:
-            pass
-        else:
-            pass
+            text_length = len(self.get_label())
+            if text_length == 1:
+                pass
+            else:
+                pass
             #self.space.set_width(self.get_width() - 200 - self.image.get_width())
 
-        self.box.add_child(self.space)
-        self.box.add_child(self.image)
+            self.box.add_child(self.space)
+            self.box.add_child(self.image)
 
     def custom_content(self):
         self.set_icon_visible(False)
@@ -289,18 +295,19 @@ class Button(Mx.Button, PropertyAdapter):
 
     def change_icon_white(self):
         try:
-            if self.style_pseudo_class_contains("hover"):
-                self.set_image_white()
-            else:
-                pixbuf = self.svg.get_pixbuf()
-                icon_size = self.get_icon_size()
-                if icon_size:
-                    pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
-                    self.image.set_from_data(pixbuf.get_pixels(),
-                                             Cogl.PixelFormat.RGBA_8888, 
-                                             pixbuf.get_width(), 
-                                             pixbuf.get_height(), 
-                                             pixbuf.get_rowstride())
+            if self.icon_name:
+                if self.style_pseudo_class_contains("hover"):
+                    self.set_image_white()
+                else:
+                    pixbuf = self.svg.get_pixbuf()
+                    icon_size = self.get_icon_size()
+                    if icon_size:
+                        pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+                        self.image.set_from_data(pixbuf.get_pixels(),
+                                                 Cogl.PixelFormat.RGBA_8888, 
+                                                 pixbuf.get_width(), 
+                                                 pixbuf.get_height(), 
+                                                 pixbuf.get_rowstride())
         except AttributeError:
             pass
             
