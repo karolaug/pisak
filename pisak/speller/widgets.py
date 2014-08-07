@@ -492,7 +492,7 @@ class Prediction(pisak.widgets.Button):
         self._order_num = value
 
 
-class LoadPopUpBox(layout.Box, properties.PropertyAdapter):
+class LoadPopUpBox(layout.Box):
     __gtype_name__ = "PisakSpellerLoadPopUpBox"
     __gproperties__ = {
         "background_scene" : (

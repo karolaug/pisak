@@ -45,8 +45,8 @@
         "type": "PisakSpellerLoadPopUpBox",
         "target": "text_box",
         "background-scene": "main",
-        "ratio-width": 0.6,
-        "ratio-height": 0.5,
+        "width": 800,
+        "height": 400,
         "background-color": "light blue"
     },
     {                                                                                                          
