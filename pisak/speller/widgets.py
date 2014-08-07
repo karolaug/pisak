@@ -392,6 +392,7 @@ class Prediction(pisak.widgets.Button):
         self.set_label(" ")
         self.icon_size = self.idle_icon_size
         self.icon_name = self.idle_icon_name
+        self.set_disabled(True)
 
     def _follow_dictionary(self):
         if self.dictionary:
