@@ -180,11 +180,11 @@ def swap_caps_chars(keyboard_item):
 
 @signals.registered_handler("speller/lower_chars_on_select")
 def lower_chars_on_select(keyboard_panel):
-    _previous_chars_on_select(keyboard_panel, keyboard_panel, widgets.Key.set_caps_label)
+    _previous_chars_on_select(keyboard_panel, keyboard_panel, widgets.Key.set_lower_label)
 
 @signals.registered_handler("speller/caps_chars_on_select")
 def caps_chars_on_select(keyboard_panel):
-    _previous_chars_on_select(keyboard_panel, keyboard_panel, widgets.Key.set_lower_label)
+    _previous_chars_on_select(keyboard_panel, keyboard_panel, widgets.Key.set_caps_label)
 
 @signals.registered_handler("speller/swap_caps_chars_on_select")
 def swap_caps_chars_on_select(keyboard_panel):
