@@ -195,12 +195,12 @@ class Text(Mx.Label, properties.PropertyAdapter):
             x = x_pos
 
         layout_line = layout.get_line_readonly(line_no)
-        if !layout_line:
+        if not layout_line:
             return False
 
         index_, trailing = layout.x_to_index(layout_line, x)
 
-        pos = 
+        #pos = 
 
     def move_line_down(self):
         """
