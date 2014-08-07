@@ -282,6 +282,8 @@ class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
     __gsignals__ = {
         "content_update":(
             GObject.SIGNAL_RUN_FIRST, None, ()),
+        "processing_on":(
+            GObject.SIGNAL_RUN_FIRST, None, ())
     }
     __gproperties__ = {
         "target": (
@@ -301,6 +303,7 @@ class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
         
     def _update_content(self, *args):
         string = self.target.get_endmost_triplet()
+        #self.emit("processing-on")
         self.content = predictor.get_predictions(string)
         self.emit("content-update")
 
@@ -355,6 +358,7 @@ class Prediction(pisak.widgets.Button):
         super().__init__()
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self._on_activate)
+        self.idle_icon_name = "hourglass"
 
     def _on_activate(self, source):
         label = self.get_label()
@@ -362,6 +366,11 @@ class Prediction(pisak.widgets.Button):
             self.target.replace_endmost_string(label)
 
     def _update_button(self, source):
+        try:
+            if self.icon_name:
+                self.icon_name = ""
+        except AttributeError:
+            pass
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
             self.set_label(new_label)
@@ -371,14 +380,21 @@ class Prediction(pisak.widgets.Button):
             self.set_label("")
             self.set_disabled(True)
 
+    def _button_idle(self, source):
+        self.set_label("")
+        self.icon_name = self.idle_icon
+        self.set_disabled(True)
+
     def _follow_dictionary(self):
         if self.dictionary:
             self.dictionary.connect("content-update", self._update_button)
+            self.dictionary.connect("processing-on", self._button_idle)
 
     def _stop_following_dictionary(self):
         try:
             if self.dictionary:
                 self.dictionary.disconnect_by_func("text-changed", self._update_button)
+                self.dictionary.disconnect_by_func("processing-on", self._button_idle)
         except AttributeError:
             return None
 
