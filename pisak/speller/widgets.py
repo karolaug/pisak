@@ -305,7 +305,7 @@ class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
         string = self.target.get_endmost_triplet()
         self.emit("processing-on")
         self.content = predictor.get_predictions(string)
-        #self.emit("content-update")
+        self.emit("content-update")
 
     def _follow_target(self):
         if self.target:
