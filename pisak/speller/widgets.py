@@ -296,16 +296,23 @@ class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.content = []
+        self.lock = threading.Lock() #nessesary
 
     def get_suggestion(self, accuracy_level):
         if accuracy_level < len(self.content): 
             return self.content[accuracy_level]
-        
-    def _update_content(self, *args):
-        string = self.target.get_endmost_triplet()
-        self.emit("processing-on")
-        self.content = predictor.get_predictions(string)
+
+    def do_prediction(self): #function to preform in a separate thread
+        with self.lock: #might be replaced with clutter.threads_enter and clutter.threads_leave
+            string = self.target.get_endmost_triplet()
+            self.content = predictor.get_predictions(string)
         self.emit("content-update")
+
+    def _update_content(self, *args):
+        self.emit("processing-on")
+        t = threading.Thread(target = self.do_prediction) #very simple solution, not sure
+        t.daemon = True #thread will be killed when the main program is killed
+        t.start()
 
     def _follow_target(self):
         if self.target:
@@ -385,7 +392,6 @@ class Prediction(pisak.widgets.Button):
         self.set_label(" ")
         self.icon_size = self.idle_icon_size
         self.icon_name = self.idle_icon_name
-        self.set_disabled(True)
 
     def _follow_dictionary(self):
         if self.dictionary:
