@@ -61,7 +61,7 @@ class Strategy(GObject.GObject):
         raise NotImplementedError("Incomplete strategy implementation")
 
 
-class Group(Clutter.Actor, pisak.widgets.PropertyAdapter):
+class Group(Clutter.Actor, properties.PropertyAdapter):
     """
     Container for grouping widgets for scanning purposes.
     """
