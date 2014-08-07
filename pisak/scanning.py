@@ -2,7 +2,8 @@
 Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx
-import pisak.widgets
+
+from pisak import properties
 
 
 class Strategy(GObject.GObject):
@@ -60,7 +61,7 @@ class Strategy(GObject.GObject):
         raise NotImplementedError("Incomplete strategy implementation")
 
 
-class Group(Clutter.Actor, pisak.widgets.PropertyAdapter):
+class Group(Clutter.Actor, properties.PropertyAdapter):
     """
     Container for grouping widgets for scanning purposes.
     """
@@ -166,7 +167,7 @@ class Group(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.remove_pseudoclass_all("scanning")
 
 
-class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
+class RowStrategy(Strategy, properties.PropertyAdapter):
     __gtype_name__ = "PisakRowStrategy"
 
     __gproperties__ = {

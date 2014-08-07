@@ -48,6 +48,7 @@ class CursorGroup(Clutter.Actor):
         self.cursor.set_x(coords[1])
         self.cursor.set_y(coords[2])
 
+
 class Cursor(Clutter.Actor):
     def __init__(self, size):
         super().__init__()
@@ -69,7 +70,7 @@ class Cursor(Clutter.Actor):
         context.fill()
         return True
     
-class Text(Mx.Label, pisak.widgets.PropertyAdapter):
+class Text(Mx.Label, properties.PropertyAdapter):
     class Insertion(object):
         def __init__(self, pos, value):
             self.pos = pos
@@ -148,7 +149,6 @@ class Text(Mx.Label, pisak.widgets.PropertyAdapter):
 
         def __str__(self):
             return "{} -> {} @ {}".format(self.before, self.after, self.pos)
-
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
