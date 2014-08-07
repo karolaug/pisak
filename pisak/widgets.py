@@ -209,12 +209,7 @@ class Button(Mx.Button, PropertyAdapter):
         raise NotImplementedError
 
     def set_icon(self):
-        try:
-            if self.box in self.get_children()[0].get_children():
-                self.get_children()[0].remove_actor(self.box)
-        except AttributeError:
-            pass
-        if self.icon_name:        
+        if self.icon_name:
             self.custom_content()
             self.read_svg()
             self.set_image()
@@ -225,16 +220,22 @@ class Button(Mx.Button, PropertyAdapter):
             else:
                 pass
             #self.space.set_width(self.get_width() - 200 - self.image.get_width())
-
-            self.box.add_child(self.space)
-            self.box.add_child(self.image)
+            self.box.show()
+            if self.image not in self.box.get_children():
+                self.box.add_child(self.space)
+                self.box.add_child(self.image)
+        else:
+            try:
+                self.box.hide()
+            except AttributeError:
+                return None
 
     def custom_content(self):
         self.set_icon_visible(False)
-        self.box = Box()
         self.space = Clutter.Actor()
-
-        self.get_children()[0].add_actor(self.box, 1)
+        if not hasattr(self, "box"):
+            self.box = Box()
+            self.get_children()[0].add_actor(self.box, 1)
 
     def read_svg(self):
         try:
@@ -247,7 +248,8 @@ class Button(Mx.Button, PropertyAdapter):
             self.svg = False
 
     def set_image(self):
-        self.image = Mx.Image()
+        if not hasattr(self, "image"):
+            self.image = Mx.Image()
         self.image_path = os.path.join(res.PATH, "icons", self.icon_name)
         icon_size = self.get_icon_size()
         if self.svg:
