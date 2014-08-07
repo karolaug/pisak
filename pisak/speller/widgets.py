@@ -358,6 +358,12 @@ class Prediction(pisak.widgets.Button):
             Text.__gtype__,
             "typing target",
             "id of text box to type text",
+            GObject.PARAM_READWRITE),
+        "idle_icon_name": (
+            GObject.TYPE_STRING,
+            "idle icon name",
+            "name of the icon on button while idle",
+            " ",
             GObject.PARAM_READWRITE)
     }
 
@@ -366,7 +372,15 @@ class Prediction(pisak.widgets.Button):
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self._on_activate)
         self.idle_icon_name = "hourglass"
-        self.idle_icon_size = 50
+        self.icon_size = 50
+
+    @property
+    def idle_icon_name(self):
+        return self._idle_icon_name
+
+    @idle_icon_name.setter
+    def idle_icon_name(self, value):
+        self._idle_icon_name = value
 
     def _on_activate(self, source):
         label = self.get_label()
@@ -382,17 +396,17 @@ class Prediction(pisak.widgets.Button):
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
             self.set_label(new_label)
-            if self.get_disabled():
-                self.set_disabled(False)
+            self.set_disabled(False)
         else:
             self.set_label("")
-            if not self.get_disabled():
-                self.set_disabled(True)
+            self.set_disabled(True)
 
     def _button_idle(self, source):
         self.set_label(" ")
-        self.icon_size = self.idle_icon_size
-        self.icon_name = self.idle_icon_name
+        try:
+            self.icon_name = self.idle_icon_name
+        except AttributeError:
+            pass
         self.set_disabled(True)
 
     def _follow_dictionary(self):
