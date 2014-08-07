@@ -303,7 +303,7 @@ class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
         
     def _update_content(self, *args):
         string = self.target.get_endmost_triplet()
-        #self.emit("processing-on")
+        self.emit("processing-on")
         self.content = predictor.get_predictions(string)
         self.emit("content-update")
 
@@ -382,7 +382,7 @@ class Prediction(pisak.widgets.Button):
 
     def _button_idle(self, source):
         self.set_label("")
-        self.icon_name = self.idle_icon
+        self.icon_name = self.idle_icon_name
         self.set_disabled(True)
 
     def _follow_dictionary(self):
