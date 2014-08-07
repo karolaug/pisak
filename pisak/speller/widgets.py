@@ -386,7 +386,8 @@ class Prediction(pisak.widgets.Button):
                 self.set_disabled(False)
         else:
             self.set_label("")
-            self.set_disabled(True)
+            if not self.get_disabled():
+                self.set_disabled(True)
 
     def _button_idle(self, source):
         self.set_label(" ")
