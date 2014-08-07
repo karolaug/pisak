@@ -1,13 +1,13 @@
 '''
 Definitions of widgets specific to speller applet
 '''
+import threading
+
 from gi.repository import Mx, GObject, Pango
 
 from pisak.speller.prediction import predictor
 from pisak import unit
 import pisak.widgets
-
-import threading
 
 
 class Button(pisak.widgets.Button):
@@ -365,8 +365,11 @@ class Prediction(pisak.widgets.Button):
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
             self.set_label(new_label)
+            if self.get_disabled():
+                self.set_disabled(False)
         else:
             self.set_label("")
+            self.set_disabled(True)
 
     def _follow_dictionary(self):
         if self.dictionary:
