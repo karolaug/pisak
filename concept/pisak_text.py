@@ -1,5 +1,4 @@
 from gi.repository import Clutter
-from cairo_cursor import Cursor
 import cairo
 
 class Cursor_Canvas(Clutter.Actor):
