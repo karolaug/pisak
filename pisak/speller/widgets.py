@@ -509,6 +509,8 @@ class LoadPopUpBox(layout.Box):
 
     def __init__(self):
         super().__init__()
+        self.scanning_group = None
+        self.stage = None
 
     @property
     def target(self):
@@ -527,8 +529,10 @@ class LoadPopUpBox(layout.Box):
         self._background_scene = value
 
     def on_screen(self):
-        self.background_scene.stop_cycle()
-        self.background_scene.add_child(self.get_parent())
+        self.scanning_group = self.get_parent()
+        self.stage = self.background_scene.get_stage()
+        self.stage.add_child(self.scanning_group)
+        self.stage.pending_group = self.scanning_group
 
     def generate_content(self, text_files):
         for file in text_files:
@@ -545,6 +549,10 @@ class LoadPopUpBox(layout.Box):
         self._close()
         
     def _close(self):
+        self.stage.pending_group = self.background_scene
+        self.scanning_group.hide()
+        Clutter.threads_add_timeout(0, self.scanning_group.strategy.interval, self._killall, None)
+
+    def _killall(self, *args):  # workaround for scanning issues
         self.remove_all_children()
-        self.background_scene.remove_child(self.get_parent())
-        self.background_scene.start_cycle()
+        self.stage.remove_child(self.scanning_group)
