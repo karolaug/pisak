@@ -207,6 +207,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def _custom_content(self):
         self.set_icon_visible(False)
         self.box = Box()
+        self.get_children()[0].add_actor(self.box, 1)
         self.space = Clutter.Actor()
         self.image = Mx.Image()
         self.box.add_child(self.space)
@@ -215,11 +216,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def set_icon(self):
         if self.icon_name:
             self.load_image()
-            if self.box not in self.get_children()[0].get_children():
-                self.get_children()[0].add_actor(self.box, 1)
+            self.box.show()
         else:
-            if self.box in self.get_children()[0].get_children():
-                self.get_children()[0].remove_actor(self.box)
+            self.box.hide()
 
     def load_image(self):
         self.read_svg()
