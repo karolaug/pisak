@@ -35,10 +35,10 @@ def nav_left(text_box):
 @signals.registered_handler("speller/save")
 def save(text_box):
     text = text_box.get_text()
-    name_length = 20
-    name = text.strip()[:name_length] + "..."
-    file_path = database_agent.insert_text_file(name)
     if text:
+        name_length = 20
+        name = text.strip()[:name_length] + "..."
+        file_path = database_agent.insert_text_file(name)
         with open(file_path, "w") as file:
             file.write(text)
     

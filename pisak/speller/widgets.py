@@ -536,10 +536,10 @@ class LoadPopUpBox(layout.Box):
 
     def generate_content(self, text_files):
         for file in text_files:
-            b = Button()
-            b.set_label(file["name"])
-            self.add_child(b)
-            b.connect("clicked", self._on_select, file["path"])
+            button = Button()
+            button.set_label(file["name"])
+            self.add_child(button)
+            button.connect("clicked", self._on_select, file["path"])
 
     def _on_select(self, button, path):
         with open(path, "r") as file:
