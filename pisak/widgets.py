@@ -74,19 +74,31 @@ class Button(Mx.Button, properties.PropertyAdapter):
         "spacing": (
             GObject.TYPE_INT64, "space between icon and text",
             "space between icon and text", 0, 1000, 100, 
-            GObject.PARAM_READWRITE)
+            GObject.PARAM_READWRITE),
+        "on_select_hilite_pattern": (
+            GObject.TYPE_STRING,
+            "hilite pattern",
+            "progression of hilite states invoked"
+            "by button selection separated with hyphens",
+            "active-", GObject.PARAM_READWRITE),
+        "on_select_hilite_duration": (
+            GObject.TYPE_UINT, "hilite duration",
+            "duration of hilite progression in msc",
+            0, GObject.G_MAXUINT, 1000,
+            GObject.PARAM_READWRITE),
     }
     
     def __init__(self):
         super().__init__()
         self.properties = {}
-        self.selection_time = 1000
+        self.on_select_hilite_pattern = "hover-scanning-"
+        self.on_select_hilite_duration = 1000
         self.current_icon = None
         self._connect_signals()
 
     def _connect_signals(self):
         self.connect("notify::text", self._set_initial_label)
-        self.connect("clicked", self.click_activate)
+        self.connect("clicked", self.on_click_activate)
         #self.connect("enter-event", lambda *_: self.hilite_on())
         #self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
@@ -154,6 +166,22 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def spacing(self, value):
         self._spacing = value
         #self.box.set_spacing(value)
+
+    @property
+    def on_select_hilite_pattern(self):
+        return self._on_select_hilite_pattern
+
+    @on_select_hilite_pattern.setter
+    def on_select_hilite_pattern(self, value):
+        self._on_select_hilite_pattern = value
+
+    @property
+    def on_select_hilite_duration(self):
+        return self._on_select_hilite_duration
+
+    @on_select_hilite_duration.setter
+    def on_select_hilite_duration(self, value):
+        self._on_select_hilite_duration = value
 
     def _set_initial_label(self, source, spec):
         self.set_default_label()
@@ -282,10 +310,17 @@ class Button(Mx.Button, properties.PropertyAdapter):
 
     def inactivate(self):
         self.style_pseudo_class_remove("active")
+
+    def on_select_hilite(self):
+        hilite_stage = self._on_select_hilite_pattern_parsed.pop(0)
+        self.set_style_pseudo_class(hilite_stage)
+        if self._on_select_hilite_pattern_parsed:
+            return True
     
-    def click_activate(self, source):
-        self.select_on()
-        Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
+    def on_click_activate(self, source):
+        self._on_select_hilite_pattern_parsed = self.on_select_hilite_pattern.split("-")
+        phase_duration = int( self.on_select_hilite_duration / len(self._on_select_hilite_pattern_parsed) )
+        Clutter.threads_add_timeout(0, phase_duration, self.on_select_hilite)
         self.emit("activate")
 
 
