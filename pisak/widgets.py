@@ -94,7 +94,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.on_select_hilite_pattern = "hover-scanning-"
         self.on_select_hilite_duration = 1000
         self.current_icon = None
-        self._custom_content()
+        self.box = None
         self._connect_signals()
 
     def _connect_signals(self):
@@ -204,7 +204,16 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def switch_icon(self):
         raise NotImplementedError
 
-    def _custom_content(self):
+    def set_icon(self):
+        if not self.box:
+            self.custom_content()
+        if self.icon_name:
+            self.load_image()
+            self.box.show()
+        else:
+            self.box.hide()
+
+    def custom_content(self):
         self.set_icon_visible(False)
         self.box = Box()
         self.get_children()[0].add_actor(self.box, 1)
@@ -212,13 +221,6 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.image = Mx.Image()
         self.box.add_child(self.space)
         self.box.add_child(self.image)
-
-    def set_icon(self):
-        if self.icon_name:
-            self.load_image()
-            self.box.show()
-        else:
-            self.box.hide()
 
     def load_image(self):
         self.read_svg()
