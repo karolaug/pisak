@@ -516,7 +516,7 @@ class Key(pisak.widgets.Button):
         self._target = value
 
 
-class Dictionary(GObject.GObject, pisak.widgets.PropertyAdapter):
+class Dictionary(GObject.GObject, properties.PropertyAdapter):
     __gtype_name__ = "PisakSpellerDictionary"
     __gsignals__ = {
         "content_update":(
