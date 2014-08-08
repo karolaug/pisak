@@ -3,7 +3,7 @@ Definitions of widgets specific to speller applet
 '''
 from gi.repository import Clutter, Mx, GObject, Pango
 
-from pisak import unit, layout, properties
+from pisak import unit, layout, properties, scanning
 import pisak.widgets
 
 
@@ -496,7 +496,7 @@ class LoadPopUpBox(layout.Box):
     __gtype_name__ = "PisakSpellerLoadPopUpBox"
     __gproperties__ = {
         "background_scene" : (
-            Clutter.Actor.__gtype__,
+            scanning.Group.__gtype__,
             "background scene",
             "scene to show pop up on",
             GObject.PARAM_READWRITE),
@@ -545,5 +545,6 @@ class LoadPopUpBox(layout.Box):
         self._close()
         
     def _close(self):
+        self.remove_all_children()
         self.background_scene.remove_child(self.get_parent())
         self.background_scene.start_cycle()
