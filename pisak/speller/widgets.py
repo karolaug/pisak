@@ -41,9 +41,114 @@ class CursorGroup(Clutter.Actor):
         self.add_child(self.cursor)
         self.cursor.set_x(0)
         self.cursor.set_y(0)
+        
+    def move_cursor(self, event):
+        cursor_pos = self.text.clutter_text.get_cursor_position()
+        coords = self.text.clutter_text.position_to_coords(cursor_pos)
+        self.cursor.set_x(coords[1])
+        self.cursor.set_y(coords[2])
 
+class Cursor(Clutter.Actor):
+    def __init__(self, size):
+        super().__init__()
+
+        self.width = size[0]
+        self.height = size[1]
+        self.set_size(self.width, self.height)
+
+        self.canvas = Clutter.Canvas()
+        self.canvas.set_size(self.width, self.height)
+        self.canvas.connect('draw', self.draw)
+        self.canvas.invalidate()
+        self.set_content(self.canvas)
+
+    @staticmethod
+    def draw(canvas, context, width, height):
+        context.set_source_rgb(0, 0, 0)
+        context.rectangle(0, 0, width, height)
+        context.fill()
+        return True
     
 class Text(Mx.Label, properties.PropertyAdapter):
+    class Insertion(object):
+        def __init__(self, pos, value):
+            self.pos = pos
+            self.value = value
+
+        def apply(self, text):
+            text.clutter_text.insert_text(self.value, self.pos)
+
+        def revert(self, text):
+            end = self.pos + len(self.value)
+            text.clutter_text.delete_text(self.pos, end)
+
+        def compose(self, operation):
+            if isinstance(operation, Text.Insertion):
+                consecutive = self.pos + len(self.value) == operation.pos
+                compatible = self.value[-1].isspace() or \
+                    not operation.value[0].isspace()
+                if consecutive and compatible:
+                    self.value = self.value + operation.value
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+        def __str__(self):
+            return "+ {} @ {}".format(self.value, self.pos)
+
+    class Deletion(object):
+        def __init__(self, pos, value):
+            self.pos = pos
+            self.value = value
+
+        def apply(self, text):
+            end = self.pos + len(self.value)
+            text.clutter_text.delete_text(self.pos, end)
+
+        def revert(self, text):
+            text.clutter_text.insert_text(self.value, self.pos)
+
+        def compose(self, operation): 
+            if isinstance(operation, Text.Deletion):
+                consecutive = operation.pos + len(operation.value) == self.pos
+                compatible = operation.value[-1].isspace() or \
+                    not self.value[0].isspace()
+                if consecutive and compatible:
+                    self.pos = operation.pos
+                    self.value = operation.value + self.value
+                    return True
+                else:
+                    return False
+            else:
+                return False
+
+        def __str__(self):
+            return "- {} @ {}".format(self.value, self.pos)
+
+    class Replacement(object):
+        def __init__(self, pos, before, after):
+            self.pos = pos
+            self.before = before
+            self.after = after
+
+        def _replace(self, text, before, after):
+            text.clutter_text.delete_text(self.pos, self.pos + len(before))
+            text.clutter_text.insert_text(self.pos, after)
+
+        def apply(self, text):
+            self._replace(text, self.before, self.after)
+
+        def revert(self, text):
+            self._replace(text)
+
+        def compose(self):
+            return False
+
+        def __str__(self):
+            return "{} -> {} @ {}".format(self.before, self.after, self.pos)
+
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
