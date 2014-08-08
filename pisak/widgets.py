@@ -94,6 +94,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.on_select_hilite_pattern = "hover-scanning-"
         self.on_select_hilite_duration = 1000
         self.current_icon = None
+        self._custom_content()
         self._connect_signals()
 
     def _connect_signals(self):
@@ -203,48 +204,24 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def switch_icon(self):
         raise NotImplementedError
 
+    def _custom_content(self):
+        self.set_icon_visible(False)
+        self.box = Box()
+        self.get_children()[0].add_actor(self.box, 1)
+        self.space = Clutter.Actor()
+        self.image = Mx.Image()
+        self.box.add_child(self.space)
+        self.box.add_child(self.image)
+
     def set_icon(self):
         if self.icon_name:
-            self.custom_content()
-            self.read_svg()
-            self.set_image()
-
-            text_length = len(self.get_label())
-            if text_length == 1:
-                pass
-            else:
-                pass
-            #self.space.set_width(self.get_width() - 200 - self.image.get_width())
+            self.load_image()
             self.box.show()
-            if self.image not in self.box.get_children():
-                self.box.add_child(self.space)
-                self.box.add_child(self.image)
         else:
-            try:
-                self.box.hide()
-            except AttributeError:
-                return None
+            self.box.hide()
 
-    def custom_content(self):
-        self.set_icon_visible(False)
-        self.space = Clutter.Actor()
-        if not hasattr(self, "box"):
-            self.box = Box()
-            self.get_children()[0].add_actor(self.box, 1)
-
-    def read_svg(self):
-        try:
-            handle = Rsvg.Handle()
-            svg_path = ''.join([os.path.join(res.PATH,'icons',
-                                             self.icon_name), '.svg'])
-            self.svg = handle.new_from_file(svg_path)
-        except: #GError as error:
-            print('No file found at {}.'.format(svg_path))
-            self.svg = False
-
-    def set_image(self):
-        if not hasattr(self, "image"):
-            self.image = Mx.Image()
+    def load_image(self):
+        self.read_svg()
         self.image_path = os.path.join(res.PATH, "icons", self.icon_name)
         icon_size = self.get_icon_size()
         if self.svg:
@@ -273,6 +250,16 @@ class Button(Mx.Button, properties.PropertyAdapter):
                 print(image_size, icon_size)
                 self.image.set_scale(icon_size * 10 / image_size[1],
                                      icon_size * 10/ image_size[0])
+
+    def read_svg(self):
+        try:
+            handle = Rsvg.Handle()
+            svg_path = ''.join([os.path.join(res.PATH,'icons',
+                                             self.icon_name), '.svg'])
+            self.svg = handle.new_from_file(svg_path)
+        except:  # GError as error:
+            print('No file found at {}.'.format(svg_path))
+            self.svg = False
 
     def set_image_white(self):
         handle = Rsvg.Handle()
