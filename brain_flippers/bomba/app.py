@@ -34,7 +34,6 @@ def prepare_help_view(stage, script, data):
     text = script.get_object("text")
     tuto = "W grze tej masz oszacować moment,\nw którym na zegarze bomby wybije 00:00\ni wtedy wcisnąć czerwony guzik."
     text.set_text(tuto)
-
     backButton = script.get_object("backButton")
     backButton.connect("clicked", lambda *_: stage.load_view("menu", None))
 
@@ -42,6 +41,7 @@ def prepare_help_view(stage, script, data):
 def prepare_top_result_view(stage, script, data):
     def back_to_menu(*args):
         stage.load_view("menu", None)
+        
     def show_top_list(*args):
         data = {"score": score_logic.game_score}
         stage.load_view("top_list", data)
@@ -59,25 +59,23 @@ def prepare_meh_result_view(stage, script, data):
     score_message = str(score)
     message_label = script.get_object("player_score_value")
     message_label.set_text(score_message)
-
     button = script.get_object("try_again")
     button.connect("activate", lambda *_: stage.load_view("game", None))
 
 def prepare_top_list_view(stage, script, data):
-    title_text = "Dzisiejsze wyniki:"
     def back_to_menu(*args):
         stage.load_view("menu", None)
+        
+    title_text = "Dzisiejsze wyniki:"
     logic = script.get_object("logic")
     logic.game = "bomba"
     logic.only_today = True
-    logic.results_table = script.get_object("score_table")
+    logic.results_table = script.get_object("score_table")  # workaround for some annoying problems
     logic.best_score = script.get_object("best_score_value")
     script.get_object("title").set_text(title_text)
     exit_button = script.get_object("exit_button")
     exit_button.connect("activate", back_to_menu)
     logic.generate_results()
-    
-
 
 def fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
