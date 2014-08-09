@@ -1,63 +1,59 @@
-import time
+from datetime import datetime, date
 import sqlite3
 from os import getenv
 import os.path
 
+
 home = getenv('HOME')
 DATABASE = os.path.join(home, 'pisak_scores.db')
+COLUMNS = "(datetime TIMESTAMP, date DATE, name TEXT, score REAL)"
 
-def _get_today_date():
-    return time.strftime("%Y-%m-%d")
 
-def _query_db(query, values=None):
-    conn = sqlite3.connect(DATABASE)
-    cur = conn.cursor()
-    if values:
-        cur.execute(query, values)
-    else:
-        cur.execute(query)
-    response = cur.fetchall()
-    conn.commit()
-    conn.close()
-    return response
-
-def _create_table(game):
-    query = "CREATE TABLE IF NOT EXISTS " + game + "(date TEXT, name TEXT, score REAL)"
-    _query_db(query)
-    
 def add_record(game, name, score):
-    _create_table(game)
+    db = DBConnector()
+    db.create_table(game)
     today = _get_today_date()
-    values = (today, name, score)
-    query = "INSERT INTO " + game + " VALUES (?, ?, ?)"
-    _query_db(query, values)
+    now = _get_timestamp()
+    values = (now, today, name, score)
+    query = "INSERT INTO " + game + " VALUES (?, ?, ?, ?)"
+    db.query_db(query, values)
+    db.close_connection()
 
 def get_best_today(game):
-    _create_table(game)
+    db = DBConnector()
+    db.create_table(game)
     today = _get_today_date()
-    query = "SELECT name, score FROM " + game + " WHERE date=? ORDER BY score DESC LIMIT 10"
-    return _query_db(query, (today,))
+    query = "SELECT name, score FROM " + game + " WHERE date=? ORDER BY score DESC, datetime DESC LIMIT 10"
+    results = db.query_db(query, (today,))
+    db.close_connection()
+    return results
     
 def get_best_ever(game):
-    _create_table(game)
-    query = "SELECT name, score FROM " + game + " ORDER BY score DESC LIMIT 10"
-    return _query_db(query)
+    db = DBConnector()
+    db.create_table(game)
+    query = "SELECT name, score FROM " + game + " ORDER BY score DESC, datetime DESC LIMIT 10"
+    results = db.query_db(query)
+    db.close_connection()
+    return results
 
 def get_average_today(game):
-    _create_table(game)
+    db = DBConnector()
+    db.create_table(game)
     today = _get_today_date()
     query = "SELECT AVG(score) FROM " + game + " WHERE date=?"
-    response = _query_db(query)
-    if response:
-        return response[0][0]
+    result = db.query_db(query, (today,))
+    db.close_connection()
+    if result[0]:
+        return result[0][0]
 
 def get_average_ever(game):
-    _create_table(game)
+    db = DBConnector()
+    db.create_table(game)
     query = "SELECT AVG(score) FROM " + game
-    response = _query_db(query)
-    if response:
-        return response[0][0]
-
+    result = db.query_db(query)
+    db.close_connection()
+    if result[0]:
+        return result[0][0]
 
 def is_top_ten(game, score):
     top_ten = get_best_today(game)
@@ -65,3 +61,31 @@ def is_top_ten(game, score):
         return score > min(0, *[score for (_name, score) in top_ten])
     else:
         return score > 0
+
+
+def _get_today_date():
+    return date.today()
+
+def _get_timestamp():
+    return datetime.now()
+
+
+class DBConnector(object):
+    def __init__(self):
+        self.conn = sqlite3.connect(DATABASE)
+        self.cur = self.conn.cursor()
+
+    def create_table(self, game):
+        query = "CREATE TABLE IF NOT EXISTS " + game + COLUMNS
+        self.query_db(query)
+
+    def query_db(self, query, values=None):
+        if values:
+            self.cur.execute(query, values)
+        else:
+            self.cur.execute(query)
+        return self.cur.fetchall()
+
+    def close_connection(self):
+        self.conn.commit()
+        self.conn.close()
