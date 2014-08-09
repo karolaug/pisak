@@ -91,7 +91,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.properties = {}
-        self.on_select_hilite_pattern = "hover-scanning"
+        self.on_select_hilite_pattern = "scanning-hover-scanning"
         self.on_select_hilite_interval = 1000
         self.current_icon = None
         self._connect_signals()
