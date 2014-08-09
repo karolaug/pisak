@@ -288,7 +288,8 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
     }
     
     __gsignals__ = {
-        "finished": (GObject.SIGNAL_RUN_FIRST, None, ())
+        "finished": (GObject.SIGNAL_RUN_FIRST, None, ()),
+        "move-on": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
 
     def __init__(self):
@@ -333,7 +334,10 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
     def _update_average_score(self):
         if self.total_average_score:
             game_average = score_manager.get_average_ever(self.game_name)
-            self.total_average_score.set_text(str(game_average))
+            if game_average:
+                self.total_average_score.set_text(str(int(game_average)))
+            else:
+                self.total_average_score.set_text("brak wyników")
     
     @property
     def typed_player_name(self):
@@ -353,6 +357,10 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
         else:
             name = self.typed_player_name
             self.player_name.set_text("{} {}".format(name[0], name[1]))
+            score_manager.add_record(
+                self.game_name, self.typed_player_name, self.game_score)
+            self.emit("move-on")
+            
 
     # GObject properties
 
@@ -375,6 +383,7 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
                 current.connect("activate", self._type_letter)
             else:
                 to_scan.extend(current.get_children())
+                
     
     def _type_letter(self, source):
         if len(self.typed_player_name) < 2:
@@ -416,23 +425,27 @@ class TopResultLogic(Clutter.Actor, PropertyAdapter):
         value.connect("activate", self._finish)
 
     def _finish(self, *args):
-        score_manager.add_record(
-            self.game_name, self.typed_player_name, self.game_score)
         self.emit("finished")
 
 
-class TopResultsList(Clutter.Actor, PropertyAdapter):
-    __gtype_name__ = "BrainTopResultsList"
+class TopResultsListLogic(Clutter.Actor, PropertyAdapter):
+    __gtype_name__ = "BrainTRLLogic"
 
     __gproperties___ = {
+        "results-table": (Clutter.Actor.__gtype__, "", "", GObject.PARAM_READWRITE),
+        "best-score": (Clutter.Text.__gtype__, "", "", GObject.PARAM_READWRITE),
         "game": (GObject.TYPE_STRING, "", "", "", GObject.PARAM_READWRITE),
-        "only-today": (GObject.TYPE_BOOLEAN, "", "", False, GObject.PARAM_READWRITE)
+        "only-today": (GObject.TYPE_BOOLEAN, "", "", False, GObject.PARAM_READWRITE),
     }
 
     def __init__(self):
         super().__init__()
         self.layout = Clutter.GridLayout()
         self.set_layout_manager(self.layout)
+        self._results_table = None
+        self._game = None
+        self._only_today = True
+        self._best_score = None
 
     @property
     def game(self):
@@ -450,10 +463,40 @@ class TopResultsList(Clutter.Actor, PropertyAdapter):
     def only_today(self, value):
         self._only_today = value
 
+    @property
+    def results_table(self):
+        return self._results_table
+
+    @results_table.setter
+    def results_table(self, value):
+        self._results_table = value
+
+    @property
+    def best_score(self):
+        return self._best_score
+
+    @best_score.setter
+    def best_score(self, value):
+        self._best_score = value
+    
     def generate_results(self):
         """
         Query results based on widget settings. It must be called to display
         results.
         """
-        # TODO: implement
-        pass
+        if self.only_today:
+            results = score_manager.get_best_today(self.game)
+        else:
+            results = scoe_manager.get_best_ever(self.game)
+        best_score = str(results[0][1])
+        self.best_score.set_text(best_score)
+        for idx, row in enumerate(self.results_table.get_children()):
+            if idx < len(results):
+                fields = row.get_children()
+                fields[1].set_text(results[idx][0])
+                fields[2].set_text(str(results[idx][1]))
+            else:
+                row.hide()
+            
+        
+            

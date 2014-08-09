@@ -409,9 +409,14 @@
                                     ]
                             }
                         ]
-                }
+                },
+                "logic"
             ]
-        }
+        },
+    {
+        "id": "logic",
+        "type": "BrainTRLLogic"
+    }
 ]
                                 
                     
