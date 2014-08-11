@@ -465,6 +465,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "wielkie_litery",
+        "is-toggle": true,
         "spacing": 0,
         "signals": [
                        {
@@ -486,6 +487,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "polskie",
+        "is-toggle": true,
         "related-object": "keyboard_panel",
         "signals": [
                        {
@@ -518,6 +520,7 @@
         "icon-size": 50,
         "icon-name": "specjalne",
         "related-object": "keyboard_panel",
+        "is-toggle": true,
         "signals": [
                        {
                            "name": "clicked",
