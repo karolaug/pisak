@@ -471,6 +471,10 @@
                            "name": "clicked",
                            "handler": "speller/swap_caps_chars",
                            "object": "keyboard_panel"
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/switch_toggled_state"
                        }
                    ]
     },

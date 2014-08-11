@@ -198,6 +198,19 @@ def swap_altgr_chars_on_select(keyboard_panel):
 def swap_special_chars_on_select(keyboard_panel):
     _previous_chars_on_select(keyboard_panel, keyboard_panel, widgets.Key.set_swap_special_label)
 
+@signals.registered_handler("speller/switch_toggled_state_on_select")
+def switch_toggled_state_on_select(button):
+    pass#?????????????//
+    #ustawic na wybranie a pozniej na wybranie key
+    #switch tylko dla swap
+
+@signals.registered_handler("speller/switch_toggled_state")
+def switch_toggled_state(button):
+    if button.style_pseudo_class_contains("toggled"):
+        button.style_pseudo_class_remove("toggled")
+    else:
+        button.style_pseudo_class_add("toggled")
+
 @signals.registered_handler("speller/switch_label")
 def switch_label(button):
     button.switch_label()
