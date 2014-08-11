@@ -211,23 +211,48 @@ def swap_special_chars_on_select(keyboard_panel):
     _previous_chars_on_select(keyboard_panel, keyboard_panel, widgets.Key.set_swap_special_label)
     
 
-@signals.registered_handler("speller/remove_toggled_state_on_select")
-def remove_toggled_state_on_select(button, keyboard_panel):
-    #TODO: Implement
-    pass
+@signals.registered_handler("speller/unset_toggled_state_on_select")
+def unset_toggled_state_on_select(button):
+    keyboard_panel = button.related_object
+    key_bag = []
+    _find_and_get_keys(keyboard_panel, key_bag)
+    for key in key_bag:
+        try:
+            key.disconnect_by_func(unset_toggled_state)
+        except TypeError:
+            pass
+        key.connect_object("clicked", unset_toggled_state, button)
 
 
-@signals.registered_handler("speller/add_toggled_state")
-def add_toggled_state(button):
-    button.style_pseudo_class_add("toggled")
+@signals.registered_handler("speller/unset_toggled_state")
+def unset_toggled_state(button):
+    if button.get_toggled():
+        button.set_toggled(False)
+    try:
+        keyboard_panel = button.related_object
+        key_bag = []
+        _find_and_get_keys(keyboard_panel, key_bag)
+        for key in key_bag:
+            try:
+                key.disconnect_by_func(unset_toggled_state)
+            except TypeError:
+                pass
+    except AttributeError:
+        pass
+
+
+@signals.registered_handler("speller/set_toggled_state")
+def set_toggled_state(button):
+    if not button.get_toggled():
+    	button.set_toggled(True)
     
 
 @signals.registered_handler("speller/switch_toggled_state")
 def switch_toggled_state(button):
-    if button.style_pseudo_class_contains("toggled"):
-        button.style_pseudo_class_remove("toggled")
+    if button.get_toggled():
+        button.set_toggled(False)
     else:
-        button.style_pseudo_class_add("toggled")
+        button.set_toggled(True)
         
 
 def _previous_chars_on_select(keyboard_item, keyboard_panel, allowed_undo):
@@ -243,9 +268,9 @@ def _previous_chars_on_select(keyboard_item, keyboard_panel, allowed_undo):
             _previous_chars_on_select(sub_item, keyboard_panel, allowed_undo)
             
 
-def _find_and_get_keys(keyboard_item, keys_bag):
+def _find_and_get_keys(keyboard_item, key_bag):
     if isinstance(keyboard_item, widgets.Key):
-        keys_bag.append(keyboard_item)
+        key_bag.append(keyboard_item)
     else:
         for sub_item in keyboard_item.get_children():
-            _find_and_get_keys(sub_item)
+            _find_and_get_keys(sub_item, key_bag)

@@ -486,6 +486,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "polskie",
+        "related-object": "keyboard_panel",
         "signals": [
                        {
                            "name": "clicked",
@@ -499,7 +500,11 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/add_toggled_state"
+                           "handler": "speller/set_toggled_state"
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/unset_toggled_state_on_select"
                        }
                    ]
     },
@@ -512,6 +517,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "specjalne",
+        "related-object": "keyboard_panel",
         "signals": [
                        {
                            "name": "clicked",
@@ -525,7 +531,11 @@
                        },
                        {
                            "name": "clicked",
-                           "handler": "speller/add_toggled_state"
+                           "handler": "speller/set_toggled_state"
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/unset_toggled_state_on_select"
                        }
                    ]
     },
