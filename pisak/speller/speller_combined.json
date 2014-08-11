@@ -229,7 +229,7 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/exit",
+                           "handler": "general/exit",
                            "object": "main"
                        }
                    ]
@@ -496,7 +496,10 @@
                            "name": "clicked",
                            "handler": "speller/swap_altgr_chars_on_select",
                            "object": "keyboard_panel"
-
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/add_toggled_state"
                        }
                    ]
     },
@@ -519,7 +522,10 @@
                            "name": "clicked",
                            "handler": "speller/swap_special_chars_on_select",
                            "object": "keyboard_panel"
-
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/add_toggled_state"
                        }
                    ]
     },
