@@ -9,6 +9,25 @@ import pisak.widgets
 
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
+    __gproperties__ = {
+        "related_object": (
+            Clutter.Actor.__gtype__,
+            "related object",
+            "object that button has an impact on",
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+
+    @property
+    def related_object(self):
+        return self._related_object
+
+    @related_object.setter
+    def related_object(self, value):
+        self._related_object = value
+
 
 class CursorGroup(Clutter.Actor):
     __gtype_name__ = "PisakCursorGroup"
@@ -144,11 +163,13 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def revert(self, text):
             self._replace(text)
 
-        def compose(self):
+        def compose(self, *args):
             return False
 
         def __str__(self):
             return "{} -> {} @ {}".format(self.before, self.after, self.pos)
+
+
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
@@ -161,16 +182,16 @@ class Text(Mx.Label, properties.PropertyAdapter):
         self._set_text_params()
         self.clutter_text.set_reactive(True)
         self.clutter_text.set_editable(True)
+        self.line = 0
 
     def add_operation(self, operation):
-        if len(self.history) == 0 or (not self.history[-1].compose(operation)):
+        if len(self.history) == 0 or not self.history[-1].compose(operation):
             self.history.append(operation)
         operation.apply(self)
     
     def revert_operation(self):
         if len(self.history) > 0:
-            operation = self.history.pop()
-            operation.revert(self)
+            self.history.pop().revert(self)
         
     def _set_text_params(self):
         self.clutter_text.set_line_wrap(True)
@@ -190,10 +211,12 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
     def type_text(self, text):
         """
-        Append the given text to the text buffer
+        Insert the given text to the text buffer on the
+        current cursor position
         @param text string passed after a user's actions
         """
-        operation = Text.Insertion(self.get_text_length(), text)
+        pos = self.clutter_text.get_cursor_position()
+        operation = Text.Insertion(pos, text)
         self.add_operation(operation)
 
     def type_unicode_char(self, char):
@@ -208,10 +231,20 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
     def delete_char(self):
         """
-        Delete the endmost single character
+        Delete the single character from behind the
+        current cursor position
         """
-        pos = self.get_text_length() - 1
-        text = self.get_text()[-1]
+        pos = self.clutter_text.get_cursor_position()
+        if pos == -1:
+            if self.get_text_length() > 0:
+                pos = self.get_text_length() - 1
+            else:
+                return False
+        elif pos == 0:
+            return
+        elif pos > 0:
+            pos -= 1
+        text = self.get_text()[pos]
         operation = Text.Deletion(pos, text)
         self.add_operation(operation)
         
@@ -276,6 +309,85 @@ class Text(Mx.Label, properties.PropertyAdapter):
         elif current_position == -1 and text_length > 0:
             self.clutter_text.set_cursor_position(text_length-1)
 
+    def move_word_backward(self):
+        """
+        Move cursor one word backward
+        """
+        current_position = self.clutter_text.get_cursor_position()
+        text = self.clutter_text.get_text()
+        if current_position == 0:
+            pass
+        else:
+            if current_position == -1:
+                current_position = len(text) - 1
+            letter = text[current_position-1]
+            while letter == ' ':
+                current_position -= 1
+                letter = text[current_position]
+            while letter != ' ':
+                current_position -= 1
+                letter = text[current_position-1]
+                if current_position == 0:
+                    break
+            self.clutter_text.set_cursor_position(current_position)
+
+    def move_word_forward(self):
+        """
+        Move cursor one word forward
+        """
+        current_position = self.clutter_text.get_cursor_position()
+        text = self.clutter_text.get_text()
+        if current_position <= -1:
+            pass
+        else:
+            try:
+                letter = text[current_position]
+                while letter == ' ':
+                    current_position += 1
+                    letter = text[current_position]
+                while letter != ' ':
+                    current_position += 1
+                    letter = text[current_position-1]
+            except IndexError:
+                current_position = -1
+        self.clutter_text.set_cursor_position(current_position)
+
+
+    def move_line_up(self):
+        """
+        Move cursor one line up
+        """
+        
+        layout = self.clutter_text.get_layout()
+        text = self.get_text()
+        cursor_pos = self.clutter_text.get_cursor_position()
+        if cursor_pos == 0:
+            index_ = 0
+        else:
+            index_ = len(text)
+
+        line_no, x = layout.index_to_line_x(index_, 0)
+
+        line_no -= 1
+        if line_no < 0:
+            return False
+
+        if x_pos != -1:
+            x = x_pos
+
+        layout_line = layout.get_line_readonly(line_no)
+        if not layout_line:
+            return False
+
+        index_, trailing = layout.x_to_index(layout_line, x)
+
+        #pos = 
+
+    def move_line_down(self):
+        """
+        Move cursor one line down
+        """
+
     def move_to_new_line(self):
         """
         Move to new line
@@ -304,7 +416,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 class Key(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerKey"
     __gproperties__ = {
-        "text": (
+        "default_text": (
             GObject.TYPE_STRING,
             "key default text",
             "string appended to a text",
@@ -331,64 +443,106 @@ class Key(pisak.widgets.Button):
 
     def __init__(self):
         super().__init__()
+        self.pre_special_text = None
+        self.undo_chain = []
+        self.allowed_undos = set()
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self.on_activate)
-        self.connect("notify::text", self._set_initial_label)
+        self.connect("notify::default-text", self._set_initial_label)
 
     def _set_initial_label(self, source, spec):
         self.set_default_label()
         self.disconnect_by_func(self._set_initial_label)
 
+    def _cache_pre_special_text(self, text_to_cache):
+        if not self.pre_special_text:
+            self.pre_special_text = text_to_cache
+
+    def undo_label(self):
+        while self.undo_chain:
+            operation = self.undo_chain.pop()
+            if callable(operation) and operation in self.allowed_undos:
+                operation(self)
+        
+    def set_pre_special_label(self):
+        if self.pre_special_text:
+            self.set_label(self.pre_special_text)
+            self.pre_special_text = None
+
     def set_default_label(self):
-        self.set_label(self.text)
+        self.set_label(self.default_text)
+
+    def set_special_label(self):
+        self._cache_pre_special_text(self.get_label())
+        self.set_label(self.special_text)
+
+    def set_caps_label(self):
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.upper())
+
+    def set_lower_label(self):
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.lower())
+
+    def set_altgr_label(self):
+        try:
+            label = self.get_label()
+            if label.isalpha():
+                if label.islower():
+                    self.set_label(self.altgr_text.lower())
+                elif label.isupper():
+                    self.set_label(self.altgr_text.upper())
+        except AttributeError:
+            return None
         
     def set_swap_altgr_label(self):
-        label = self.get_label()
         try:
+            label = self.get_label()
             if self.altgr_text.lower() == label.lower():
                 if label.islower():
                     # from lowercase altgr to lowercase default
-                    self.set_label(self.text.lower())
+                    self.set_label(self.default_text.lower())
                 else:
                     # from uppercase altgr to (uppercase) default
-                    self.set_label(self.text)
-            else:     
+                    self.set_label(self.default_text.upper())
+            else:
                 if label.isalpha() and self.altgr_text:
-                    if self.get_label().islower():
+                    if label.islower():
                         # from lowercase default to lowercase altgr
-                        self.set_label(self.altgr_text.swapcase())
+                        self.set_label(self.altgr_text.lower())
                     else:
                         # from (uppercase) default to uppercase altgr
-                        self.set_label(self.altgr_text)
+                        self.set_label(self.altgr_text.upper())
         except AttributeError:
             return None
 
     def set_swap_caps_label(self):
-        self.set_label(self.get_label().swapcase())
+        label = self.get_label()
+        if label.isalpha():
+            self.set_label(label.swapcase())
 
     def set_swap_special_label(self):
         try:
             if self.get_label() == self.special_text:
-                self.set_default_label()
+                self.set_pre_special_label()
             else:
                 self.set_special_label()
         except AttributeError:
             return None
 
-    def set_special_label(self):
-        self.set_label(self.special_text)
-
     def on_activate(self, source):
         if self.target:
             self.target.type_text(self.get_label())
-
+        
     @property
-    def text(self):
-        return self._text
+    def default_text(self):
+        return self._default_text
 
-    @text.setter
-    def text(self, value):
-        self._text = str(value)
+    @default_text.setter
+    def default_text(self, value):
+        self._default_text = str(value)
 
     @property
     def altgr_text(self):
