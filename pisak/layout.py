@@ -5,10 +5,10 @@ layout parameters are proxied to internal layout manager.
 '''
 from gi.repository import Clutter, GObject
 
-from pisak import unit
+from pisak import unit, properties
 
 
-class Box(Clutter.Actor):
+class Box(Clutter.Actor, properties.PropertyAdapter):
     """
     Arranges children in single line using BoxLayout.
     """
@@ -30,6 +30,12 @@ class Box(Clutter.Actor):
             "", "",
             0, GObject.G_MAXUINT, 0,
             GObject.PARAM_READWRITE),
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
         "ratio_spacing": (
             GObject.TYPE_FLOAT,
             None, None, 0, 1., 0,
@@ -75,6 +81,40 @@ class Box(Clutter.Actor):
         self._set_px_spacing()
 
     @property
+    def spacing(self):
+        return self.layout.get_spacing()
+
+    @spacing.setter
+    def spacing(self, value):
+        self.layout.set_spacing(value)
+
+    @property
+    def homogeneous(self):
+        return self.layout.get_homogeneous()
+
+    @homogeneous.setter
+    def homogeneous(self, value):
+        self.layout.set_homogeneous(value)
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
+        
+    @property
     def ratio_spacing(self):
         return self._ratio_spacing
 
@@ -118,31 +158,17 @@ class Box(Clutter.Actor):
     def ratio_margin_left(self, value):
         self._ratio_margin_left = value
         self.set_margin_left(unit.w(value))
-    
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            self.layout.set_property(spec.name, value)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            self.layout.get_property(spec.name)
 
 
-class Bin(Clutter.Actor):
+class Bin(Clutter.Actor, properties.PropertyAdapter):
     __gtype_name__ = "PisakBinLayout"
     __gproperties__ = {
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
         "ratio_margin_bottom": (
             GObject.TYPE_FLOAT,
             None, None, 0, 1., 0,
@@ -165,6 +191,24 @@ class Bin(Clutter.Actor):
         super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
     @property
     def ratio_margin_bottom(self):
@@ -201,23 +245,3 @@ class Bin(Clutter.Actor):
     def ratio_margin_left(self, value):
         self._ratio_margin_left = value
         self.set_margin_left(unit.w(value))
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            self.layout.set_property(spec.name, value)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name.replace("-", "_"))
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            self.layout.get_property(spec.name)

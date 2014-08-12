@@ -25,29 +25,50 @@
         "y-expand": true
     },
     {
-        "id": "load_pop_up",
+        "id": "load_pop_up_scanning_group",
         "type": "PisakScanningGroup",
         "strategy": {
                         "type": "PisakRowStrategy",
                         "interval": 800,
                         "max-cycle-count": -1
                     },
-        "signals": [
-                       {
-                           "name": "notify::mapped",
-                           "handler": "general/start_group"
-                       }
-                   ],
-        "children": ["load_pop_up_box"]
+        "children": ["load_pop_up_box", "load_pop_up_background"]
+    },
+    {
+        "id": "load_pop_up_background",
+        "type": "PisakBackgroundPattern",
+        "background-color": "white",
+        "ratio-width": 0.8,
+        "ratio-height": 0.8
     },
     {
         "id": "load_pop_up_box",
-        "type": "PisakSpellerLoadPopUpBox",
+        "type": "PisakSpellerLoadPopUp",
         "target": "text_box",
+        "row-count": 3,
+        "column-count": 3,
         "background-scene": "main",
-        "width": 800,
-        "height": 400,
-        "background-color": "light blue"
+        "orientation": "vertical",
+        "ratio-margin-top": 0.1,
+        "ratio-margin-bottom": 0.1,
+        "ratio-margin-left": 0.1,
+        "ratio-margin-right": 0.1,
+        "ratio-spacing": 0.1,
+        "tile-ratio-height": 0.1,
+        "tile-ratio-width": 0.2,
+        "tile-font-name": "Kelson Sans",
+        "children": ["load_pop_up_space", "load_pop_up_header"]
+    },
+    {
+        "id": "load_pop_up_header",
+        "type": "ClutterText",
+        "font-name": "Kelson Sans light 30"
+    },
+    {
+        "id": "load_pop_up_space",
+        "type": "PisakBoxLayout",
+        "ratio-spacing": 0.1,
+        "orientation": "vertical"
     },
     {                                                                                                          
         "id": "main_box",

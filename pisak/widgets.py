@@ -289,8 +289,17 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.emit("activate")
 
 
-class BackgroundPattern(Clutter.Actor):
+class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
     __gtype_name__ = "PisakBackgroundPattern"
+    __gproperties__ = {
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE)
+    }
+    
 
     def __init__(self):
         super().__init__()
@@ -313,6 +322,24 @@ class BackgroundPattern(Clutter.Actor):
             context.line_to(x2, y2)
             context.stroke()
         return True
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
 
 class Aperture(Clutter.Actor):

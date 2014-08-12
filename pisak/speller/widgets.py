@@ -492,8 +492,8 @@ class Prediction(pisak.widgets.Button):
         self._order_num = value
 
 
-class LoadPopUpBox(layout.Box):
-    __gtype_name__ = "PisakSpellerLoadPopUpBox"
+class LoadPopUp(layout.Box):
+    __gtype_name__ = "PisakSpellerLoadPopUp"
     __gproperties__ = {
         "background_scene" : (
             scanning.Group.__gtype__,
@@ -504,13 +504,76 @@ class LoadPopUpBox(layout.Box):
             Text.__gtype__,
             "text inserting target",
             "id of text box to insert text",
-            GObject.PARAM_READWRITE)
+            GObject.PARAM_READWRITE),
+         "row_count": (
+            GObject.TYPE_INT64, "number of rows",
+            "number of rows with buttons", 0, 10, 3, 
+            GObject.PARAM_READWRITE),
+        "column_count":  (
+            GObject.TYPE_INT64, "number of columns",
+            "number of coolumns with buttons", 0, 10, 3, 
+            GObject.PARAM_READWRITE),
+        "tile_ratio_width": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "tile_ratio_height": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "tile_font_name": (
+            GObject.TYPE_STRING, "font on buttons",
+            "button font", "noop", GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
         super().__init__()
         self.scanning_group = None
+        self.space = None
+        self.header = None
         self.stage = None
+        self.pop_up_idle_duration = 3000
+        self.background_effect = Clutter.BlurEffect.new()
+        self.files_present_text = "WYBIERZ PLIK"
+        self.no_files_present_text = "BRAK PLIKÓW DO WCZYTANIA"
+
+    @property
+    def tile_ratio_width(self):
+        return self._tile_ratio_width
+
+    @tile_ratio_width.setter
+    def tile_ratio_width(self, value):
+        self._tile_ratio_width = value
+
+    @property
+    def tile_ratio_height(self):
+        return self._tile_ratio_height
+
+    @tile_ratio_height.setter
+    def tile_ratio_height(self, value):
+        self._tile_ratio_height = value
+
+    @property
+    def tile_font_name(self):
+        return self._tile_font_name
+
+    @tile_font_name.setter
+    def tile_font_name(self, value):
+        self._tile_font_name = value
+
+    @property
+    def row_count(self):
+        return self._row_count
+
+    @row_count.setter
+    def row_count(self, value):
+        self._row_count = value
+
+    @property
+    def column_count(self):
+        return self._column_count
+
+    @column_count.setter
+    def column_count(self, value):
+        self._column_count = value
 
     @property
     def target(self):
@@ -528,18 +591,37 @@ class LoadPopUpBox(layout.Box):
     def background_scene(self, value):
         self._background_scene = value
 
-    def on_screen(self):
+    def on_screen(self, text_files):
+        self.space = self.get_children()[1]
+        self.header = self.get_children()[0]
         self.scanning_group = self.get_parent()
         self.stage = self.background_scene.get_stage()
         self.stage.add_child(self.scanning_group)
-        self.stage.pending_group = self.scanning_group
+        self.background_scene.add_effect(self.background_effect)
+        if text_files:
+            self.header.set_text(self.files_present_text)
+            self._generate_content(text_files)
+            self.scanning_group.start_cycle()
+            self.stage.pending_group = self.scanning_group
+        else:
+            self.header.set_text(self.no_files_present_text)
+            #self.stage.pending_group = None
+            self.background_scene.stop_cycle()
+            Clutter.threads_add_timeout(0, self.pop_up_idle_duration, self._close, None)
+            
 
-    def generate_content(self, text_files):
-        for file in text_files:
+    def _generate_content(self, text_files):
+        for idx, file in enumerate(text_files):
+            if idx % self.column_count == 0:
+                row = layout.Box()
+                row.spacing = self.spacing
+                self.space.add_child(row)
             button = Button()
             button.set_label(file["name"])
-            self.add_child(button)
+            button.ratio_width = self.tile_ratio_width
+            button.ratio_height = self.tile_ratio_height
             button.connect("clicked", self._on_select, file["path"])
+            row.add_child(button)        
 
     def _on_select(self, button, path):
         with open(path, "r") as file:
@@ -548,11 +630,12 @@ class LoadPopUpBox(layout.Box):
         self.target.type_text(text)
         self._close()
         
-    def _close(self):
+    def _close(self, *args):
         self.stage.pending_group = self.background_scene
         self.scanning_group.hide()
+        self.background_scene.remove_effect(self.background_effect)
         Clutter.threads_add_timeout(0, self.scanning_group.strategy.interval, self._killall, None)
 
-    def _killall(self, *args):  # workaround for scanning issues
-        self.remove_all_children()
+    def _killall(self, *args):  # workaround for some scanning issues
+        self.space.remove_all_children()
         self.stage.remove_child(self.scanning_group)

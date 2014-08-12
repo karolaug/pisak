@@ -34,13 +34,16 @@ def nav_left(text_box):
 
 @signals.registered_handler("speller/save")
 def save(text_box):
-    text = text_box.get_text()
-    if text:
-        name_length = 20
-        name = text.strip()[:name_length] + "..."
-        file_path = database_agent.insert_text_file(name)
-        with open(file_path, "w") as file:
-            file.write(text)
+    files_limit = 9
+    files = database_agent.get_text_files()
+    if len(files) < files_limit:
+        text = text_box.get_text()
+        if text:
+            name_length = 20
+            name = text.strip()[:name_length] + "..."
+            file_path = database_agent.insert_text_file(name)
+            with open(file_path, "w") as file:
+                file.write(text)
     
 @signals.registered_handler("speller/load")
 def load(text_box):
@@ -55,10 +58,7 @@ def load(text_box):
 @signals.registered_handler("speller/show_load_pop_up")
 def show_load_pop_up(load_pop_up):
     text_files = database_agent.get_text_files()
-    if text_files:
-        pop_up = load_pop_up
-        pop_up.generate_content(text_files)
-        pop_up.on_screen()
+    load_pop_up.on_screen(text_files)
     
 @signals.registered_handler("speller/print")
 def print_doc(text_box):
