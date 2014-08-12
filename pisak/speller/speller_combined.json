@@ -238,7 +238,7 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/exit",
+                           "handler": "general/exit",
                            "object": "main"
                        }
                    ]
@@ -487,12 +487,17 @@
         "icon-size": 50,
         "icon-name": "wielkie_litery",
         "on-select-hilite-pattern": "scanning-hover-scanning",
+        "is-toggle": true,
         "spacing": 0,
         "signals": [
                        {
                            "name": "clicked",
                            "handler": "speller/swap_caps_chars",
                            "object": "keyboard_panel"
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/switch_toggled_state"
                        }
                    ]
     },
@@ -505,6 +510,8 @@
         "icon-size": 50,
         "icon-name": "polskie",
         "on-select-hilite-pattern": "scanning-hover-scanning",
+        "is-toggle": true,
+        "related-object": "keyboard_panel",
         "signals": [
                        {
                            "name": "clicked",
@@ -515,7 +522,14 @@
                            "name": "clicked",
                            "handler": "speller/swap_altgr_chars_on_select",
                            "object": "keyboard_panel"
-
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/set_toggled_state"
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/unset_toggled_state_on_select"
                        }
                    ]
     },
@@ -529,6 +543,8 @@
         "icon-size": 50,
         "icon-name": "specjalne",
         "on-select-hilite-pattern": "scanning-hover-scanning",
+        "related-object": "keyboard_panel",
+        "is-toggle": true,
         "signals": [
                        {
                            "name": "clicked",
@@ -539,7 +555,14 @@
                            "name": "clicked",
                            "handler": "speller/swap_special_chars_on_select",
                            "object": "keyboard_panel"
-
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/set_toggled_state"
+                       },
+                       {
+                           "name": "clicked",
+                           "handler": "speller/unset_toggled_state_on_select"
                        }
                    ]
     },

@@ -9,6 +9,25 @@ import pisak.widgets
 
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
+    __gproperties__ = {
+        "related_object": (
+            Clutter.Actor.__gtype__,
+            "related object",
+            "object that button has an impact on",
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+
+    @property
+    def related_object(self):
+        return self._related_object
+
+    @related_object.setter
+    def related_object(self, value):
+        self._related_object = value
+
 
 class CursorGroup(Clutter.Actor):
     __gtype_name__ = "PisakCursorGroup"
