@@ -78,6 +78,7 @@
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-",
         "icon-size": 50,
         "label": "LITERY",
         "icon-name": "klawiatura",
@@ -93,6 +94,7 @@
         "id": "button_2",
         "type": "PisakSpellerButton",
         "text": "PREDYKCJA",
+        "on-select-hilite-pattern": "scanning-hover-",
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
@@ -111,6 +113,7 @@
         "id": "button_3",
         "type": "PisakSpellerButton",
         "text": "PRZECZYTAJ",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
@@ -129,6 +132,7 @@
         "id": "button_4",
         "type": "PisakSpellerButton",
         "text": "ZAPISZ",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
@@ -148,6 +152,7 @@
         "id": "button_5",
         "type": "PisakSpellerButton",
         "text": "WCZYTAJ",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
@@ -166,6 +171,7 @@
         "id": "button_6",
         "type": "PisakSpellerButton",
         "text": "WYŚLIJ",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
@@ -184,6 +190,7 @@
         "id": "button_7",
         "type": "PisakSpellerButton",
         "text": "DRUKUJ",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
@@ -202,6 +209,7 @@
         "id": "button_8",
         "type": "PisakSpellerButton",
         "text": "NOWY DOKUMENT",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
@@ -220,6 +228,7 @@
         "id": "button_9",
         "type": "PisakSpellerButton",
         "text": "PANEL STARTOWY",
+        "on-select-hilite-pattern": "scanning-hover-",
         "x-align": "start",
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
@@ -273,6 +282,7 @@
         "order-num": 1,
         "target": "text_box",
         "label": "PREDYKCJA 1",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },  
@@ -282,6 +292,7 @@
         "order-num": 2,
         "target": "text_box",
         "label": "PREDYKCJA 2",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -291,6 +302,7 @@
         "order-num": 3,
         "target": "text_box",
         "label": "PREDYKCJA 3",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -300,6 +312,7 @@
         "order-num": 4,
         "target": "text_box",
         "label": "PREDYKCJA 4",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },  
@@ -309,6 +322,7 @@
         "order-num": 5,
         "target": "text_box",
         "label": "PREDYKCJA 5",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -318,6 +332,7 @@
         "order-num": 6,
         "target": "text_box",
         "label": "PREDYKCJA 6",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -327,6 +342,7 @@
         "order-num": 7,
         "target": "text_box",
         "label": "PREDYKCJA 7",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },  
@@ -336,6 +352,7 @@
         "order-num": 8,
         "target": "text_box",
         "label": "PREDYKCJA 8",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -345,6 +362,7 @@
         "order-num": 9,
         "target": "text_box",
         "label": "PREDYKCJA 9",
+        "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -414,6 +432,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "predykcja",
+        "on-select-hilite-pattern": "scanning-hover-",
         "spacing": 0,
         "signals": [
             {
@@ -431,6 +450,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "spacja",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "spacing": 0,
         "signals": [
                        {
@@ -448,6 +468,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "backspace",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "spacing": 0,
         "signals": [
                        {
@@ -465,6 +486,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "wielkie_litery",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "spacing": 0,
         "signals": [
                        {
@@ -482,6 +504,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "polskie",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "signals": [
                        {
                            "name": "clicked",
@@ -505,6 +528,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "specjalne",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "signals": [
                        {
                            "name": "clicked",
@@ -527,6 +551,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "funkcje",
+        "on-select-hilite-pattern": "scanning-hover-",
         "signals": [
             {
                 "name": "clicked",
@@ -543,6 +568,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "cofnij",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "signals": [
                        {
                            "name": "clicked",
@@ -559,6 +585,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "nav_left",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "signals": [
                        {
                            "name": "clicked",
@@ -575,6 +602,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "nav_right",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
         "signals": [
                        {
                            "name": "clicked",
@@ -622,7 +650,8 @@
         "special-text": ",",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_2",
@@ -631,7 +660,8 @@
         "special-text": ".",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_3",
@@ -641,7 +671,8 @@
         "special-text": ";",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_4",
@@ -650,7 +681,8 @@
         "special-text": ":",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_5",
@@ -659,7 +691,8 @@
         "special-text": "\"",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_6",
@@ -668,7 +701,8 @@
         "special-text": "/",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_7",
@@ -677,7 +711,8 @@
         "special-text": "\\",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_8",
@@ -686,7 +721,8 @@
         "special-text": "&",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_9",
@@ -696,7 +732,8 @@
         "special-text": "*",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_1_10",
@@ -705,7 +742,8 @@
         "special-text": "%",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "keyboard_row_2",
@@ -737,7 +775,8 @@
         "special-text": "?",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_2",
@@ -747,7 +786,8 @@
         "special-text": "!",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_3",
@@ -756,7 +796,8 @@
         "special-text": "@",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_4",
@@ -765,7 +806,8 @@
         "special-text": "(",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_5",
@@ -774,7 +816,8 @@
         "special-text": ")",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_6",
@@ -783,7 +826,8 @@
         "special-text": "[",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_7",
@@ -792,7 +836,8 @@
         "special-text": "]",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_8",
@@ -801,7 +846,8 @@
         "special-text": "+",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_9",
@@ -811,7 +857,8 @@
         "special-text": "-",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_2_10",
@@ -820,7 +867,8 @@
         "special-text": "=",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "keyboard_row_3",
@@ -852,7 +900,8 @@
         "special-text": "1",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_2",
@@ -862,7 +911,8 @@
         "special-text": "2",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_3",
@@ -872,7 +922,8 @@
         "special-text": "3",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_4",
@@ -881,7 +932,8 @@
         "special-text": "4",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_5",
@@ -890,7 +942,8 @@
         "special-text": "5",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_6",
@@ -900,7 +953,8 @@
         "special-text": "6",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_7",
@@ -909,7 +963,8 @@
         "special-text": "7",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_8",
@@ -918,7 +973,8 @@
         "special-text": "8",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_9",
@@ -927,7 +983,8 @@
         "special-text": "9",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
         "id": "key_3_10",
@@ -936,6 +993,7 @@
         "special-text": "0",
         "target": "text_box",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "on-select-hilite-pattern": "scanning-hover-scanning"
     }
 ]
