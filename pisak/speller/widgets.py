@@ -146,7 +146,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def revert(self, text):
             self._replace(text)
 
-        def compose(self, opertaion):
+        def compose(self, *args):
             return False
 
         def __str__(self):
