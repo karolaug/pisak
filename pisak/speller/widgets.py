@@ -190,10 +190,12 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
     def type_text(self, text):
         """
-        Append the given text to the text buffer
+        Insert the given text to the text buffer on the
+        current cursor position
         @param text string passed after a user's actions
         """
-        operation = Text.Insertion(self.get_text_length(), text)
+        pos = self.clutter_text.get_cursor_position()
+        operation = Text.Insertion(pos, text)
         self.add_operation(operation)
 
     def type_unicode_char(self, char):
@@ -208,10 +210,20 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
     def delete_char(self):
         """
-        Delete the endmost single character
+        Delete the single character from behind the
+        current cursor position
         """
-        pos = self.get_text_length() - 1
-        text = self.get_text()[-1]
+        pos = self.clutter_text.get_cursor_position()
+        if pos == -1:
+            if self.get_text_length() > 0:
+                pos = self.get_text_length() - 1
+            else:
+                return
+        elif pos == 0:
+            return
+        elif pos > 0:
+            pos -= 1
+        text = self.get_text()[pos]
         operation = Text.Deletion(pos, text)
         self.add_operation(operation)
         
