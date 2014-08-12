@@ -48,6 +48,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
     }
     
     __gproperties__ = {
+        "disabled": (GObject.TYPE_BOOLEAN, "State of button",
+                     "If state of button is disabled.", False, 
+                     GObject.PARAM_READWRITE),
         "ratio_width": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
@@ -105,6 +108,15 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.connect("notify::style-pseudo-class", 
                      lambda *_: self.change_icon_white())
         self.set_reactive(True)
+
+    @property
+    def disabled(self):
+        return self._disabled
+
+    @disabled.setter
+    def disabled(self, value):
+        self._disabled = value
+        self.set_disabled(value)
 
     @property
     def ratio_width(self):
@@ -248,6 +260,11 @@ class Button(Mx.Button, properties.PropertyAdapter):
                                      pixbuf.get_width(), 
                                      pixbuf.get_height(), 
                                      pixbuf.get_rowstride())
+            try:
+                if self.disabled:
+                    self.image.set_opacity(100)
+            except AttributeError: #if the disabled props is not yet set
+                pass
         else:
             try:
                 self.image.set_from_file(''.join([self.image_path, '.png']))
