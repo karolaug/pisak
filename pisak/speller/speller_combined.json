@@ -886,14 +886,21 @@
         "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
-        "id": "key_2_10",
-        "type": "PisakSpellerKey",
-        "default-text": "CH",
-        "special-text": "=",
-        "target": "text_box",
+	"id": "key_2_10",
+        "type": "PisakSpellerButton",
+        "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "on-select-hilite-pattern": "scanning-hover-scanning"
+        "icon-size": 50,
+        "icon-name": "nav_up",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "speller/nav_word_backward",
+                           "object": "text_box"
+                       }
+                   ]
     },
     {
         "id": "keyboard_row_3",
@@ -1012,13 +1019,20 @@
         "on-select-hilite-pattern": "scanning-hover-scanning"
     },
     {
-        "id": "key_3_10",
-        "type": "PisakSpellerKey",
-        "default-text": "RZ",
-        "special-text": "0",
-        "target": "text_box",
+	"id": "key_3_10",
+	"type": "PisakSpellerButton",
+        "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "on-select-hilite-pattern": "scanning-hover-scanning"
+        "icon-size": 50,
+        "icon-name": "nav_down",
+        "on-select-hilite-pattern": "scanning-hover-scanning",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "speller/nav_word_forward",
+                           "object": "text_box"
+                       }
+                   ]
     }
 ]
