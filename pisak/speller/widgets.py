@@ -551,22 +551,24 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
                               'Nie', 'Niestety', 'Rzeczywiście',
                               'Super', 'Witam'] #this is subject to change, perhaps should be a class argument
         self.content = []
-        self.lock = threading.Lock() #nessesary
 
     def get_suggestion(self, accuracy_level):
         if accuracy_level < len(self.content): 
             return self.content[accuracy_level]
 
     def do_prediction(self): #function to preform in a separate thread
-        with self.lock: #might be replaced with clutter.threads_enter and clutter.threads_leave
-            string = self.target.get_endmost_triplet()
-            if string == ' ':
-                self.content = self.basic_content
-            else:
-                self.content = predictor.get_predictions(string)
-            if len(self.content) == 1:
-                self.content[0] = self.content[0] + ' ' # automatic space if only  one suggestion
+        Clutter.threads_enter()
+        string = self.target.get_endmost_triplet()
+        Clutter.threads_leave()
+        if string == ' ':
+            self.content = self.basic_content
+        else:
+            self.content = predictor.get_predictions(string)
+        if len(self.content) == 1:
+            self.content[0] = self.content[0] + ' ' # automatic space if only  one suggestion
+        Clutter.threads_enter()
         self.emit("content-update")
+        Clutter.threads_leave()
 
     def _update_content(self, *args):
         self.emit("processing-on")
@@ -596,7 +598,7 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         self._stop_following_target()
         self._target = value
         self._follow_target()
-        
+
 
 class Prediction(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerPrediction"
@@ -613,7 +615,7 @@ class Prediction(pisak.widgets.Button):
             1,
             9,
             1,
-            GObject.PARAM_READWRITE),        
+            GObject.PARAM_READWRITE),
         "target": (
             Text.__gtype__,
             "typing target",
