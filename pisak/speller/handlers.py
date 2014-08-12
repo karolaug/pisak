@@ -40,6 +40,14 @@ def nav_left(text_box):
 def nav_up(text_box):
     text_box.move_line_up()
 
+@signals.registered_handler("speller/nav_word_backward")
+def nav_up(text_box):
+    text_box.move_word_backward()
+
+@signals.registered_handler("speller/nav_word_forward")
+def nav_up(text_box):
+    text_box.move_word_forward()
+
 @signals.registered_handler("speller/save")
 def save(text_box):
     text = text_box.get_text()

@@ -276,6 +276,50 @@ class Text(Mx.Label, properties.PropertyAdapter):
         elif current_position == -1 and text_length > 0:
             self.clutter_text.set_cursor_position(text_length-1)
 
+    def move_word_backward(self):
+        """
+        Move cursor one word backward
+        """
+        current_position = self.clutter_text.get_cursor_position()
+        text = self.clutter_text.get_text()
+        if current_position == 0:
+            pass
+        else:
+            if current_position == -1:
+                current_position = len(text) - 1
+            letter = text[current_position-1]
+            while letter == ' ':
+                current_position -= 1
+                letter = text[current_position]
+            while letter != ' ':
+                current_position -= 1
+                letter = text[current_position-1]
+                if current_position == 0:
+                    break
+            self.clutter_text.set_cursor_position(current_position)
+
+    def move_word_forward(self):
+        """
+        Move cursor one word forward
+        """
+        current_position = self.clutter_text.get_cursor_position()
+        text = self.clutter_text.get_text()
+        if current_position <= -1:
+            pass
+        else:
+            try:
+                letter = text[current_position]
+                while letter == ' ':
+                    current_position += 1
+                    letter = text[current_position]
+                while letter != ' ':
+                    current_position += 1
+                    letter = text[current_position-1]
+            except IndexError:
+                current_position = -1
+        self.clutter_text.set_cursor_position(current_position)
+
+
     def move_line_up(self):
         """
         Move cursor one line up
