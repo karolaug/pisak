@@ -210,9 +210,7 @@ def swap_altgr_chars_on_select(keyboard_panel):
 def swap_special_chars_on_select(keyboard_panel):
     _previous_chars_on_select(keyboard_panel, keyboard_panel, widgets.Key.set_swap_special_label)
     
-
-@signals.registered_handler("speller/unset_toggled_state_on_select")
-def unset_toggled_state_on_select(button):
+def find_buttons_disconnect(button, connect_clicked=True):
     keyboard_panel = button.related_object
     key_bag = []
     _find_and_get_keys(keyboard_panel, key_bag)
@@ -221,7 +219,12 @@ def unset_toggled_state_on_select(button):
             key.disconnect_by_func(unset_toggled_state)
         except TypeError:
             pass
-        key.connect_object("clicked", unset_toggled_state, button)
+        if connect_clicked:
+            key.connect_object("clicked", unset_toggled_state, button)
+
+@signals.registered_handler("speller/unset_toggled_state_on_select")
+def unset_toggled_state_on_select(button):
+    find_buttons_disconnect(button)
 
 
 @signals.registered_handler("speller/unset_toggled_state")
@@ -229,14 +232,7 @@ def unset_toggled_state(button):
     if button.get_toggled():
         button.set_toggled(False)
     try:
-        keyboard_panel = button.related_object
-        key_bag = []
-        _find_and_get_keys(keyboard_panel, key_bag)
-        for key in key_bag:
-            try:
-                key.disconnect_by_func(unset_toggled_state)
-            except TypeError:
-                pass
+        find_buttons_disconnect(button, connect_clicked=False)
     except AttributeError:
         pass
 
