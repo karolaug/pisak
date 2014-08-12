@@ -218,7 +218,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
             if self.get_text_length() > 0:
                 pos = self.get_text_length() - 1
             else:
-                return
+                return False
         elif pos == 0:
             return
         elif pos > 0:
