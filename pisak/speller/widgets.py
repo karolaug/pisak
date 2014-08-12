@@ -240,19 +240,26 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Look for and return the first three-word string of characters with no commas
         starting from the end of the text buffer
+        Look for and return the first three-word string of characters
+        with no commas, starting from the end of the text buffer.
+        if a comma or similar sign is detected at the end of the string
+        this function returns whitespace.
+
         """
 
         text = self.get_text()
         start_pos = None
-        last_sentence_list = text.rstrip().split('.')[-1].split()	
+        last_sentence_list = text.rstrip().split('. |, |; |? |! |" |: |( |)')[-1].split()
         if len(last_sentence_list) >= 1:         
             start_pos = -len(last_sentence_list[-1]) #negative start pos, counted from the end of the sting
-        if len(last_sentence_list) >= 2:
+            if last_sentence_list[-1][-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
+                start_pos = None
+        if len(last_sentence_list) >= 2 and start_pos is not None:
             start_pos -= len(last_sentence_list[-2]) + 1
-        if len(last_sentence_list) >= 3:
+        if len(last_sentence_list) >= 3 and start_pos is not None:
             start_pos -= len(last_sentence_list[-3]) + 2
         if start_pos is not None:        
-            return text.rstrip()[start_pos:]
+            return text.rstrip()[start_pos:] + (text[-1] == ' ')*' '
         else:
             return ' '
 
@@ -273,13 +280,19 @@ class Text(Mx.Label, properties.PropertyAdapter):
         @param text string passed after a user's action
         """
         current_text = self.get_text()
-        start_pos = current_text.rstrip().rfind(' ') + 1
-        #end_pos = self.get_text_length()
-        text_before = current_text[start_pos : -1]
-        operation = Text.Replacement(start_pos, text_before, text_after)
-        self.add_operation(operation)
-        #self.delete_text(start_pos, end_pos)
-        #self.type_text(text)
+        if current_text: #if the text buffer is empty, or ends with whitespace, simply add predicted words. Otherwise, replace the last word.
+            if current_text[-1] == ' ':
+                self.type_text(text_after)
+            else:
+                start_pos = current_text.rstrip().rfind(' ') + 1
+                #end_pos = self.get_text_length()
+                text_before = current_text[start_pos : -1]
+                operation = Text.Replacement(start_pos, text_before, text_after)
+                self.add_operation(operation)
+                #self.delete_text(start_pos, end_pos)
+                #self.type_text(text)
+        else:
+            self.type_text(text_after)
 
     def move_cursor_forward(self):
         """
@@ -534,6 +547,9 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
 
     def __init__(self):
         super().__init__()
+        self.basic_content = ['Chciałbym', 'Czy', 'Jak', 'Jestem',
+                              'Nie', 'Niestety', 'Rzeczywiście',
+                              'Super', 'Witam'] #this is subject to change, perhaps should be a class argument
         self.content = []
         self.lock = threading.Lock() #nessesary
 
@@ -544,7 +560,12 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
     def do_prediction(self): #function to preform in a separate thread
         with self.lock: #might be replaced with clutter.threads_enter and clutter.threads_leave
             string = self.target.get_endmost_triplet()
-            self.content = predictor.get_predictions(string)
+            if string == ' ':
+                self.content = self.basic_content
+            else:
+                self.content = predictor.get_predictions(string)
+            if len(self.content) == 1:
+                self.content[0] = self.content[0] + ' ' # automatic space if only  one suggestion
         self.emit("content-update")
 
     def _update_content(self, *args):
