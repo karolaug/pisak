@@ -137,8 +137,8 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self.after = after
 
         def _replace(self, text, before, after):
-            text.clutter_text.delete_text(self.pos, self.pos + len(before))
-            text.clutter_text.insert_text(self.pos, after)
+            text.clutter_text.delete_text(self.pos, self.pos + len(before) + 1)
+            text.clutter_text.insert_text(after, self.pos)
 
         def apply(self, text):
             self._replace(text, self.before, self.after)
@@ -146,7 +146,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def revert(self, text):
             self._replace(text)
 
-        def compose(self):
+        def compose(self, opertaion):
             return False
 
         def __str__(self):
