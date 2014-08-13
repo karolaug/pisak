@@ -160,8 +160,8 @@ class Button(Mx.Button, properties.PropertyAdapter):
     @icon_name.setter
     def icon_name(self, value):
         self._icon_name = value
-        if not Mx.IconTheme.get_default().has_icon(value):
-            self.set_icon()
+        #if not Mx.IconTheme.get_default().has_icon(value):
+        self.set_icon()
 
     @property
     def alternative_icon_name(self):
