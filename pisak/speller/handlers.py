@@ -37,38 +37,39 @@ def nav_word_forward(text_box):
 
 @signals.registered_handler("speller/save")
 def save(pop_up):
-    pop_up.mode = "save"
-    file_overwrite_text = "WYBIERZ PLIK DO NADPISANIA"
-    empty_text_box_text = "BRAK TEKSTU DO ZAPISANIA"
-    save_success_text = "POMYŚLNIE ZAPISANO PLIK"
-    text_box = pop_up.target
+    file_overwrite_message = "WYBIERZ PLIK DO NADPISANIA"
+    empty_text_box_message = "BRAK TEKSTU DO ZAPISANIA"
+    save_success_message = "POMYŚLNIE ZAPISANO PLIK:"
+    file_name_base = "plik nr "
     files_limit = 9
+    pop_up.mode = "save"
+    text_box = pop_up.target
     files = database_agent.get_text_files()
-    if len(files) < files_limit:
-        text = text_box.get_text()
-        if text:
-            name_length = 10
-            name = text.strip()[:name_length] + "..."
+    text = text_box.get_text()
+    if text:
+        if len(files) < files_limit:
+            name = file_name_base + str(len(files)+1)
             file_path = database_agent.insert_text_file(name)
             with open(file_path, "w") as file:
                 file.write(text)
-            pop_up.on_screen(save_success_text)
+            message = save_success_message + "\n\n" + '"' + name + '"'
+            pop_up.on_screen(message)
         else:
-            pop_up.on_screen(empty_text_box_text)
+            pop_up.on_screen(file_overwrite_message, files)
     else:
-        pop_up.on_screen(file_overwrite_text, files)
+        pop_up.on_screen(empty_text_box_message)
 
 
 @signals.registered_handler("speller/load")
 def load(pop_up):
+    files_present_message = "WYBIERZ PLIK"
+    no_files_present_message = "BRAK PLIKÓW DO WCZYTANIA"
     pop_up.mode = "load"
-    files_present_text = "WYBIERZ PLIK"
-    no_files_present_text = "BRAK PLIKÓW DO WCZYTANIA"
     files = database_agent.get_text_files()
     if files:
-        pop_up.on_screen(files_present_text, files)
+        pop_up.on_screen(files_present_message, files)
     else:
-        pop_up.on_screen(no_files_present_text)
+        pop_up.on_screen(no_files_present_message)
     
 
 @signals.registered_handler("speller/print")

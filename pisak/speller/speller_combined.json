@@ -29,6 +29,7 @@
         "id": "pop_up_scanning_group",
         "type": "PisakScanningGroup",
         "selector": "mouse",
+        "scanning-hilite": true,
         "strategy": {
                         "type": "PisakRowStrategy",
                         "interval": 800,
@@ -55,21 +56,21 @@
         "ratio-margin-bottom": 0.1,
         "ratio-margin-left": 0.1,
         "ratio-margin-right": 0.1,
-        "ratio-spacing": 0.1,
+        "ratio-spacing": 0.07,
         "tile-ratio-height": 0.1,
         "tile-ratio-width": 0.2,
-        "tile-font-name": "Kelson Sans",
         "children": ["pop_up_space", "pop_up_header"]
     },
     {
         "id": "pop_up_header",
         "type": "ClutterText",
-        "font-name": "Kelson Sans light 30"
+        "font-name": "Kelson Sans light 30",
+        "line-alignment": "center"
     },
     {
         "id": "pop_up_space",
         "type": "PisakBoxLayout",
-        "ratio-spacing": 0.1,
+        "ratio-spacing": 0.07,
         "orientation": "vertical"
     },
     {                                                                                                          
@@ -535,17 +536,12 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "wielkie_litery",
-        "is-toggle": true,
         "spacing": 0,
         "signals": [
                        {
                            "name": "clicked",
                            "handler": "speller/swap_caps_chars",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/switch_toggled_state"
                        }
                    ]
     },
@@ -557,7 +553,6 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "polskie",
-        "is-toggle": true,
         "related-object": "keyboard_panel",
         "signals": [
                        {
@@ -569,14 +564,6 @@
                            "name": "clicked",
                            "handler": "speller/swap_altgr_chars_on_select",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/set_toggled_state"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/unset_toggled_state_on_select"
                        }
                    ]
     },
@@ -590,7 +577,6 @@
         "icon-size": 50,
         "icon-name": "specjalne",
         "related-object": "keyboard_panel",
-        "is-toggle": true,
         "signals": [
                        {
                            "name": "clicked",
@@ -601,14 +587,6 @@
                            "name": "clicked",
                            "handler": "speller/swap_special_chars_on_select",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/set_toggled_state"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/unset_toggled_state_on_select"
                        }
                    ]
     },

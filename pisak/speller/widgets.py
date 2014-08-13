@@ -806,10 +806,7 @@ class PopUp(layout.Box):
             0, 1., 0, GObject.PARAM_READWRITE),
         "tile_ratio_height": (
             GObject.TYPE_FLOAT, None, None,
-            0, 1., 0, GObject.PARAM_READWRITE),
-        "tile_font_name": (
-            GObject.TYPE_STRING, "font on buttons",
-            "button font", "noop", GObject.PARAM_READWRITE)
+            0, 1., 0, GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
@@ -819,7 +816,8 @@ class PopUp(layout.Box):
         self.header = None
         self.stage = None
         self.mode = None
-        self.exit_button_label = "KONTYNUUJ"
+        self.continue_button_label = "KONTYNUUJ"
+        self.exit_button_label = "WYJDŹ"
         self.pop_up_idle_duration = 3000
         self.background_effect = Clutter.BlurEffect.new()
 
@@ -838,14 +836,6 @@ class PopUp(layout.Box):
     @tile_ratio_height.setter
     def tile_ratio_height(self, value):
         self._tile_ratio_height = value
-
-    @property
-    def tile_font_name(self):
-        return self._tile_font_name
-
-    @tile_font_name.setter
-    def tile_font_name(self, value):
-        self._tile_font_name = value
 
     @property
     def row_count(self):
@@ -903,13 +893,15 @@ class PopUp(layout.Box):
                 button.ratio_height = self.tile_ratio_height
                 button.connect("clicked", self._on_select, file["path"])
                 row.add_child(button)
-        else:
-            button = Button()
+        button = Button()
+        button.ratio_width = self.tile_ratio_width
+        button.ratio_height = self.tile_ratio_height
+        button.connect("clicked", self._close)
+        self.space.add_child(button)
+        if text_files:
             button.set_label(self.exit_button_label)
-            button.ratio_width = self.tile_ratio_width
-            button.ratio_height = self.tile_ratio_height
-            button.connect("clicked", self._close)
-            self.space.add_child(button)
+        else:
+            button.set_label(self.continue_button_label)
         
     def _on_select(self, button, path):
         if self.mode == "save":
@@ -925,8 +917,8 @@ class PopUp(layout.Box):
         
     def _close(self, *args):
         self.stage.pending_group = self.background_scene
-        self.scanning_group.hide()
         self.background_scene.remove_effect(self.background_effect)
+        self.scanning_group.hide()
         Clutter.threads_add_timeout(0, self.scanning_group.strategy.interval, self._killall, None)
 
     def _killall(self, *args):  # workaround for some scanning issues
