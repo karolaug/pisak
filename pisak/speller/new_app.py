@@ -55,7 +55,7 @@ class PisakSpellerApp(switcher_app.Application):
     def create_stage(self, argv):
         script_path = SCRIPT_PATHS[argv[1]]
         stage = PisakSpellerStage(self.context, script_path)
-        stage.set_size(1366, 768)
+        stage.set_size(1920, 1080)
         stage.set_fullscreen(True)
         return stage
 

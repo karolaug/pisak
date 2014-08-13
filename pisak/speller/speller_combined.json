@@ -28,6 +28,7 @@
     {
         "id": "pop_up_scanning_group",
         "type": "PisakScanningGroup",
+        "selector": "mouse",
         "strategy": {
                         "type": "PisakRowStrategy",
                         "interval": 800,
