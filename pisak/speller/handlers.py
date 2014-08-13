@@ -37,6 +37,7 @@ def nav_word_forward(text_box):
 
 @signals.registered_handler("speller/save")
 def save(pop_up):
+    pop_up.mode = "save"
     file_overwrite_text = "WYBIERZ PLIK DO NADPISANIA"
     empty_text_box_text = "BRAK TEKSTU DO ZAPISANIA"
     save_success_text = "POMYŚLNIE ZAPISANO PLIK"
@@ -51,22 +52,23 @@ def save(pop_up):
             file_path = database_agent.insert_text_file(name)
             with open(file_path, "w") as file:
                 file.write(text)
-            pop_up.on_screen("save", save_success_text)
+            pop_up.on_screen(save_success_text)
         else:
-            pop_up.on_screen("save", empty_text_box_text)
+            pop_up.on_screen(empty_text_box_text)
     else:
-        pop_up.on_screen("save", file_overwrite_text, files)
+        pop_up.on_screen(file_overwrite_text, files)
 
 
 @signals.registered_handler("speller/load")
 def load(pop_up):
+    pop_up.mode = "load"
     files_present_text = "WYBIERZ PLIK"
     no_files_present_text = "BRAK PLIKÓW DO WCZYTANIA"
     files = database_agent.get_text_files()
     if files:
-        pop_up.on_screen("load", files_present_text, files)
+        pop_up.on_screen(files_present_text, files)
     else:
-        pop_up.on_screen("load", no_files_present_text)
+        pop_up.on_screen(no_files_present_text)
     
 
 @signals.registered_handler("speller/print")
