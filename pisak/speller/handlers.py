@@ -36,36 +36,39 @@ def nav_word_forward(text_box):
 
 
 @signals.registered_handler("speller/save")
-def save(text_box):
+def save(pop_up):
+    file_overwrite_text = "WYBIERZ PLIK DO NADPISANIA"
+    empty_text_box_text = "BRAK TEKSTU DO ZAPISANIA"
+    save_success_text = "POMYŚLNIE ZAPISANO PLIK"
+    text_box = pop_up.target
     files_limit = 9
     files = database_agent.get_text_files()
     if len(files) < files_limit:
         text = text_box.get_text()
         if text:
-            name_length = 20
+            name_length = 10
             name = text.strip()[:name_length] + "..."
             file_path = database_agent.insert_text_file(name)
             with open(file_path, "w") as file:
                 file.write(text)
+            pop_up.on_screen("save", save_success_text)
+        else:
+            pop_up.on_screen("save", empty_text_box_text)
+    else:
+        pop_up.on_screen("save", file_overwrite_text, files)
 
-    
+
 @signals.registered_handler("speller/load")
-def load(text_box):
+def load(pop_up):
+    files_present_text = "WYBIERZ PLIK"
+    no_files_present_text = "BRAK PLIKÓW DO WCZYTANIA"
     files = database_agent.get_text_files()
     if files:
-        file_path = files[-1]["path"]
-        with open(file_path, "r") as file:
-            text = file.read()
-        text_box.clear_all()
-        text_box.type_text(text)
-
-
-@signals.registered_handler("speller/show_load_pop_up")
-def show_load_pop_up(load_pop_up):
-    text_files = database_agent.get_text_files()
-    load_pop_up.on_screen(text_files)
-
+        pop_up.on_screen("load", files_present_text, files)
+    else:
+        pop_up.on_screen("load", no_files_present_text)
     
+
 @signals.registered_handler("speller/print")
 def print_doc(text_box):
     raise NotImplementedError

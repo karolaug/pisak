@@ -646,8 +646,8 @@ class Prediction(pisak.widgets.Button):
         self._order_num = value
 
 
-class LoadPopUp(layout.Box):
-    __gtype_name__ = "PisakSpellerLoadPopUp"
+class PopUp(layout.Box):
+    __gtype_name__ = "PisakSpellerPopUp"
     __gproperties__ = {
         "background_scene" : (
             scanning.Group.__gtype__,
@@ -684,10 +684,10 @@ class LoadPopUp(layout.Box):
         self.space = None
         self.header = None
         self.stage = None
+        self.mode = None
+        self.exit_button_label = "KONTYNUUJ"
         self.pop_up_idle_duration = 3000
         self.background_effect = Clutter.BlurEffect.new()
-        self.files_present_text = "WYBIERZ PLIK"
-        self.no_files_present_text = "BRAK PLIKÓW DO WCZYTANIA"
 
     @property
     def tile_ratio_width(self):
@@ -745,43 +745,50 @@ class LoadPopUp(layout.Box):
     def background_scene(self, value):
         self._background_scene = value
 
-    def on_screen(self, text_files):
+    def on_screen(self, mode, message, text_files=None):
+        self.mode = mode
         self.space = self.get_children()[1]
         self.header = self.get_children()[0]
         self.scanning_group = self.get_parent()
         self.stage = self.background_scene.get_stage()
         self.stage.add_child(self.scanning_group)
         self.background_scene.add_effect(self.background_effect)
-        if text_files:
-            self.header.set_text(self.files_present_text)
-            self._generate_content(text_files)
-            self.scanning_group.start_cycle()
-            self.stage.pending_group = self.scanning_group
-        else:
-            self.header.set_text(self.no_files_present_text)
-            #self.stage.pending_group = None
-            self.background_scene.stop_cycle()
-            Clutter.threads_add_timeout(0, self.pop_up_idle_duration, self._close, None)
-            
+        self.header.set_text(message)
+        self._generate_content(text_files)
+        self.scanning_group.start_cycle()
+        self.stage.pending_group = self.scanning_group
 
-    def _generate_content(self, text_files):
-        for idx, file in enumerate(text_files):
-            if idx % self.column_count == 0:
-                row = layout.Box()
-                row.spacing = self.spacing
-                self.space.add_child(row)
+    def _generate_content(self, text_files=None):
+        if text_files:
+            for idx, file in enumerate(text_files):
+                if idx % self.column_count == 0:
+                    row = layout.Box()
+                    row.spacing = self.spacing
+                    self.space.add_child(row)
+                button = Button()
+                button.set_label(file["name"])
+                button.ratio_width = self.tile_ratio_width
+                button.ratio_height = self.tile_ratio_height
+                button.connect("clicked", self._on_select, file["path"])
+                row.add_child(button)
+        else:
             button = Button()
-            button.set_label(file["name"])
+            button.set_label(self.exit_button_label)
             button.ratio_width = self.tile_ratio_width
             button.ratio_height = self.tile_ratio_height
-            button.connect("clicked", self._on_select, file["path"])
-            row.add_child(button)        
-
+            button.connect("clicked", self._close)
+            self.space.add_child(button)
+        
     def _on_select(self, button, path):
-        with open(path, "r") as file:
-            text = file.read()
-        self.target.clear_all()
-        self.target.type_text(text)
+        if self.mode == "save":
+            new_text = self.target.get_text()
+            with open(path, "w") as file:
+                file.write(new_text)
+        elif self.mode == "load":
+            with open(path, "r") as file:
+                text = file.read()
+            self.target.clear_all()
+            self.target.type_text(text)
         self._close()
         
     def _close(self, *args):
