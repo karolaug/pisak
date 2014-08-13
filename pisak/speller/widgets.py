@@ -888,11 +888,10 @@ class PopUp(layout.Box):
         self.scanning_group = self.get_parent()
         self.stage = self.background_scene.get_stage()
         self.stage.add_child(self.scanning_group)
+        self.stage.pending_group = self.scanning_group
         self.background_scene.add_effect(self.background_effect)
         self.header.set_text(message)
         self._generate_content(text_files)
-        self.scanning_group.start_cycle()
-        self.stage.pending_group = self.scanning_group
 
     def _generate_content(self, text_files=None):
         if text_files:
