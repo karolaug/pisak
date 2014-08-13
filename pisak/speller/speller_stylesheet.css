@@ -14,16 +14,16 @@ PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
 
 PisakSpellerButton:hover, PisakSpellerKey:hover, PisakSpellerPrediction:hover {
     color: white;
-    border-image: url("hover_button.png") 5;
+    border-image: url("hover_button.png");
 }
 
 PisakSpellerButton:active, PisakSpeller:key:active, PisakSpellerPrediction:active {
     color: white;
-    border-image: url("active_button.png") 5;
+    border-image: url("active_button.png");
 }
 
 MxButton:scanning {
     color: #ccc;
-    border-image: url("active_button.png");
+    border-image: url("scanning_button.png");
 }
 
