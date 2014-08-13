@@ -175,7 +175,7 @@
         "text": "WYŚLIJ",
         "on-select-hilite-pattern": "scanning-hover-scanning",
         "x-align": "start",
-	"disabled": true,
+        "disabled": true,
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
@@ -195,7 +195,7 @@
         "text": "DRUKUJ",
         "on-select-hilite-pattern": "scanning-hover-scanning",
         "x-align": "start",
-	"disabled": true,
+        "disabled": true,
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
@@ -247,6 +247,13 @@
                        }
                    ]
     },
+
+    {
+        "id": "prediction_dictionary",
+        "type": "PisakSpellerDictionary",
+        "target": "text_box"
+    },
+
     {
         "id": "prediction_panel",
         "type": "PisakScanningGroup",
@@ -285,8 +292,9 @@
         "id": "prediction_1",
         "type": "PisakSpellerPrediction",
         "order-num": 1,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 1",
+        "label": "Chciałbym",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -295,8 +303,9 @@
         "id": "prediction_2",
         "type": "PisakSpellerPrediction",
         "order-num": 2,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 2",
+        "label": "Czy",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -305,8 +314,9 @@
         "id": "prediction_3",
         "type": "PisakSpellerPrediction",
         "order-num": 3,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 3",
+        "label": "Jak",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -315,8 +325,9 @@
         "id": "prediction_4",
         "type": "PisakSpellerPrediction",
         "order-num": 4,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 4",
+        "label": "Jestem",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -325,8 +336,9 @@
         "id": "prediction_5",
         "type": "PisakSpellerPrediction",
         "order-num": 5,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 5",
+        "label": "Nie",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -335,8 +347,9 @@
         "id": "prediction_6",
         "type": "PisakSpellerPrediction",
         "order-num": 6,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 6",
+        "label": "Niestety",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -345,8 +358,9 @@
         "id": "prediction_7",
         "type": "PisakSpellerPrediction",
         "order-num": 7,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 7",
+        "label": "Rzeczywiście",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -355,8 +369,9 @@
         "id": "prediction_8",
         "type": "PisakSpellerPrediction",
         "order-num": 8,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 8",
+        "label": "Super",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -365,8 +380,9 @@
         "id": "prediction_9",
         "type": "PisakSpellerPrediction",
         "order-num": 9,
+        "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "PREDYKCJA 9",
+        "label": "Witam",
         "on-select-hilite-pattern": "scanning-hover-",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
@@ -475,7 +491,6 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "backspace",
-        "on-select-hilite-pattern": "scanning-hover-scanning",
         "spacing": 0,
         "signals": [
                        {

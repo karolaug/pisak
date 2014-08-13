@@ -24,7 +24,7 @@ PisakSpellerButton:hover, PisakSpellerKey:hover, PisakSpellerPrediction:hover {
     border-image: url("hover_button.png") 5;
 }
 
-PisakSpellerButton:active, PisakSpeller:key:active, PisakSpellerPrediction:active {
+PisakSpellerButton:active, PisakSpellerKey:active, PisakSpellerPrediction:active {
     color: white;
     border-image: url("active_button.png") 5;
 }
@@ -33,4 +33,12 @@ MxButton:scanning {
     color: #ccc;
     border-image: url("active_button.png");
 }
+
+PisakSpellerPrediction:disabled{
+    color: black;
+    font-size: 20;
+    font-family: serif;
+    border-image: url("rest_button.png") 5;
+}
+
 
