@@ -602,9 +602,9 @@ class Key(pisak.widgets.Button):
 class Dictionary(GObject.GObject, properties.PropertyAdapter):
     __gtype_name__ = "PisakSpellerDictionary"
     __gsignals__ = {
-        "content_update":(
+        "content_update": (
             GObject.SIGNAL_RUN_FIRST, None, ()),
-        "processing_on":(
+        "processing_on": (
             GObject.SIGNAL_RUN_FIRST, None, ())
     }
     __gproperties__ = {
@@ -617,6 +617,7 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
 
     def __init__(self):
         super().__init__()
+        self.target = None
         self.basic_content = ['Chciałbym', 'Czy', 'Jak', 'Jestem',
                               'Nie', 'Niestety', 'Rzeczywiście',
                               'Super', 'Witam'] #this is subject to change, perhaps should be a class argument
@@ -647,13 +648,13 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         t.start()
 
     def _follow_target(self):
-        if self.target:
+        if self.target is not None:
             text_field = self.target.clutter_text
             text_field.connect("text-changed", self._update_content)
 
     def _stop_following_target(self):
         try:
-            if self.target:
+            if self.target is not None:
                 text_field = self.target.clutter_text
                 text_field.disconnect_by_func("text-changed", self._update_content)
         except AttributeError:
@@ -704,6 +705,7 @@ class Prediction(pisak.widgets.Button):
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self._on_activate)
         self.idle_icon_name = "hourglass"
+        self.icon_name = None
         self.icon_size = 50
 
     @property
@@ -720,11 +722,8 @@ class Prediction(pisak.widgets.Button):
             self.target.replace_endmost_string(label)
 
     def _update_button(self, source):
-        try:
-            if self.icon_name:
-                self.icon_name = ""
-        except AttributeError:
-            pass
+        if self.icon_name is not None:  # if there is a need to call icon setter
+            self.icon_name = None
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
             self.set_label(new_label)
@@ -735,21 +734,19 @@ class Prediction(pisak.widgets.Button):
 
     def _button_idle(self, source):
         self.set_label(" ")
-        try:
+        if self.idle_icon_name is not None:
             self.icon_name = self.idle_icon_name
-        except AttributeError:
-            pass
         self.set_disabled(True)
 
     def _follow_dictionary(self):
-        if self.dictionary:
+        if self.dictionary is not None:
             self.dictionary.connect("content-update", self._update_button)
             self.dictionary.connect("processing-on", self._button_idle)
 
     def _stop_following_dictionary(self):
         try:
-            if self.dictionary:
-                self.dictionary.disconnect_by_func("text-changed", self._update_button)
+            if self.dictionary is not None:
+                self.dictionary.disconnect_by_func("content-update", self._update_button)
                 self.dictionary.disconnect_by_func("processing-on", self._button_idle)
         except AttributeError:
             return None
