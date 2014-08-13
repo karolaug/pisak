@@ -27,11 +27,11 @@ MxButton:scanning {
     border-image: url("scanning_button.png");
 }
 
-PisakSpellerPrediction:disabled{
+MxButton:disabled{
     color: black;
     font-size: 20;
     font-family: serif;
-    border-image: url("rest_button.png") 5;
+    border-image: url("disabled_button.png") 5;
 }
 
 
