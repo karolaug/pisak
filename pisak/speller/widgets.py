@@ -9,6 +9,25 @@ import pisak.widgets
 
 class Button(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerButton"
+    __gproperties__ = {
+        "related_object": (
+            Clutter.Actor.__gtype__,
+            "related object",
+            "object that button has an impact on",
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+
+    @property
+    def related_object(self):
+        return self._related_object
+
+    @related_object.setter
+    def related_object(self, value):
+        self._related_object = value
+
 
 class CursorGroup(Clutter.Actor):
     __gtype_name__ = "PisakCursorGroup"
@@ -143,7 +162,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def revert(self, text):
             self._replace(text)
 
-        def compose(self):
+        def compose(self, *args):
             return False
 
         def __str__(self):
@@ -190,10 +209,12 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
     def type_text(self, text):
         """
-        Append the given text to the text buffer
+        Insert the given text to the text buffer on the
+        current cursor position
         @param text string passed after a user's actions
         """
-        operation = Text.Insertion(self.get_text_length(), text)
+        pos = self.clutter_text.get_cursor_position()
+        operation = Text.Insertion(pos, text)
         self.add_operation(operation)
 
     def type_unicode_char(self, char):
@@ -208,10 +229,20 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
     def delete_char(self):
         """
-        Delete the endmost single character
+        Delete the single character from behind the
+        current cursor position
         """
-        pos = self.get_text_length() - 1
-        text = self.get_text()[-1]
+        pos = self.clutter_text.get_cursor_position()
+        if pos == -1:
+            if self.get_text_length() > 0:
+                pos = self.get_text_length() - 1
+            else:
+                return False
+        elif pos == 0:
+            return
+        elif pos > 0:
+            pos -= 1
+        text = self.get_text()[pos]
         operation = Text.Deletion(pos, text)
         self.add_operation(operation)
         
@@ -275,6 +306,50 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self.clutter_text.set_cursor_position(current_position-1)
         elif current_position == -1 and text_length > 0:
             self.clutter_text.set_cursor_position(text_length-1)
+
+    def move_word_backward(self):
+        """
+        Move cursor one word backward
+        """
+        current_position = self.clutter_text.get_cursor_position()
+        text = self.clutter_text.get_text()
+        if current_position == 0:
+            pass
+        else:
+            if current_position == -1:
+                current_position = len(text) - 1
+            letter = text[current_position-1]
+            while letter == ' ':
+                current_position -= 1
+                letter = text[current_position]
+            while letter != ' ':
+                current_position -= 1
+                letter = text[current_position-1]
+                if current_position == 0:
+                    break
+            self.clutter_text.set_cursor_position(current_position)
+
+    def move_word_forward(self):
+        """
+        Move cursor one word forward
+        """
+        current_position = self.clutter_text.get_cursor_position()
+        text = self.clutter_text.get_text()
+        if current_position <= -1:
+            pass
+        else:
+            try:
+                letter = text[current_position]
+                while letter == ' ':
+                    current_position += 1
+                    letter = text[current_position]
+                while letter != ' ':
+                    current_position += 1
+                    letter = text[current_position-1]
+            except IndexError:
+                current_position = -1
+        self.clutter_text.set_cursor_position(current_position)
+
 
     def move_line_up(self):
         """
