@@ -48,6 +48,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
     }
     
     __gproperties__ = {
+        "disabled": (GObject.TYPE_BOOLEAN, "State of button",
+                     "If state of button is disabled.", False, 
+                     GObject.PARAM_READWRITE),
         "ratio_width": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
@@ -81,9 +84,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
             "progression of hilite states invoked"
             "by button selection separated with hyphens",
             "active-", GObject.PARAM_READWRITE),
-        "on_select_hilite_duration": (
-            GObject.TYPE_UINT, "hilite duration",
-            "duration of hilite progression in msc",
+        "on_select_hilite_interval": (
+            GObject.TYPE_UINT, "hilite interval",
+            "interval of hilite progression in msc",
             0, GObject.G_MAXUINT, 1000,
             GObject.PARAM_READWRITE),
     }
@@ -91,8 +94,8 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.properties = {}
-        self.on_select_hilite_pattern = "hover-scanning-"
-        self.on_select_hilite_duration = 1000
+        self.on_select_hilite_pattern = "scanning-hover-scanning"
+        self.on_select_hilite_interval = 100
         self.current_icon = None
         self.box = None
         self._connect_signals()
@@ -106,6 +109,15 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.connect("notify::style-pseudo-class", 
                      lambda *_: self.change_icon_white())
         self.set_reactive(True)
+
+    @property
+    def disabled(self):
+        return self._disabled
+
+    @disabled.setter
+    def disabled(self, value):
+        self._disabled = value
+        self.set_disabled(value)
 
     @property
     def ratio_width(self):
@@ -177,12 +189,12 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self._on_select_hilite_pattern = value
 
     @property
-    def on_select_hilite_duration(self):
-        return self._on_select_hilite_duration
+    def on_select_hilite_interval(self):
+        return self._on_select_hilite_interval
 
-    @on_select_hilite_duration.setter
-    def on_select_hilite_duration(self, value):
-        self._on_select_hilite_duration = value
+    @on_select_hilite_interval.setter
+    def on_select_hilite_interval(self, value):
+        self._on_select_hilite_interval = value
 
     def _set_initial_label(self, source, spec):
         self.set_default_label()
@@ -235,6 +247,11 @@ class Button(Mx.Button, properties.PropertyAdapter):
                                      pixbuf.get_width(), 
                                      pixbuf.get_height(), 
                                      pixbuf.get_rowstride())
+            try:
+                if self.disabled:
+                    self.image.set_opacity(100)
+            except AttributeError: #if the disabled props is not yet set
+                pass
         else:
             try:
                 self.image.set_from_file(''.join([self.image_path, '.png']))
@@ -309,16 +326,19 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def inactivate(self):
         self.style_pseudo_class_remove("active")
 
-    def on_select_hilite(self):
-        hilite_stage = self._on_select_hilite_pattern_parsed.pop(0)
-        self.set_style_pseudo_class(hilite_stage)
-        if self._on_select_hilite_pattern_parsed:
-            return True
+    def on_select_hilite(self, token):
+        if token == self.timeout_token:
+            hilite_stage = self._on_select_hilite_pattern_parsed.pop(0)
+            self.set_style_pseudo_class(hilite_stage)
+            if self._on_select_hilite_pattern_parsed:
+                return True
     
     def on_click_activate(self, source):
         self._on_select_hilite_pattern_parsed = self.on_select_hilite_pattern.split("-")
-        phase_duration = int( self.on_select_hilite_duration / len(self._on_select_hilite_pattern_parsed) )
-        Clutter.threads_add_timeout(0, phase_duration, self.on_select_hilite)
+        self.set_style_pseudo_class(self._on_select_hilite_pattern_parsed.pop(0))
+        if self._on_select_hilite_pattern_parsed:
+            self.timeout_token = object()
+            Clutter.threads_add_timeout(0, self.on_select_hilite_interval, self.on_select_hilite, self.timeout_token)
         self.emit("activate")
 
 
