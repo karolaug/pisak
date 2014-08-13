@@ -97,6 +97,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.on_select_hilite_pattern = "scanning-hover-scanning"
         self.on_select_hilite_interval = 100
         self.current_icon = None
+        self.box = None
         self._connect_signals()
 
     def _connect_signals(self):
@@ -216,39 +217,25 @@ class Button(Mx.Button, properties.PropertyAdapter):
         raise NotImplementedError
 
     def set_icon(self):
-        self.custom_content()
-        self.read_svg()
-        self.set_image()
-
-        text_length = len(self.get_label())
-        if text_length == 1:
-            pass
+        if not self.box:
+            self.custom_content()
+        if self.icon_name:
+            self.load_image()
+            self.box.show()
         else:
-            pass
-            #self.space.set_width(self.get_width() - 200 - self.image.get_width())
-
-        self.box.add_child(self.space)
-        self.box.add_child(self.image)
+            self.box.hide()
 
     def custom_content(self):
         self.set_icon_visible(False)
         self.box = Box()
-        self.space = Clutter.Actor()
-
         self.get_children()[0].add_actor(self.box, 1)
-
-    def read_svg(self):
-        try:
-            handle = Rsvg.Handle()
-            svg_path = ''.join([os.path.join(res.PATH,'icons',
-                                             self.icon_name), '.svg'])
-            self.svg = handle.new_from_file(svg_path)
-        except: #GError as error:
-            print('No file found at {}.'.format(svg_path))
-            self.svg = False
-
-    def set_image(self):
+        self.space = Clutter.Actor()
         self.image = Mx.Image()
+        self.box.add_child(self.space)
+        self.box.add_child(self.image)
+
+    def load_image(self):
+        self.read_svg()
         self.image_path = os.path.join(res.PATH, "icons", self.icon_name)
         icon_size = self.get_icon_size()
         if self.svg:
@@ -283,6 +270,16 @@ class Button(Mx.Button, properties.PropertyAdapter):
                 self.image.set_scale(icon_size * 10 / image_size[1],
                                      icon_size * 10/ image_size[0])
 
+    def read_svg(self):
+        try:
+            handle = Rsvg.Handle()
+            svg_path = ''.join([os.path.join(res.PATH,'icons',
+                                             self.icon_name), '.svg'])
+            self.svg = handle.new_from_file(svg_path)
+        except:  # GError as error:
+            print('No file found at {}.'.format(svg_path))
+            self.svg = False
+
     def set_image_white(self):
         handle = Rsvg.Handle()
         svg_path = ''.join([os.path.join(res.PATH,'icons',
@@ -301,18 +298,19 @@ class Button(Mx.Button, properties.PropertyAdapter):
 
     def change_icon_white(self):
         try:
-            if self.style_pseudo_class_contains("hover"):
-                self.set_image_white()
-            else:
-                pixbuf = self.svg.get_pixbuf()
-                icon_size = self.get_icon_size()
-                if icon_size:
-                    pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
-                    self.image.set_from_data(pixbuf.get_pixels(),
-                                             Cogl.PixelFormat.RGBA_8888, 
-                                             pixbuf.get_width(), 
-                                             pixbuf.get_height(), 
-                                             pixbuf.get_rowstride())
+            if self.icon_name:
+                if self.style_pseudo_class_contains("hover"):
+                    self.set_image_white()
+                else:
+                    pixbuf = self.svg.get_pixbuf()
+                    icon_size = self.get_icon_size()
+                    if icon_size:
+                        pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+                        self.image.set_from_data(pixbuf.get_pixels(),
+                                                 Cogl.PixelFormat.RGBA_8888, 
+                                                 pixbuf.get_width(), 
+                                                 pixbuf.get_height(), 
+                                                 pixbuf.get_rowstride())
         except AttributeError:
             pass
             
