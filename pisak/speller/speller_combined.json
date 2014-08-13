@@ -245,6 +245,13 @@
                        }
                    ]
     },
+
+    {
+        "id": "prediction_dictionary",
+        "type": "PisakSpellerDictionary",
+        "target": "text_box"
+    },
+
     {
         "id": "prediction_panel",
         "type": "PisakScanningGroup",
