@@ -46,7 +46,7 @@ class CursorGroup(Clutter.Actor):
         self.text = [i for i in self.get_children() 
                      if type(i) == Text][0]
         self.init_cursor()
-        self.text.clutter_text.connect('cursor_changed', self.move_cursor)
+        self.text.clutter_text.connect('text-changed', self.move_cursor)
 
     def init_cursor(self):
         font_name = self.text.clutter_text.get_font_name()
