@@ -280,13 +280,17 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         text = self.get_text()
         if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions                     
-            if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: 
-                return ' '
+            if text.rstrip():
+                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: 
+                    return ' '
         else:
             return ' '    
 
-        last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
-        return last_sentence.rstrip() + (text[-1]  == ' ')*' '
+        if text.rstrip():
+            last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
+            return last_sentence.strip() + (text[-1]  == ' ')*' '
+        else:
+            return ' '
 
     def get_endmost_string(self):
         """
