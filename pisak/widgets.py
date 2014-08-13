@@ -78,24 +78,17 @@ class Button(Mx.Button, properties.PropertyAdapter):
             GObject.TYPE_INT64, "space between icon and text",
             "space between icon and text", 0, 1000, 100, 
             GObject.PARAM_READWRITE),
-        "on_select_hilite_pattern": (
-            GObject.TYPE_STRING,
-            "hilite pattern",
-            "progression of hilite states invoked"
-            "by button selection separated with hyphens",
-            "active-", GObject.PARAM_READWRITE),
-        "on_select_hilite_interval": (
-            GObject.TYPE_UINT, "hilite interval",
-            "interval of hilite progression in msc",
+        "on_select_hilite_duration": (
+            GObject.TYPE_UINT, "hilite duration",
+            "duration of hilite in msc",
             0, GObject.G_MAXUINT, 1000,
-            GObject.PARAM_READWRITE),
+            GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
         super().__init__()
         self.properties = {}
-        self.on_select_hilite_pattern = "scanning-hover-scanning"
-        self.on_select_hilite_interval = 100
+        self.on_select_hilite_duration = None
         self.current_icon = None
         self.box = None
         self._connect_signals()
@@ -106,8 +99,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         #self.connect("enter-event", lambda *_: self.hilite_on())
         #self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
-        self.connect("notify::style-pseudo-class", 
-                     lambda *_: self.change_icon_white())
+        self.connect("notify::style-pseudo-class", self._change_icon_style)
         self.set_reactive(True)
 
     @property
@@ -160,8 +152,8 @@ class Button(Mx.Button, properties.PropertyAdapter):
     @icon_name.setter
     def icon_name(self, value):
         self._icon_name = value
-        if not Mx.IconTheme.get_default().has_icon(value):
-            self.set_icon()
+        #if not Mx.IconTheme.get_default().has_icon(value):
+        self.set_icon()
 
     @property
     def alternative_icon_name(self):
@@ -181,20 +173,12 @@ class Button(Mx.Button, properties.PropertyAdapter):
         #self.box.set_spacing(value)
 
     @property
-    def on_select_hilite_pattern(self):
-        return self._on_select_hilite_pattern
+    def on_select_hilite_duration(self):
+        return self._on_select_hilite_duration
 
-    @on_select_hilite_pattern.setter
-    def on_select_hilite_pattern(self, value):
-        self._on_select_hilite_pattern = value
-
-    @property
-    def on_select_hilite_interval(self):
-        return self._on_select_hilite_interval
-
-    @on_select_hilite_interval.setter
-    def on_select_hilite_interval(self, value):
-        self._on_select_hilite_interval = value
+    @on_select_hilite_duration.setter
+    def on_select_hilite_duration(self, value):
+        self._on_select_hilite_duration = value
 
     def _set_initial_label(self, source, spec):
         self.set_default_label()
@@ -215,6 +199,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
 
     def switch_icon(self):
         raise NotImplementedError
+
+    def _change_icon_style(self, *args):
+        self.change_icon_white()
 
     def set_icon(self):
         if not self.box:
@@ -299,7 +286,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def change_icon_white(self):
         try:
             if self.icon_name:
-                if self.style_pseudo_class_contains("hover"):
+                if self.style_pseudo_class_contains("scanning"):
                     self.set_image_white()
                 else:
                     pixbuf = self.svg.get_pixbuf()
@@ -326,19 +313,15 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def inactivate(self):
         self.style_pseudo_class_remove("active")
 
-    def on_select_hilite(self, token):
+    def on_select_hilite_off(self, token):
         if token == self.timeout_token:
-            hilite_stage = self._on_select_hilite_pattern_parsed.pop(0)
-            self.set_style_pseudo_class(hilite_stage)
-            if self._on_select_hilite_pattern_parsed:
-                return True
+            self.style_pseudo_class_remove("active")
     
     def on_click_activate(self, source):
-        self._on_select_hilite_pattern_parsed = self.on_select_hilite_pattern.split("-")
-        self.set_style_pseudo_class(self._on_select_hilite_pattern_parsed.pop(0))
-        if self._on_select_hilite_pattern_parsed:
+        if self.on_select_hilite_duration:
+            self.style_pseudo_class_add("active")
             self.timeout_token = object()
-            Clutter.threads_add_timeout(0, self.on_select_hilite_interval, self.on_select_hilite, self.timeout_token)
+            Clutter.threads_add_timeout(0, self.on_select_hilite_duration, self.on_select_hilite_off, self.timeout_token)
         self.emit("activate")
 
 
