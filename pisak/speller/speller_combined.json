@@ -275,12 +275,7 @@
         "order-num": 1,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-<<<<<<< HEAD
-        "label": "PREDYKCJA 1",
-=======
         "label": "Chciałbym",
-        "on-select-hilite-pattern": "scanning-hover-",
->>>>>>> master
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },  
@@ -290,12 +285,7 @@
         "order-num": 2,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-<<<<<<< HEAD
-        "label": "PREDYKCJA 2",
-=======
         "label": "Czy",
-        "on-select-hilite-pattern": "scanning-hover-",
->>>>>>> master
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -345,7 +335,7 @@
         "order-num": 7,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Rzeczywiście"
+        "label": "Rzeczywiście",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },  
