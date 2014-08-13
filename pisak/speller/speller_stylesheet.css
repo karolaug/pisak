@@ -12,13 +12,6 @@ PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
     border-image: url("rest_button.png") 5;
 }
 
-PisakSpellerButton:disabled {
-    color: grey;
-    font-size: 18 pt;
-    font-family: Kelson Sans;
-    border-image: url("disabled_button.png") 5;
-}
-
 PisakSpellerButton:hover, PisakSpellerKey:hover, PisakSpellerPrediction:hover {
     color: white;
     border-image: url("hover_button.png");
