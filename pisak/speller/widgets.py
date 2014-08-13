@@ -2,6 +2,7 @@
 Definitions of widgets specific to speller applet
 '''
 import threading
+import re
 
 from gi.repository import Clutter, Mx, GObject, Pango
 
@@ -238,30 +239,19 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
     def get_endmost_triplet(self):
         """
-        Look for and return the first three-word string of characters with no commas
-        starting from the end of the text buffer
         Look for and return the first three-word string of characters
         with no commas, starting from the end of the text buffer.
-        if a comma or similar sign is detected at the end of the string
-        this function returns whitespace.
-
+        This function is used to send word from the text buffer to be used in prediction. 
+        When the words in the buffer are unsuited to be used in prediction the funciton returns ' '.
         """
 
         text = self.get_text()
-        start_pos = None
-        last_sentence_list = text.rstrip().split('. |, |; |? |! |" |: |( |)')[-1].split()
-        if len(last_sentence_list) >= 1:         
-            start_pos = -len(last_sentence_list[-1]) #negative start pos, counted from the end of the sting
-            if last_sentence_list[-1][-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
-                start_pos = None
-        if len(last_sentence_list) >= 2 and start_pos is not None:
-            start_pos -= len(last_sentence_list[-2]) + 1
-        if len(last_sentence_list) >= 3 and start_pos is not None:
-            start_pos -= len(last_sentence_list[-3]) + 2
-        if start_pos is not None:        
-            return text.rstrip()[start_pos:] + (text[-1] == ' ')*' '
-        else:
-            return ' '
+        if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions 
+            if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: 
+                return ' '
+
+        last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
+        return last_sentence.rstrip() + (text[-1]  == ' ')*' '
 
     def get_endmost_string(self):
         """
@@ -281,7 +271,9 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         current_text = self.get_text()
         if current_text: #if the text buffer is empty, or ends with whitespace, simply add predicted words. Otherwise, replace the last word.
-            if current_text[-1] == ' ':
+            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: #if the text buffer ends in a commas, add a space before adding the predicted word
+                self.type_text(' ' + text_after)
+            elif current_text[-1] == ' ':
                 self.type_text(text_after)
             else:
                 start_pos = current_text.rstrip().rfind(' ') + 1
@@ -293,6 +285,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
                 #self.type_text(text)
         else:
             self.type_text(text_after)
+
 
     def move_cursor_forward(self):
         """
