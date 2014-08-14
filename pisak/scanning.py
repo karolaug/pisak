@@ -126,11 +126,14 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         to_scan = self.get_children()
         while len(to_scan) > 0:
             current = to_scan.pop()
-            if isinstance(current, Group) or isinstance(current, Mx.Button):
+            if isinstance(current, Group):
+                yield current
+            elif isinstance(current, Mx.Button) \
+                    and not current.get_disabled():
                 yield current
             if not isinstance(current, Group):
                 to_scan.extend(current.get_children())
-    
+
     def start_cycle(self):
         self.stage = self.get_stage()
         if self.selector == 'mouse':
