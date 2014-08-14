@@ -37,11 +37,11 @@ class Strategy(GObject.GObject):
         elif isinstance(element, Mx.Button):
             self.group.stop_cycle()
             # set potential next group
-            self.group.get_stage().pending_group = self.unwind_to
+            self.group.stage.pending_group = self.unwind_to
             element.emit("clicked")
             # launch next group
-            if self.group.get_stage().pending_group:
-                self.group.get_stage().pending_group.start_cycle()
+            if self.group.stage.pending_group:
+                self.group.stage.pending_group.start_cycle()
             else:
                 self.group.start_cycle()
         else:
@@ -75,7 +75,10 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         "scanning-hilite": (
             GObject.TYPE_BOOLEAN,
             "", "", False,
-            GObject.PARAM_READWRITE)
+            GObject.PARAM_READWRITE),
+        "selector": (
+            GObject.TYPE_STRING, "", "", 
+            "mouse", GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
@@ -99,6 +102,14 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             self.strategy.group = self
     
     @property
+    def selector(self):
+        return self._selector
+
+    @selector.setter
+    def selector(self, value):
+        self._selector = value
+
+    @property
     def scanning_hilite(self):
         return self._scanning_hilite
     
@@ -121,15 +132,29 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
                 to_scan.extend(current.get_children())
     
     def start_cycle(self):
-        self._handler_token = self.connect("key-release-event", self.key_release)
+        self.stage = self.get_stage()
+        if self.selector == 'mouse':
+            self._handler_token = self.stage.connect("button-release-event",
+                                                     self.button_release)
+        elif self.selector == 'keyboard':
+            self._handler_token = self.connect("key-release-event", 
+                                               self.key_release)
+        else:
+            print("Unknown selector: ", self.selector)
+            return None
         self.get_stage().set_key_focus(self)
         if self.scanning_hilite:
             self.enable_scan_hilite()
         self.strategy.start()
 
     def stop_cycle(self):
+        action = {'mouse': self.stage.disconnect, 
+                  'keyboard': self.disconnect}
         self.get_stage().set_key_focus(None)
-        self.disconnect(self._handler_token)
+        try:
+            action[self.selector](self._handler_token)
+        except AttributeError:
+            print('No such selector:', self.selector)
         if self.scanning_hilite:
             self.disable_scan_hilite()
         self.strategy.stop()
@@ -139,6 +164,10 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         if event.unicode_value == ' ':
             source.strategy.select()
         return True
+
+    def button_release(self, source, event):
+        self.strategy.select()
+        return False
 
     def add_pseudoclass_all(self, pseudoclass):
         for s in self.get_subgroups():

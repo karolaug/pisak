@@ -48,6 +48,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
     }
     
     __gproperties__ = {
+        "disabled": (GObject.TYPE_BOOLEAN, "State of button",
+                     "If state of button is disabled.", False, 
+                     GObject.PARAM_READWRITE),
         "ratio_width": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
@@ -74,25 +77,41 @@ class Button(Mx.Button, properties.PropertyAdapter):
         "spacing": (
             GObject.TYPE_INT64, "space between icon and text",
             "space between icon and text", 0, 1000, 100, 
+            GObject.PARAM_READWRITE),
+        "on_select_hilite_duration": (
+            GObject.TYPE_UINT, "hilite duration",
+            "duration of hilite in msc",
+            0, GObject.G_MAXUINT, 1000,
             GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
         super().__init__()
         self.properties = {}
-        self.selection_time = 1000
+        self.on_select_hilite_duration = None
         self.current_icon = None
+        self.box = None
+        self.disabled = False
         self._connect_signals()
 
     def _connect_signals(self):
         self.connect("notify::text", self._set_initial_label)
-        self.connect("clicked", self.click_activate)
+        self.connect("clicked", self.on_click_activate)
         #self.connect("enter-event", lambda *_: self.hilite_on())
         #self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
-        self.connect("notify::style-pseudo-class", 
-                     lambda *_: self.change_icon_white())
+        self.connect("notify::style-pseudo-class", self._change_icon_style)
+        self.connect("notify::mapped", self.set_space)
         self.set_reactive(True)
+
+    @property
+    def disabled(self):
+        return self._disabled
+
+    @disabled.setter
+    def disabled(self, value):
+        self._disabled = value
+        self.set_disabled(value)
 
     @property
     def ratio_width(self):
@@ -135,8 +154,8 @@ class Button(Mx.Button, properties.PropertyAdapter):
     @icon_name.setter
     def icon_name(self, value):
         self._icon_name = value
-        if not Mx.IconTheme.get_default().has_icon(value):
-            self.set_icon()
+        #if not Mx.IconTheme.get_default().has_icon(value):
+        self.set_icon()
 
     @property
     def alternative_icon_name(self):
@@ -155,12 +174,29 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self._spacing = value
         #self.box.set_spacing(value)
 
+    @property
+    def on_select_hilite_duration(self):
+        return self._on_select_hilite_duration
+
+    @on_select_hilite_duration.setter
+    def on_select_hilite_duration(self, value):
+        self._on_select_hilite_duration = value
+
     def _set_initial_label(self, source, spec):
         self.set_default_label()
         self.disconnect_by_func(self._set_initial_label)
 
     def set_default_label(self):
         self.set_label(self.text)
+
+    def set_space(self, *args):
+        try:
+            img_width = self.image.get_width()
+            text_width = self.get_children()[0].get_children()[1].get_width()
+            butt_width = self.get_width()
+            self.space.set_width(butt_width - img_width - text_width - 26)
+        except AttributeError:
+            pass #should write a new PisakButtonMenu
 
     def set_alternative_label(self):
         self.set_label(self.alternative_text)
@@ -175,40 +211,37 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def switch_icon(self):
         raise NotImplementedError
 
+    def _change_icon_style(self, *args):
+        self.change_icon_white()
+
     def set_icon(self):
-        self.custom_content()
-        self.read_svg()
-        self.set_image()
-
-        text_length = len(self.get_label())
-        if text_length == 1:
-            pass
+        if not self.box:
+            self.custom_content()
+        if self.icon_name:
+            self.load_image()
+            self.box.show()
         else:
-            pass
-            #self.space.set_width(self.get_width() - 200 - self.image.get_width())
-
-        self.box.add_child(self.space)
-        self.box.add_child(self.image)
+            self.box.hide()
 
     def custom_content(self):
         self.set_icon_visible(False)
         self.box = Box()
-        self.space = Clutter.Actor()
-
-        self.get_children()[0].add_actor(self.box, 1)
-
-    def read_svg(self):
-        try:
-            handle = Rsvg.Handle()
-            svg_path = ''.join([os.path.join(res.PATH,'icons',
-                                             self.icon_name), '.svg'])
-            self.svg = handle.new_from_file(svg_path)
-        except: #GError as error:
-            print('No file found at {}.'.format(svg_path))
-            self.svg = False
-
-    def set_image(self):
+        original_box = self.get_children()[0]
+        self.clutter_text = original_box.get_children()[1]
+        self.clutter_text.set_property("ellipsize", 0)
+        text_content = self.clutter_text.get_text()
+        if text_content.strip() == '':
+            original_box.set_layout_manager(Clutter.BinLayout())
+            original_box.add_actor(self.box, 1)
+        else:
+            original_box.add_actor(self.box, 1)
+            self.space = Clutter.Actor()
+            self.box.add_child(self.space)
         self.image = Mx.Image()
+        self.box.add_child(self.image)
+
+    def load_image(self):
+        self.read_svg()
         self.image_path = os.path.join(res.PATH, "icons", self.icon_name)
         icon_size = self.get_icon_size()
         if self.svg:
@@ -220,6 +253,11 @@ class Button(Mx.Button, properties.PropertyAdapter):
                                      pixbuf.get_width(), 
                                      pixbuf.get_height(), 
                                      pixbuf.get_rowstride())
+            try:
+                if self.disabled:
+                    self.image.set_opacity(100)
+            except AttributeError: #if the disabled props is not yet set
+                pass
         else:
             try:
                 self.image.set_from_file(''.join([self.image_path, '.png']))
@@ -237,6 +275,16 @@ class Button(Mx.Button, properties.PropertyAdapter):
                 print(image_size, icon_size)
                 self.image.set_scale(icon_size * 10 / image_size[1],
                                      icon_size * 10/ image_size[0])
+
+    def read_svg(self):
+        try:
+            handle = Rsvg.Handle()
+            svg_path = ''.join([os.path.join(res.PATH,'icons',
+                                             self.icon_name), '.svg'])
+            self.svg = handle.new_from_file(svg_path)
+        except:  # GError as error:
+            print('No file found at {}.'.format(svg_path))
+            self.svg = False
 
     def set_image_white(self):
         handle = Rsvg.Handle()
@@ -256,18 +304,32 @@ class Button(Mx.Button, properties.PropertyAdapter):
 
     def change_icon_white(self):
         try:
-            if self.style_pseudo_class_contains("hover"):
-                self.set_image_white()
-            else:
-                pixbuf = self.svg.get_pixbuf()
-                icon_size = self.get_icon_size()
-                if icon_size:
-                    pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
-                    self.image.set_from_data(pixbuf.get_pixels(),
-                                             Cogl.PixelFormat.RGBA_8888, 
-                                             pixbuf.get_width(), 
-                                             pixbuf.get_height(), 
-                                             pixbuf.get_rowstride())
+            if self.icon_name:
+                if self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover"):
+                    if self.disabled and self.style_pseudo_class_contains("hover") and self.style_pseudo_class_contains("scanning"):
+                        self.set_image_white()
+                    elif self.disabled and not self.style_pseudo_class_contains("hover") and self.style_pseudo_class_contains("scanning"):
+                        pixbuf = self.svg.get_pixbuf()
+                        icon_size = self.get_icon_size()
+                        if icon_size:
+                            pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+                            self.image.set_from_data(pixbuf.get_pixels(),
+                                                     Cogl.PixelFormat.RGBA_8888, 
+                                                     pixbuf.get_width(), 
+                                                     pixbuf.get_height(), 
+                                                     pixbuf.get_rowstride())
+                    elif not self.disabled and (self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover")):
+                        self.set_image_white()
+                else:
+                    pixbuf = self.svg.get_pixbuf()
+                    icon_size = self.get_icon_size()
+                    if icon_size:
+                        pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+                        self.image.set_from_data(pixbuf.get_pixels(),
+                                                 Cogl.PixelFormat.RGBA_8888, 
+                                                 pixbuf.get_width(), 
+                                                 pixbuf.get_height(), 
+                                                 pixbuf.get_rowstride())
         except AttributeError:
             pass
             
@@ -282,15 +344,30 @@ class Button(Mx.Button, properties.PropertyAdapter):
 
     def inactivate(self):
         self.style_pseudo_class_remove("active")
+
+    def on_select_hilite_off(self, token):
+        if token == self.timeout_token:
+            self.style_pseudo_class_remove("active")
     
-    def click_activate(self, source):
-        self.select_on()
-        Clutter.threads_add_timeout(0, self.selection_time, lambda _: self.hilite_off(), None)
+    def on_click_activate(self, source):
+        if self.on_select_hilite_duration:
+            self.style_pseudo_class_add("active")
+            self.timeout_token = object()
+            Clutter.threads_add_timeout(0, self.on_select_hilite_duration, self.on_select_hilite_off, self.timeout_token)
         self.emit("activate")
 
 
-class BackgroundPattern(Clutter.Actor):
+class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
     __gtype_name__ = "PisakBackgroundPattern"
+    __gproperties__ = {
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE)
+    }
+    
 
     def __init__(self):
         super().__init__()
@@ -313,6 +390,24 @@ class BackgroundPattern(Clutter.Actor):
             context.line_to(x2, y2)
             context.stroke()
         return True
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
 
 class Aperture(Clutter.Actor):
