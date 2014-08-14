@@ -100,6 +100,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         #self.connect("leave-event", lambda *_: self.hilite_off())
         self.connect("inactivate", lambda *_: self.inactivate())
         self.connect("notify::style-pseudo-class", self._change_icon_style)
+        self.connect("notify::mapped", self.set_space)
         self.set_reactive(True)
 
     @property
@@ -187,6 +188,15 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def set_default_label(self):
         self.set_label(self.text)
 
+    def set_space(self, *args):
+        try:
+            img_width = self.image.get_width()
+            text_width = self.get_children()[0].get_children()[1].get_width()
+            butt_width = self.get_width()
+            self.space.set_width(butt_width - img_width - text_width - 26)
+        except AttributeError:
+            pass #should write a new PisakButtonMenu
+
     def set_alternative_label(self):
         self.set_label(self.alternative_text)
 
@@ -227,7 +237,6 @@ class Button(Mx.Button, properties.PropertyAdapter):
             self.space = Clutter.Actor()
             self.box.add_child(self.space)
         self.image = Mx.Image()
-        self.box.add_child(self.space)
         self.box.add_child(self.image)
 
     def load_image(self):
