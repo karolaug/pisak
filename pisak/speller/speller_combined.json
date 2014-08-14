@@ -435,7 +435,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "predykcja",
         "spacing": 0,
         "signals": [
@@ -452,7 +452,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "spacja",
         "spacing": 0,
         "signals": [
@@ -469,7 +469,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "backspace",
         "spacing": 0,
         "signals": [
@@ -486,7 +486,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "wielkie_litery",
         "is-toggle": true,
         "spacing": 0,
@@ -508,7 +508,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "polskie",
         "is-toggle": true,
         "related-object": "keyboard_panel",
@@ -540,7 +540,7 @@
         "alternative-text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "specjalne",
         "related-object": "keyboard_panel",
         "is-toggle": true,
@@ -571,7 +571,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "funkcje",
         "signals": [
             {
@@ -587,7 +587,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "cofnij",
         "signals": [
                        {
@@ -603,7 +603,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "nav_left",
         "signals": [
                        {
@@ -619,7 +619,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "nav_right",
         "signals": [
                        {
@@ -867,7 +867,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "nav_up",
         "signals": [
                        {
@@ -991,7 +991,7 @@
         "text": " ",
         "ratio-width": 0.048,
         "ratio-height": 0.085,
-        "icon-size": 50,
+        "icon-size": 30,
         "icon-name": "nav_down",
         "signals": [
                        {
