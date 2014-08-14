@@ -91,6 +91,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.on_select_hilite_duration = None
         self.current_icon = None
         self.box = None
+        self.disabled = False
         self._connect_signals()
 
     def _connect_signals(self):
@@ -286,7 +287,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def change_icon_white(self):
         try:
             if self.icon_name:
-                if self.style_pseudo_class_contains("scanning"):
+                if self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover"):
                     self.set_image_white()
                 else:
                     pixbuf = self.svg.get_pixbuf()
