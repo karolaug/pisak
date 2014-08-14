@@ -4,8 +4,8 @@ from pisak import layout, properties
 
 
 class ProgressBar(layout.Bin, properties.PropertyAdapter):
-    __gtype_name__ = "PisakProgressBar"
-    __groperties__ = {
+    __gtype_name__ = "PisakViewerProgressBar"
+    __gproperties__ = {
         "progress": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
@@ -15,7 +15,7 @@ class ProgressBar(layout.Bin, properties.PropertyAdapter):
     }
     
     class Bar(Mx.ProgressBar):
-        __gtype_name__ = "PisakViewerProgressBar"
+        __gtype_name__ = "PisakViewerProgressBarBar"
         def __init__(self):
             super().__init__()
             
