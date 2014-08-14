@@ -288,9 +288,19 @@ class Button(Mx.Button, properties.PropertyAdapter):
         try:
             if self.icon_name:
                 if self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover"):
-                    if self.disabled and self.style_pseudo_class_contains("hover"):
+                    if self.disabled and self.style_pseudo_class_contains("hover") and self.style_pseudo_class_contains("scanning"):
                         self.set_image_white()
-                    if not self.disabled and (self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover")):
+                    elif self.disabled and not self.style_pseudo_class_contains("hover") and self.style_pseudo_class_contains("scanning"):
+                        pixbuf = self.svg.get_pixbuf()
+                        icon_size = self.get_icon_size()
+                        if icon_size:
+                            pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+                            self.image.set_from_data(pixbuf.get_pixels(),
+                                                     Cogl.PixelFormat.RGBA_8888, 
+                                                     pixbuf.get_width(), 
+                                                     pixbuf.get_height(), 
+                                                     pixbuf.get_rowstride())
+                    elif not self.disabled and (self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover")):
                         self.set_image_white()
                 else:
                     pixbuf = self.svg.get_pixbuf()
