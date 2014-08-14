@@ -1,5 +1,11 @@
-PisakViewerProgressBar {
+PisakViewerProgressBar{
   border-image: url('progress_bar_background.png');
+}
+
+PisakViewerProgressBarLabel{
+  font-face: serif;
+  font-size: 20;
+  color: white;
 }
 
 PisakViewerProgressBar MxProgressBarFill {
