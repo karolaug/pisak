@@ -99,6 +99,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.current_icon = None
         self.box = None
         self._connect_signals()
+        self.image = None
 
     def _connect_signals(self):
         self.connect("notify::text", self._set_initial_label)
@@ -108,6 +109,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.connect("inactivate", lambda *_: self.inactivate())
         self.connect("notify::style-pseudo-class", 
                      lambda *_: self.change_icon_white())
+        self.connect("notify::mapped", self.set_space)
         self.set_reactive(True)
 
     @property
@@ -206,6 +208,16 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def set_alternative_label(self):
         self.set_label(self.alternative_text)
 
+    def set_space(self, *args):
+        try:
+            img_width = self.image.get_width()
+            butt_width = self.get_width()
+            text_width = self.get_children()[0].get_children()[1].get_width()
+            self.space.set_width(butt_width - text_width - img_width - 26)
+        except AttributeError:
+            #print('!!!Line 218 in pisak/widgets.py, remember to write PisakSpellerMenuButton!!!')
+            pass
+
     def switch_label(self):
         current_label = self.get_label()
         if current_label in (self.alternative_text, None):
@@ -228,10 +240,18 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def custom_content(self):
         self.set_icon_visible(False)
         self.box = Box()
-        self.get_children()[0].add_actor(self.box, 1)
-        self.space = Clutter.Actor()
+        original_box = self.get_children()[0]
+        self.clutter_text = original_box.get_children()[1]
+        self.clutter_text.set_property("ellipsize", 0)
+        text_content = self.clutter_text.get_text()
+        if text_content.strip() == '':
+            original_box.set_layout_manager(Clutter.BinLayout())
+            original_box.add_actor(self.box, 1)
+        else:
+            original_box.add_actor(self.box, 1)
+            self.space = Clutter.Actor()
+            self.box.add_child(self.space)
         self.image = Mx.Image()
-        self.box.add_child(self.space)
         self.box.add_child(self.image)
 
     def load_image(self):
@@ -269,6 +289,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
                 print(image_size, icon_size)
                 self.image.set_scale(icon_size * 10 / image_size[1],
                                      icon_size * 10/ image_size[0])
+        
 
     def read_svg(self):
         try:
