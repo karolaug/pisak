@@ -288,7 +288,10 @@ class Button(Mx.Button, properties.PropertyAdapter):
         try:
             if self.icon_name:
                 if self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover"):
-                    self.set_image_white()
+                    if self.disabled and self.style_pseudo_class_contains("hover"):
+                        self.set_image_white()
+                    if not self.disabled and (self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover")):
+                        self.set_image_white()
                 else:
                     pixbuf = self.svg.get_pixbuf()
                     icon_size = self.get_icon_size()
