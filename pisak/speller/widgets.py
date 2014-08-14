@@ -922,9 +922,5 @@ class PopUp(layout.Box):
     def _close(self, *args):
         self.stage.pending_group = self.background_scene
         self.background_scene.remove_effect(self.background_effect)
-        self.scanning_group.hide()
-        Clutter.threads_add_timeout(0, self.scanning_group.strategy.interval, self._killall, None)
-
-    def _killall(self, *args):  # workaround for some scanning issues
         self.space.remove_all_children()
         self.stage.remove_child(self.scanning_group)
