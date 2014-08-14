@@ -141,6 +141,7 @@ class Tile(layout.Bin, properties.PropertyAdapter):
 
     def _init_box(self):
         self.box = layout.Box()
+        self.box.orientation = Clutter.Orientation.VERTICAL
         self.add_child(self.box)
 
     def _init_preview(self):
