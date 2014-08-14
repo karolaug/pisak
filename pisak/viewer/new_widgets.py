@@ -13,11 +13,6 @@ class ProgressBar(layout.Bin, properties.PropertyAdapter):
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE)
     }
-    MODEL = {
-        "label": "10 / 100",
-        "label_ratio_x_offset": 0.7,
-        "progress": 0.3
-    }
     
     class Bar(Mx.ProgressBar):
         __gtype_name__ = "PisakViewerProgressBar"
@@ -36,11 +31,7 @@ class ProgressBar(layout.Bin, properties.PropertyAdapter):
         self.label = ProgressBar.Label()
         self._display_bar()
         self._display_label()
-        self.connect("notify::size", self._allocate_label)
-        
-        self._update_label(self.MODEL["label"])
-        self.progress = self.MODEL["progress"]
-        self.label_ratio_x_offset = self.MODEL["label_ratio_x_offset"]
+        self.connect("notify::width", self._allocate_label)
 
     @property
     def progress(self):
