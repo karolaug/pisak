@@ -4,6 +4,13 @@ from pisak import layout, properties
 
 
 class ProgressBar(layout.Bin, properties.PropertyAdapter):
+    class Bar(Mx.ProgressBar):
+        __gtype_name__ = "PisakViewerProgressBarBar"
+        
+    class Label(Mx.Label):
+        __gtype_name__ = "PisakViewerProgressBarLabel"
+
+
     __gtype_name__ = "PisakViewerProgressBar"
     __gproperties__ = {
         "progress": (
@@ -12,15 +19,7 @@ class ProgressBar(layout.Bin, properties.PropertyAdapter):
         "label_ratio_x_offset": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE)
-    }
-    
-    class Bar(Mx.ProgressBar):
-        __gtype_name__ = "PisakViewerProgressBarBar"
-        
-            
-    class Label(Mx.Label):
-        __gtype_name__ = "PisakViewerProgressBarLabel"
-        
+    }  
 
     def __init__(self):
         super().__init__()
@@ -68,6 +67,10 @@ class ProgressBar(layout.Bin, properties.PropertyAdapter):
 
 
 class Tile(layout.Bin, properties.PropertyAdapter):
+    class Label(Mx.Label):
+         __gtype_name__ = "PisakViewerTileLabel"
+
+         
     __gtype_name__ = "PisakViewerTile"
     __gsignals__ = {
         "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
@@ -94,11 +97,7 @@ class Tile(layout.Bin, properties.PropertyAdapter):
             None, None, 0, 1., 0,
             GObject.PARAM_READWRITE)
     }
-    
-    class Label(Mx.Label):
-         __gtype_name__ = "PisakViewerTileLabel"
 
-         
     def __init__(self):
         super().__init__()
         self.hilite_tool = None
