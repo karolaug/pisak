@@ -947,10 +947,6 @@ class ScrollingView(Clutter.Actor):
         return ScrollingViewCycle(self)
 
 
-class NewProgressBar(Mx.ProgressBar):
-    __gtype_name__ = "PisakProgressBar"
-
-
 class ProgressBar(Clutter.Actor):
     __gproperties__ = {
         'progress': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
