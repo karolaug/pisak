@@ -874,11 +874,11 @@ class PopUp(layout.Box):
         self._background_scene = value
 
     def on_screen(self, message, text_files=None):
-        self.space = self.get_children()[1]
-        self.header = self.get_children()[0]
         self.scanning_group = self.get_parent()
         self.stage = self.background_scene.get_stage()
         self.stage.add_child(self.scanning_group)
+        self.space = self.get_children()[1]
+        self.header = self.get_children()[0]
         self.stage.pending_group = self.scanning_group
         self.background_scene.add_effect(self.background_effect)
         self.header.set_text(message)
