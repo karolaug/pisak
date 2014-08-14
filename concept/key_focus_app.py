@@ -9,7 +9,7 @@ class MyButton(Clutter.Actor):
         self.set_background_color(Clutter.Color.new(64, 192, 64, 255))
         self.set_size(100, 100)
         self.connect("key-release-event", self.key_release)
-    
+
     def key_release(self, *args):
         print("KEY RELEASE: BUTTON")
         # set focus to the stage
@@ -24,11 +24,11 @@ class MyBox(Clutter.Actor):
         self.button = MyButton()
         self.add_child(self.button)
         self.set_layout_manager(Clutter.BoxLayout())
-        
+
     def start_focus(self, source, *args):
         # set focus to the box
         self.get_stage().set_key_focus(source)
-    
+
     def key_release(self, source, *args):
         print("KEY RELEASE: BOX")
         # set focus to the button
@@ -41,7 +41,7 @@ class MyStage(Clutter.Stage):
         self.box = MyBox()
         self.add_child(self.box)
         self.set_layout_manager(Clutter.BinLayout())
-    
+
 
 if __name__ == '__main__':
     Clutter.init([])

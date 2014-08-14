@@ -27,8 +27,15 @@ else:
     print('Apparently not on linux, using Gdk.Screen for mm size.')
     size_mm = screen_mm(Gdk.Screen.width_mm(), Gdk.Screen.height_mm())
 
-SCREEN_DPMM = getattr(size_pix, 'width') / getattr(size_mm, 'width')
+try:
+    SCREEN_DPMM = getattr(size_pix, 'width') / getattr(size_mm, 'width')
+except ZeroDivisionError:
+    print('Issue with xrandr causes screen size to be 0mm, using Gdk.Screen of mm size.')
+    size_mm = screen_mm(Gdk.Screen.width_mm(), Gdk.Screen.height_mm())
+    SCREEN_DPMM = getattr(size_pix, 'width') / getattr(size_mm, 'width')
+
 SCREEN_DPI = SCREEN_DPMM * 25.4
+	
 
 def mm(value):
     return int(value * SCREEN_DPMM)
@@ -38,6 +45,9 @@ def w(v):
 
 def h(v):
     return v * Gdk.Screen.height()
+
+def pt_to_px(pt):
+    return pt * SCREEN_DPMM
 
 if __name__ == '__main__':
     msg = 'Your screen size in mm is {} x {}, in pixels {} x {} which gives {} DPI.'

@@ -1,49 +1,44 @@
-from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
-import os.path
-from pisak import switcher_app, unit, res
-from pisak.layout import Box
 import collections
-from pisak.res import colors, dims
+import os.path
+
+from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
 
-class PropertyAdapter(object):
-
-    def find_attribute(self, name):
-        name  = self._repair_prop_name(name)
-        for relative in self.__class__.mro():
-            attribute = relative.__dict__.get(name)
-            if attribute:
-                break
-        return attribute
-
-    @staticmethod
-    def _repair_prop_name(name):
-        if '-' in name:
-            name = name.replace('-', '_')
-        return name
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.find_attribute(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.find_attribute(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name)
+from pisak import switcher_app, unit, res, properties
+from pisak.layout import Box
+from pisak.res import colors, dims
 
 
-class Button(Mx.Button, PropertyAdapter):
+class Header(Mx.Image, properties.PropertyAdapter):
+
+    __gtype_name__ = "PisakMenuHeader"
+
+    __gproperties__ = {
+        "name": (GObject.TYPE_STRING, None, None, "funkcjenapis", 
+                 GObject.PARAM_READWRITE)}
+
+    def __init__(self):
+        super().__init__()
+        self.handle = Rsvg.Handle()
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+        svg_path = os.path.join(res.PATH, 'icons', 
+                                ''.join([self.name, ".svg"]))
+        self.svg = self.handle.new_from_file(svg_path)
+        pixbuf = self.svg.get_pixbuf()
+        self.set_from_data(pixbuf.get_pixels(),
+                           Cogl.PixelFormat.RGBA_8888, 
+                           pixbuf.get_width(), 
+                           pixbuf.get_height(), 
+                           pixbuf.get_rowstride())
+
+class Button(Mx.Button, properties.PropertyAdapter):
     """
     Generic Pisak button widget with label and icon.
     """
@@ -53,23 +48,44 @@ class Button(Mx.Button, PropertyAdapter):
     }
     
     __gproperties__ = {
-        "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
-                        GObject.PARAM_READWRITE),
-        "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, 
-                         GObject.PARAM_READWRITE),
-        "icon_name": (GObject.TYPE_STRING, "blank", "name of the icon displayed on the button", "blank", GObject.PARAM_READWRITE),
-        "spacing": (GObject.TYPE_INT64, "space between icon and text",
-                    "space between icon and text", 0, 1000, 100, 
-                    GObject.PARAM_READWRITE)
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0,
+            1., 0, GObject.PARAM_READWRITE),
+        "text": (
+            GObject.TYPE_STRING, "label default text",
+            "text displayed on the button", "noop",
+            GObject.PARAM_READWRITE),
+        "alternative_text": (
+            GObject.TYPE_STRING,
+            "alternative label text",
+            "alternative text displayed on the button",
+            "?", GObject.PARAM_READWRITE),
+        "icon_name": (
+            GObject.TYPE_STRING, "blank",
+            "name of the icon displayed on the button",
+            "blank", GObject.PARAM_READWRITE),
+        "alternative_icon_name":(
+            GObject.TYPE_STRING, "blank",
+            "name of the aternative icon displayed on the button",
+            "blank", GObject.PARAM_READWRITE),
+        "spacing": (
+            GObject.TYPE_INT64, "space between icon and text",
+            "space between icon and text", 0, 1000, 100, 
+            GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
         super().__init__()
         self.properties = {}
         self.selection_time = 1000
+        self.current_icon = None
         self._connect_signals()
 
     def _connect_signals(self):
+        self.connect("notify::text", self._set_initial_label)
         self.connect("clicked", self.click_activate)
         #self.connect("enter-event", lambda *_: self.hilite_on())
         #self.connect("leave-event", lambda *_: self.hilite_off())
@@ -95,6 +111,22 @@ class Button(Mx.Button, PropertyAdapter):
     def ratio_height(self, value):
         self._ratio_height = value
         self.set_height(unit.h(value))
+
+    @property
+    def text(self):
+        return self._text
+
+    @text.setter
+    def text(self, value):
+        self._text = str(value)
+
+    @property
+    def alternative_text(self):
+        return self._alternative_text
+
+    @alternative_text.setter
+    def alternative_text(self, value):
+        self._alternative_text = str(value)
     
     @property
     def icon_name(self):
@@ -107,6 +139,14 @@ class Button(Mx.Button, PropertyAdapter):
             self.set_icon()
 
     @property
+    def alternative_icon_name(self):
+        return self._alternative_icon_name
+    
+    @alternative_icon_name.setter
+    def alternative_icon_name(self, value):
+        self._alternative_icon_name = value
+
+    @property
     def spacing(self):
         return self._spacing
 
@@ -115,22 +155,47 @@ class Button(Mx.Button, PropertyAdapter):
         self._spacing = value
         #self.box.set_spacing(value)
 
+    def _set_initial_label(self, source, spec):
+        self.set_default_label()
+        self.disconnect_by_func(self._set_initial_label)
+
+    def set_default_label(self):
+        self.set_label(self.text)
+
+    def set_alternative_label(self):
+        self.set_label(self.alternative_text)
+
+    def switch_label(self):
+        current_label = self.get_label()
+        if current_label in (self.alternative_text, None):
+            self.set_default_label()
+        elif current_label == self.text:
+            self.set_alternative_label()
+
+    def switch_icon(self):
+        raise NotImplementedError
+
     def set_icon(self):
         self.custom_content()
         self.read_svg()
         self.set_image()
-        
-        self.box.add_actor(self.image, 1)
+
+        text_length = len(self.get_label())
+        if text_length == 1:
+            pass
+        else:
+            pass
+            #self.space.set_width(self.get_width() - 200 - self.image.get_width())
+
+        self.box.add_child(self.space)
+        self.box.add_child(self.image)
 
     def custom_content(self):
         self.set_icon_visible(False)
-        children = self.get_children()
-        if len(children) == 1:
-            self.box = children[0]
-        else:
-            text = 'It appears that Button has custom content already: {}.' 
-            print(text.format(children))
+        self.box = Box()
+        self.space = Clutter.Actor()
 
+        self.get_children()[0].add_actor(self.box, 1)
 
     def read_svg(self):
         try:

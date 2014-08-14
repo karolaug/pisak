@@ -2,7 +2,8 @@
 Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx
-import pisak.widgets
+
+from pisak import properties
 
 
 class Strategy(GObject.GObject):
@@ -34,8 +35,15 @@ class Strategy(GObject.GObject):
             element.parent_group = self.group
             element.start_cycle()
         elif isinstance(element, Mx.Button):
+            self.group.stop_cycle()
+            # set potential next group
+            self.group.get_stage().pending_group = self.unwind_to
             element.emit("clicked")
-            self.unwind()
+            # launch next group
+            if self.group.get_stage().pending_group:
+                self.group.get_stage().pending_group.start_cycle()
+            else:
+                self.group.start_cycle()
         else:
             raise Exception("Unsupported selection")
 
@@ -53,7 +61,7 @@ class Strategy(GObject.GObject):
         raise NotImplementedError("Incomplete strategy implementation")
 
 
-class Group(Clutter.Actor):
+class Group(Clutter.Actor, properties.PropertyAdapter):
     """
     Container for grouping widgets for scanning purposes.
     """
@@ -63,11 +71,16 @@ class Group(Clutter.Actor):
         "strategy": (
             Strategy.__gtype__,
             "", "",
+            GObject.PARAM_READWRITE),
+        "scanning-hilite": (
+            GObject.TYPE_BOOLEAN,
+            "", "", False,
             GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
         self._strategy = None
+        self._scanning_hilite = False
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
         # handle only when active
@@ -84,26 +97,16 @@ class Group(Clutter.Actor):
         self._strategy = value
         if self.strategy is not None:
             self.strategy.group = self
-
-    def do_set_property(self, spec, value):
-        """
-        Introspect object properties and set the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            attribute.fset(self, value)
-        else:
-            raise ValueError("No such property", spec.name)
-
-    def do_get_property(self, spec):
-        """
-        Introspect object properties and get the value.
-        """
-        attribute = self.__class__.__dict__.get(spec.name)
-        if attribute is not None and isinstance(attribute, property):
-            return attribute.fget(self)
-        else:
-            raise ValueError("No such property", spec.name)
+    
+    @property
+    def scanning_hilite(self):
+        return self._scanning_hilite
+    
+    @scanning_hilite.setter
+    def scanning_hilite(self, value):
+        self._scanning_hilite = value
+        if not value:
+            self.disable_scan_hilite("scanning")
 
     def get_subgroups(self):
         '''
@@ -120,11 +123,15 @@ class Group(Clutter.Actor):
     def start_cycle(self):
         self._handler_token = self.connect("key-release-event", self.key_release)
         self.get_stage().set_key_focus(self)
+        if self.scanning_hilite:
+            self.enable_scan_hilite()
         self.strategy.start()
 
     def stop_cycle(self):
         self.get_stage().set_key_focus(None)
         self.disconnect(self._handler_token)
+        if self.scanning_hilite:
+            self.disable_scan_hilite()
         self.strategy.stop()
 
     @staticmethod
@@ -133,22 +140,34 @@ class Group(Clutter.Actor):
             source.strategy.select()
         return True
 
-    def enable_hilite(self):
+    def add_pseudoclass_all(self, pseudoclass):
         for s in self.get_subgroups():
             if isinstance(s, Mx.Stylable):
-                s.set_style_pseudo_class("hover")
+                s.style_pseudo_class_add(pseudoclass)
             elif isinstance(s, Group):
-                s.enable_hilite()
+                s.add_pseudoclass_all(pseudoclass)
+
+    def remove_pseudoclass_all(self, pseudoclass):
+        for s in self.get_subgroups():
+            if isinstance(s, Mx.Stylable):
+                s.style_pseudo_class_remove(pseudoclass)
+            elif isinstance(s, Group):
+                s.remove_pseudoclass_all(pseudoclass)
+
+    def enable_hilite(self):
+        self.add_pseudoclass_all("hover")
 
     def disable_hilite(self):
-        for s in self.get_subgroups():
-            if isinstance(s, Mx.Stylable):
-                s.set_style_pseudo_class("")
-            elif isinstance(s, Group):
-                s.disable_hilite()
+        self.remove_pseudoclass_all("hover")    
+
+    def enable_scan_hilite(self):
+        self.add_pseudoclass_all("scanning")
+
+    def disable_scan_hilite(self):
+        self.remove_pseudoclass_all("scanning")
 
 
-class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
+class RowStrategy(Strategy, properties.PropertyAdapter):
     __gtype_name__ = "PisakRowStrategy"
 
     __gproperties__ = {
@@ -157,11 +176,14 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
             "", "",
             0, GObject.G_MAXUINT, 1000,
             GObject.PARAM_READWRITE),
-        ""
         "max-cycle-count": (
             GObject.TYPE_INT,
             "", "",
             -1, GObject.G_MAXINT, 2,
+            GObject.PARAM_READWRITE),
+        "unwind-to": (
+            Group.__gtype__,
+            "", "",
             GObject.PARAM_READWRITE)
     }
 
@@ -171,6 +193,7 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
         self.interval = 1000
         self._max_cycle_count = 2
         self._buttons = []
+        self._unwind_to = None
         self.timeout_token = None
 
     @property
@@ -190,6 +213,14 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
         self._max_cycle_count = int(value)
 
     @property
+    def unwind_to(self):
+        return self._unwind_to
+
+    @unwind_to.setter
+    def unwind_to(self, value):
+        self._unwind_to = value
+
+    @property
     def group(self):
         return self._group
 
@@ -204,7 +235,7 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
     def update_rows(self, *args):
         selection = self._subgroups[self.index]
         if isinstance(selection, Mx.Stylable):
-            selection.set_style_pseudo_class("")
+            selection.style_pseudo_class_remove("hover")
         self.compute_sequence()
 
     def compute_sequence(self):
@@ -229,7 +260,7 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
         if self.index is not None:
             selection = self._subgroups[self.index]
             if isinstance(selection, Mx.Stylable):
-                selection.set_style_pseudo_class("")
+                selection.style_pseudo_class_remove("hover")
             elif isinstance(selection, Group):
                 selection.disable_hilite()
 
@@ -237,7 +268,7 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
         if self.index is not None:
             selection = self._subgroups[self.index]
             if isinstance(selection, Mx.Stylable):
-                selection.set_style_pseudo_class("")
+                selection.style_pseudo_class_remove("hover")
             elif isinstance(selection, Group):
                 selection.disable_hilite()
             self.index = (self.index + 1) % len(self._subgroups)
@@ -245,11 +276,9 @@ class RowStrategy(Strategy, pisak.widgets.PropertyAdapter):
             self.index = 0
         selection = self._subgroups[self.index]
         if isinstance(selection, Mx.Stylable):
-            selection.set_style_pseudo_class("hover")
+            selection.style_pseudo_class_add("hover")
         elif isinstance(selection, Group):
-            #Clutter.threads_enter()
             selection.enable_hilite()
-            #Clutter.threads_leave()
         if self.index == len(self._subgroups) - 1:
             self._cycle_count += 1
 

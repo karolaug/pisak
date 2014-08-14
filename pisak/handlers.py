@@ -3,14 +3,16 @@ ClutterScript signal handler library
 '''
 from pisak import signals
 
-@signals.registered_handler("general/hello_world") 
+
+@signals.registered_handler("general/hello_world")
 def say_hello(*args):
     """
     Print standard acknowledging message
     """
     print("Hello World!")
-    
-@signals.registered_handler("general/start_group") 
+
+
+@signals.registered_handler("general/start_group")
 def start_group(source, *args):
     """
     Start scanning group
@@ -18,6 +20,12 @@ def start_group(source, *args):
     if source.get_property("mapped"):
         source.start_cycle()
 
-@signals.registered_handler("general/exit") 
+
+@signals.registered_handler("general/exit")
 def exit_app(source, *args):
     source.get_stage().destroy()
+
+
+@signals.registered_handler("scanning/set_pending_group")
+def set_pending_group(source, *args):
+    source.get_stage().pending_group = source
