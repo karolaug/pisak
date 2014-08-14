@@ -278,11 +278,16 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     def start(self):
         self.compute_sequence()
-        self.index = None
-        self._cycle_count = 0
-        self._expose_next()
-        self.timeout_token = object()
-        Clutter.threads_add_timeout(0, self.interval, self.cycle_timeout, self.timeout_token)
+        if len(self._subgroups) == 0:
+            # stop immediately
+            self.index = None
+            Clutter.threads_add_timeout(0, self.interval, self.cycle_timeout, self.timeout_token)
+        else:
+            self.index = None
+            self._cycle_count = 0
+            self._expose_next()
+            self.timeout_token = object()
+            Clutter.threads_add_timeout(0, self.interval, self.cycle_timeout, self.timeout_token)
 
     def stop(self):
         self.timeout_token = None
@@ -315,8 +320,11 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
             self._cycle_count += 1
 
     def _has_next(self):
-        return (self.max_cycle_count == -1) or \
-            (self._cycle_count < self.max_cycle_count)
+        if len(self._subgroups) == 0:
+            return False
+        else:
+            return (self.max_cycle_count == -1) or \
+                (self._cycle_count < self.max_cycle_count)
 
     def cycle_timeout(self, token):
         if self.timeout_token != token:
