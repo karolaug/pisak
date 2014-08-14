@@ -1,0 +1,10 @@
+[
+    {
+        "id": "progress_bar",
+        "type": "PisakViewerProgressBar",
+        "ratio-width": 0.5,
+        "ratio-height": 0.05,
+        "progress": 0.25,
+        "label_ratio_x_offset": 0.8
+    }
+]
