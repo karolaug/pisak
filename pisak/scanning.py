@@ -37,11 +37,11 @@ class Strategy(GObject.GObject):
         elif isinstance(element, Mx.Button):
             self.group.stop_cycle()
             # set potential next group
-            self.group.get_stage().pending_group = self.unwind_to
+            self.group.stage.pending_group = self.unwind_to
             element.emit("clicked")
             # launch next group
-            if self.group.get_stage().pending_group:
-                self.group.get_stage().pending_group.start_cycle()
+            if self.group.stage.pending_group:
+                self.group.stage.pending_group.start_cycle()
             else:
                 self.group.start_cycle()
         else:

@@ -25,6 +25,54 @@
         "x-expand": true,
         "y-expand": true
     },
+    {
+        "id": "pop_up_scanning_group",
+        "type": "PisakScanningGroup",
+        "selector": "mouse",
+        "scanning-hilite": true,
+        "strategy": {
+                        "type": "PisakRowStrategy",
+                        "interval": 800,
+                        "max-cycle-count": -1
+                    },
+        "children": ["pop_up_box", "pop_up_background"]
+    },
+    {
+        "id": "pop_up_background",
+        "type": "PisakBackgroundPattern",
+        "background-color": "white",
+        "ratio-width": 0.8,
+        "ratio-height": 0.8
+    },
+    {
+        "id": "pop_up_box",
+        "type": "PisakSpellerPopUp",
+        "target": "text_box",
+        "row-count": 3,
+        "column-count": 3,
+        "background-scene": "main",
+        "orientation": "vertical",
+        "ratio-margin-top": 0.1,
+        "ratio-margin-bottom": 0.1,
+        "ratio-margin-left": 0.1,
+        "ratio-margin-right": 0.1,
+        "ratio-spacing": 0.07,
+        "tile-ratio-height": 0.1,
+        "tile-ratio-width": 0.2,
+        "children": ["pop_up_space", "pop_up_header"]
+    },
+    {
+        "id": "pop_up_header",
+        "type": "ClutterText",
+        "font-name": "Kelson Sans light 30",
+        "line-alignment": "center"
+    },
+    {
+        "id": "pop_up_space",
+        "type": "PisakBoxLayout",
+        "ratio-spacing": 0.07,
+        "orientation": "vertical"
+    },
     {                                                                                                          
         "id": "main_box",
         "type": "PisakBoxLayout",
@@ -142,7 +190,7 @@
                        {
                            "name": "clicked",
                            "handler": "speller/save",
-                           "object": "text_box"
+                           "object": "pop_up_box"
                        }
                    ]
     },
@@ -160,7 +208,7 @@
                        {
                            "name": "clicked",
                            "handler": "speller/load",
-                           "object": "text_box"
+			   "object": "pop_up_box"
                        }
                    ]
     },
@@ -488,17 +536,12 @@
         "ratio-height": 0.085,
         "icon-size": 30,
         "icon-name": "wielkie_litery",
-        "is-toggle": true,
         "spacing": 0,
         "signals": [
                        {
                            "name": "clicked",
                            "handler": "speller/swap_caps_chars",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/switch_toggled_state"
                        }
                    ]
     },
@@ -510,7 +553,6 @@
         "ratio-height": 0.085,
         "icon-size": 30,
         "icon-name": "polskie",
-        "is-toggle": true,
         "related-object": "keyboard_panel",
         "signals": [
                        {
@@ -522,14 +564,6 @@
                            "name": "clicked",
                            "handler": "speller/swap_altgr_chars_on_select",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/set_toggled_state"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/unset_toggled_state_on_select"
                        }
                    ]
     },
@@ -543,7 +577,6 @@
         "icon-size": 30,
         "icon-name": "specjalne",
         "related-object": "keyboard_panel",
-        "is-toggle": true,
         "signals": [
                        {
                            "name": "clicked",
@@ -554,14 +587,6 @@
                            "name": "clicked",
                            "handler": "speller/swap_special_chars_on_select",
                            "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/set_toggled_state"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/unset_toggled_state_on_select"
                        }
                    ]
     },

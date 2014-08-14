@@ -91,6 +91,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.on_select_hilite_duration = None
         self.current_icon = None
         self.box = None
+        self.disabled = False
         self._connect_signals()
 
     def _connect_signals(self):
@@ -304,8 +305,21 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def change_icon_white(self):
         try:
             if self.icon_name:
-                if self.style_pseudo_class_contains("scanning"):
-                    self.set_image_white()
+                if self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover"):
+                    if self.disabled and self.style_pseudo_class_contains("hover") and self.style_pseudo_class_contains("scanning"):
+                        self.set_image_white()
+                    elif self.disabled and not self.style_pseudo_class_contains("hover") and self.style_pseudo_class_contains("scanning"):
+                        pixbuf = self.svg.get_pixbuf()
+                        icon_size = self.get_icon_size()
+                        if icon_size:
+                            pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
+                            self.image.set_from_data(pixbuf.get_pixels(),
+                                                     Cogl.PixelFormat.RGBA_8888, 
+                                                     pixbuf.get_width(), 
+                                                     pixbuf.get_height(), 
+                                                     pixbuf.get_rowstride())
+                    elif not self.disabled and (self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover")):
+                        self.set_image_white()
                 else:
                     pixbuf = self.svg.get_pixbuf()
                     icon_size = self.get_icon_size()
@@ -343,8 +357,17 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.emit("activate")
 
 
-class BackgroundPattern(Clutter.Actor):
+class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
     __gtype_name__ = "PisakBackgroundPattern"
+    __gproperties__ = {
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE)
+    }
+    
 
     def __init__(self):
         super().__init__()
@@ -367,6 +390,24 @@ class BackgroundPattern(Clutter.Actor):
             context.line_to(x2, y2)
             context.stroke()
         return True
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
 
 class Aperture(Clutter.Actor):

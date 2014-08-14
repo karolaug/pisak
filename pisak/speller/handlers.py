@@ -1,13 +1,8 @@
 import subprocess
 import os
 
-from pisak import res, signals
-from pisak.speller import widgets
-
-
-MODEL = {
-        "document": os.path.join(res.PATH, "sample.txt")
-    }
+from pisak import signals
+from pisak.speller import widgets, database_agent
 
 
 @signals.registered_handler("speller/undo")
@@ -31,30 +26,50 @@ def nav_up(text_box):
     
 
 @signals.registered_handler("speller/nav_word_backward")
-def nav_up(text_box):
+def nav_word_backward(text_box):
     text_box.move_word_backward()
 
+
 @signals.registered_handler("speller/nav_word_forward")
-def nav_up(text_box):
+def nav_word_forward(text_box):
     text_box.move_word_forward()
 
+
 @signals.registered_handler("speller/save")
-def save(text_box):
+def save(pop_up):
+    file_overwrite_message = "WYBIERZ PLIK DO NADPISANIA"
+    empty_text_box_message = "BRAK TEKSTU DO ZAPISANIA"
+    save_success_message = "POMYŚLNIE ZAPISANO PLIK:"
+    file_name_base = "plik nr "
+    files_limit = 9
+    pop_up.mode = "save"
+    text_box = pop_up.target
+    files = database_agent.get_text_files()
     text = text_box.get_text()
     if text:
-        with open(MODEL["document"], "w") as file:
-            file.write(text)
-            
+        if len(files) < files_limit:
+            name = file_name_base + str(len(files)+1)
+            file_path = database_agent.insert_text_file(name)
+            with open(file_path, "w") as file:
+                file.write(text)
+            message = save_success_message + "\n\n" + '"' + name + '"'
+            pop_up.on_screen(message)
+        else:
+            pop_up.on_screen(file_overwrite_message, files)
+    else:
+        pop_up.on_screen(empty_text_box_message)
+
 
 @signals.registered_handler("speller/load")
-def load(text_box):
-    try:
-        with open(MODEL["document"], "r") as file:
-            text = file.read()
-        text_box.clear_all()
-        text_box.type_text(text)
-    except FileNotFoundError:
-        return None
+def load(pop_up):
+    files_present_message = "WYBIERZ PLIK"
+    no_files_present_message = "BRAK PLIKÓW DO WCZYTANIA"
+    pop_up.mode = "load"
+    files = database_agent.get_text_files()
+    if files:
+        pop_up.on_screen(files_present_message, files)
+    else:
+        pop_up.on_screen(no_files_present_message)
     
 
 @signals.registered_handler("speller/print")
@@ -218,7 +233,9 @@ def swap_altgr_chars_on_select(keyboard_panel):
 def swap_special_chars_on_select(keyboard_panel):
     _previous_chars_on_select(keyboard_panel, keyboard_panel, widgets.Key.set_swap_special_label)
     
-def find_buttons_disconnect(button, connect_clicked=True):
+
+@signals.registered_handler("speller/unset_toggled_state_on_select")
+def unset_toggled_state_on_select(button):
     keyboard_panel = button.related_object
     key_bag = []
     _find_and_get_keys(keyboard_panel, key_bag)
@@ -227,12 +244,7 @@ def find_buttons_disconnect(button, connect_clicked=True):
             key.disconnect_by_func(unset_toggled_state)
         except TypeError:
             pass
-        if connect_clicked:
-            key.connect_object("clicked", unset_toggled_state, button)
-
-@signals.registered_handler("speller/unset_toggled_state_on_select")
-def unset_toggled_state_on_select(button):
-    find_buttons_disconnect(button)
+        key.connect_object("clicked", unset_toggled_state, button)
 
 
 @signals.registered_handler("speller/unset_toggled_state")
@@ -240,7 +252,14 @@ def unset_toggled_state(button):
     if button.get_toggled():
         button.set_toggled(False)
     try:
-        find_buttons_disconnect(button, connect_clicked=False)
+        keyboard_panel = button.related_object
+        key_bag = []
+        _find_and_get_keys(keyboard_panel, key_bag)
+        for key in key_bag:
+            try:
+                key.disconnect_by_func(unset_toggled_state)
+            except TypeError:
+                pass
     except AttributeError:
         pass
 

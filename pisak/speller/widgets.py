@@ -6,8 +6,8 @@ import re
 
 from gi.repository import Clutter, Mx, GObject, Pango
 
+from pisak import unit, layout, properties, scanning
 from pisak.speller.prediction import predictor
-from pisak import unit, properties
 import pisak.widgets
 
 
@@ -46,7 +46,7 @@ class CursorGroup(Clutter.Actor):
         self.text = [i for i in self.get_children() 
                      if type(i) == Text][0]
         self.init_cursor()
-        self.text.clutter_text.connect('cursor_changed', self.move_cursor)
+        self.text.clutter_text.connect('text-changed', self.move_cursor)
 
     def init_cursor(self):
         font_name = self.text.clutter_text.get_font_name()
@@ -70,6 +70,7 @@ class CursorGroup(Clutter.Actor):
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
         self.cursor.set_x(coords[1])
         self.cursor.set_y(coords[2])
+
 
 class Cursor(Clutter.Actor):
     def __init__(self, size):
@@ -171,6 +172,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         def __str__(self):
             return "{} -> {} @ {}".format(self.before, self.after, self.pos)
+
 
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
@@ -278,13 +280,17 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         text = self.get_text()
         if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions                     
-            if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: 
-                return ' '
+            if text.rstrip():
+                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: 
+                    return ' '
         else:
             return ' '    
 
-        last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
-        return last_sentence.rstrip() + (text[-1]  == ' ')*' '
+        if text.rstrip():
+            last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
+            return last_sentence.strip() + (text[-1]  == ' ')*' '
+        else:
+            return ' '
 
     def get_endmost_string(self):
         """
@@ -776,3 +782,145 @@ class Prediction(pisak.widgets.Button):
     @order_num.setter
     def order_num(self, value):
         self._order_num = value
+
+
+class PopUp(layout.Box):
+    __gtype_name__ = "PisakSpellerPopUp"
+    __gproperties__ = {
+        "background_scene" : (
+            scanning.Group.__gtype__,
+            "background scene",
+            "scene to show pop up on",
+            GObject.PARAM_READWRITE),
+        "target": (
+            Text.__gtype__,
+            "text inserting target",
+            "id of text box to insert text",
+            GObject.PARAM_READWRITE),
+         "row_count": (
+            GObject.TYPE_INT64, "number of rows",
+            "number of rows with buttons", 0, 10, 3, 
+            GObject.PARAM_READWRITE),
+        "column_count":  (
+            GObject.TYPE_INT64, "number of columns",
+            "number of coolumns with buttons", 0, 10, 3, 
+            GObject.PARAM_READWRITE),
+        "tile_ratio_width": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "tile_ratio_height": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.scanning_group = None
+        self.space = None
+        self.header = None
+        self.stage = None
+        self.mode = None
+        self.continue_button_label = "KONTYNUUJ"
+        self.exit_button_label = "WYJDŹ"
+        self.pop_up_idle_duration = 3000
+        self.background_effect = Clutter.BlurEffect.new()
+
+    @property
+    def tile_ratio_width(self):
+        return self._tile_ratio_width
+
+    @tile_ratio_width.setter
+    def tile_ratio_width(self, value):
+        self._tile_ratio_width = value
+
+    @property
+    def tile_ratio_height(self):
+        return self._tile_ratio_height
+
+    @tile_ratio_height.setter
+    def tile_ratio_height(self, value):
+        self._tile_ratio_height = value
+
+    @property
+    def row_count(self):
+        return self._row_count
+
+    @row_count.setter
+    def row_count(self, value):
+        self._row_count = value
+
+    @property
+    def column_count(self):
+        return self._column_count
+
+    @column_count.setter
+    def column_count(self, value):
+        self._column_count = value
+
+    @property
+    def target(self):
+        return self._target
+
+    @target.setter
+    def target(self, value):
+        self._target = value
+
+    @property
+    def background_scene(self):
+        return self._background_scene
+
+    @background_scene.setter
+    def background_scene(self, value):
+        self._background_scene = value
+
+    def on_screen(self, message, text_files=None):
+        self.scanning_group = self.get_parent()
+        self.stage = self.background_scene.get_stage()
+        self.stage.add_child(self.scanning_group)
+        self.space = self.get_children()[1]
+        self.header = self.get_children()[0]
+        self.stage.pending_group = self.scanning_group
+        self.background_scene.add_effect(self.background_effect)
+        self.header.set_text(message)
+        self._generate_content(text_files)
+
+    def _generate_content(self, text_files=None):
+        if text_files:
+            for idx, file in enumerate(text_files):
+                if idx % self.column_count == 0:
+                    row = layout.Box()
+                    row.spacing = self.spacing
+                    self.space.add_child(row)
+                button = Button()
+                button.set_label(file["name"])
+                button.ratio_width = self.tile_ratio_width
+                button.ratio_height = self.tile_ratio_height
+                button.connect("clicked", self._on_select, file["path"])
+                row.add_child(button)
+        button = Button()
+        button.ratio_width = self.tile_ratio_width
+        button.ratio_height = self.tile_ratio_height
+        button.connect("clicked", self._close)
+        self.space.add_child(button)
+        if text_files:
+            button.set_label(self.exit_button_label)
+        else:
+            button.set_label(self.continue_button_label)
+        
+    def _on_select(self, button, path):
+        if self.mode == "save":
+            new_text = self.target.get_text()
+            with open(path, "w") as file:
+                file.write(new_text)
+        elif self.mode == "load":
+            with open(path, "r") as file:
+                text = file.read()
+            self.target.clear_all()
+            self.target.type_text(text)
+        self._close()
+        
+    def _close(self, *args):
+        self.stage.pending_group = self.background_scene
+        self.background_scene.remove_effect(self.background_effect)
+        self.space.remove_all_children()
+        self.stage.remove_child(self.scanning_group)
