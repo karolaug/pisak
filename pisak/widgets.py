@@ -65,11 +65,11 @@ class PhotoTile(Bin, properties.PropertyAdapter):
 
     @property
     def label_text(self):
-        return self._label_text
+        if self.label is not None:
+            return self.label.get_text()
 
     @label_text.setter
     def label_text(self, value):
-        self._label_text = value
         if self.label is not None:
             self.label.set_text(value)
 
