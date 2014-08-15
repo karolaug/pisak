@@ -9,6 +9,132 @@ from pisak.layout import Box, Bin
 from pisak.res import colors, dims
 
 
+class PhotoTile(Bin, properties.PropertyAdapter):
+    __gtype_name__ = "PisakPhotoTile"
+    __gsignals__ = {
+        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+    __gproperties__ = {
+        "preview_path": (
+            GObject.TYPE_STRING,
+            "path to preview photo",
+            "path to preview photo displayed on a tile",
+            "noop",
+            GObject.PARAM_READWRITE),
+        "preview_ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "preview_ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "label": (
+            Mx.Label.__gtype__,
+            "", "", GObject.PARAM_READWRITE),
+        "label_text": (
+            GObject.TYPE_STRING,
+            "label under the tile",
+            "tile label text",
+            "noop",
+            GObject.PARAM_READWRITE),
+        "hilite_tool": (
+            Clutter.Actor.__gtype__,
+            "actor to hilite", "hiliting tool",
+            GObject.PARAM_READWRITE),
+        "ratio_spacing": (
+            GObject.TYPE_FLOAT,
+            None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self._init_box()
+        self._init_preview()
+        self.label = None
+        self.hilite_tool = None
+
+    @property
+    def label(self):
+        return self._label
+
+    @label.setter
+    def label(self, value):
+        self._label = value
+        if value is not None:
+            self.box.add_child(value)
+
+    @property
+    def label_text(self):
+        return self._label_text
+
+    @label_text.setter
+    def label_text(self, value):
+        self._label_text = value
+        if self.label is not None:
+            self.label.set_text(value)
+
+    @property
+    def preview_path(self):
+        return self._preview_path
+
+    @preview_path.setter
+    def preview_path(self, value):
+        self._preview_path = value
+        self.preview.set_from_file(value)
+
+    @property
+    def preview_ratio_width(self):
+        return self._preview_ratio_width
+
+    @preview_ratio_width.setter
+    def preview_ratio_width(self, value):
+        self._preview_ratio_width = value
+        self.preview.set_width(unit.w(value))
+
+    @property
+    def preview_ratio_height(self):
+        return self._preview_ratio_height
+
+    @preview_ratio_height.setter
+    def preview_ratio_height(self, value):
+        self._preview_ratio_height = value
+        self.preview.set_height(unit.h(value))
+
+    @property
+    def ratio_spacing(self):
+        return self.box.ratio_spacing
+
+    @ratio_spacing.setter
+    def ratio_spacing(self, value):
+        self.box.ratio_spacing = value
+
+    @property
+    def hilite_tool(self):
+        return self._hilite_tool
+
+    @hilite_tool.setter
+    def hilite_tool(self, value):
+        self._hilite_tool = value
+
+    def _init_box(self):
+        self.box = Box()
+        self.box.orientation = Clutter.Orientation.VERTICAL
+        self.add_child(self.box)
+
+    def _init_preview(self):
+        self.preview = Mx.Image()
+        self.preview.set_scale_mode(Mx.ImageScaleMode.CROP)
+        self.box.add_child(self.preview)
+
+    def hilite_off(self):
+        # turn the hilite_tool off
+        pass
+        
+    def hilite_on(self):
+        # turn the hilite_tool on
+        pass
+
+
 class ProgressBar(Bin, properties.PropertyAdapter):
     __gtype_name__ = "PisakProgressBar"
     __gproperties__ = {

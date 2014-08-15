@@ -12,7 +12,7 @@ PisakViewerProgressBarBar MxProgressBarFill {
   border-image: url('progress_bar_fill.png');
 }
 
-PisakViewerTileLabel {
+PisakViewerPhotoTileLabel {
   font-face: Kelson Sans;
   font-size: 20;
   color: black;

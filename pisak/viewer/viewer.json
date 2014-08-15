@@ -9,5 +9,18 @@
         "counter-limit": 10,
         "progress": 0.25,
         "label_ratio_x_offset": 0.8
+    },
+    {
+        "id": "photo_tile",
+        "type": "PisakPhotoTile",
+        "label": {"type": "PisakViewerPhotoTileLabel"},
+        "label-text": "bla",
+        "preview-path": "bla/bla",
+        "preview-ratio-width": 0.15,
+        "preview-ratio-height": 0.15,
+        "ratio-width": 0.2,
+        "ratio-height": 0.2,
+        "ratio-spacing": 0.01,
+        "background-color": "blue"
     }
 ]
