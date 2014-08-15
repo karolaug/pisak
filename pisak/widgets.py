@@ -32,8 +32,8 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
     def __init__(self):
         super().__init__()
-        self.label_ratio_x_offset = None
         self.label = None
+        self.label_ratio_x_offset = None
         self.connect("notify::width", self._allocate_label)
 
     @property
@@ -54,9 +54,10 @@ class ProgressBar(Bin, properties.PropertyAdapter):
     @label.setter
     def label(self, value):
         self._label = value
-        value.set_y_expand(True)
-        value.set_y_align(Clutter.ActorAlign.START)
-        self.insert_child_above(value, None)
+        if value is not None:
+            value.set_y_expand(True)
+            value.set_y_align(Clutter.ActorAlign.START)
+            self.insert_child_above(value, None)
 
     @property
     def counter_limit(self):
@@ -92,8 +93,8 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
     def _update_label(self):
         if self.label is not None:
-            new_text = int(self.progress*self.counter_limit) + \
-                       " / " + str(self.counter_limit)
+            new_text = " / ".join([str(int(self.progress*self.counter_limit)),
+                                   str(self.counter_limit)])
             self.label.set_text(new_text)
 
 
