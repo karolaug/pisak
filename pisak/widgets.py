@@ -5,8 +5,96 @@ from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
 
 from pisak import switcher_app, unit, res, properties
-from pisak.layout import Box
+from pisak.layout import Box, Bin
 from pisak.res import colors, dims
+
+
+class ProgressBar(Bin, properties.PropertyAdapter):
+    __gtype_name__ = "PisakProgressBar"
+    __gproperties__ = {
+        "bar": (
+            Mx.ProgressBar.__gtype__,
+            "", "", GObject.PARAM_READWRITE),
+        "label": (
+            Mx.Label.__gtype__,
+            "", "", GObject.PARAM_READWRITE),
+        "progress": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "label_ratio_x_offset": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "counter_limit": (
+            GObject.TYPE_INT64, "counter limit",
+            "max counter value", 0, GObject.G_MAXUINT,
+            10, GObject.PARAM_READWRITE)
+    }  
+
+    def __init__(self):
+        super().__init__()
+        self.label_ratio_x_offset = None
+        self.label = None
+        self.connect("notify::width", self._allocate_label)
+
+    @property
+    def bar(self):
+        return self._bar
+
+    @bar.setter
+    def bar(self, value):
+        self._bar = value
+        value.set_x_expand(True)
+        value.set_y_expand(True)
+        self.insert_child_below(value, None)
+
+    @property
+    def label(self):
+        return self._label
+
+    @label.setter
+    def label(self, value):
+        self._label = value
+        value.set_y_expand(True)
+        value.set_y_align(Clutter.ActorAlign.START)
+        self.insert_child_above(value, None)
+
+    @property
+    def counter_limit(self):
+        return self._counter_limit
+
+    @counter_limit.setter
+    def counter_limit(self, value):
+        self._counter_limit = value
+
+    @property
+    def progress(self):
+        return self.bar.get_progress()
+
+    @progress.setter
+    def progress(self, value):
+        self.bar.set_progress(value)
+        self._update_label()
+
+    @property
+    def label_ratio_x_offset(self):
+        return self._label_ratio_x_offset
+
+    @label_ratio_x_offset.setter
+    def label_ratio_x_offset(self, value):
+        self._label_ratio_x_offset = value
+        self._allocate_label()
+
+    def _allocate_label(self, *args):
+        if self.label is not None:
+            if self.get_width() and self.label_ratio_x_offset is not None:
+                px_x_offset = self.label_ratio_x_offset * self.get_width()
+                self.label.set_x(px_x_offset)
+
+    def _update_label(self):
+        if self.label is not None:
+            new_text = int(self.progress*self.counter_limit) + \
+                       " / " + str(self.counter_limit)
+            self.label.set_text(new_text)
 
 
 class Header(Mx.Image, properties.PropertyAdapter):
@@ -947,7 +1035,7 @@ class ScrollingView(Clutter.Actor):
         return ScrollingViewCycle(self)
 
 
-class ProgressBar(Clutter.Actor):
+class OldProgressBar(Clutter.Actor):
     __gproperties__ = {
         'progress': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
     }
@@ -999,7 +1087,7 @@ class ProgressBar(Clutter.Actor):
         return True
 
 
-class SignedProgressBar(ProgressBar):
+class SignedOldProgressBar(ProgressBar):
     def __init__(self, page_count='?', page=0):
         self.where = ''.join([str(page + 1), '/', str(page_count)])
         super().__init__()

@@ -1,10 +1,13 @@
 [
     {
         "id": "progress_bar",
-        "type": "PisakViewerProgressBar",
+        "type": "PisakProgressBar",
+        "bar": {"type": "PisakViewerProgressBarBar"},
+        "label": {"type": "PisakViewerProgressBarLabel"},
         "ratio-width": 0.5,
         "ratio-height": 0.05,
         "progress": 0.25,
-        "label_ratio_x_offset": 0.8
+        "label_ratio_x_offset": 0.8,
+        "counter-limit": 10
     }
 ]
