@@ -1,6 +1,4 @@
-from gi.repository import Clutter, Mx, GObject
-
-from pisak import layout, properties, unit
+from gi.repository import Mx
 
 
 class ProgressBarBar(Mx.ProgressBar):
