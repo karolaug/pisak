@@ -29,5 +29,5 @@ PisakViewerButton {
 
 PisakViewerButton:scanning {
   color: black;
-  border-image: url("scanning_button.png")
+  border-image: url("scanning_button.png");
 }
