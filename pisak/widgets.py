@@ -136,6 +136,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
 
     def _init_preview(self):
         self.preview = Mx.Image()
+        self.preview.set_allow_upscale(True)
         self.box.add_child(self.preview)
 
     def hilite_off(self):
