@@ -18,6 +18,7 @@
         "preview-path": "bla/bla",
         "preview-ratio-width": 0.15,
         "preview-ratio-height": 0.15,
+        "scale-mode": "crop",
         "ratio-width": 0.2,
         "ratio-height": 0.2,
         "ratio-spacing": 0.01,

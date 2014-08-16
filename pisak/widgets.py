@@ -30,6 +30,10 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         "label": (
             Mx.Label.__gtype__,
             "", "", GObject.PARAM_READWRITE),
+        "scale_mode": (
+            Mx.ImageScaleMode.__gtype__,
+            "image scale mode", "scale mode", "crop",
+            GObject.PARAM_READWRITE),
         "label_text": (
             GObject.TYPE_STRING,
             "label under the tile",
@@ -52,6 +56,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         self._init_preview()
         self.label = None
         self.hilite_tool = None
+        self.scale_mode = Mx.ImageScaleMode.CROP
 
     @property
     def label(self):
@@ -109,6 +114,14 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         self.box.ratio_spacing = value
 
     @property
+    def scale_mode(self):
+        return self.preview.get_scale_mode()
+
+    @scale_mode.setter
+    def scale_mode(self, value):
+        self.preview.set_scale_mode(value)
+
+    @property
     def hilite_tool(self):
         return self._hilite_tool
 
@@ -123,7 +136,6 @@ class PhotoTile(Bin, properties.PropertyAdapter):
 
     def _init_preview(self):
         self.preview = Mx.Image()
-        self.preview.set_scale_mode(Mx.ImageScaleMode.CROP)
         self.box.add_child(self.preview)
 
     def hilite_off(self):
