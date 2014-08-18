@@ -69,7 +69,8 @@ class Scanner(object):
         for current, subdirs, files in path_generator:
             new_category = Category(current)
             if first_level:
-                subdirs.remove(LIBRARY_SUBDIR)
+                if LIBRARY_SUBDIR:
+                    subdirs.remove(LIBRARY_SUBDIR)
                 first_level = False
             for photo_path in [os.path.join(current, name) for name in files]:
                 if os.path.splitext(photo_path)[-1].lower() in SUPPORTED_FORMATS_EXTENSIONS:
