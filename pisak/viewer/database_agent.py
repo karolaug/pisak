@@ -1,3 +1,5 @@
+from gi.repository import GExiv2
+
 from pisak.database_manager import DatabaseConnector
 
 
@@ -51,8 +53,9 @@ def add_to_favourite_photos(path):
     db.commit()
     db.close_connection()
 
-def insert_photo(path, category, created_on):
+def insert_photo(path, category):
     db = DatabaseConnector()
+    created_on = GExiv2.Metadata(path).get_date_time()
     added_on = db.generate_timestamp()
     db.execute_query(_CREATE_PHOTOS)
     query = "INSERT INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
