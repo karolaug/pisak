@@ -15,10 +15,9 @@ _CREATE_PHOTOS = "CREATE TABLE IF NOT EXISTS photos ( \
 
 _CREATE_FAVOURITE_PHOTOS = "CREATE TABLE IF NOT EXISTS favourite_photos ( \
                                             id INTEGER PRIMARY KEY, \
-                                            path TEXT UNIQUE, \
-                                            category TEXT, \
-                                            created_on TIMESTAMP, \
-                                            added_on TIMESTAMP)"
+                                            path TEXT UNIQUE REFERENCES photos(path), \
+                                            category TEXT REFERENCES photos(category))"
+
 
 
 def get_categories():
@@ -40,20 +39,21 @@ def get_photos(category):
 def get_favourite_photos():
     db = DatabaseConnector()
     db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "SELECT * FROM favourite_photos ORDER BY id DESC, created_on ASC, added_on ASC"
+    query = "SELECT id, favs.path, favs.category, created_on, added_on FROM favourite_photos AS favs JOIN \
+                photos ON photos.path=favs.path AND photos.category=favs.category ORDER BY id DESC, created_on ASC, added_on ASC"
     favourite_photos = db.execute(query)
     db.close_connection()
     return favourite_photos
 
-def add_to_favourite_photos(path):
+def add_to_favourite_photos(path, category):
     if is_in_favourite_photos(path):
         return False
     else:
         db = DatabaseConnector()
         db.execute(_CREATE_FAVOURITE_PHOTOS)
         db.execute(_CREATE_PHOTOS)
-        query = "INSERT INTO favourite_photos (path, category, created_on, added_on) \
-                                                SELECT * FROM photos WHERE path='" + path + "'"
+        query = "INSERT INTO favourite_photos (path, category) SELECT path, category FROM photos \
+                                        WHERE path='" + path + "' AND category='" + category + "'"
         db.execute(query)
         db.commit()
         db.close_connection()
