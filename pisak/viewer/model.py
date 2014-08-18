@@ -80,5 +80,4 @@ class Scanner(object):
                     new_photo = Photo(photo_path)
                     self.library.add_category_photo(new_category, new_photo)
                     new_photos.add(new_photo)
-        database_agent.insert_many_photos(all_photos)
-        return new_photos
+        return new_photos, all_photos

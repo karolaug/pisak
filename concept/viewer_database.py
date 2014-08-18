@@ -8,7 +8,8 @@ if __name__ == "__main__":
     print("Wyszukiwanie w : " + path)
     model.LIBRARY_SUBDIR = ""
     lib = model.Library(path)
-    lib.scan()
+    all_photos = lib.scan()[-1]
+    database_agent.insert_many_photos(all_photos)
     categories = database_agent.get_categories()
     if len(categories) > 0:
         print("Kategorie: ", ", ".join([i["category"] for i in categories]))
