@@ -1,6 +1,6 @@
 import os.path
 
-import database_agent
+from pisak.viewer import database_agent
 
 
 LIBRARY_SUBDIR = ".view"
