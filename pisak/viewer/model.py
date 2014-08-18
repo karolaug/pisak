@@ -1,5 +1,8 @@
 import os.path
 
+import database_agent
+
+
 LIBRARY_SUBDIR = ".view"
 
 def create_library(path):
@@ -38,7 +41,7 @@ class Library(object):
         self.categories.add(category)
         self.photos.add(photo)
         category.photos.add(photo)
-    
+        
     def close(self):
         pass
         
@@ -53,6 +56,7 @@ class Scanner(object):
         """
         Scan library directory for new photos. Return a list of newly imported photo objects.
         """
+        all_photos = set()
         new_photos = set()
         old_photos = self.get_photo_paths()
         path_generator = os.walk(self.library.path)
@@ -63,10 +67,11 @@ class Scanner(object):
                 subdirs.remove(LIBRARY_SUBDIR)
                 first_level = False
             for photo_path in [os.path.join(current, name) for name in files]:
+                all_photos.add((photo_path, current))
                 if photo_path in old_photos:
                     continue
                 new_photo = Photo(photo_path)
                 self.library.add_category_photo(new_category, new_photo)
                 new_photos.add(new_photo)
+        database_agent.insert_many_photos(all_photos)
         return new_photos
-

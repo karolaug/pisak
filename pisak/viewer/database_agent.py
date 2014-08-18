@@ -92,10 +92,10 @@ def insert_many_photos(photos_list):
     for photo in photos_list:
         meta = Metadata(photo[0])  # photo path as the first item
         if meta.has_exif():
-            photo.append(meta.get_date_time())
+            photo + (meta.get_date_time(),)
         else:
-            photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
-        photo.append(added_on)
+            photo + (datetime.fromtimestamp(os.path.getctime(photo[0])),)
+        photo + (added_on,)
     query = "INSERT OR IGNORE INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
     db.executemany(query, photos_list)
     db.commit()
