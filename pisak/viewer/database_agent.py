@@ -47,25 +47,26 @@ def get_favourite_photos():
     return favourite_photos
 
 def add_to_favourite_photos(path):
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_PHOTOS)
     if is_in_favourite_photos(path):
-        db.close_connection()
         return False
     else:
+        db = DatabaseConnector()
+        db.execute(_CREATE_FAVOURITE_PHOTOS)
         db.execute(_CREATE_PHOTOS)
         query = "INSERT INTO favourite_photos (photos_id, path, category, created_on, added_on) \
-                                                SELECT * FROM photos WHERE path='" + path + "'"
+                                                SELECT * FROM photos WHERE path='" + path + "' LIMIT 1"
         db.execute(query)
         db.commit()
         db.close_connection()
         return True
 
 def is_in_favourite_photos(path):
+    db = DatabaseConnector()
+    db.execute(_CREATE_FAVOURITE_PHOTOS)
     query = "SELECT * FROM favourite_photos WHERE path='" + path + "'"
     favourite_photos = db.execute(query)
     db.close_connection()
-    if favourite_photos[0]:
+    if favourite_photos:
         return True
     else:
         return False
