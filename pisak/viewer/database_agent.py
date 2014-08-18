@@ -1,7 +1,8 @@
 import os
 from datetime import datetime
 
-from gi.repository.GExiv2 import Metadata
+from gi.repository import GExiv2, GObject
+
 
 from pisak.database_manager import DatabaseConnector
 
@@ -73,10 +74,13 @@ def is_in_favourite_photos(path):
 def insert_photo(path, category):
     db = DatabaseConnector()
     db.execute(_CREATE_PHOTOS)
-    meta = Metadata(path)
-    if meta.has_exif():
-        created_on = meta.get_date_time()
-    else:
+    try:
+        meta = GExiv2.Metadata(path)
+        if meta.has_tag("Exif.Photo.DateTimeOriginal"):
+            created_on = meta.get_date_time()
+        else:
+            created_on = datetime.fromtimestamp(os.path.getctime(path))
+    except GObject.GError:
         created_on = datetime.fromtimestamp(os.path.getctime(path))
     added_on = db.generate_timestamp()
     query = "INSERT OR IGNORE INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
@@ -90,10 +94,13 @@ def insert_many_photos(photos_list):
     db.execute(_CREATE_PHOTOS)
     added_on = db.generate_timestamp()
     for photo in photos_list:
-        meta = Metadata(photo[0])  # photo path as the first item
-        if meta.has_exif():
-            photo.append(meta.get_date_time())
-        else:
+        try:
+            meta = GExiv2.Metadata(photo[0])  # photo path as the first item
+            if meta.has_tag("Exif.Photo.DateTimeOriginal"):
+                photo.append(meta.get_date_time())
+            else:
+                photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
+        except GObject.GError:
             photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
         photo.append(added_on)
     query = "INSERT OR IGNORE INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
