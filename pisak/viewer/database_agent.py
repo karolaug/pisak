@@ -2,11 +2,12 @@ from pisak.database_manager import DatabaseConnector
 
 
 _create_photos = "CREATE TABLE IF NOT EXISTS photos ( \
-                                id INTEGER PRIMARY KEY, \
-                                path TEXT, \
-                                category TEXT, \
-                                created_on TIMESTAMP, \
-                                added_on TIMESTAMP)"
+                                    id INTEGER PRIMARY KEY, \
+                                    path TEXT, \
+                                    category TEXT, \
+                                    created_on TIMESTAMP, \
+                                    added_on TIMESTAMP)"
+
 _create_favourite_photos = "CREATE TABLE IF NOT EXISTS photos ( \
                                             id INTEGER PRIMARY KEY, \
                                             photos_id INTEGER, \
@@ -14,6 +15,7 @@ _create_favourite_photos = "CREATE TABLE IF NOT EXISTS photos ( \
                                             category TEXT, \
                                             created_on TIMESTAMP, \
                                             added_on TIMESTAMP)"
+
 
 def get_categories():
     db = DatabaseConnector()
