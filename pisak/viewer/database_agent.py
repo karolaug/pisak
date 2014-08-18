@@ -3,7 +3,6 @@ from datetime import datetime
 
 from gi.repository import GExiv2, GObject
 
-
 from pisak.database_manager import DatabaseConnector
 
 
