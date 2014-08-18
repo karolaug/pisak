@@ -13,7 +13,7 @@ _CREATE_PHOTOS = "CREATE TABLE IF NOT EXISTS photos ( \
 _CREATE_FAVOURITE_PHOTOS = "CREATE TABLE IF NOT EXISTS favourite_photos ( \
                                             id INTEGER PRIMARY KEY, \
                                             photos_id INTEGER, \
-                                            path TEXT, \
+                                            path TEXT UNIQUE, \
                                             category TEXT, \
                                             created_on TIMESTAMP, \
                                             added_on TIMESTAMP)"
@@ -49,9 +49,15 @@ def add_to_favourite_photos(path):
     db.execute_query(_CREATE_PHOTOS)
     query = "INSERT INTO favourite_photos (photos_id, path, category, created_on, added_on) \
                                             SELECT * FROM photos WHERE path=" + path
-    db.execute_query(query)
-    db.commit()
-    db.close_connection()
+    try:
+        db.execute_query(query)
+        db.commit()
+        db.close_connection()
+        return True
+    except sqlite3.IntegrityError:
+        db.commit()
+        db.close_connection()
+        return False
 
 def insert_photo(path, category):
     db = DatabaseConnector()
