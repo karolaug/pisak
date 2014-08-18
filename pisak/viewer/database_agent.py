@@ -8,7 +8,7 @@ _create_photos = "CREATE TABLE IF NOT EXISTS photos ( \
                                     created_on TIMESTAMP, \
                                     added_on TIMESTAMP)"
 
-_create_favourite_photos = "CREATE TABLE IF NOT EXISTS photos ( \
+_create_favourite_photos = "CREATE TABLE IF NOT EXISTS favourite_photos ( \
                                             id INTEGER PRIMARY KEY, \
                                             photos_id INTEGER, \
                                             path TEXT, \
