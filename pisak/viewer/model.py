@@ -56,7 +56,7 @@ class Scanner(object):
         """
         Scan library directory for new photos. Return a list of newly imported photo objects.
         """
-        all_photos = set()
+        all_photos = []
         new_photos = set()
         old_photos = self.get_photo_paths()
         path_generator = os.walk(self.library.path)
@@ -67,7 +67,7 @@ class Scanner(object):
                 subdirs.remove(LIBRARY_SUBDIR)
                 first_level = False
             for photo_path in [os.path.join(current, name) for name in files]:
-                all_photos.add((photo_path, current))
+                all_photos.append([photo_path, current])
                 if photo_path in old_photos:
                     continue
                 new_photo = Photo(photo_path)

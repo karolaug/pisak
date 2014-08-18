@@ -52,9 +52,9 @@ def add_to_favourite_photos(path, category):
         db = DatabaseConnector()
         db.execute(_CREATE_FAVOURITE_PHOTOS)
         db.execute(_CREATE_PHOTOS)
-        query = "INSERT INTO favourite_photos (path, category) SELECT path, category FROM photos \
-                                        WHERE path='" + path + "' AND category='" + category + "'"
-        db.execute(query)
+        values = (path, category,)
+        query = "INSERT INTO favourite_photos (path, category) VALUES (?, ?)"
+        db.execute(query, values)
         db.commit()
         db.close_connection()
         return True
@@ -92,10 +92,10 @@ def insert_many_photos(photos_list):
     for photo in photos_list:
         meta = Metadata(photo[0])  # photo path as the first item
         if meta.has_exif():
-            photo + (meta.get_date_time(),)
+            photo.append(meta.get_date_time())
         else:
-            photo + (datetime.fromtimestamp(os.path.getctime(photo[0])),)
-        photo + (added_on,)
+            photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
+        photo.append(added_on)
     query = "INSERT OR IGNORE INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
     db.executemany(query, photos_list)
     db.commit()
