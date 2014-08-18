@@ -34,7 +34,7 @@ class DatabaseConnector(object):
                                     detect_types=sqlite3.PARSE_DECLTYPES|
                                     sqlite3.PARSE_COLNAMES)
 
-    def _execute(self, query, values=None):
+    def execute(self, query, values=None):
         cur = self.conn.cursor()
         if values:
             cur.execute(query, values)
@@ -42,19 +42,24 @@ class DatabaseConnector(object):
             cur.execute(query)
         return cur.fetchall()
 
+    def executemany(self, query, values):
+        cur = self.conn.cursor()
+        cur.executemany(query, values)
+        return cur.fetchall()
+
     def _create_table(self, app):
         query = "CREATE TABLE IF NOT EXISTS " + CONST_APP["TABLE_NAME"][app] + CONST_APP["TABLE_COLUMNS"][app]
-        self._execute(query)
+        self.execute(query)
 
     def _get_table_length(self, app):
         query = "SELECT COUNT(*) FROM " + CONST_APP["TABLE_NAME"][app]
-        return self._execute(query)[0][0]
+        return self.execute(query)[0][0]
 
     def add_record(self, app, values):
         self._create_table(app)
         value_placeholders = "(" + ", ".join(["?" for i in range(len(values))]) + ")"
         query = "INSERT INTO " + CONST_APP["TABLE_NAME"][app] + " VALUES " + value_placeholders
-        self._execute(query, values)
+        self.execute(query, values)
 
     def generate_timestamp(self):
         return datetime.now()
@@ -68,12 +73,12 @@ class DatabaseConnector(object):
     def get_all_records(self, app):
         self._create_table(app)
         query = "SELECT * FROM " + CONST_APP["TABLE_NAME"][app]
-        return self._execute(query)
+        return self.execute(query)
 
     def get_n_last_added_records(self, app, n):
         self._create_table(app)
         query = "SELECT * FROM " + CONST_APP["TABLE_NAME"][app] + " ORDER BY added_on DESC LIMIT " + n
-        return self._execute(query)
+        return self.execute(query)
 
     def commit(self):
         self.conn.commit()
