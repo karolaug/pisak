@@ -1,3 +1,6 @@
+import os
+from datetime import datetime
+
 from gi.repository.GExiv2 import Metadata
 
 from pisak.database_manager import DatabaseConnector
@@ -69,7 +72,11 @@ def is_in_favourite_photos(path):
 
 def insert_photo(path, category):
     db = DatabaseConnector()
-    created_on = Metadata(path).get_date_time()
+    meta = Metadata(path)
+    if meta.has_exif():
+        created_on = meta.get_date_time()
+    else:
+        created_on = datetime.fromtimestamp(os.path.getctime(path))
     added_on = db.generate_timestamp()
     db.execute(_CREATE_PHOTOS)
     query = "INSERT INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
@@ -82,7 +89,11 @@ def insert_many_photos(photos_list):
     db = DatabaseConnector()
     added_on = db.generate_timestamp()
     for photo in photos_list:
-        photo.append(Metadata(photo[0]).get_date_time())  # photo path as the first item
+        meta = Metadata(photo[0])  # photo path as the first item
+        if meta.has_exif():
+            photo.append(meta.get_date_time())
+        else:
+            photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
         photo.append(added_on)
     query = "INSERT INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
     db.executemany(query, photos_list)
