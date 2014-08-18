@@ -33,7 +33,7 @@ def get_categories():
 def get_photos(category):
     db = DatabaseConnector()
     db.execute(_CREATE_PHOTOS)
-    query = "SELECT * FROM photos WHERE category=" + category + " ORDER BY created_on ASC, added_on ASC"
+    query = "SELECT * FROM photos WHERE category='" + category + "' ORDER BY created_on ASC, added_on ASC"
     photos = db.execute(query)
     db.close_connection()
     return photos
@@ -55,14 +55,14 @@ def add_to_favourite_photos(path):
     else:
         db.execute(_CREATE_PHOTOS)
         query = "INSERT INTO favourite_photos (photos_id, path, category, created_on, added_on) \
-                                                SELECT * FROM photos WHERE path=" + path
+                                                SELECT * FROM photos WHERE path='" + path + "'"
         db.execute(query)
         db.commit()
         db.close_connection()
         return True
 
 def is_in_favourite_photos(path):
-    query = "SELECT * FROM favourite_photos WHERE path=" + path
+    query = "SELECT * FROM favourite_photos WHERE path='" + path + "'"
     favourite_photos = db.execute(query)
     db.close_connection()
     if favourite_photos[0]:
@@ -103,7 +103,7 @@ def insert_many_photos(photos_list):
 def remove_from_favourite_photos(path):
     db = DatabaseConnector()
     db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "DELETE FROM favourite_photos WHERE path=" + path
+    query = "DELETE FROM favourite_photos WHERE path='" + path + "'"
     db.execute(query)
     db.commit()
     db.close_connection()
