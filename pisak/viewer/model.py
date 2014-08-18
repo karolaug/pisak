@@ -1,7 +1,5 @@
 import os.path
 
-from pisak.viewer import database_agent
-
 
 SUPPORTED_FORMATS_EXTENSIONS = (".png", ".jpg", ".jpeg", ".tiff", ".gif", ".raw", ".bmp", ".svg")
 
