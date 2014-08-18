@@ -82,7 +82,7 @@ def insert_many_photos(photos_list):
     db = DatabaseConnector()
     added_on = db.generate_timestamp()
     for photo in photos_list:
-        photo.append(Metadata(photo[0]).get_date_time())  # photo path as the firt item
+        photo.append(Metadata(photo[0]).get_date_time())  # photo path as the first item
         photo.append(added_on)
     query = "INSERT INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
     db.executemany(query, photos_list)
