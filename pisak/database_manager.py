@@ -4,7 +4,9 @@ from datetime import datetime
 
 
 _PATH = os.path.abspath(os.path.split(__file__)[0])
-DATABASE_PATH = os.path.join(_PATH, "res/pisak_database.db")
+
+DATABASE_PATH = os.path.join(_PATH, "pisak_database.db")
+
 CONST_APP = {
     "TABLE_NAME": {
         "speller": "text_files"
