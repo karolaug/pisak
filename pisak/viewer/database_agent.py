@@ -46,7 +46,7 @@ def add_to_favourite_photos(path):
     db.execute_query(_create_favourite_photos)
     db.execute_query(_create_photos)
     query = "INSERT INTO favourite_photos (photos_id, path, category, created_on, added_on) \
-                                            VALUES (SELECT * FROM photos WHERE path=" + path + " )"
+                                            SELECT * FROM photos WHERE path=" + path
     db.execute_query(query)
     db.commit()
     db.close_connection()
