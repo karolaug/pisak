@@ -3,7 +3,10 @@ import os.path
 from pisak.viewer import database_agent
 
 
+SUPPORTED_FORMATS_EXTENSIONS = (".png", ".jpg", ".jpeg", ".tiff", ".gif", ".raw", ".bmp", ".svg")
+
 LIBRARY_SUBDIR = ".view"
+
 
 def create_library(path):
     library_dir = os.path.join(path, LIBRARY_SUBDIR)
@@ -11,9 +14,11 @@ def create_library(path):
         raise LibraryException("Library already exists")
     os.mkdir(library_dir)
     return Library(path)
+
     
 class LibraryException(Exception):
     pass
+
 
 class Category(object):
     def __init__(self, name):
@@ -67,11 +72,12 @@ class Scanner(object):
                 subdirs.remove(LIBRARY_SUBDIR)
                 first_level = False
             for photo_path in [os.path.join(current, name) for name in files]:
-                all_photos.append([photo_path, current])
-                if photo_path in old_photos:
-                    continue
-                new_photo = Photo(photo_path)
-                self.library.add_category_photo(new_category, new_photo)
-                new_photos.add(new_photo)
+                if os.path.splitext(photo_path)[-1].lower() in SUPPORTED_FORMATS_EXTENSIONS:
+                    all_photos.append([photo_path, current])
+                    if photo_path in old_photos:
+                        continue
+                    new_photo = Photo(photo_path)
+                    self.library.add_category_photo(new_category, new_photo)
+                    new_photos.add(new_photo)
         database_agent.insert_many_photos(all_photos)
         return new_photos
