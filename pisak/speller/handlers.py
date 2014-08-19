@@ -267,7 +267,7 @@ def unset_toggled_state(button):
 @signals.registered_handler("speller/set_toggled_state")
 def set_toggled_state(button):
     if not button.get_toggled():
-    	button.set_toggled(True)
+        button.set_toggled(True)
 
 
 @signals.registered_handler("speller/switch_toggled_state")
