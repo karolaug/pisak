@@ -39,10 +39,10 @@ def get_photos(category):
 def get_previews(categories_list):
     db = DatabaseConnector()
     db.execute(_CREATE_PHOTOS)
-    previews = []
+    previews = {}
     query = "SELECT * FROM photos WHERE category='{}' ORDER BY created_on DESC, added_on DESC LIMIT 1"
     for category in categories_list:
-        previews.append(db.execute(query.format(category))[0])
+        previews[category] = db.execute(query.format(category))[0]
     db.close_connection()
     return previews
 
