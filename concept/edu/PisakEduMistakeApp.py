@@ -52,13 +52,13 @@ class _RewardPanelCycle(object):
 
     def expose_next(self):
         pass
-        
+
     def stop(self):
         pass
 
     def select(self):
         return self.panel.exit_panel()
-        
+
 
 class ResultInfoPanel(Clutter.Actor):
     def __init__(self,container):
@@ -162,7 +162,7 @@ class SecondPracticePanel(Clutter.Actor):
             one_row.append(button)
             self.layout.attach(button, i % self.col_count, i / self.col_count + 1, 1, 1)
         self.buttons.append(one_row)
-            
+
     def _init_action_buttons(self):
         one_row = []
         button_names=['powrót','sprawdź','skasuj','czytaj', 'literuj','wróć']
@@ -307,7 +307,7 @@ class _SecondPracticePanelCycle(object):
             self.direction = 'y'
             self.previous = 'x'
             return self.panel.select_action(button)
-        
+
 
 class FirstPracticePanel(Clutter.Actor):
     def __init__(self,container):
@@ -324,7 +324,7 @@ class FirstPracticePanel(Clutter.Actor):
         self.layout.set_row_spacing(10)
         self._init_params()
         self._init_elements()
-        
+
     def _init_params(self):
         self.font_name = 'Sans 60'
         self.mistake_index = random.randint(0, len(self.word) - 1)
@@ -343,7 +343,7 @@ class FirstPracticePanel(Clutter.Actor):
         self.buttons = []
         self._init_number_buttons()
         self._init_action_buttons()
-    
+
     def _init_number_buttons(self):
         for i in range(len(self.word)):
             button = widgets.TextField()
@@ -378,7 +378,7 @@ class FirstPracticePanel(Clutter.Actor):
         self.text_field.set_font(self.font_name)
         self.layout.attach(self.text_field, 0, 0, 12, 2)
         self.text_field.set_background_color(self.white_color)
-        
+
     def read_out_loud(self):
         print('Reading out loud:   ' + self.word)
 
@@ -399,7 +399,7 @@ class FirstPracticePanel(Clutter.Actor):
             self.container.user_word = user_word
             self.container.mistake_index = self.mistake_index
             return self.container.change_panel(new_panel_name)
-            
+
     def select_action(self, button):
         try:
             button_label = button.get_label()
@@ -481,7 +481,7 @@ class MainPanel(Clutter.Actor):
         self.layout.attach(self.word_field, 0, 1, 2, 4)
         self.word_field.set_x_expand(True)
         self.word_field.set_y_expand(True)
-        
+
     def _init_image(self):
         self.image = widgets.Image()
         self.layout.attach(self.image, 2, 1, 3, 4)
@@ -521,7 +521,7 @@ class MainPanel(Clutter.Actor):
 
     def update_image(self):
         self.image.set_image_from_file('./words/pictures/' + self.word + '.jpg')
-        
+
     def select_action(self,button):
         button_label = button.get_label()
         if button_label == 'zamknij':
@@ -538,7 +538,7 @@ class MainPanel(Clutter.Actor):
     def go_practice(self):
         self.container.word = self.word
         self.container.word_index = self.word_index
-        new_panel_name = 'first_practice'    
+        new_panel_name = 'first_practice'
         return self.container.change_panel(new_panel_name)
 
     def read_out_loud(self):
@@ -680,7 +680,7 @@ class PisakEduStage(Clutter.Stage):
         self.context.switcher.push_cycle(self.content.create_cycle())
         self.input = switcher_app.MouseSwitcherInput(self)
         self.context.switcher.add_input(self.input)
-        
+
     def _init_elements(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
@@ -707,7 +707,7 @@ class PisakEduApp(object):
         self.stage.connect("destroy", lambda _: Clutter.main_quit())
         self.stage.set_fullscreen(True)
         self.stage.show_all()
-    
+
     def main(self):
         Clutter.main()
 

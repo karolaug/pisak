@@ -51,7 +51,7 @@ class PracticePanel(Clutter.Actor):
         self.result_field=buttons.TextField()
         self.layout.attach(self.result_field , 0, 0, 4 ,1)
         self.result_field.set_x_expand(True)
-        
+
     def _init_word_buttons(self):
         words=[]
         while len(words)< self.word_count-1:
@@ -70,14 +70,14 @@ class PracticePanel(Clutter.Actor):
             self.layout.attach(one_button , 0, i+1,2,1)
             one_button.set_x_expand(True)
             one_button.set_y_expand(True)
-        
+
     def _init_image(self):
         self.image=buttons.Image()
         self.image.set_image_from_file('concept/edu/words/pictures/' + self.word + '.jpg')
         self.layout.attach(self.image , 2, 1,2,self.word_count)
         self.image.set_x_expand(True)
         self.image.set_y_expand(True)
-        
+
     def _init_action_buttons(self):
         self.action_buttons=[]
         action_button_names=['czytaj',
@@ -124,7 +124,7 @@ class PracticePanel(Clutter.Actor):
         self.timer.set_repeat_count(-1)
         self.timer.connect('completed', lambda _: self.on_timer_event())
         self.start_timer_cycle()
-        
+
     def start_timer_cycle(self):
         self.timer.start()
 

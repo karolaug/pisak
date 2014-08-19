@@ -65,7 +65,7 @@ class PracticePanel(Clutter.Actor):
             self.letter_buttons.append(one_button)
             self.active_letters_indices.append(i)
             self.layout.attach(one_button,  self.letter_coords[i][0] , self.letter_coords[i][1] ,1,1)
-            
+
     def _init_action_buttons(self):
         self.action_buttons=[]
         button_names=['sprawdź','skasuj','wyczyść','czytaj', 'literuj','wróć']
@@ -77,7 +77,7 @@ class PracticePanel(Clutter.Actor):
             self.action_buttons.append(one_button)
             self.layout.attach(one_button,col, self.letter_grid_row_count ,1,1)
 
-        
+
     def _init_text_field(self):
         self.text_field=buttons.TextField()
         self.text_field.set_font(self.font_name)
@@ -109,7 +109,7 @@ class PracticePanel(Clutter.Actor):
         self.previous_button=button
         self.idx = (self.idx +1) % (len(self.action_buttons) + len(self.active_letters_indices))
         self.set_reactive(True)
-        
+
     def on_click_event(self):
         self.set_reactive(False)
         self.stop_timer_cycle()
@@ -121,11 +121,11 @@ class PracticePanel(Clutter.Actor):
                 button=self.action_buttons[self.idx - len(self.active_letters_indices)]
             button.set_hilite_color(self.selection_color)
             button_label=button.get_label()
-            actions = {'sprawdź' : self.check_result, 
-                   'skasuj' : self.delete_letter, 
-                   'wyczyść' : self.clear_all, 
-                   'czytaj' : self.read_out_loud, 
-                   'literuj' : self.spell, 
+            actions = {'sprawdź' : self.check_result,
+                   'skasuj' : self.delete_letter,
+                   'wyczyść' : self.clear_all,
+                   'czytaj' : self.read_out_loud,
+                   'literuj' : self.spell,
                    'wróć' : self.back_to_main}
             actions[button_label]()
         else:
@@ -184,7 +184,7 @@ class PracticePanel(Clutter.Actor):
         self.container.back_to_main= True
         self.container.change_panel()
 
-        
+
 class MainPanel(Clutter.Actor):
     def __init__(self,container):
         super(MainPanel, self).__init__()
@@ -214,19 +214,19 @@ class MainPanel(Clutter.Actor):
         self.result_field=buttons.TextField()
         self.layout.attach(self.result_field , 0, 0, 5 ,1)
         self.result_field.set_x_expand(True)
-        
+
     def _init_word_field(self):
         self.word_field=buttons.TextField()
         self.layout.attach(self.word_field , 0, 1,2,4)
         self.word_field.set_x_expand(True)
         self.word_field.set_y_expand(True)
-        
+
     def _init_image(self):
         self.image=buttons.Image()
         self.layout.attach(self.image , 2, 1,3,4)
         self.image.set_x_expand(True)
         self.image.set_y_expand(True)
-        
+
     def _init_buttons(self):
         self.buttons=[]
         button_names=['ćwicz','czytaj',
@@ -272,7 +272,7 @@ class MainPanel(Clutter.Actor):
         self.timer.set_repeat_count(-1)
         self.timer.connect('completed', lambda _: self.on_timer_event())
         self.start_timer_cycle()
-        
+
     def start_timer_cycle(self):
         self.timer.start()
 

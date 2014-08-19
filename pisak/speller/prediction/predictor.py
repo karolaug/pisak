@@ -41,6 +41,6 @@ class CallbackClass(pressagio.callback.Callback):
 
     def past_stream(self):
         return self.buffer
-    
+
     def future_stream(self):
         return ''

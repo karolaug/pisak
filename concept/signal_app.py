@@ -26,7 +26,7 @@ class ButtonApp(switcher_app.Application):
     '''
     def create_stage(self, argv):
         return ButtonStage()
-        
+
 
 if __name__ == '__main__':
     ButtonApp(sys.argv).main()

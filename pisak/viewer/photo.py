@@ -9,13 +9,13 @@ class SlideshowCycle(switcher_app.Cycle):
     def __init__(self, view_actor):
         self.view_actor = view_actor
         self.remaining = len(self.view_actor.photos)
-    
+
     def has_next(self):
         return self.remaining > 0
-    
+
     def expose_next(self):
         self.view_actor.next_photo()
-    
+
     def select(self):
         raise NotImplementedError()
 
@@ -24,13 +24,13 @@ class PhotoViewIdleCycle(switcher_app.Cycle):
     interval = 3600
     def __init__(self, view_actor):
         self.view_actor = view_actor
-    
+
     def has_next(self):
         return True
-    
+
     def expose_next(self):
         pass
-    
+
     def select(self):
         return self.view_actor.create_slideshow_cycle()
 
@@ -39,7 +39,7 @@ class PhotoViewMenu(widgets.SideMenu):
     @staticmethod
     def foo():
         pass
-    
+
     MODEL = {
         "foo": foo}
 
@@ -64,7 +64,7 @@ class PhotoView(Clutter.Actor):
         self.photo_actor = widgets.PhotoSlide()
         self.photo_actor.set_model(self.photos[index])
         self.add_child(self.photo_actor)
-    
+
     def set_model(self, model):
         self.model = model
         self.photos = self.model["items"]
@@ -76,10 +76,10 @@ class PhotoView(Clutter.Actor):
 
     def create_idle_cycle(self):
         return PhotoViewIdleCycle(self)
-    
+
     def create_initial_cycle(self):
         return self.create_idle_cycle()
-    
+
 
 class PhotoEditionMenu(Clutter.Actor):
     """
@@ -93,7 +93,7 @@ class PhotoEditionMenu(Clutter.Actor):
         self.buffer = view.buffer
         self._init_layout()
         self._init_buttons()
-        
+
     def _init_layout(self):
         self.layout = Clutter.BoxLayout()
         self.layout.set_orientation(Clutter.Orientation.VERTICAL)
@@ -114,4 +114,4 @@ class PhotoEditionMenu(Clutter.Actor):
             button = widgets.Button()
             button.set_model({'label': self.buttons[b][0]})
             button.connect('activate', self.buttons[b][1])
-            self.add_child(button) 
+            self.add_child(button)

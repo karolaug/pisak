@@ -16,7 +16,7 @@ class ButtonStage(Clutter.Stage):
     def __init__(self):
         super().__init__()
         self.button = Mx.Button()
-        
+
         self.script = Clutter.Script()
         self.script.load_from_file('concept/mxButton/button.json')
 
@@ -44,7 +44,7 @@ class ButtonApp(switcher_app.Application):
     '''
     def create_stage(self, argv):
         return ButtonStage()
-        
+
 
 if __name__ == '__main__':
     ButtonApp(sys.argv).main()

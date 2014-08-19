@@ -20,7 +20,7 @@ class TimerCycle(object):
         self.col=0
         self.direction='rows'
         self.previous_tiles=[]
-        
+
     def _init_timer(self):
         self.timer=Clutter.Timeline.new(self.time_interval)
         self.timer.set_repeat_count(-1)
@@ -31,10 +31,10 @@ class TimerCycle(object):
 
     def stop_cycle(self):
         self.timer.stop()
-        
+
     def on_timer_event(self):
         if self.previous_tiles:
-            self.tiles_table.update_tiles(self.previous_tiles,'off')            
+            self.tiles_table.update_tiles(self.previous_tiles,'off')
         if self.direction=='rows':
             tiles=range(self.row*self.col_count , self.row*self.col_count + self.col_count )
             self.row=(self.row+1) %self.row_count
@@ -72,11 +72,11 @@ class LetterTile(Clutter.Actor):
     def _init_letter_label(self):
         self.letter_label=Mx.Label()
         self.add_actor(self.letter_label)
-        
+
     def set_letter_label(self,letter):
         self.letter_label.set_text(letter)
-        
-    
+
+
 class ActionTile(Clutter.Actor):
     def __init__(self):
         super(ActionTile,self).__init__()
@@ -93,7 +93,7 @@ class ActionTile(Clutter.Actor):
         self.icon=Mx.Image()
         self.add_actor(self.icon)
 
-    def _init_label(self):        
+    def _init_label(self):
         self.label=Mx.Label()
         self.add_actor(self.label)
 
@@ -144,7 +144,7 @@ class ExecuteAction(object):
 
     def other(self):
         print('Executing action: '+self.tile_label)
-        
+
 
 class ToggleHilite(object):
     def __init__(self,tile,toggle):
@@ -199,8 +199,8 @@ class TilesTable(Clutter.Actor):
             self.text_buffer.insert_text(cursor_position ,letter, 1)
         except AttributeError:
             ExecuteAction(self.tiles[index],self.contents)
-            
-        current_txt_coord =self.text_field.text_field.position_to_coords(len(self.text_buffer.get_text()))[3]           
+
+        current_txt_coord =self.text_field.text_field.position_to_coords(len(self.text_buffer.get_text()))[3]
         if current_txt_coord >= self.text_field.get_height():
             self.text_field.scroll_field()
 
@@ -220,8 +220,8 @@ class TextField(Clutter.ScrollActor):
         self.set_background_color(white_color)
         self.font='Sans 100px'
         self._init_field()
-    
-    def _init_field(self):        
+
+    def _init_field(self):
         self.text_field=Clutter.Text.new_with_buffer(self.text_buffer)
         self.text_field.set_line_wrap(True)
         self.text_field.set_height(1000)
@@ -239,7 +239,7 @@ class TextField(Clutter.ScrollActor):
         self.set_easing_mode(Clutter.AnimationMode.LINEAR)
         self.set_easing_duration(animation_time)
         self.scroll_to_point(point)
-            
+
 
 class PisakSpellerContainer(Clutter.Actor):
     def __init__(self,stage):
@@ -249,9 +249,9 @@ class PisakSpellerContainer(Clutter.Actor):
         margin.left = margin.right = margin.top = margin.bottom = 20
         self.set_margin(margin)
         self._init_elements()
-        
+
     def _init_elements(self):
-        
+
         self.text_buffer=TextBuffer()
         self.text_field=TextField(self.text_buffer)
         self.text_field.set_height(200)
@@ -280,7 +280,7 @@ class PisakSpellerStage(Clutter.Stage):
         color=Clutter.Color.new(180,200,230,100)
         self.set_background_color(color)
         self._init_elements()
-    
+
     def _init_elements(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
@@ -304,4 +304,4 @@ class PisakSpellerApp(object):
         Clutter.main()
 
 PisakSpellerApp(sys.argv).main()
-            
+

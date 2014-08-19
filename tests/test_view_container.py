@@ -24,14 +24,14 @@ class DummyCycle(switcher_app.Cycle):
     interval = 100
     def expose_next(self):
         pass
-    
+
     def stop(self):
         pass
-    
+
     def has_next(self):
         return True
-            
-            
+
+
 class AbstractViewContainerTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
@@ -47,7 +47,7 @@ class AbstractViewContainerTest(unittest.TestCase):
             view_container.push_view(view_actor)
         with self.assertRaises(NotImplementedError):
             view_container.pop_view()
-     
+
     def test_dummy_view_container(self):
         """
         View container usage
@@ -59,7 +59,7 @@ class AbstractViewContainerTest(unittest.TestCase):
         self.assertTrue(view_container.pushed)
         view_container.pop_view()
         self.assertTrue(view_container.popped)
-   
+
     @tests.clutter.on_stage
     def test_basic_view_container(self, stage):
         """
@@ -68,7 +68,7 @@ class AbstractViewContainerTest(unittest.TestCase):
         class DummyViewActor(Clutter.Actor):
             def create_initial_cycle(self):
                 return DummyCycle()
-            
+
         context = switcher_app.Context(object())
         view_container = view.BasicViewContainer(context)
         view_actor_1 = DummyViewActor()

@@ -2,7 +2,7 @@ Widgets
 =======
 
 List of JSON-dedicated widgets
- 
+
   * :class:`pisak.widgets.Button`
   * :class:`pisak.layout.Box`
   * :class:`pisak.scanning.Group`

@@ -29,7 +29,7 @@ class Panel(Clutter.Actor):
 
     def exit_panel(self):
         self.container.change_panel()
- 
+
 
 class RewardPanel(Panel):
     def __init__(self, container):
@@ -77,6 +77,6 @@ class PisakEduApp(object):
         self.stage.connect("destroy", lambda _: Clutter.main_quit())
         self.stage.set_fullscreen(True)
         self.stage.show_all()
-    
+
     def main(self):
         Clutter.main()

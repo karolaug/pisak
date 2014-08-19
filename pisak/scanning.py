@@ -66,7 +66,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
     Container for grouping widgets for scanning purposes.
     """
     __gtype_name__ = "PisakScanningGroup"
-    
+
     __gproperties__ = {
         "strategy": (
             Strategy.__gtype__,
@@ -77,7 +77,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             "", "", False,
             GObject.PARAM_READWRITE),
         "selector": (
-            GObject.TYPE_STRING, "", "", 
+            GObject.TYPE_STRING, "", "",
             "mouse", GObject.PARAM_READWRITE)
     }
 
@@ -100,7 +100,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self._strategy = value
         if self.strategy is not None:
             self.strategy.group = self
-    
+
     @property
     def selector(self):
         return self._selector
@@ -112,7 +112,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
     @property
     def scanning_hilite(self):
         return self._scanning_hilite
-    
+
     @scanning_hilite.setter
     def scanning_hilite(self, value):
         self._scanning_hilite = value
@@ -140,7 +140,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
         elif self.selector == 'keyboard':
-            self._handler_token = self.connect("key-release-event", 
+            self._handler_token = self.connect("key-release-event",
                                                self.key_release)
         else:
             print("Unknown selector: ", self.selector)
@@ -151,7 +151,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.strategy.start()
 
     def stop_cycle(self):
-        action = {'mouse': self.stage.disconnect, 
+        action = {'mouse': self.stage.disconnect,
                   'keyboard': self.disconnect}
         self.get_stage().set_key_focus(None)
         try:
@@ -190,7 +190,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.add_pseudoclass_all("hover")
 
     def disable_hilite(self):
-        self.remove_pseudoclass_all("hover")    
+        self.remove_pseudoclass_all("hover")
 
     def enable_scan_hilite(self):
         self.add_pseudoclass_all("scanning")

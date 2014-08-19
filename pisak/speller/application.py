@@ -9,7 +9,7 @@ class TextView(Clutter.Actor):
     """
     TXT_F_WIDTH = unit.mm(218)
     TXT_F_HEIGHT = unit.mm(108)
-    
+
     def __init__(self):
         super().__init__()
         color = Clutter.Color.new(250, 250, 250, 255)
@@ -22,7 +22,7 @@ class TextView(Clutter.Actor):
         self.set_x_align(Clutter.ActorAlign.CENTER)
         self.set_y_expand(True)
         self.set_y_align(Clutter.ActorAlign.END)
-    
+
     def _init_text_field(self):
         self.text_field = Clutter.Text()
         self.text_field.set_size(self.TXT_F_WIDTH, self.TXT_F_HEIGHT)
@@ -40,7 +40,7 @@ class ButtonBlock(Clutter.Actor):
     """
     Base class for widgets containing block of buttons.
     """
-    
+
     def __init__(self):
         super().__init__()
         self._init_layout()
@@ -51,7 +51,7 @@ class ButtonBlock(Clutter.Actor):
 
     def _init_buttons(self):
         raise NotImplementedError()
-    
+
     def hilite_on(self):
         for b in self.get_children():
             b.hilite_on()
@@ -70,13 +70,13 @@ class ButtonBlock(Clutter.Actor):
 
 class ButtonBlockCycle(switcher_app.Cycle):
     interval = 1000
-    
+
     def __init__(self, actor):
         self.actor = actor
         self.STEPS = actor.get_children()
         self.index = 0
         self.next = True
-    
+
     def expose_next(self):
         previous_button = self.STEPS[self.index-1]
         previous_button.hilite_off()
@@ -89,15 +89,15 @@ class ButtonBlockCycle(switcher_app.Cycle):
         button.select_on()
         self.next = False
         return switcher_app.selection_activate_actor(button)
-    
+
     def has_next(self):
         return self.next
 
     def stop(self):
         final_button = self.STEPS[self.index-1]
         final_button.hilite_off()
-    
-            
+
+
 class KeyboardMenu(ButtonBlock):
     """
     Widget of functional buttons closely related to Keyboard.
@@ -117,10 +117,10 @@ class KeyboardMenu(ButtonBlock):
             ["a->A", None, None], ["A->Ą", None, None], [":-)", None, None], ["01", None, None]
             ]
     ]
-    
+
     def __init__(self):
         super().__init__()
-        
+
     def _init_layout(self):
         layout = Clutter.BoxLayout()
         layout.set_orientation(Clutter.Orientation.HORIZONTAL)
@@ -138,7 +138,7 @@ class KeyboardMenu(ButtonBlock):
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
 
-    
+
 class Keyboard(Clutter.Actor):
     """
     Widget of buttons necessary for entering text.
@@ -154,7 +154,7 @@ class Keyboard(Clutter.Actor):
             "Z", "X", "C", "V", "B", "N", "M", "CZ", "SZ", "RZ"
             ]
     ]
-    
+
     def __init__(self):
         super().__init__()
         self._init_layout()
@@ -197,7 +197,7 @@ class Keyboard(Clutter.Actor):
     def generate_row(self):
         class EmptyRow(ButtonBlock):
             SPACING =  unit.mm(2)
-            
+
             def __init__(self):
                 super().__init__()
 
@@ -232,12 +232,12 @@ class Keyboard(Clutter.Actor):
 
 class KeyboardCycle(switcher_app.Cycle):
     interval = 1000
-    
+
     def __init__(self, actor):
         self.actor = actor
         self.STEPS = actor.get_children()
         self.index = 0
-    
+
     def expose_next(self):
         previous_row = self.STEPS[self.index-1]
         previous_row.hilite_off()
@@ -255,11 +255,11 @@ class KeyboardCycle(switcher_app.Cycle):
         final_row = self.STEPS[self.index-1]
         final_row.hilite_off()
         self.index = 0
-    
+
     def has_next(self):
         return True
 
-        
+
 class Extra(ButtonBlock):
     """
     Widget of buttons containing suggested words or other extra features.
@@ -271,7 +271,7 @@ class Extra(ButtonBlock):
         "label": "PREDYKCJA %d" % i
         } for i in reversed(range(1, 10))
     ]
-    
+
     def __init__(self):
         super().__init__()
 
@@ -291,7 +291,7 @@ class Extra(ButtonBlock):
             button.set_up_with_size(self.BT_WIDTH, self.BT_HEIGHT)
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
-    
+
 
 class Menu(ButtonBlock):
     """
@@ -310,7 +310,7 @@ class Menu(ButtonBlock):
             ["DRUKUJ", None, None], ["NOWY DOKUMENT", None, None], ["PANEL STARTOWY", None, None]
             ]
     ]
-    
+
     def __init__(self):
         super().__init__()
 
@@ -330,14 +330,14 @@ class Menu(ButtonBlock):
             button.set_up_with_size(self.BT_WIDTH, self.BT_HEIGHT)
             self.add_child(button)
             button.set_model(self.BUTTONS[i])
-            
+
 
 class Dispatcher(object):
     """
     Object whose role is to receive, gather, and distribute commands and informations throughout
     all the speller app elements.
     """
-    
+
     def __init__(self, menu, extra, keyboard, text_view):
         self.menu = menu
         self.extra = extra
@@ -346,7 +346,7 @@ class Dispatcher(object):
 
     def insert_letter(self, letter):
         self.text_view.insert_letter(letter)
-        
+
 
 class MainView(Clutter.Actor):
     """
@@ -356,7 +356,7 @@ class MainView(Clutter.Actor):
     ROW_SPACING = unit.mm(2)
     COL_SPACING = unit.mm(4)
     MARGIN = unit.mm(2)
-    
+
     def __init__(self, context):
         super().__init__()
         self._init_layout()
@@ -382,7 +382,7 @@ class MainView(Clutter.Actor):
         self.text_view = TextView()
         self.keyboard = Keyboard()
         self._arrange_elements()
-        
+
     def _arrange_elements(self):
         self.layout.attach(self.menu, 0, 0, 3, 9)
         self.layout.attach(self.extra, 3, 0, 2, 9)
@@ -401,21 +401,21 @@ class MainView(Clutter.Actor):
 
 class MainViewCycle(switcher_app.Cycle):
     interval = 1000
-    
+
     def __init__(self, actor):
         self.actor = actor
         self.STEPS = [
             actor.menu, actor.extra, actor.keyboard
             ]
         self.index = 0
-    
+
     def expose_next(self):
         previous_block = self.STEPS[self.index-1]
         previous_block.hilite_off()
         current_block = self.STEPS[self.index]
         current_block.hilite_on()
         self.index = (self.index + 1) % 3
-    
+
     def has_next(self):
         return True
 
@@ -429,10 +429,10 @@ class MainViewCycle(switcher_app.Cycle):
         final_block = self.STEPS[self.index-1]
         final_block.hilite_off()
         self.index = 0
-    
+
     def has_next(self):
         return True
-    
+
 
 class PisakSpellerContainer(view.BasicViewContainer):
     def __init__(self, context):
@@ -468,7 +468,7 @@ class PisakSpellerStage(Clutter.Stage):
     def _init_input(self):
         self.input = switcher_app.KeyboardSwitcherInput(self)
         self.context.switcher.add_input(self.input)
-        
+
 
 class PisakSpellerApp(switcher_app.Application):
     """

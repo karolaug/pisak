@@ -41,9 +41,9 @@ class CursorGroup(Clutter.Actor):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         self.connect("notify::mapped", self.init_content)
-    
+
     def init_content(self, *args):
-        self.text = [i for i in self.get_children() 
+        self.text = [i for i in self.get_children()
                      if type(i) == Text][0]
         self.init_cursor()
         self.text.clutter_text.connect('text-changed', self.move_cursor)
@@ -65,7 +65,7 @@ class CursorGroup(Clutter.Actor):
         self.add_child(self.cursor)
         self.cursor.set_x(0)
         self.cursor.set_y(0)
-        
+
     def move_cursor(self, event):
         cursor_pos = self.text.clutter_text.get_cursor_position()
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
@@ -93,7 +93,7 @@ class Cursor(Clutter.Actor):
         context.rectangle(0, 0, width, height)
         context.fill()
         return True
-    
+
 class Text(Mx.Label, properties.PropertyAdapter):
     class Insertion(object):
         def __init__(self, pos, value):
@@ -135,7 +135,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def revert(self, text):
             text.clutter_text.insert_text(self.value, self.pos)
 
-        def compose(self, operation): 
+        def compose(self, operation):
             if isinstance(operation, Text.Deletion):
                 consecutive = operation.pos + len(operation.value) == self.pos
                 compatible = operation.value[-1].isspace() or \
@@ -179,7 +179,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
         "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE)}
-    
+
     def __init__(self):
         super().__init__()
         self.history = []
@@ -193,15 +193,15 @@ class Text(Mx.Label, properties.PropertyAdapter):
         if len(self.history) == 0 or not self.history[-1].compose(operation):
             self.history.append(operation)
         operation.apply(self)
-    
+
     def revert_operation(self):
         if len(self.history) > 0:
             self.history.pop().revert(self)
-        
+
     def _set_text_params(self):
         self.clutter_text.set_line_wrap(True)
         self.clutter_text.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        
+
     def get_text(self):
         """
         Return the entire text from the text buffer
@@ -229,7 +229,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         Append the given unicode character to the text buffer
         @param char unicode character in the form of unicode escape sequence
         :deprecated:
-        """ 
+        """
         # TODO: remove
         operation = Text.Insertion(self.get_text_length(), char)
         self.add_operation(operation)
@@ -252,7 +252,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         text = self.get_text()[pos]
         operation = Text.Deletion(pos, text)
         self.add_operation(operation)
-        
+
         #self.clutter_text.delete_text(pos, pos+1)
 
     def delete_text(self, start_pos, end_pos):
@@ -275,17 +275,17 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Look for and return the first three-word string of characters
         with no commas, starting from the end of the text buffer.
-        This function is used to send word from the text buffer to be used in prediction. 
+        This function is used to send word from the text buffer to be used in prediction.
         When the words in the buffer are unsuited to be used in prediction the funciton returns ' '.
         """
 
         text = self.get_text()
-        if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions                     
+        if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
             if text.rstrip():
-                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: 
+                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
                     return ' '
         else:
-            return ' '    
+            return ' '
 
         if text.rstrip():
             last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
@@ -394,7 +394,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one line up
         """
-        
+
         layout = self.clutter_text.get_layout()
         text = self.get_text()
         cursor_pos = self.clutter_text.get_cursor_position()
@@ -418,7 +418,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         index_, trailing = layout.x_to_index(layout_line, x)
 
-        #pos = 
+        #pos =
 
     def move_line_down(self):
         """
@@ -448,7 +448,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
     def ratio_height(self, value):
         self._ratio_height = value
         self.set_height(unit.h(value))
-        
+
 
 class Key(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerKey"
@@ -500,7 +500,7 @@ class Key(pisak.widgets.Button):
             operation = self.undo_chain.pop()
             if callable(operation) and operation in self.allowed_undos:
                 operation(self)
-        
+
     def set_pre_special_label(self):
         if self.pre_special_text:
             self.set_label(self.pre_special_text)
@@ -533,7 +533,7 @@ class Key(pisak.widgets.Button):
                     self.set_label(self.altgr_text.upper())
         except AttributeError:
             return None
-        
+
     def set_swap_altgr_label(self):
         try:
             label = self.get_label()
@@ -572,7 +572,7 @@ class Key(pisak.widgets.Button):
     def on_activate(self, source):
         if self.target:
             self.target.type_text(self.get_label())
-        
+
     @property
     def default_text(self):
         return self._default_text
@@ -631,7 +631,7 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         self.content = []
 
     def get_suggestion(self, accuracy_level):
-        if accuracy_level < len(self.content): 
+        if accuracy_level < len(self.content):
             return self.content[accuracy_level]
 
     def do_prediction(self): #function to preform in a separate thread
@@ -800,11 +800,11 @@ class PopUp(layout.Box):
             GObject.PARAM_READWRITE),
          "row_count": (
             GObject.TYPE_INT64, "number of rows",
-            "number of rows with buttons", 0, 10, 3, 
+            "number of rows with buttons", 0, 10, 3,
             GObject.PARAM_READWRITE),
         "column_count":  (
             GObject.TYPE_INT64, "number of columns",
-            "number of coolumns with buttons", 0, 10, 3, 
+            "number of coolumns with buttons", 0, 10, 3,
             GObject.PARAM_READWRITE),
         "tile_ratio_width": (
             GObject.TYPE_FLOAT, None, None,
@@ -907,7 +907,7 @@ class PopUp(layout.Box):
             button.set_label(self.exit_button_label)
         else:
             button.set_label(self.continue_button_label)
-        
+
     def _on_select(self, button, path):
         if self.mode == "save":
             new_text = self.target.get_text()
@@ -919,7 +919,7 @@ class PopUp(layout.Box):
             self.target.clear_all()
             self.target.type_text(text)
         self._close()
-        
+
     def _close(self, *args):
         self.stage.pending_group = self.background_scene
         self.background_scene.remove_effect(self.background_effect)

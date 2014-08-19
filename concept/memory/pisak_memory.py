@@ -11,7 +11,7 @@ class TimerCycle(object):
 		self.tiles_table.connect('button_release_event',lambda x,y:self.when_clicked())
 		self._init_params()
 		self._init_timer()
-	
+
 	def _init_params(self):
 		self.time_interval=1000
 		self.row_count=self.tiles_table.row_count
@@ -20,7 +20,7 @@ class TimerCycle(object):
 		self.col=0
 		self.direction='rows'
 		self.previous_tiles=[]
-		
+
 	def _init_timer(self):
 		self.timer=Clutter.Timeline.new(self.time_interval)
 		self.timer.set_repeat_count(-1)
@@ -31,10 +31,10 @@ class TimerCycle(object):
 
 	def stop_cycle(self):
 		self.timer.stop()
-		
+
 	def on_timer_event(self):
 		if self.previous_tiles:
-			self.tiles_table.update_tiles(self.previous_tiles,'off')			
+			self.tiles_table.update_tiles(self.previous_tiles,'off')
 		if self.direction=='rows':
 			tiles=range(self.row*self.col_count , self.row*self.col_count + self.col_count )
 			self.row=(self.row+1) %self.row_count
@@ -61,7 +61,7 @@ class TimerCycle(object):
 			self.col=0
 		self.start_cycle()
 
-	
+
 class ActionTile(Clutter.Actor):
 	def __init__(self):
 		super(ActionTile,self).__init__()
@@ -78,7 +78,7 @@ class ActionTile(Clutter.Actor):
 		self.icon=Mx.Image()
 		self.add_actor(self.icon)
 
-	def _init_label(self):		
+	def _init_label(self):
 		self.label=Mx.Label()
 		self.add_actor(self.label)
 
@@ -94,7 +94,7 @@ class ExecuteAction(object):
 		super().__init__()
 		self.tile_label=action_tile.label.get_text()
 		self.row,self.column = None,None
-		if self.tile_label != 'zamknij' and self.tile_label != 'reset': 
+		if self.tile_label != 'zamknij' and self.tile_label != 'reset':
 			self.row,self.column = int(self.tile_label.split()[0]),int(self.tile_label.split()[1]) #zmienic?
 
 		self.contents=contents
@@ -118,16 +118,16 @@ class ExecuteAction(object):
 
 	def flip_picture(self):
 		self.move_info = self.contents.game.check_field(self.column,self.row)
-		self.tiles[6*self.row + self.column].set_icon_from_file('./'+str(int(self.contents.game.info_field[self.row,self.column]))+'.png')	
+		self.tiles[6*self.row + self.column].set_icon_from_file('./'+str(int(self.contents.game.info_field[self.row,self.column]))+'.png')
 
 		if self.move_info == 'second-miss':
 				self.contents.revert = 3 #za 3 cykle timera nastapi revert
 				self.contents.row, self.contents.col = self.row, self.column
 
 		if self.move_info == 'first':
-				
+
 				self.contents.old_row, self.contents.old_col = self.row, self.column
-	
+
 	def reset_game(self):
 		self.contents.revert = 0
 		self.contents.game = memory.MemoryGame((4,6))
@@ -137,12 +137,12 @@ class ExecuteAction(object):
 
 		for i in range(len(self.contents.tiles)-6):
 			tile = self.contents.tiles[i]
-			tile.set_icon_from_file('./empty.png')		
+			tile.set_icon_from_file('./empty.png')
 
 	def other(self):
 		return 0
 
-		
+
 
 class ToggleHilite(object):
 	def __init__(self,tile,toggle):
@@ -195,9 +195,9 @@ class TilesTable(Clutter.Actor):
 				self.contents.game.revert()
 				self.tiles[6*self.contents.row + self.contents.col].set_icon_from_file('./empty.png')
 				self.tiles[6*self.contents.old_row + self.contents.old_col].set_icon_from_file('./empty.png')
-		
+
 			self.contents.revert -= 1
-		
+
 		for i in indices:
 			ToggleHilite(self.tiles[i],toggle)
 
@@ -208,7 +208,7 @@ class TilesTable(Clutter.Actor):
 			self.text_buffer.insert_text(cursor_position ,letter, 1)
 		except AttributeError:
 			ExecuteAction(self.tiles[index],self.contents)
-			
+
 
 class PisakSpellerContainer(Clutter.Actor):
 	def __init__(self,stage):
@@ -219,9 +219,9 @@ class PisakSpellerContainer(Clutter.Actor):
 		margin.top = margin.bottom = 0
 		self.set_margin(margin)
 		self._init_elements()
-		
+
 	def _init_elements(self):
-		
+
 		self.revert = 0
 		self.game = memory.MemoryGame((4,6))
 		self.game.create_info_field()
@@ -234,7 +234,7 @@ class PisakSpellerContainer(Clutter.Actor):
 		self.tiles_table.set_y_expand(False)
 
 		self.row = None
-		self.col = None	
+		self.col = None
 
 		self.old_row = None
 		self.old_col = None
@@ -254,7 +254,7 @@ class PisakSpellerStage(Clutter.Stage):
 		color=Clutter.Color.new(180,200,230,100)
 		self.set_background_color(color)
 		self._init_elements()
-	
+
 	def _init_elements(self):
 		self.layout = Clutter.BinLayout()
 		self.set_layout_manager(self.layout)
@@ -279,4 +279,4 @@ class PisakSpellerApp(object):
 
 
 PisakSpellerApp(sys.argv).main()
-			
+

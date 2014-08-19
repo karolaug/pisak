@@ -60,22 +60,22 @@ class PracticePanel(Clutter.Actor):
         letters=['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w',
                  'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b',
                  'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź']
-        self.letter_buttons = [self.set_letter_button(i, letter) 
+        self.letter_buttons = [self.set_letter_button(i, letter)
                                for i, letter in enumerate(letters)]
-            
+
     def _init_action_buttons(self):
-        button_names=['sprawdź','skasuj', 'czytaj', 
+        button_names=['sprawdź','skasuj', 'czytaj',
                       'literuj', 'wyczyść', 'wróć']
-        self.action_buttons = [self.set_action_button(index, action) 
+        self.action_buttons = [self.set_action_button(index, action)
                                for index, action in enumerate(button_names)]
-            
-        
+
+
     def _init_text_field(self):
         self.text_field = buttons.TextField()
         self.text_field.set_font(self.font_name)
         self.layout.attach(self.text_field, 0, 0, self.col_count, 1)
         self.text_field.set_background_color(self.white_color)
-        self.user_word = [letter if index not in self.gap_indices else '_' 
+        self.user_word = [letter if index not in self.gap_indices else '_'
                           for index, letter in enumerate(self.word)]
         self.text_field.set_text(''.join(self.user_word))
 
@@ -90,7 +90,7 @@ class PracticePanel(Clutter.Actor):
         button.set_letter_label(letter)
         button.set_font(self.font_name)
         button.set_hilite_color(self.off_color)
-        self.layout.attach(button, index % self.col_count, 
+        self.layout.attach(button, index % self.col_count,
                            index/self.col_count+1, 1, 1)
         return button
 
@@ -147,7 +147,7 @@ class PracticePanel(Clutter.Actor):
             button.set_hilite_color(self.on_color)
             self.previous_buttons.append(button)
         self.set_reactive(True)
-        
+
     def on_click_event(self):
         self.set_reactive(False)
         self.stop_timer_cycle()
@@ -183,14 +183,14 @@ class PracticePanel(Clutter.Actor):
 
     def choose_action(self, button):
         button_label = button.get_label()
-        actions = {'sprawdź' : self.check_result, 
-                   'skasuj' : self.delete_letter, 
-                   'wyczyść' : self.clear_all, 
-                   'czytaj' : self.read_out_loud, 
-                   'literuj' : self.spell, 
+        actions = {'sprawdź' : self.check_result,
+                   'skasuj' : self.delete_letter,
+                   'wyczyść' : self.clear_all,
+                   'czytaj' : self.read_out_loud,
+                   'literuj' : self.spell,
                    'wróć' : self.back_to_main}
         actions[button_label]()
-        
+
     def add_letter(self,button):
         letter=button.get_letter_label()
         pos=self.gap_indices[ len(self.added_letters_indices)]
@@ -227,7 +227,7 @@ class PracticePanel(Clutter.Actor):
         self.container.back_to_main= True
         self.container.change_panel()
 
-        
+
 class MainPanel(Clutter.Actor):
     def __init__(self,container):
         super(MainPanel, self).__init__()
@@ -257,19 +257,19 @@ class MainPanel(Clutter.Actor):
         self.result_field=buttons.TextField()
         self.layout.attach(self.result_field , 0, 0, 5 ,1)
         self.result_field.set_x_expand(True)
-        
+
     def _init_word_field(self):
         self.word_field=buttons.TextField()
         self.layout.attach(self.word_field , 0, 1,2,4)
         self.word_field.set_x_expand(True)
         self.word_field.set_y_expand(True)
-        
+
     def _init_image(self):
         self.image=buttons.Image()
         self.layout.attach(self.image , 2, 1,3,4)
         self.image.set_x_expand(True)
         self.image.set_y_expand(True)
-        
+
     def _init_buttons(self):
         self.buttons=[]
         button_names=['ćwicz','czytaj',
@@ -315,7 +315,7 @@ class MainPanel(Clutter.Actor):
         self.timer.set_repeat_count(-1)
         self.timer.connect('completed', lambda _: self.on_timer_event())
         self.start_timer_cycle()
-        
+
     def start_timer_cycle(self):
         self.timer.start()
 

@@ -20,14 +20,14 @@
 			"x-expand": true,
 			"y-expand": true
 		},
-	{                                                                                                             
+	{
         "id": "main_box",
         "type": "PisakBoxLayout",
         "x-expand": true,
         "y-expand": true,
         "orientation": "horizontal",
 	"spacing" : 10,
-        "scanning": 
+        "scanning":
 	{
             "id": "main_scanning",
             "type": "GObject"
@@ -227,7 +227,7 @@
 			"label": "PREDYKCJA 3",
                         "ratio-width": 0.16,
                         "ratio-height": 0.09
-                    },	
+                    },
                     {
                         "id": "prediction_2",
                         "type": "PisakSpellerPrediction",
