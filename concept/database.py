@@ -11,9 +11,13 @@ _CREATE_MUSIC = "CREATE TABLE IF NOT EXISTS music( \
                                         album TEXT, \
                                         track_number INTEGER, \
                                         title TEXT NOT NULL, \
-                                        path TEXT PRIMARY KEY NOT NULL, \
+                                        path TEXT PRIMARY KEY, \
                                         directory TEXT, \
-                                        added_on TIMESTAMP)"
+                                        added_on TIMESTAMP NOT NULL)"
+
+_CREATE_MUSIC_COVERS = "CREATE TABLE IF NOT EXISTS music_covers( \
+                                                album TEXT PRIMARY KEY REFERENCES album(music), \
+                                                path TEXT))"
 
 _CREATE_FAVOURITE_MUSIC = "CREATE TABLE IF NOT EXISTS favourite_music( \
                                                     id INTEGER PRIMARY KEY, \
@@ -41,6 +45,23 @@ def _get_metadata(path):
         metadata["title"] = os.path.splitext(os.path.split(path)[-1])[0]
     return list(metadata.values)
 
+def insert_cover(album, path):
+    db = DatabaseConnector()
+    db.execute(_CREATE_MUSIC_COVERS)
+    query = "INSERT OR IGNORE INTO music_covers VALUES (?, ?)"
+    db.execute(query, (album, path,))
+    db.commit()
+    db.close_connection()
+    
+def get_cover(album):
+    db = DatabaseConnector()
+    db.execute(_CREATE_MUSIC_COVERS)
+    query = "SELECT path FROM music_covers WHERE album='" + album + "'"
+    cover = db.execute(query)
+    db.close_connection()
+    if cover:
+        return cover[0]["path"]
+    
 def remove_from_favourite_music(path):
     db = DatabaseConnector()
     db.execute(_CREATE_FAVOURITE_MUSIC)
@@ -182,4 +203,42 @@ def get_tracks_from_genre(genre):
 """
 movies
 """
-# ...
+_CREATE_MOVIES = "CREATE TABLE IF NOT EXISTS movies( \
+                                    path TEXT PRIMARY KEY, \
+                                    category TEXT, \
+                                    name TEXT NOT NULL, \
+                                    cover_path TEXT, \
+                                    director TEXT, \
+                                    genre TEXT, \
+                                    year INTEGER, \
+                                    added_on TIMESTAMP NOT NULL)"
+
+
+def insert_movie(path, name, category=None, genre=None, year=None, cover_path=None, director=None):
+    db.DatabaseConnector()
+    db.execute(_CREATE_MOVIES)
+    added_on = db.generate_timestamp()
+    if name is None:
+        name = os.path.splitext(os.path.split(path)[-1])[0]
+    query = "INSERT OR IGNORE INTO movies VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    values = (path, category, name, cover_path, director, genre, year, added_on)
+    db.execute(query, values)
+    db.commit()
+    db.close_connection()
+    return True
+
+def get_all_movies():
+    db.DatabaseConnector()
+    db.execute(_CREATE_MOVIES)
+    query = "SELECT * FROM movies"
+    movies = db.execute(query)
+    db.close_connection()
+    return movies
+
+def get_movies_from_genre(genre):
+    db.DatabaseConnector()
+    db.execute(_CREATE_MOVIES)
+    query = "SELECT * FROM movies WHERE genre='" + genre + "'"
+    movies = db.execute(query)
+    db.close_connection()
+    return movies
