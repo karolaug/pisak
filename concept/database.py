@@ -79,10 +79,7 @@ def insert_many_tracks(tracks_list):
         values = _get_metadata(track[0])  # path as the first item
         if not values:
             continue
-        values.append(track[0])
-        values.append(track[1])
-        values.append(added_on)
-        tracks_list[idx] = values
+        tracks_list[idx] = values + [track[0], track[1], added_on]
     query = "INSERT OR IGNORE INTO music VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     db.executemany(query, tracks_list)
     db.commit()
