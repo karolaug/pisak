@@ -63,7 +63,7 @@ def insert_track(path, directory):
     values = _get_metadata(path)
     if not values:
         return False
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     values.append(path)
     values.append(directory)
@@ -74,7 +74,7 @@ def insert_track(path, directory):
     db.close_connection()
 
 def insert_many_tracks(tracks_list):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     added_on = db.generate_timestamp()
     for idx, track in enumerate(tracks_list):
@@ -88,7 +88,7 @@ def insert_many_tracks(tracks_list):
     db.close_connection()
 
 def get_all_tracks():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music"
     tracks = = db.execute(query)
@@ -96,7 +96,7 @@ def get_all_tracks():
     return tracks
 
 def get_genres():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT DISTINCT genres FROM music"
     genres = db.execute(query)
@@ -104,7 +104,7 @@ def get_genres():
     return genres
 
 def get_artists_from_genre(genre):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT artists FROM music WHERE genre='" + genre + "'"
     artists = = db.execute(query)
@@ -112,7 +112,7 @@ def get_artists_from_genre(genre):
     return artists
 
 def get_tracks_from_genre(genre):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music WHERE genre='" + genre + "'"
     tracks = = db.execute(query)
@@ -120,7 +120,7 @@ def get_tracks_from_genre(genre):
     return tracks
 
 def get_albums_by_artist(artist):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT DISTINCT albums FROM music WHERE artist='" + artist + "'"
     albums = db.execute(query)
@@ -128,7 +128,7 @@ def get_albums_by_artist(artist):
     return albums
 
 def get_tracks_from_album_by_artist(album, artist):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music WHERE artist='" + artist + "' AND album='" + album + "' ORDER BY track_number ASC"
     tracks = = db.execute(query)
@@ -136,7 +136,7 @@ def get_tracks_from_album_by_artist(album, artist):
     return tracks
 
 def get_tracks_by_artist(artist):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music WHERE artist='" + artist + "'"
     tracks = = db.execute(query)
@@ -144,7 +144,7 @@ def get_tracks_by_artist(artist):
     return tracks
 
 def get_tracks_from_directory(directory):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music WHERE directory='" + directory + "'"
     tracks = = db.execute(query)
@@ -154,7 +154,7 @@ def get_tracks_from_directory(directory):
 def insert_to_favourite_music(path):
     if is_in_favourite_music(path):
         return False
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_FAVOURITE_MUSIC)
     query = "INSERT OR IGNORE INTO favourite_music (path) VALUES (?)"
     db.execute(query, (path,))
@@ -224,7 +224,7 @@ _CREATE_MOVIES = "CREATE TABLE IF NOT EXISTS movies( \
 
 
 def insert_movie(path, name, category=None, genre=None, year=None, cover_path=None, director=None):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MOVIES)
     added_on = db.generate_timestamp()
     if name is None:
@@ -235,7 +235,7 @@ def insert_movie(path, name, category=None, genre=None, year=None, cover_path=No
     db.close_connection()
 
 def get_all_movies():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MOVIES)
     query = "SELECT * FROM movies"
     movies = db.execute(query)
@@ -243,7 +243,7 @@ def get_all_movies():
     return movies
 
 def get_genres():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MOVIES)
     query = "SELECT DISTINCT genre FROM movies"
     genres = db.execute(query)
@@ -251,7 +251,7 @@ def get_genres():
     return genres
 
 def get_movies_from_genre(genre):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MOVIES)
     query = "SELECT * FROM movies WHERE genre='" + genre + "'"
     movies = db.execute(query)
@@ -259,7 +259,7 @@ def get_movies_from_genre(genre):
     return movies
 
 def get_directors():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MOVIES)
     query = "SELECT DISTINCT director FROM movies"
     directors = db.execute(query)
@@ -267,7 +267,7 @@ def get_directors():
     return directors
 
 def get_movies_by_director(director):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_MOVIES)
     query = "SELECT * FROM movies WHERE director='" + director + "'"
     movies = db.execute(query)
@@ -288,7 +288,7 @@ _CREATE_EBOOKS = "CREATE TABLE IF NOT EXISTS ebooks( \
 
 
 def insert_ebook(path, category=None, name=None, author=None, year=None):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_EBOOKS)
     added_on = db.generate_timestamp()
     if name is None:
@@ -299,7 +299,7 @@ def insert_ebook(path, category=None, name=None, author=None, year=None):
     db.close_connection()
 
 def get_all_ebooks():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_EBOOKS)
     query = "SELECT * FROM ebooks"
     ebooks = db.execute(query)
@@ -307,7 +307,7 @@ def get_all_ebooks():
     return ebooks
 
 def get_authors():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_AUDIOBOOKS)
     query = "SELECT DISTINCT author FROM ebooks"
     authors = db.execute(query)
@@ -315,7 +315,7 @@ def get_authors():
     return authors
 
 def get_ebooks_by_author(author):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_EBOOKS)
     query = "SELECT * FROM ebooks WHERE author='" + author + "'"
     ebooks = db.execute(query)
@@ -336,7 +336,7 @@ _CREATE_AUDIOBOOKS = "CREATE TABLE IF NOT EXISTS audiobooks( \
 
 
 def insert_audiobook(path, category=None, name=None, author=None, year=None):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_AUDIOBOOKS)
     added_on = db.generate_timestamp()
     if name is None:
@@ -347,7 +347,7 @@ def insert_audiobook(path, category=None, name=None, author=None, year=None):
     db.close_connection()
 
 def get_all_audiobooks():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_AUDIOBOOKS)
     query = "SELECT * FROM audiobooks"
     audiobooks = db.execute(query)
@@ -355,7 +355,7 @@ def get_all_audiobooks():
     return audiobooks
 
 def get_authors():
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_AUDIOBOOKS)
     query = "SELECT DISTINCT author FROM audiobooks"
     authors = db.execute(query)
@@ -363,7 +363,7 @@ def get_authors():
     return authors
 
 def get_audiobooks_by_author(author):
-    db.DatabaseConnector()
+    db = DatabaseConnector()
     db.execute(_CREATE_AUDIOBOOKS)
     query = "SELECT * FROM audiobooks WHERE author='" + author + "'"
     audiobooks = db.execute(query)
