@@ -9,8 +9,8 @@ from pisak.database_manager import DatabaseConnector
 _CREATE_PHOTOS = "CREATE TABLE IF NOT EXISTS photos ( \
                                     path TEXT, \
                                     category TEXT, \
-                                    created_on TIMESTAMP, \
-                                    added_on TIMESTAMP, \
+                                    created_on TIMESTAMP NOT NULL, \
+                                    added_on TIMESTAMP NOT NULL, \
                                     PRIMARY KEY (path, category))"
 
 _CREATE_FAVOURITE_PHOTOS = "CREATE TABLE IF NOT EXISTS favourite_photos ( \

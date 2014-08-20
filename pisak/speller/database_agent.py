@@ -11,9 +11,9 @@ _FILE_NAME_SUFFIX = ".txt"
 
 _CREATE_TEXT_FILES = "CREATE TABLE IF NOT EXISTS text_files( \
                                         id INTEGER PRIMARY KEY, \
-                                        path TEXT, \
-                                        name TEXT, \
-                                        added_on TIMESTAMP)"
+                                        path TEXT NOT NULL, \
+                                        name TEXT NOT NULL, \
+                                        added_on TIMESTAMP NOT NULL)"
 
 
 def insert_text_file(name):
