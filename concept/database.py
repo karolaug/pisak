@@ -242,10 +242,34 @@ def get_all_movies():
     db.close_connection()
     return movies
 
+def get_genres():
+    db.DatabaseConnector()
+    db.execute(_CREATE_MOVIES)
+    query = "SELECT DISTINCT genre FROM movies"
+    genres = db.execute(query)
+    db.close_connection()
+    return genres
+
 def get_movies_from_genre(genre):
     db.DatabaseConnector()
     db.execute(_CREATE_MOVIES)
     query = "SELECT * FROM movies WHERE genre='" + genre + "'"
+    movies = db.execute(query)
+    db.close_connection()
+    return movies
+
+def get_directors():
+    db.DatabaseConnector()
+    db.execute(_CREATE_MOVIES)
+    query = "SELECT DISTINCT director FROM movies"
+    directors = db.execute(query)
+    db.close_connection()
+    return directors
+
+def get_movies_by_director(director):
+    db.DatabaseConnector()
+    db.execute(_CREATE_MOVIES)
+    query = "SELECT * FROM movies WHERE director='" + director + "'"
     movies = db.execute(query)
     db.close_connection()
     return movies
@@ -281,6 +305,14 @@ def get_all_ebooks():
     ebooks = db.execute(query)
     db.close_connection()
     return ebooks
+
+def get_authors():
+    db.DatabaseConnector()
+    db.execute(_CREATE_AUDIOBOOKS)
+    query = "SELECT DISTINCT author FROM ebooks"
+    authors = db.execute(query)
+    db.close_connection()
+    return authors
 
 def get_ebooks_by_author(author):
     db.DatabaseConnector()
@@ -321,6 +353,14 @@ def get_all_audiobooks():
     audiobooks = db.execute(query)
     db.close_connection()
     return audiobooks
+
+def get_authors():
+    db.DatabaseConnector()
+    db.execute(_CREATE_AUDIOBOOKS)
+    query = "SELECT DISTINCT author FROM audiobooks"
+    authors = db.execute(query)
+    db.close_connection()
+    return authors
 
 def get_audiobooks_by_author(author):
     db.DatabaseConnector()
