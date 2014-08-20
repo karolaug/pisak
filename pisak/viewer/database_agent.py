@@ -7,16 +7,16 @@ from pisak.database_manager import DatabaseConnector
 
 
 _CREATE_PHOTOS = "CREATE TABLE IF NOT EXISTS photos ( \
-                                    path TEXT, \
-                                    category TEXT, \
+                                    path TEXT NOT NULL, \
+                                    category TEXT NOT NULL, \
                                     created_on TIMESTAMP, \
                                     added_on TIMESTAMP, \
                                     PRIMARY KEY (path, category))"
 
 _CREATE_FAVOURITE_PHOTOS = "CREATE TABLE IF NOT EXISTS favourite_photos ( \
                                             id INTEGER PRIMARY KEY, \
-                                            path TEXT UNIQUE REFERENCES photos(path), \
-                                            category TEXT REFERENCES photos(category))"
+                                            path TEXT UNIQUE NOT NULL REFERENCES photos(path), \
+                                            category TEXT NOT NULL REFERENCES photos(category))"
 
 
 
