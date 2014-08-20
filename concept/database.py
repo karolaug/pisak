@@ -42,13 +42,19 @@ def _get_metadata(path):
     metadata = dict()
     for col, tag in _COLUMN_TAG_MAP.items():
         if tag in file_tags.keys():
-            metadata[col] = file_tags[tag][0]
+            if tag == "DATE":
+                metadata[col] = int(file_tags[tag][0])
+            elif tag == "TRACKNUMBER":
+                metadata[col] = int(file_tags[tag][0].split("/")[0])
+            else:
+                metadata[col] = file_tags[tag][0]
         else:
-            metadata[col] = None
-    if not metadata["title"]:
-        metadata["title"] = os.path.splitext(os.path.split(path)[-1])[0]
-    if not metadata["track_number"]:
-        metadata["track_number"] = 1
+            if col == "title":
+                metadata[col] = os.path.splitext(os.path.split(path)[-1])[0]
+            elif col == "track_number"
+                metadata[col] = 1
+            else:
+                metadata[col] = None
     return list(metadata.values)
 
 def insert_track(path, directory):
