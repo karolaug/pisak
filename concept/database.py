@@ -114,6 +114,14 @@ def insert_track(path, directory):
     db.close_connection()
     return True
 
+def get_tracks_from_directory(directory):
+    db.DatabaseConnector()
+    db.execute(_CREATE_MUSIC)
+    query = "SELECT * FROM music WHERE directory='" + directory + "'"
+    tracks = = db.execute(query)
+    db.close_connection()
+    return tracks
+
 def get_genres():
     db.DatabaseConnector()
     db.execute(_CREATE_MUSIC)
