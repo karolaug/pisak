@@ -17,7 +17,7 @@ _CREATE_MUSIC = "CREATE TABLE IF NOT EXISTS music( \
 
 _CREATE_FAVOURITE_MUSIC = "CREATE TABLE IF NOT EXISTS favourite_music( \
                                                     id INTEGER PRIMARY KEY, \
-                                                    path TEXT UNIQUE REFERENCES path(music))"
+                                                    path TEXT UNIQUE NOT NULL REFERENCES path(music))"
 
 _COLUMN_TAG_MAP = {
     "year": "DATE", "genre": "GENRE", "artist": "ARTIST",
@@ -25,7 +25,7 @@ _COLUMN_TAG_MAP = {
     }
 
 
-def get_metadata(path):
+def _get_metadata(path):
     try:
         file_tags = taglib.File(path).tags
     except OSError:
@@ -49,6 +49,16 @@ def remove_from_favourite_music(path):
     db.commit()
     db.close_connection()
 
+def get_favourite_music():
+    db = DatabaseConnector()
+    db.execute(_CREATE_FAVOURITE_MUSIC)
+    db.execute(_CREATE_MUSIC)
+    query = "SELECT id, favs.path, year, genre, artist, album, track_number, title, directory, added_on \
+                            FROM favourite_music AS favs JOIN music ON favs.path=music.path ORDER BY id DESC"
+    favourite_music = db.execute(query)
+    db.close_connection()
+    return favourite_music
+
 def is_in_favourite_music(path):
     db = DatabaseConnector()
     db.execute(_CREATE_FAVOURITE_MUSIC)
@@ -66,20 +76,19 @@ def insert_to_favourite_music(path):
     db.DatabaseConnector()
     db.execute(_CREATE_FAVOURITE_MUSIC)
     query = "INSERT OR IGNORE INTO favourite_music (path) VALUES (?)"
-    values = (path,)
-    db.execute(query, values)
+    db.execute(query, (path,))
     db.commit()
     db.close_connection()
     return True
 
 def insert_many_tracks(tracks_list):
+    db.DatabaseConnector()
+    db.execute(_CREATE_MUSIC)
     added_on = db.generate_timestamp()
     for idx, track in enumerate(tracks_list):
-        values = get_metadata(track[0])  # path as the first item
+        values = _get_metadata(track[0])  # path as the first item
         if not values:
             continue
-        db.DatabaseConnector()
-        db.execute(_CREATE_MUSIC)
         values.append(track[0])
         values.append(track[1])
         values.append(added_on)
@@ -91,7 +100,7 @@ def insert_many_tracks(tracks_list):
     return True
 
 def insert_track(path, directory):
-    values = get_metadata(path)
+    values = _get_metadata(path)
     if not values:
         return False
     db.DatabaseConnector()
