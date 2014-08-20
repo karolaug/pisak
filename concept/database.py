@@ -285,9 +285,6 @@ def get_ebooks_by_author(author):
 """
 audiobooks
 """
-"""
-ebooks
-"""
 _CREATE_AUDIOBOOKS = "CREATE TABLE IF NOT EXISTS audiobooks( \
                                         path TEXT PRIMARY KEY, \
                                         category TEXT, \
