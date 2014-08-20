@@ -43,6 +43,8 @@ def _get_metadata(path):
             metadata[col] = None
     if not metadata["title"]:
         metadata["title"] = os.path.splitext(os.path.split(path)[-1])[0]
+    if not metadata["track_number"]:
+        metadata["track_number"] = 1
     return list(metadata.values)
 
 def insert_cover(album, path):
@@ -221,8 +223,7 @@ def insert_movie(path, name, category=None, genre=None, year=None, cover_path=No
     if name is None:
         name = os.path.splitext(os.path.split(path)[-1])[0]
     query = "INSERT OR IGNORE INTO movies VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    values = (path, category, name, cover_path, director, genre, year, added_on)
-    db.execute(query, values)
+    db.execute(query, (path, category, name, cover_path, director, genre, year, added_on,))
     db.commit()
     db.close_connection()
     return True
@@ -242,3 +243,49 @@ def get_movies_from_genre(genre):
     movies = db.execute(query)
     db.close_connection()
     return movies
+
+
+"""
+ebooks
+"""
+_CREATE_EBOOKS = "CREATE TABLE IF NOT EXISTS ebooks( \
+                                        path TEXT PRIMARY KEY, \
+                                        category TEXT, \
+                                        name TEXT NOT NULL, \
+                                        author TEXT, \
+                                        year INTEGER, \
+                                        added_on TIMESTAMP NOT NULL)"
+
+def insert_ebook(path, category=None, name=None, author=None, year=None):
+    db.DatabaseConnector()
+    db.execute(_CREATE_EBOOKS)
+    added_on = db.generate_timestamp()
+    if name is None:
+        name = os.path.splitext(os.path.split(path)[-1])[0]
+    query = "INSERT OR IGNORE INTO ebooks VALUES (?, ?, ?, ?, ?, ?)"
+    db.execute(query, (path, category, name, author, year, added_on,))
+    db.commit()
+    db.close_connection()
+    return True
+
+def get_all_ebooks():
+    db.DatabaseConnector()
+    db.execute(_CREATE_EBOOKS)
+    query = "SELECT * FROM ebooks"
+    ebooks = db.execute(query)
+    db.close_connection()
+    return ebooks
+
+def get_ebooks_by_author(author):
+    db.DatabaseConnector()
+    db.execute(_CREATE_EBOOKS)
+    query = "SELECT * FROM ebooks WHERE author='" + author + "'"
+    ebooks = db.execute(query)
+    db.close_connection()
+    return ebooks
+                                        
+
+"""
+audiobooks
+"""
+#...
