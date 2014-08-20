@@ -120,7 +120,6 @@ def insert_many_tracks(tracks_list):
     db.executemany(query, tracks_list)
     db.commit()
     db.close_connection()
-    return True
 
 def insert_track(path, directory):
     values = _get_metadata(path)
@@ -135,7 +134,6 @@ def insert_track(path, directory):
     db.execute(query, values)
     db.commit()
     db.close_connection()
-    return True
 
 def get_tracks_from_directory(directory):
     db.DatabaseConnector()
@@ -226,7 +224,6 @@ def insert_movie(path, name, category=None, genre=None, year=None, cover_path=No
     db.execute(query, (path, category, name, cover_path, director, genre, year, added_on,))
     db.commit()
     db.close_connection()
-    return True
 
 def get_all_movies():
     db.DatabaseConnector()
@@ -256,6 +253,7 @@ _CREATE_EBOOKS = "CREATE TABLE IF NOT EXISTS ebooks( \
                                         year INTEGER, \
                                         added_on TIMESTAMP NOT NULL)"
 
+
 def insert_ebook(path, category=None, name=None, author=None, year=None):
     db.DatabaseConnector()
     db.execute(_CREATE_EBOOKS)
@@ -266,7 +264,6 @@ def insert_ebook(path, category=None, name=None, author=None, year=None):
     db.execute(query, (path, category, name, author, year, added_on,))
     db.commit()
     db.close_connection()
-    return True
 
 def get_all_ebooks():
     db.DatabaseConnector()
@@ -299,6 +296,7 @@ _CREATE_AUDIOBOOKS = "CREATE TABLE IF NOT EXISTS audiobooks( \
                                         year INTEGER, \
                                         added_on TIMESTAMP NOT NULL)"
 
+
 def insert_audiobook(path, category=None, name=None, author=None, year=None):
     db.DatabaseConnector()
     db.execute(_CREATE_AUDIOBOOKS)
@@ -309,7 +307,6 @@ def insert_audiobook(path, category=None, name=None, author=None, year=None):
     db.execute(query, (path, category, name, author, year, added_on,))
     db.commit()
     db.close_connection()
-    return True
 
 def get_all_audiobooks():
     db.DatabaseConnector()
