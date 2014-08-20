@@ -53,7 +53,7 @@ def _get_metadata(path):
         else:
             if col == "title":
                 metadata[col] = os.path.splitext(os.path.split(path)[-1])[0]
-            elif col == "track_number"
+            elif col == "track_number":
                 metadata[col] = 1
             else:
                 metadata[col] = None
@@ -91,7 +91,7 @@ def get_all_tracks():
     db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music"
-    tracks = = db.execute(query)
+    tracks = db.execute(query)
     db.close_connection()
     return tracks
 
@@ -107,7 +107,7 @@ def get_artists_from_genre(genre):
     db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT artists FROM music WHERE genre='" + genre + "'"
-    artists = = db.execute(query)
+    artists = db.execute(query)
     db.close_connection()
     return artists
 
@@ -115,7 +115,7 @@ def get_tracks_from_genre(genre):
     db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music WHERE genre='" + genre + "'"
-    tracks = = db.execute(query)
+    tracks = db.execute(query)
     db.close_connection()
     return tracks
 
@@ -131,7 +131,7 @@ def get_tracks_from_album_by_artist(album, artist):
     db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music WHERE artist='" + artist + "' AND album='" + album + "' ORDER BY track_number ASC"
-    tracks = = db.execute(query)
+    tracks = db.execute(query)
     db.close_connection()
     return tracks
 
@@ -139,7 +139,7 @@ def get_tracks_by_artist(artist):
     db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music WHERE artist='" + artist + "'"
-    tracks = = db.execute(query)
+    tracks = db.execute(query)
     db.close_connection()
     return tracks
 
@@ -147,7 +147,7 @@ def get_tracks_from_directory(directory):
     db = DatabaseConnector()
     db.execute(_CREATE_MUSIC)
     query = "SELECT * FROM music WHERE directory='" + directory + "'"
-    tracks = = db.execute(query)
+    tracks = db.execute(query)
     db.close_connection()
     return tracks
 
