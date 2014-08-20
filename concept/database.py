@@ -3,6 +3,8 @@ music
 """
 import taglib
 
+from pisak.database_manager import DatabaseConnector
+
 
 _CREATE_MUSIC = "CREATE TABLE IF NOT EXISTS music( \
                                         year INTEGER, \
