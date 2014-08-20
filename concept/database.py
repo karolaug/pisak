@@ -9,24 +9,28 @@ _CREATE_MUSIC = "CREATE TABLE IF NOT EXISTS music( \
                                         genre TEXT, \
                                         artist TEXT, \
                                         album TEXT, \
-                                        track_number INTEGER, \
+                                        track_number INTEGER NOT NULL, \
                                         title TEXT NOT NULL, \
                                         path TEXT PRIMARY KEY, \
                                         directory TEXT, \
                                         added_on TIMESTAMP NOT NULL)"
 
 _CREATE_MUSIC_COVERS = "CREATE TABLE IF NOT EXISTS music_covers( \
-                                                album TEXT PRIMARY KEY REFERENCES album(music), \
+                                                album TEXT PRIMARY KEY REFERENCES music(album), \
                                                 path TEXT))"
 
 _CREATE_FAVOURITE_MUSIC = "CREATE TABLE IF NOT EXISTS favourite_music( \
                                                     id INTEGER PRIMARY KEY, \
-                                                    path TEXT UNIQUE NOT NULL REFERENCES path(music))"
+                                                    path TEXT UNIQUE NOT NULL REFERENCES music(path))"
 
 _COLUMN_TAG_MAP = {
-    "year": "DATE", "genre": "GENRE", "artist": "ARTIST",
-    "album": "ALBUM", "track_number": "TRACKNUMBER", "title": "TITLE"
-    }
+    "year": "DATE",
+    "genre": "GENRE",
+    "artist": "ARTIST",
+    "album": "ALBUM",
+    "track_number": "TRACKNUMBER",
+    "title": "TITLE"
+}
 
 
 def _get_metadata(path):
@@ -47,62 +51,19 @@ def _get_metadata(path):
         metadata["track_number"] = 1
     return list(metadata.values)
 
-def insert_cover(album, path):
-    db = DatabaseConnector()
-    db.execute(_CREATE_MUSIC_COVERS)
-    query = "INSERT OR IGNORE INTO music_covers VALUES (?, ?)"
-    db.execute(query, (album, path,))
-    db.commit()
-    db.close_connection()
-    
-def get_cover(album):
-    db = DatabaseConnector()
-    db.execute(_CREATE_MUSIC_COVERS)
-    query = "SELECT path FROM music_covers WHERE album='" + album + "'"
-    cover = db.execute(query)
-    db.close_connection()
-    if cover:
-        return cover[0]["path"]
-    
-def remove_from_favourite_music(path):
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_MUSIC)
-    query = "DELETE FROM favourite_music WHERE path='" + path + "'"
-    db.execute(query)
-    db.commit()
-    db.close_connection()
-
-def get_favourite_music():
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_MUSIC)
-    db.execute(_CREATE_MUSIC)
-    query = "SELECT id, favs.path, year, genre, artist, album, track_number, title, directory, added_on \
-                            FROM favourite_music AS favs JOIN music ON favs.path=music.path ORDER BY id DESC"
-    favourite_music = db.execute(query)
-    db.close_connection()
-    return favourite_music
-
-def is_in_favourite_music(path):
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_MUSIC)
-    query = "SELECT * FROM favourite_music WHERE path='" + path + "'"
-    favourite_music = db.execute(query)
-    db.close_connection()
-    if favourite_music:
-        return True
-    else:
-        return False
-
-def insert_to_favourite_music(path):
-    if is_in_favourite_music(path):
+def insert_track(path, directory):
+    values = _get_metadata(path)
+    if not values:
         return False
     db.DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_MUSIC)
-    query = "INSERT OR IGNORE INTO favourite_music (path) VALUES (?)"
-    db.execute(query, (path,))
+    db.execute(_CREATE_MUSIC)
+    values.append(path)
+    values.append(directory)
+    values.append(db.generate_timestamp())
+    query = "INSERT OR IGNORE INTO music VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    db.execute(query, values)
     db.commit()
     db.close_connection()
-    return True
 
 def insert_many_tracks(tracks_list):
     db.DatabaseConnector()
@@ -121,24 +82,10 @@ def insert_many_tracks(tracks_list):
     db.commit()
     db.close_connection()
 
-def insert_track(path, directory):
-    values = _get_metadata(path)
-    if not values:
-        return False
+def get_all_tracks():
     db.DatabaseConnector()
     db.execute(_CREATE_MUSIC)
-    values.append(path)
-    values.append(directory)
-    values.append(db.generate_timestamp())
-    query = "INSERT OR IGNORE INTO music VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    db.execute(query, values)
-    db.commit()
-    db.close_connection()
-
-def get_tracks_from_directory(directory):
-    db.DatabaseConnector()
-    db.execute(_CREATE_MUSIC)
-    query = "SELECT * FROM music WHERE directory='" + directory + "'"
+    query = "SELECT * FROM music"
     tracks = = db.execute(query)
     db.close_connection()
     return tracks
@@ -150,6 +97,22 @@ def get_genres():
     genres = db.execute(query)
     db.close_connection()
     return genres
+
+def get_artists_from_genre(genre):
+    db.DatabaseConnector()
+    db.execute(_CREATE_MUSIC)
+    query = "SELECT artists FROM music WHERE genre='" + genre + "'"
+    artists = = db.execute(query)
+    db.close_connection()
+    return artists
+
+def get_tracks_from_genre(genre):
+    db.DatabaseConnector()
+    db.execute(_CREATE_MUSIC)
+    query = "SELECT * FROM music WHERE genre='" + genre + "'"
+    tracks = = db.execute(query)
+    db.close_connection()
+    return tracks
 
 def get_albums_by_artist(artist):
     db.DatabaseConnector()
@@ -167,14 +130,6 @@ def get_tracks_from_album_by_artist(album, artist):
     db.close_connection()
     return tracks
 
-def get_artists_from_genre(genre):
-    db.DatabaseConnector()
-    db.execute(_CREATE_MUSIC)
-    query = "SELECT artists FROM music WHERE genre='" + genre + "'"
-    artists = = db.execute(query)
-    db.close_connection()
-    return artists
-
 def get_tracks_by_artist(artist):
     db.DatabaseConnector()
     db.execute(_CREATE_MUSIC)
@@ -183,22 +138,71 @@ def get_tracks_by_artist(artist):
     db.close_connection()
     return tracks
 
-def get_all_tracks():
+def get_tracks_from_directory(directory):
     db.DatabaseConnector()
     db.execute(_CREATE_MUSIC)
-    query = "SELECT * FROM music"
+    query = "SELECT * FROM music WHERE directory='" + directory + "'"
     tracks = = db.execute(query)
     db.close_connection()
     return tracks
 
-def get_tracks_from_genre(genre):
+def insert_to_favourite_music(path):
+    if is_in_favourite_music(path):
+        return False
     db.DatabaseConnector()
-    db.execute(_CREATE_MUSIC)
-    query = "SELECT * FROM music WHERE genre='" + genre + "'"
-    tracks = = db.execute(query)
+    db.execute(_CREATE_FAVOURITE_MUSIC)
+    query = "INSERT OR IGNORE INTO favourite_music (path) VALUES (?)"
+    db.execute(query, (path,))
+    db.commit()
     db.close_connection()
-    return tracks
+    return True
 
+def is_in_favourite_music(path):
+    db = DatabaseConnector()
+    db.execute(_CREATE_FAVOURITE_MUSIC)
+    query = "SELECT * FROM favourite_music WHERE path='" + path + "'"
+    favourite_music = db.execute(query)
+    db.close_connection()
+    if favourite_music:
+        return True
+    else:
+        return False
+
+def get_favourite_music():
+    db = DatabaseConnector()
+    db.execute(_CREATE_FAVOURITE_MUSIC)
+    db.execute(_CREATE_MUSIC)
+    query = "SELECT id, favs.path, year, genre, artist, album, track_number, title, directory, added_on \
+                            FROM favourite_music AS favs JOIN music ON favs.path=music.path ORDER BY id DESC"
+    favourite_music = db.execute(query)
+    db.close_connection()
+    return favourite_music
+
+def remove_from_favourite_music(path):
+    db = DatabaseConnector()
+    db.execute(_CREATE_FAVOURITE_MUSIC)
+    query = "DELETE FROM favourite_music WHERE path='" + path + "'"
+    db.execute(query)
+    db.commit()
+    db.close_connection()
+
+def insert_cover(album, path):
+    db = DatabaseConnector()
+    db.execute(_CREATE_MUSIC_COVERS)
+    query = "INSERT OR IGNORE INTO music_covers VALUES (?, ?)"
+    db.execute(query, (album, path,))
+    db.commit()
+    db.close_connection()
+    
+def get_cover(album):
+    db = DatabaseConnector()
+    db.execute(_CREATE_MUSIC_COVERS)
+    query = "SELECT path FROM music_covers WHERE album='" + album + "'"
+    cover = db.execute(query)
+    db.close_connection()
+    if cover:
+        return cover[0]["path"]
+    
 
 """
 movies
