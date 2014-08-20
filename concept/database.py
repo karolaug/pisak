@@ -288,4 +288,41 @@ def get_ebooks_by_author(author):
 """
 audiobooks
 """
-#...
+"""
+ebooks
+"""
+_CREATE_AUDIOBOOKS = "CREATE TABLE IF NOT EXISTS audiobooks( \
+                                        path TEXT PRIMARY KEY, \
+                                        category TEXT, \
+                                        name TEXT NOT NULL, \
+                                        author TEXT, \
+                                        year INTEGER, \
+                                        added_on TIMESTAMP NOT NULL)"
+
+def insert_audiobook(path, category=None, name=None, author=None, year=None):
+    db.DatabaseConnector()
+    db.execute(_CREATE_AUDIOBOOKS)
+    added_on = db.generate_timestamp()
+    if name is None:
+        name = os.path.splitext(os.path.split(path)[-1])[0]
+    query = "INSERT OR IGNORE INTO audiobooks VALUES (?, ?, ?, ?, ?, ?)"
+    db.execute(query, (path, category, name, author, year, added_on,))
+    db.commit()
+    db.close_connection()
+    return True
+
+def get_all_audiobooks():
+    db.DatabaseConnector()
+    db.execute(_CREATE_AUDIOBOOKS)
+    query = "SELECT * FROM audiobooks"
+    audiobooks = db.execute(query)
+    db.close_connection()
+    return audiobooks
+
+def get_audiobooks_by_author(author):
+    db.DatabaseConnector()
+    db.execute(_CREATE_AUDIOBOOKS)
+    query = "SELECT * FROM audiobooks WHERE author='" + author + "'"
+    audiobooks = db.execute(query)
+    db.close_connection()
+    return audiobooks
