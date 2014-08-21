@@ -289,7 +289,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         if text.rstrip():
             last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
-            return last_sentence.strip() + (text[-1]  == ' ')*' '
+            return last_sentence.strip() + (text[-1] == ' ')*' '
         else:
             return ' '
 

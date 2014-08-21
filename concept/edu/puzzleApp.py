@@ -123,12 +123,12 @@ class PracticePanel(Clutter.Actor):
                 button = self.action_buttons[self.idx - len(self.active_letters_indices)]
             button.set_hilite_color(self.selection_color)
             button_label = button.get_label()
-            actions  =  {'sprawdź' : self.check_result,
-                         'skasuj' : self.delete_letter,
-                         'wyczyść' : self.clear_all,
-                         'czytaj' : self.read_out_loud,
-                         'literuj' : self.spell,
-                         'wróć' : self.back_to_main}
+            actions = {'sprawdź' : self.check_result,
+                       'skasuj' : self.delete_letter,
+                       'wyczyść' : self.clear_all,
+                       'czytaj' : self.read_out_loud,
+                       'literuj' : self.spell,
+                       'wróć' : self.back_to_main}
             actions[button_label]()
         else:
             self.add_letter(self.idx)
@@ -288,7 +288,7 @@ class MainPanel(Clutter.Actor):
         button.set_hilite_color(self.on_color)
         self.previous_button = button
         self.idx = (self.idx + 1) % self.idx_count
-        self.scanning_on  =  True
+        self.scanning_on = True
         self.set_reactive(True)
 
     def on_click_event(self):
@@ -342,10 +342,10 @@ class MainPanel(Clutter.Actor):
 class PisakEduContainer(Clutter.Actor):
     def __init__(self):
         super(PisakEduContainer, self).__init__()
-        margin  =  Clutter.Margin()
+        margin = Clutter.Margin()
         margin.left = margin.right = margin.top = margin.bottom = unit.mm(10)
         self.set_margin(margin)
-        layout  =  Clutter.BinLayout()
+        layout = Clutter.BinLayout()
         self.set_layout_manager(layout)
         self.set_x_expand(True)
         self.set_y_expand(True)
@@ -401,7 +401,7 @@ class PisakEduContainer(Clutter.Actor):
             else:
                 new_panel = ResultInfoPanel(self)
                 self.current_panel_name = 'result_info'
-                if self.user_word  == self.word:
+                if self.user_word == self.word:
                     self.result += 1
                     self.word_idx = (self.word_idx + 1)%self.word_count
                     if self.result == self.points_limit:
