@@ -1,5 +1,5 @@
 PisakViewerProgressBarBar{
-  border-image: url("progress_bar_background.png");
+  border-image: url("viewer_progress_bar_background.png");
 }
 
 PisakViewerProgressBarLabel{
@@ -9,7 +9,7 @@ PisakViewerProgressBarLabel{
 }
 
 PisakViewerProgressBarBar MxProgressBarFill {
-  border-image: url("progress_bar_fill.png");
+  border-image: url("viewer_progress_bar_fill.png");
 }
 
 PisakViewerPhotoTileLabel {
@@ -23,11 +23,11 @@ PisakViewerButton {
   font-size: 18 pt;
   font-family: Kelson Sans;
   font-weight: bold;
-  border-image: url("rest_button.png");
+  border-image: url("viewer_rest_button.png");
 
 }
 
 PisakViewerButton:scanning {
   color: black;
-  border-image: url("scanning_button.png");
+  border-image: url("viewer_scanning_button.png");
 }

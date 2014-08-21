@@ -148,7 +148,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         pass
 
 
-class ProgressBar(Bin, properties.PropertyAdapter):
+class NewProgressBar(Bin, properties.PropertyAdapter):
     __gtype_name__ = "PisakProgressBar"
     __gproperties__ = {
         "bar": (
@@ -1175,7 +1175,10 @@ class ScrollingView(Clutter.Actor):
         return ScrollingViewCycle(self)
 
 
-class OldProgressBar(Clutter.Actor):
+class ProgressBar(Clutter.Actor):
+    """ 
+    Deprecated. Use NewProgressBar instead, in order to have JSON and CSS support.
+    """
     __gproperties__ = {
         'progress': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
     }
@@ -1227,7 +1230,10 @@ class OldProgressBar(Clutter.Actor):
         return True
 
 
-class SignedOldProgressBar(ProgressBar):
+class SignedProgressBar(ProgressBar):
+    """ 
+    Deprecated. Use NewProgressBar instead, in order to have JSON and CSS support.
+    """
     def __init__(self, page_count='?', page=0):
         self.where = ''.join([str(page + 1), '/', str(page_count)])
         super().__init__()
