@@ -7,11 +7,12 @@ from pisak.database_manager import DatabaseConnector
 
 
 _CREATE_PHOTOS = "CREATE TABLE IF NOT EXISTS photos ( \
-                                    path TEXT, \
-                                    category TEXT, \
+                                    id INTEGER PRIMARY KEY, \
+                                    path TEXT NOT NULL, \
+                                    category TEXT NOT NULL, \
                                     created_on TIMESTAMP NOT NULL, \
                                     added_on TIMESTAMP NOT NULL, \
-                                    PRIMARY KEY (path, category))"
+                                    UNIQUE (path, category))"
 
 _CREATE_FAVOURITE_PHOTOS = "CREATE TABLE IF NOT EXISTS favourite_photos ( \
                                             id INTEGER PRIMARY KEY, \
@@ -49,8 +50,8 @@ def get_previews(categories_list):
 def get_favourite_photos():
     db = DatabaseConnector()
     db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "SELECT id, favs.path, favs.category, created_on, added_on FROM favourite_photos AS favs JOIN \
-                photos ON photos.path=favs.path AND photos.category=favs.category ORDER BY id DESC, created_on ASC, added_on ASC"
+    query = "SELECT favs.id, favs.path, favs.category, created_on, added_on FROM favourite_photos AS favs JOIN \
+                photos ON photos.path=favs.path AND photos.category=favs.category ORDER BY favs.id DESC, created_on ASC, added_on ASC"
     favourite_photos = db.execute(query)
     db.close_connection()
     return favourite_photos
