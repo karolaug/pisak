@@ -147,9 +147,9 @@ class SecondPracticePanel(Clutter.Actor):
         self._init_action_buttons()
 
     def _init_letter_buttons(self):
-        letters=['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w',
-                 'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b',
-                 'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź']
+        letters = ['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w',
+                   'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b',
+                   'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź']
         for i, letter in enumerate(letters):
             if i % self.col_count == 0:
                 if i != 0:
@@ -165,19 +165,19 @@ class SecondPracticePanel(Clutter.Actor):
 
     def _init_action_buttons(self):
         one_row = []
-        button_names=['powrót','sprawdź','skasuj','czytaj', 'literuj','wróć']
+        button_names = ['powrót','sprawdź','skasuj','czytaj', 'literuj','wróć']
         for col, b in enumerate(button_names):
             button = widgets.ActionButton()
             button.set_label(b)
             button.set_icon_from_file('./icons/'+b+'.png')
             button.set_hilite_color(self.off_color)
             one_row.append(button)
-            if b=='powrót':
-                self.layout.attach(button, col, self.row_count +1, 2, 1)
-            elif b=='wróć':
-                self.layout.attach(button, col+1, self.row_count +1, 2, 1)
+            if b == 'powrót':
+                self.layout.attach(button, col, self.row_count + 1, 2, 1)
+            elif b == 'wróć':
+                self.layout.attach(button, col + 1, self.row_count + 1, 2, 1)
             else:
-                self.layout.attach(button, col+1, self.row_count+1, 1, 1)
+                self.layout.attach(button, col + 1, self.row_count + 1, 1, 1)
         self.buttons.append(one_row)
 
     def _init_text_field(self):
@@ -354,7 +354,7 @@ class FirstPracticePanel(Clutter.Actor):
             self.layout.attach(button, i, 4, 1, 2)
 
     def _init_action_buttons(self):
-        button_names=['czytaj', 'literuj','wróć']
+        button_names = ['czytaj', 'literuj','wróć']
         for col, b in enumerate(button_names):
             button = widgets.ActionButton()
             button.set_label(b)
@@ -364,9 +364,9 @@ class FirstPracticePanel(Clutter.Actor):
             self.layout.attach(button, col*4, 7, 4, 2)
 
     def _init_text_field(self):
-        letters=['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w',
-                 'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b',
-                 'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź']
+        letters = ['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w',
+                   'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b',
+                   'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź']
         index = random.randint(0, len(letters) - 1)
         while letters[index] == list(self.word)[self.mistake_index]:
             index = random.randint(0, len(letters) - 1)
@@ -447,13 +447,13 @@ class _FirstPracticePanelCycle(object):
 class MainPanel(Clutter.Actor):
     def __init__(self,container):
         super(MainPanel, self).__init__()
-        self.container=container
+        self.container = container
         self.word = container.word
         self.result = container.result
         self.word_index = container.word_index
         self.words_list = container.words_list
         self.points_limit = container.points_limit
-        self.layout=Clutter.GridLayout()
+        self.layout = Clutter.GridLayout()
         self.set_layout_manager(self.layout)
         self.layout.set_row_homogeneous(True)
         self.layout.set_column_homogeneous(True)
@@ -511,7 +511,7 @@ class MainPanel(Clutter.Actor):
         self.update_image()
 
     def update_result_field(self):
-        text='twój wynik: '+str(self.result)+' / '+str(self.points_limit)+ ' pkt'
+        text = 'twój wynik: '+str(self.result)+' / '+str(self.points_limit)+' pkt'
         self.result_field.set_text(text)
         self.result_field.set_font(self.result_font)
 
@@ -548,7 +548,7 @@ class MainPanel(Clutter.Actor):
         print('Spelling: ' + self.word)
 
     def change_word(self):
-        self.word_index = (self.word_index +1) % len(self.words_list)
+        self.word_index = (self.word_index + 1) % len(self.words_list)
         self.word = self.words_list[self.word_index]
         self.update_word_field()
         self.update_image()

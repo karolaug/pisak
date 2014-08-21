@@ -38,8 +38,8 @@ class PhotoBuffer(object):
         source = self.buffer.split()
         for idx in range(len(source)):
             if bands[idx] != 'A':
-                out = source[idx].point(lambda i: i>threshold and 255-i)
-                mask = source[idx].point(lambda i: i>threshold and 255)
+                out = source[idx].point(lambda i: i > threshold and 255-i)
+                mask = source[idx].point(lambda i: i > threshold and 255)
                 source[idx].paste(out, None, mask)
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)

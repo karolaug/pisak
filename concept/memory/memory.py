@@ -33,8 +33,8 @@ class MemoryGame(object):
 			return 'second-miss'
 
 	def revert(self): #do poprawki
-		self.display_field -= (self.display_field == self.first_uncovered)*(self.first_uncovered +1)
-		self.display_field -= (self.display_field == self.second_uncovered)*(self.second_uncovered +1)
+		self.display_field -= (self.display_field == self.first_uncovered) * (self.first_uncovered + 1)
+		self.display_field -= (self.display_field == self.second_uncovered) * (self.second_uncovered + 1)
 
 		self.first_uncovered = False
 		self.second_uncovered = False

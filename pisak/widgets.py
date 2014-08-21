@@ -274,7 +274,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
                 image_size = self.image.get_size()
                 print(image_size, icon_size)
                 self.image.set_scale(icon_size * 10 / image_size[1],
-                                     icon_size * 10/ image_size[0])
+                                     icon_size * 10 / image_size[0])
 
     def read_svg(self):
         try:

@@ -25,7 +25,7 @@ def search_recr(e,l):
 
 
 text = 'mam na imie jarek i mam 30 lat'
-suma=0
+suma = 0
 
 for a in text:
     suma += search_recr(a,KEYBOARD)

@@ -31,7 +31,7 @@ class DatabaseConnector(object):
 
     def _open_connection(self):
         self.conn = sqlite3.connect(DATABASE_PATH,
-                                    detect_types=sqlite3.PARSE_DECLTYPES|
+                                    detect_types=sqlite3.PARSE_DECLTYPES |
                                     sqlite3.PARSE_COLNAMES)
 
     def _execute(self, query, values=None):

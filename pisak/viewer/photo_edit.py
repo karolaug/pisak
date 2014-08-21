@@ -112,8 +112,8 @@ class Image(Clutter.Actor):
         threshold = 80
         buffer = self.buffer.copy()
         grayscale = buffer.convert('L')
-        out = buffer.point(lambda i: i>threshold and 255-i)
-        mask = grayscale.point(lambda i: i>threshold and 255)
+        out = buffer.point(lambda i: i > threshold and 255-i)
+        mask = grayscale.point(lambda i: i > threshold and 255)
         buffer.paste(out, None, mask)
         self.buffer = buffer
         self.set_image_from_data()
