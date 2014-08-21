@@ -7,18 +7,20 @@ from pisak.database_manager import DatabaseConnector
 
 
 _CREATE_MUSIC = "CREATE TABLE IF NOT EXISTS music( \
+                                        id INTEGER PRMARY KEY, \
                                         year INTEGER, \
                                         genre TEXT, \
                                         artist TEXT, \
                                         album TEXT, \
                                         track_number INTEGER NOT NULL, \
                                         title TEXT NOT NULL, \
-                                        path TEXT PRIMARY KEY, \
+                                        path TEXT UNIQUE NOT NULL, \
                                         directory TEXT, \
                                         added_on TIMESTAMP NOT NULL)"
 
 _CREATE_MUSIC_COVERS = "CREATE TABLE IF NOT EXISTS music_covers( \
-                                                album TEXT PRIMARY KEY REFERENCES music(album), \
+                                                id INTEGER PRMARY KEY, \
+                                                album TEXT UNIQUE NOT NULL REFERENCES music(album), \
                                                 path TEXT))"
 
 _CREATE_FAVOURITE_MUSIC = "CREATE TABLE IF NOT EXISTS favourite_music( \
@@ -68,7 +70,8 @@ def insert_track(path, directory):
     values.append(path)
     values.append(directory)
     values.append(db.generate_timestamp())
-    query = "INSERT OR IGNORE INTO music VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    query = "INSERT OR IGNORE INTO music (year, genre, artist, album, track_number, \
+                    title, path, directory, added_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     db.execute(query, values)
     db.commit()
     db.close_connection()
@@ -82,7 +85,8 @@ def insert_many_tracks(tracks_list):
         if not values:
             continue
         tracks_list[idx] = values + [track[0], track[1], added_on]
-    query = "INSERT OR IGNORE INTO music VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    query = "INSERT OR IGNORE INTO music (year, genre, artist, album, track_number, \
+                    title, path, directory, added_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     db.executemany(query, tracks_list)
     db.commit()
     db.close_connection()
@@ -177,8 +181,8 @@ def get_favourite_music():
     db = DatabaseConnector()
     db.execute(_CREATE_FAVOURITE_MUSIC)
     db.execute(_CREATE_MUSIC)
-    query = "SELECT id, favs.path, year, genre, artist, album, track_number, title, directory, added_on \
-                            FROM favourite_music AS favs JOIN music ON favs.path=music.path ORDER BY id DESC"
+    query = "SELECT favs.id, favs.path, year, genre, artist, album, track_number, title, directory, added_on \
+                            FROM favourite_music AS favs JOIN music ON favs.path=music.path ORDER BY favs.id DESC"
     favourite_music = db.execute(query)
     db.close_connection()
     return favourite_music
@@ -194,7 +198,7 @@ def remove_from_favourite_music(path):
 def insert_cover(album, path):
     db = DatabaseConnector()
     db.execute(_CREATE_MUSIC_COVERS)
-    query = "INSERT OR IGNORE INTO music_covers VALUES (?, ?)"
+    query = "INSERT OR IGNORE INTO music_covers (album, path) VALUES (?, ?)"
     db.execute(query, (album, path,))
     db.commit()
     db.close_connection()
@@ -213,7 +217,8 @@ def get_cover(album):
 movies
 """
 _CREATE_MOVIES = "CREATE TABLE IF NOT EXISTS movies( \
-                                    path TEXT PRIMARY KEY, \
+                                    id INTEGER PRIMARY KEY, \
+                                    path TEXT UNIQUE NOT NULL, \
                                     category TEXT, \
                                     name TEXT NOT NULL, \
                                     cover_path TEXT, \
@@ -229,7 +234,8 @@ def insert_movie(path, name, category=None, genre=None, year=None, cover_path=No
     added_on = db.generate_timestamp()
     if name is None:
         name = os.path.splitext(os.path.split(path)[-1])[0]
-    query = "INSERT OR IGNORE INTO movies VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+    query = "INSERT OR IGNORE INTO movies (path, category, name, cover_path, \
+                director, genre, year, added_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
     db.execute(query, (path, category, name, cover_path, director, genre, year, added_on,))
     db.commit()
     db.close_connection()
@@ -279,7 +285,8 @@ def get_movies_by_director(director):
 ebooks
 """
 _CREATE_EBOOKS = "CREATE TABLE IF NOT EXISTS ebooks( \
-                                        path TEXT PRIMARY KEY, \
+                                        id INTEGER PRIMARY KEY, \
+                                        path TEXT UNIQUE NOT NULL, \
                                         category TEXT, \
                                         name TEXT NOT NULL, \
                                         author TEXT, \
@@ -293,7 +300,8 @@ def insert_ebook(path, category=None, name=None, author=None, year=None):
     added_on = db.generate_timestamp()
     if name is None:
         name = os.path.splitext(os.path.split(path)[-1])[0]
-    query = "INSERT OR IGNORE INTO ebooks VALUES (?, ?, ?, ?, ?, ?)"
+    query = "INSERT OR IGNORE INTO ebooks (path, category, name, author, \
+                            year, added_on) VALUES (?, ?, ?, ?, ?, ?)"
     db.execute(query, (path, category, name, author, year, added_on,))
     db.commit()
     db.close_connection()
@@ -327,7 +335,8 @@ def get_ebooks_by_author(author):
 audiobooks
 """
 _CREATE_AUDIOBOOKS = "CREATE TABLE IF NOT EXISTS audiobooks( \
-                                        path TEXT PRIMARY KEY, \
+                                        id INTEGER PRIMARY KEY, \
+                                        path TEXT UNIQUE NOT NULL, \
                                         category TEXT, \
                                         name TEXT NOT NULL, \
                                         author TEXT, \
@@ -341,7 +350,8 @@ def insert_audiobook(path, category=None, name=None, author=None, year=None):
     added_on = db.generate_timestamp()
     if name is None:
         name = os.path.splitext(os.path.split(path)[-1])[0]
-    query = "INSERT OR IGNORE INTO audiobooks VALUES (?, ?, ?, ?, ?, ?)"
+    query = "INSERT OR IGNORE INTO audiobooks (path, category, name, author, \
+                            year, added_on) VALUES (?, ?, ?, ?, ?, ?)"
     db.execute(query, (path, category, name, author, year, added_on,))
     db.commit()
     db.close_connection()
