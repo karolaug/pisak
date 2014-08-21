@@ -57,13 +57,13 @@ class PisakEduStage(Clutter.Stage):
         super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        color = Clutter.Color.new(100,170,190,255)
+        color = Clutter.Color.new(100, 170, 190, 255)
         self.set_background_color(color)
         self._init_elements(container)
 
     def _init_elements(self, container):
         self.contents = container()
-        self.contents.connect('destroy', lambda _:self.exit_app())
+        self.contents.connect('destroy', lambda _: self.exit_app())
         self.add_actor(self.contents)
 
     def exit_app(self):

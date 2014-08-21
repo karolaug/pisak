@@ -4,11 +4,11 @@ import sys
 from gi.repository import Clutter, Mx
 
 class TimerCycle(object):
-	def __init__(self,contents):
+	def __init__(self, contents):
 		super(TimerCycle, self).__init__()
 		self.tiles_table = contents.tiles_table
 		self.tiles_table.set_reactive(True)
-		self.tiles_table.connect('button_release_event', lambda x, y:self.when_clicked())
+		self.tiles_table.connect('button_release_event', lambda x, y: self.when_clicked())
 		self._init_params()
 		self._init_timer()
 
@@ -34,19 +34,19 @@ class TimerCycle(object):
 
 	def on_timer_event(self):
 		if self.previous_tiles:
-			self.tiles_table.update_tiles(self.previous_tiles,'off')
+			self.tiles_table.update_tiles(self.previous_tiles, 'off')
 		if self.direction == 'rows':
 			tiles = range(self.row * self.col_count, self.row * self.col_count + self.col_count)
 			self.row = (self.row + 1) % self.row_count
 		elif self.direction == 'cols':
 			tiles = [self.row * self.col_count + self.col]
 			self.col = (self.col + 1) % self.col_count
-		self.tiles_table.update_tiles(tiles,'on')
+		self.tiles_table.update_tiles(tiles, 'on')
 		self.previous_tiles = tiles
 
 	def when_clicked(self):
 		self.stop_cycle()
-		self.tiles_table.update_tiles(self.previous_tiles,'select')
+		self.tiles_table.update_tiles(self.previous_tiles, 'select')
 		if self.direction == 'rows':
 			self.row -= 1
 			self.direction = 'cols'
@@ -64,7 +64,7 @@ class TimerCycle(object):
 
 class ActionTile(Clutter.Actor):
 	def __init__(self):
-		super(ActionTile,self).__init__()
+		super(ActionTile, self).__init__()
 		self.layout = Clutter.BoxLayout()
 		self.set_layout_manager(self.layout)
 		self.layout.set_vertical(True)
@@ -82,20 +82,20 @@ class ActionTile(Clutter.Actor):
 		self.label = Mx.Label()
 		self.add_actor(self.label)
 
-	def set_label(self,text):
+	def set_label(self, text):
 		self.label.set_text(text)
 
-	def set_icon_from_file(self,path):
+	def set_icon_from_file(self, path):
 		self.icon.set_from_file(path)
 
 
 class ExecuteAction(object):
-	def __init__(self,action_tile,contents):
+	def __init__(self, action_tile, contents):
 		super().__init__()
 		self.tile_label = action_tile.label.get_text()
-		self.row,self.column = None,None
+		self.row, self.column = None, None
 		if self.tile_label != 'zamknij' and self.tile_label != 'reset':
-			self.row, self.column = int(self.tile_label.split()[0]), int(self.tile_label.split()[1]) #zmienic?
+			self.row, self.column = int(self.tile_label.split()[0]), int(self.tile_label.split()[1])  #zmienic?
 
 		self.contents = contents
 
@@ -130,12 +130,12 @@ class ExecuteAction(object):
 
 	def reset_game(self):
 		self.contents.revert = 0
-		self.contents.game = memory.MemoryGame((4,6))
+		self.contents.game = memory.MemoryGame((4, 6))
 
 		self.row_count = 5
 		self.col_count = 6
 
-		for i in range(len(self.contents.tiles)-6):
+		for i in range(len(self.contents.tiles) - 6):
 			tile = self.contents.tiles[i]
 			tile.set_icon_from_file('./empty.png')
 
@@ -145,21 +145,21 @@ class ExecuteAction(object):
 
 
 class ToggleHilite(object):
-	def __init__(self,tile,toggle):
+	def __init__(self, tile, toggle):
 		super(ToggleHilite, self).__init__()
 		if toggle == 'off':
-			color = Clutter.Color.new(200,150,150,100)
+			color = Clutter.Color.new(200, 150, 150, 100)
 		elif toggle == 'on':
-			color = Clutter.Color.new(90,100,180,255)
+			color = Clutter.Color.new(90, 100, 180, 255)
 		elif toggle == 'select':
-			color = Clutter.Color.new(150,40,50,100)
+			color = Clutter.Color.new(150, 40, 50, 100)
 		tile.set_background_color(color)
 
 
 class TilesTable(Clutter.Actor):
-	def __init__(self,contents):
-		super(TilesTable,self).__init__()
-		letters = ['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w', 'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b', 'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź' ]
+	def __init__(self, contents):
+		super(TilesTable, self).__init__()
+		letters = ['a', 'i', 'e', 'r', 'c', 'p', 'l', 'ę', 'o', 'z', 'w', 'y', 'm', 'ł', 'h', 'ż', 'n', 's', 'k', 'u', 'b', 'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć', 'ń', 'ź']
 		actions = ['reset', 'zamknij']
 		self.contents = contents
 		self.tiles = []
@@ -189,7 +189,7 @@ class TilesTable(Clutter.Actor):
 
 		self.update_tiles(range(len(self.tiles)), 'off')
 
-	def update_tiles(self, indices,toggle):
+	def update_tiles(self, indices, toggle):
 		if self.contents.revert:
 			if self.contents.revert == 1:
 				self.contents.game.revert()
@@ -205,13 +205,13 @@ class TilesTable(Clutter.Actor):
 		try:
 			letter = self.tiles[index].letter_label.get_text()
 			cursor_position = len(self.text_buffer.get_text())
-			self.text_buffer.insert_text(cursor_position ,letter, 1)
+			self.text_buffer.insert_text(cursor_position, letter, 1)
 		except AttributeError:
-			ExecuteAction(self.tiles[index],self.contents)
+			ExecuteAction(self.tiles[index], self.contents)
 
 
 class PisakSpellerContainer(Clutter.Actor):
-	def __init__(self,stage):
+	def __init__(self, stage):
 		super(PisakSpellerContainer, self).__init__()
 		self.stage = stage
 		margin = Clutter.Margin()
@@ -223,7 +223,7 @@ class PisakSpellerContainer(Clutter.Actor):
 	def _init_elements(self):
 
 		self.revert = 0
-		self.game = memory.MemoryGame((4,6))
+		self.game = memory.MemoryGame((4, 6))
 		self.game.create_info_field()
 
 		self.tiles_table = TilesTable(self)
@@ -251,7 +251,7 @@ class PisakSpellerContainer(Clutter.Actor):
 class PisakSpellerStage(Clutter.Stage):
 	def __init__(self):
 		super(PisakSpellerStage, self).__init__()
-		color = Clutter.Color.new(180,200,230,100)
+		color = Clutter.Color.new(180, 200, 230, 100)
 		self.set_background_color(color)
 		self._init_elements()
 

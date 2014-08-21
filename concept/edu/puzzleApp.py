@@ -35,7 +35,7 @@ class PracticePanel(Clutter.Actor):
         self.letter_grid_col_count = 6
         self.letter_coords = []
         while len(self.letter_coords) < self.word_len:
-            coords = (random.randint(0, self.letter_grid_col_count - 1),random.randint(1, self.letter_grid_row_count - 1))
+            coords = (random.randint(0, self.letter_grid_col_count - 1), random.randint(1, self.letter_grid_row_count - 1))
             if coords not in self.letter_coords:
                 self.letter_coords.append(coords)
         self.letter_coords = sorted(self.letter_coords)
@@ -68,9 +68,9 @@ class PracticePanel(Clutter.Actor):
 
     def _init_action_buttons(self):
         self.action_buttons = []
-        button_names = ['sprawdź','skasuj',
-                        'wyczyść','czytaj',
-                        'literuj','wróć']
+        button_names = ['sprawdź', 'skasuj',
+                        'wyczyść', 'czytaj',
+                        'literuj', 'wróć']
         for col, b in enumerate(button_names):
             one_button = buttons.ActionButton()
             one_button.set_label(b)
@@ -135,7 +135,7 @@ class PracticePanel(Clutter.Actor):
         self.idx = 0
         self.start_timer_cycle()
 
-    def add_letter(self,idx):
+    def add_letter(self, idx):
         self.letter_just_added = True
         button = self.letter_buttons[ self.active_letters_indices[idx]]
         letter = button.get_letter_label()
@@ -174,7 +174,7 @@ class PracticePanel(Clutter.Actor):
             self.active_letters_indices.sort()
             self.added_letters_indices = []
             end_pos =  len(self.text_field.get_text())
-            self.text_field.delete_text(0 ,end_pos)
+            self.text_field.delete_text(0, end_pos)
 
     def read_out_loud(self):
         print('Reading out loud:   ' + self.word)
@@ -188,7 +188,7 @@ class PracticePanel(Clutter.Actor):
 
 
 class MainPanel(Clutter.Actor):
-    def __init__(self,container):
+    def __init__(self, container):
         super(MainPanel, self).__init__()
         self.container = container
         self.layout = Clutter.GridLayout()
@@ -214,12 +214,12 @@ class MainPanel(Clutter.Actor):
 
     def _init_result_field(self):
         self.result_field = buttons.TextField()
-        self.layout.attach(self.result_field, 0, 0, 5 ,1)
+        self.layout.attach(self.result_field, 0, 0, 5, 1)
         self.result_field.set_x_expand(True)
 
     def _init_word_field(self):
         self.word_field = buttons.TextField()
-        self.layout.attach(self.word_field, 0, 1,2,4)
+        self.layout.attach(self.word_field, 0, 1, 2, 4)
         self.word_field.set_x_expand(True)
         self.word_field.set_y_expand(True)
 
@@ -239,24 +239,24 @@ class MainPanel(Clutter.Actor):
             one_button.set_icon_from_file('concept/edu/icons/' + b + '.png')
             one_button.set_hilite_color(self.off_color)
             self.buttons.append(one_button)
-            self.layout.attach(one_button,col,5,1,1)
+            self.layout.attach(one_button, col, 5, 1, 1)
         self.idx_count = len(self.buttons)
 
-    def update_elements(self,result,word):
+    def update_elements(self, result, word):
         self.update_result_field(result)
         self.update_word_field(word)
         self.update_image(word)
 
-    def update_result_field(self,result):
+    def update_result_field(self, result):
         text = 'twój wynik: ' + str(result) + ' / ' + str(self.container.points_limit) + ' pkt'
         self.result_field.set_text(text)
         self.result_field.set_font(self.result_font)
 
-    def update_word_field(self,word):
+    def update_word_field(self, word):
         self.word_field.set_text(word)
         self.word_field.set_font(self.word_font)
 
-    def update_image(self,word):
+    def update_image(self, word):
         self.image.set_image_from_file('concept/edu/words/pictures/' + word + '.jpg')
 
     def _init_params(self):
@@ -264,9 +264,9 @@ class MainPanel(Clutter.Actor):
         self.word_font = 'Sans 70'
         self.time_interval = 800
         self.idx = 0
-        self.on_color = Clutter.Color.new(80,100,220,255)
-        self.off_color = Clutter.Color.new(200,200,180,255)
-        self.selection_color = Clutter.Color.new(250,12,250,255)
+        self.on_color = Clutter.Color.new(80, 100, 220, 255)
+        self.off_color = Clutter.Color.new(200, 200, 180, 255)
+        self.selection_color = Clutter.Color.new(250, 12, 250, 255)
         self.scanning_on = False
 
     def _init_timer(self):
@@ -301,7 +301,7 @@ class MainPanel(Clutter.Actor):
             self.choose_action(button)
             self.start_timer_cycle()
 
-    def choose_action(self,button):
+    def choose_action(self, button):
         button_label = button.get_label()
         if button_label == 'zamknij':
             self.exit_app()
@@ -332,11 +332,11 @@ class MainPanel(Clutter.Actor):
         self.update_word_field(word=self.container.word)
         self.update_image(word=self.container.word)
 
-    def slide_in(self,widget):
+    def slide_in(self, widget):
         widget.set_opacity(0)
         widget.animatev(Clutter.AnimationMode.LINEAR, self.widget_transition_time, ["opacity"], [255])
 
-    def slide_out(self,widget):
+    def slide_out(self, widget):
         widget.animatev(Clutter.AnimationMode.LINEAR, self.widget_transition_time, ["opacity"], [0])
 
 class PisakEduContainer(Clutter.Actor):
@@ -372,11 +372,11 @@ class PisakEduContainer(Clutter.Actor):
         self.word = self.words_list[self.word_idx]
         self.panel.update_elements(result=self.result, word=self.word)
 
-    def slide_in(self,panel):
+    def slide_in(self, panel):
         panel.set_opacity(0)
         panel.animatev(Clutter.AnimationMode.LINEAR, self.panel_transition_time, ["opacity"], [255])
 
-    def slide_out(self,panel):
+    def slide_out(self, panel):
         panel.animatev(Clutter.AnimationMode.LINEAR, self.panel_transition_time, ["opacity"], [0])
         panel.set_reactive(False)
 
@@ -392,8 +392,8 @@ class PisakEduContainer(Clutter.Actor):
             new_panel = PracticePanel(self)
             self.current_panel_name = 'practice'
         elif self.current_panel_name == 'practice':
-            if hasattr(self,'back_to_main'):
-                delattr(self,'back_to_main')
+            if hasattr(self, 'back_to_main'):
+                delattr(self, 'back_to_main')
                 new_panel = MainPanel(self)
                 self.current_panel_name = 'main'
                 new_word = self.words_list[self.word_idx]

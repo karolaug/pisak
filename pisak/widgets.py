@@ -70,7 +70,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
             GObject.TYPE_STRING, "blank",
             "name of the icon displayed on the button",
             "blank", GObject.PARAM_READWRITE),
-        "alternative_icon_name":(
+        "alternative_icon_name": (
             GObject.TYPE_STRING, "blank",
             "name of the aternative icon displayed on the button",
             "blank", GObject.PARAM_READWRITE),
@@ -279,7 +279,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def read_svg(self):
         try:
             handle = Rsvg.Handle()
-            svg_path = ''.join([os.path.join(res.PATH,'icons',
+            svg_path = ''.join([os.path.join(res.PATH, 'icons',
                                              self.icon_name), '.svg'])
             self.svg = handle.new_from_file(svg_path)
         except:  # GError as error:
@@ -288,7 +288,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
 
     def set_image_white(self):
         handle = Rsvg.Handle()
-        svg_path = ''.join([os.path.join(res.PATH,'icons',
+        svg_path = ''.join([os.path.join(res.PATH, 'icons',
                                          self.icon_name), '_white', '.svg'])
         self.svg_white = handle.new_from_file(svg_path)
         icon_size = self.get_icon_size()

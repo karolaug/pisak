@@ -4,11 +4,11 @@ import sys
 from gi.repository import Clutter, Mx
 
 class TimerCycle(object):
-    def __init__(self,contents):
+    def __init__(self, contents):
         super(TimerCycle, self).__init__()
         self.tiles_table = contents.tiles_table
         self.tiles_table.set_reactive(True)
-        self.tiles_table.connect('button_release_event', lambda x,y: self.when_clicked())
+        self.tiles_table.connect('button_release_event', lambda x, y: self.when_clicked())
         self._init_params()
         self._init_timer()
 
@@ -34,19 +34,19 @@ class TimerCycle(object):
 
     def on_timer_event(self):
         if self.previous_tiles:
-            self.tiles_table.update_tiles(self.previous_tiles,'off')
+            self.tiles_table.update_tiles(self.previous_tiles, 'off')
         if self.direction == 'rows':
             tiles = range(self.row * self.col_count , self.row * self.col_count + self.col_count)
             self.row = (self.row + 1) % self.row_count
         elif self.direction == 'cols':
             tiles = [self.row * self.col_count + self.col]
             self.col = (self.col + 1) % self.col_count
-        self.tiles_table.update_tiles(tiles,'on')
+        self.tiles_table.update_tiles(tiles, 'on')
         self.previous_tiles = tiles
 
     def when_clicked(self):
         self.stop_cycle()
-        self.tiles_table.update_tiles(self.previous_tiles,'select')
+        self.tiles_table.update_tiles(self.previous_tiles, 'select')
         if self.direction == 'rows':
             self.row -= 1
             self.direction = 'cols'
@@ -64,7 +64,7 @@ class TimerCycle(object):
 
 class LetterTile(Clutter.Actor):
     def __init__(self):
-        super(LetterTile,self).__init__()
+        super(LetterTile, self).__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         self._init_letter_label()
@@ -73,13 +73,13 @@ class LetterTile(Clutter.Actor):
         self.letter_label = Mx.Label()
         self.add_actor(self.letter_label)
 
-    def set_letter_label(self,letter):
+    def set_letter_label(self, letter):
         self.letter_label.set_text(letter)
 
 
 class ActionTile(Clutter.Actor):
     def __init__(self):
-        super(ActionTile,self).__init__()
+        super(ActionTile, self).__init__()
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
         self.layout.set_vertical(True)
@@ -97,15 +97,15 @@ class ActionTile(Clutter.Actor):
         self.label = Mx.Label()
         self.add_actor(self.label)
 
-    def set_label(self,text):
+    def set_label(self, text):
         self.label.set_text(text)
 
-    def set_icon_from_file(self,path):
+    def set_icon_from_file(self, path):
         self.icon.set_from_file(path)
 
 
 class ExecuteAction(object):
-    def __init__(self,action_tile,contents):
+    def __init__(self, action_tile, contents):
         super(ExecuteAction, self).__init__()
         self.tile_label = action_tile.label.get_text()
         self.contents = contents
@@ -128,7 +128,7 @@ class ExecuteAction(object):
     def insert_space(self):
         space = ' '
         cursor_position = len(self.text_buffer.get_text())
-        self.text_buffer.insert_text(cursor_position ,space, 1)
+        self.text_buffer.insert_text(cursor_position, space, 1)
 
     def delete_character(self):
         cursor_position = len(self.text_buffer.get_text())-1
@@ -147,22 +147,22 @@ class ExecuteAction(object):
 
 
 class ToggleHilite(object):
-    def __init__(self,tile,toggle):
+    def __init__(self, tile, toggle):
         super(ToggleHilite, self).__init__()
         if toggle == 'off':
-            color = Clutter.Color.new(200,150,150,100)
+            color = Clutter.Color.new(200, 150, 150, 100)
         elif toggle == 'on':
-            color = Clutter.Color.new(90,100,180,255)
+            color = Clutter.Color.new(90, 100, 180, 255)
         elif toggle == 'select':
-            color = Clutter.Color.new(150,40,50,100)
+            color = Clutter.Color.new(150, 40, 50, 100)
         tile.set_background_color(color)
 
 
 class TilesTable(Clutter.Actor):
-    def __init__(self,contents):
-        super(TilesTable,self).__init__()
-        letters = ['a' ,'i','e', 'r', 'c', 'p','l', 'ę', 'o', 'z', 'w', 'y' ,'m', 'ł', 'h', 'ż' , 'n', 's', 'k', 'u' , 'b', 'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć' , 'ń', 'ź' ]
-        actions = ['spacja','skasuj', 'wczytaj' , 'zapisz','przywróć','wyczyść','zmień typ','zamknij']
+    def __init__(self, contents):
+        super(TilesTable, self).__init__()
+        letters = ['a', 'i', 'e', 'r', 'c', 'p', 'l', 'ę', 'o', 'z', 'w', 'y', 'm', 'ł', 'h', 'ż', 'n', 's', 'k', 'u', 'b', 'ą', 'ś', 'f', 't', 'd', 'j', 'g', 'ó', 'ć', 'ń', 'ź' ]
+        actions = ['spacja', 'skasuj', 'wczytaj', 'zapisz', 'przywróć', 'wyczyść', 'zmień typ', 'zamknij']
         self.contents = contents
         self.text_field = contents.text_field
         self.text_buffer = contents.text_field.text_buffer
@@ -185,20 +185,20 @@ class TilesTable(Clutter.Actor):
                     tile = LetterTile()
                     tile.set_letter_label(letters[i * self.col_count + j])
                 self.tiles.append(tile)
-                layout.attach(tile,j,i,1,1)
-        self.update_tiles(range(len(self.tiles)),'off')
+                layout.attach(tile, j, i, 1, 1)
+        self.update_tiles(range(len(self.tiles)), 'off')
 
-    def update_tiles(self,indices,toggle):
+    def update_tiles(self, indices, toggle):
         for i in indices:
-            ToggleHilite(self.tiles[i],toggle)
+            ToggleHilite(self.tiles[i], toggle)
 
-    def action_on_tile(self,index):
+    def action_on_tile(self, index):
         try:
             letter = self.tiles[index].letter_label.get_text()
             cursor_position = len(self.text_buffer.get_text())
-            self.text_buffer.insert_text(cursor_position ,letter, 1)
+            self.text_buffer.insert_text(cursor_position, letter, 1)
         except AttributeError:
-            ExecuteAction(self.tiles[index],self.contents)
+            ExecuteAction(self.tiles[index], self.contents)
 
         current_txt_coord = self.text_field.text_field.position_to_coords(len(self.text_buffer.get_text()))[3]
         if current_txt_coord >= self.text_field.get_height():
@@ -207,16 +207,16 @@ class TilesTable(Clutter.Actor):
 
 class TextBuffer(Clutter.TextBuffer):
     def __init__(self):
-        super(TextBuffer,self).__init__()
+        super(TextBuffer, self).__init__()
 
 class TextField(Clutter.ScrollActor):
-    def __init__(self,text_buffer):
-        super(TextField,self).__init__()
+    def __init__(self, text_buffer):
+        super(TextField, self).__init__()
         self.set_scroll_mode(Clutter.ScrollMode.VERTICALLY)
         self.text_buffer = text_buffer
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        white_color = Clutter.Color.new(255,255,255,255)
+        white_color = Clutter.Color.new(255, 255, 255, 255)
         self.set_background_color(white_color)
         self.font = 'Sans 100px'
         self._init_field()
@@ -235,14 +235,14 @@ class TextField(Clutter.ScrollActor):
         vertical_distance = 100
         animation_time = 500
         point = Clutter.Point.alloc()
-        Clutter.Point.init(point,0,vertical_distance)
+        Clutter.Point.init(point, 0, vertical_distance)
         self.set_easing_mode(Clutter.AnimationMode.LINEAR)
         self.set_easing_duration(animation_time)
         self.scroll_to_point(point)
 
 
 class PisakSpellerContainer(Clutter.Actor):
-    def __init__(self,stage):
+    def __init__(self, stage):
         super(PisakSpellerContainer, self).__init__()
         self.stage = stage
         margin = Clutter.Margin()
@@ -277,7 +277,7 @@ class PisakSpellerContainer(Clutter.Actor):
 class PisakSpellerStage(Clutter.Stage):
     def __init__(self):
         super(PisakSpellerStage, self).__init__()
-        color = Clutter.Color.new(180,200,230,100)
+        color = Clutter.Color.new(180, 200, 230, 100)
         self.set_background_color(color)
         self._init_elements()
 

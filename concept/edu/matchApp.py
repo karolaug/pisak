@@ -6,7 +6,7 @@ import random
 from concept.edu.panels import RewardPanel, ResultInfoPanel, PisakEduStage, PisakEduApp
 
 class PracticePanel(Clutter.Actor):
-    def __init__(self,container):
+    def __init__(self, container):
         super(PracticePanel, self).__init__()
         self.container = container
         self.word = container.word
@@ -49,7 +49,7 @@ class PracticePanel(Clutter.Actor):
 
     def _init_result_field(self):
         self.result_field = buttons.TextField()
-        self.layout.attach(self.result_field, 0, 0, 4 ,1)
+        self.layout.attach(self.result_field, 0, 0, 4, 1)
         self.result_field.set_x_expand(True)
 
     def _init_word_buttons(self):
@@ -80,18 +80,18 @@ class PracticePanel(Clutter.Actor):
 
     def _init_action_buttons(self):
         self.action_buttons = []
-        action_button_names = ['czytaj',
-                               'literuj','następny','zamknij']
+        action_button_names = ['czytaj', 'literuj',
+                               'następny', 'zamknij']
         for col, b in enumerate(action_button_names):
             one_button = buttons.ActionButton()
             one_button.set_label(b)
-            one_button.set_icon_from_file('concept/edu/icons/'+b+'.png')
+            one_button.set_icon_from_file('concept/edu/icons/' + b + '.png')
             one_button.set_hilite_color(self.off_color)
             self.action_buttons.append(one_button)
             self.layout.attach(one_button, col, self.word_count + 1, 1, 1)
         self.action_buttons_count = len(self.action_buttons)
 
-    def update_elements(self,current_word_buttons = None):
+    def update_elements(self, current_word_buttons = None):
         self.update_result_field()
         self.update_image()
         self.update_word_buttons(current_word_buttons)
@@ -101,7 +101,7 @@ class PracticePanel(Clutter.Actor):
         self.result_field.set_text(text)
         self.result_field.set_font(self.result_font)
 
-    def update_word_buttons(self,current_word_buttons=None):
+    def update_word_buttons(self, current_word_buttons=None):
         if not current_word_buttons:
             words = []
             while len(words) < self.word_count - 1:
@@ -109,7 +109,7 @@ class PracticePanel(Clutter.Actor):
                 word = self.container.words_list[idx]
                 if word not in words and word != self.container.word:
                     words.append(word)
-            words.insert(random.randint(0, self.word_count - 2),self.container.word)
+            words.insert(random.randint(0, self.word_count - 2), self.container.word)
             for i, b in enumerate(self.word_buttons):
                 b.set_text(words[i])
         else:
@@ -166,7 +166,7 @@ class PracticePanel(Clutter.Actor):
             self.choose_action(button)
             self.start_timer_cycle()
 
-    def choose_action(self,button):
+    def choose_action(self, button):
         if button in self.word_buttons:
             word = button.get_text()
             self.container.word = self.word
@@ -203,11 +203,11 @@ class PracticePanel(Clutter.Actor):
         self.update_word_buttons(None)
         self.update_image()
 
-    def slide_in(self,widget):
+    def slide_in(self, widget):
         widget.set_opacity(0)
         widget.animatev(Clutter.AnimationMode.LINEAR, self.widget_transition_time, ["opacity"], [255])
 
-    def slide_out(self,widget):
+    def slide_out(self, widget):
         widget.animatev(Clutter.AnimationMode.LINEAR, self.widget_transition_time, ["opacity"], [0])
 
 class PisakEduContainer(Clutter.Actor):
@@ -243,11 +243,11 @@ class PisakEduContainer(Clutter.Actor):
         self.add_actor(self.panel)
         self.panel.update_elements()
 
-    def slide_in(self,panel):
+    def slide_in(self, panel):
         panel.set_opacity(0)
         panel.animatev(Clutter.AnimationMode.LINEAR, self.panel_transition_time, ["opacity"], [255])
 
-    def slide_out(self,panel):
+    def slide_out(self, panel):
         panel.animatev(Clutter.AnimationMode.LINEAR, self.panel_transition_time, ["opacity"], [0])
         panel.set_reactive(False)
 

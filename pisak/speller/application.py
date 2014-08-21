@@ -112,7 +112,7 @@ class KeyboardMenu(ButtonBlock):
         "label": "%s" % i,
         "icon_path": "%s" % j,
         "handler": k
-        } for i,j,k in [
+        } for i, j, k in [
             ["02", None, None], ["_", None, None], ["ABCX", None, None],
             ["a->A", None, None], ["A->Ą", None, None], [":-)", None, None], ["01", None, None]
             ]
@@ -304,7 +304,7 @@ class Menu(ButtonBlock):
         "label": "%s" % i,
         "icon_path": "%s" % j,
         "handler": k
-        } for i,j,k in [
+        } for i, j, k in [
             ["KLAWIATURA", None, None], ["PREDYKCJA", None, None], ["PRZECZYTAJ", None, None],
             ["ZAPISZ", None, None], ["WCZYTAJ", None, None], ["WYŚLIJ", None, None],
             ["DRUKUJ", None, None], ["NOWY DOKUMENT", None, None], ["PANEL STARTOWY", None, None]

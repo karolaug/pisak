@@ -282,7 +282,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         text = self.get_text()
         if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
             if text.rstrip():
-                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
+                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')', ':', '"']:
                     return ' '
         else:
             return ' '
@@ -311,7 +311,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         current_text = self.get_text()
         if current_text: #if the text buffer is empty, or ends with whitespace, simply add predicted words. Otherwise, replace the last word.
-            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: #if the text buffer ends in a commas, add a space before adding the predicted word
+            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')', ':', '"']: #if the text buffer ends in a commas, add a space before adding the predicted word
                 self.type_text(' ' + text_after)
             elif current_text[-1] == ' ':
                 self.type_text(text_after)
