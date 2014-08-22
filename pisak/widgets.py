@@ -218,8 +218,8 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
 
     @progress.setter
     def progress(self, value):
-        self.progress_transition.set_from(self.progress)
-        self.progress_transition.set_to(value)
+        self.progress_transition.set_from_value(self.progress)
+        self.progress_transition.set_to_value(value)
         self.bar.remove_transition("progress")
         self.bar.add_transition("progress", self.progress_transition)
 
