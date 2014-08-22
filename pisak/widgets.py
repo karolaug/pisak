@@ -160,6 +160,10 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         "progress": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
+        "progress_transition_duration": (
+            GObject.TYPE_INT64, "transition duration",
+            "duration of progress transition", 0,
+            GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE)
         "label_ratio_x_offset": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
@@ -173,6 +177,8 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         super().__init__()
         self.label = None
         self.label_ratio_x_offset = None
+        self.progress_transition = Clutter.PropertyTransition.new("progress")
+        self.progress_transition.connect("stopped", self._update_label)
         self.connect("notify::width", self._allocate_label)
 
     @property
@@ -212,8 +218,18 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
 
     @progress.setter
     def progress(self, value):
-        self.bar.set_progress(value)
-        self._update_label()
+        self.progress_transition.set_from(self.progress)
+        self.progress_transition.set_to(value)
+        self.bar.remove_transition("progress")
+        self.bar.add_transition("progress", self.progress_transition)
+
+    @property
+    def progress_transition_duration(self):
+        return self.progress_transition.get_duration()
+
+    @progress_transition_duration.setter
+    def progress_transition_duration(self, value):
+        self.progress_transition.set_duration(value)
 
     @property
     def label_ratio_x_offset(self):
@@ -230,7 +246,7 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
                 px_x_offset = self.label_ratio_x_offset * self.get_width()
                 self.label.set_x(px_x_offset)
 
-    def _update_label(self):
+    def _update_label(self, *args):
         if self.label is not None:
             new_text = " / ".join([str(int(self.progress*self.counter_limit)),
                                    str(self.counter_limit)])
