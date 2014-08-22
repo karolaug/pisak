@@ -16,7 +16,7 @@ if __name__ == "__main__":
         preview = database_agent.get_previews([categories[-1]["category"]])[categories[-1]["category"]]
         print("Preview dla kategorii " + categories[-1]["category"] + ": ")
         print(", ".join([str(list(preview.keys())[idx]) + ": " + str(j) for idx, j in enumerate(preview)]))
-        photos = database_agent.get_photos(categories[-1]["category"])
+        photos = database_agent.get_photos_from_category(categories[-1]["category"])
         print("Zdjęcia w kategorii " + categories[-1]["category"] + ": ")
         for photo in photos:
             print(", ".join([str(list(photo.keys())[idx]) + ": " + str(j) for idx, j in enumerate(photo)]))

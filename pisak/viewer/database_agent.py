@@ -20,7 +20,6 @@ _CREATE_FAVOURITE_PHOTOS = "CREATE TABLE IF NOT EXISTS favourite_photos ( \
                                             category TEXT NOT NULL REFERENCES photos(category))"
 
 
-
 def get_categories():
     db = DatabaseConnector()
     db.execute(_CREATE_PHOTOS)
@@ -29,10 +28,18 @@ def get_categories():
     db.close_connection()
     return categories
 
-def get_photos(category):
+def get_photos_from_category(category):
     db = DatabaseConnector()
     db.execute(_CREATE_PHOTOS)
     query = "SELECT * FROM photos WHERE category='" + category + "' ORDER BY created_on ASC, added_on ASC"
+    photos = db.execute(query)
+    db.close_connection()
+    return photos
+
+def get_all_photos():
+    db = DatabaseConnector()
+    db.execute(_CREATE_PHOTOS)
+    query = "SELECT * FROM photos"
     photos = db.execute(query)
     db.close_connection()
     return photos
