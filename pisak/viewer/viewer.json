@@ -4,6 +4,7 @@
         "type": "PisakProgressBar",
         "bar": {"type": "PisakViewerProgressBarBar"},
         "label": {"type": "PisakViewerProgressBarLabel"},
+        "progress_transition_duration": 1000,
         "ratio-width": 0.5,
         "ratio-height": 0.05,
         "counter-limit": 10,

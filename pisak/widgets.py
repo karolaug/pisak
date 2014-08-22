@@ -162,8 +162,8 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
             GObject.PARAM_READWRITE),
         "progress_transition_duration": (
             GObject.TYPE_INT64, "transition duration",
-            "duration of progress transition", 0,
-            GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE)
+            "duration of progress transition in msc", 0,
+            GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE),
         "label_ratio_x_offset": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
