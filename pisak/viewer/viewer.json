@@ -26,6 +26,10 @@
         "children": ["pager", "button_menu"]
     },
     {
+        "id": "logic",
+        "type": "PisakViewerLogic"
+    },
+    {
         "id": "progress_bar",
         "type": "PisakProgressBar",
         "bar": {"type": "PisakViewerProgressBarBar"},
