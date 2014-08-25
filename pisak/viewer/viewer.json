@@ -1,5 +1,31 @@
 [
     {
+        "id": "main",
+        "type": "PisakBinLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "children": ["main_box", "background_box"]
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundPattern",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "main_box",
+        "type": "PisakBoxLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "orientation": "vertical",
+        "children": ["header", "middle_box", "progress_bar"]
+    },
+    {
+        "id": "middle_box",
+        "type": "PisakBoxLayout",
+        "children": ["pager", "button_menu"]
+    },
+    {
         "id": "progress_bar",
         "type": "PisakProgressBar",
         "bar": {"type": "PisakViewerProgressBarBar"},
