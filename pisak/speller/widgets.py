@@ -723,7 +723,7 @@ class Prediction(pisak.widgets.Button):
         
         text_width = clutter_text.get_width()
         butt_width = self.get_width()
-        if text_width > butt_width:
+        if (text_width + self.get_margin_left() * 2) > butt_width:
             clutter_text.set_scale(text_width/butt_width, 1)
 
     @property
