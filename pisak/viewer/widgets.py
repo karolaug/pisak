@@ -1,18 +1,25 @@
-from gi.repository import Mx
+from gi.repository import Mx, GObject
 
 from pisak import widgets, layout
 
 
-class ProgressBarBar(Mx.ProgressBar):
-    __gtype_name__ = "PisakViewerProgressBarBar"
+class ProgressBar(widgets.ProgressBar):
+    __gtype_name__ = "PisakViewerProgressBar"
+    
+    def __init__(self):
+        super().__init__()
+        self.label = Mx.Label()
+        self.label.set_style_class("PisakViewerProgressBar")
+        self.bar.set_style_class("PisakViewerProgressBar")
 
-        
-class ProgressBarLabel(Mx.Label):
-    __gtype_name__ = "PisakViewerProgressBarLabel"
 
-
-class PhotoTileLabel(Mx.Label):
-    __gtype_name__ = "PisakViewerPhotoTileLabel"
+class PhotoTile(widgtes.PhotoTile):
+    __gtype_name__ = "PisakViewerPhotoTile"
+    
+    def __init__(self):
+        super().__init__()
+        self.label = Mx.Label()
+        self.label.set_style_class("PisakViewerPhotoTile")
 
 
 class Button(widgets.Button):
