@@ -14,7 +14,7 @@ class ProgressBar(widgets.NewProgressBar):
         self.bar.set_style_class("PisakViewerProgressBar")
 
 
-class PhotoTile(widgtes.PhotoTile):
+class PhotoTile(widgets.PhotoTile):
     __gtype_name__ = "PisakViewerPhotoTile"
     
     def __init__(self):

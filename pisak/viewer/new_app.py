@@ -2,8 +2,8 @@ import os.path
 
 from gi.repository import Clutter, Mx
 
-from pisak import res, widgets, layout
-import pisak.viewer.widgets
+from pisak import res
+from pisak.viewer import widgets
 
 
 _PATH = os.path.abspath(os.path.split(__file__)[0])

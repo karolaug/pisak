@@ -2,14 +2,14 @@ MxProgressBar.PisakViewerProgressBar {
   border-image: url("viewer_progress_bar_background.png");
 }
 
+MxProgressBarFill.PisakViewerProgressBar {
+  border-image: url("viewer_progress_bar_fill.png");
+}
+
 MxLabel.PisakViewerProgressBar {
   font-face: Kelson Sans;
   font-size: 20;
   color: white;
-}
-
-MxProgressBarFill.PisakViewerProgressBar {
-  border-image: url("viewer_progress_bar_fill.png");
 }
 
 MxLabel.PisakViewerPhotoTile {

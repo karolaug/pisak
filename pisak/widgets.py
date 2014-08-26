@@ -49,6 +49,9 @@ class PhotoTile(Bin, properties.PropertyAdapter):
             None, None, 0, 1., 0,
             GObject.PARAM_READWRITE)
     }
+    MODEL = {
+        "preview_path": res.PATH
+    }
 
     def __init__(self):
         super().__init__()
@@ -66,8 +69,8 @@ class PhotoTile(Bin, properties.PropertyAdapter):
     def label(self, value):
         self._label = value
         if value is not None:
-            if not self.contains(value):
-                self.add_child(value)
+            if not self.box.contains(value):
+                self.box.add_child(value)
 
     @property
     def label_text(self):
@@ -84,7 +87,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
     @preview_path.setter
     def preview_path(self, value):
         self._preview_path = value
-        self.preview.set_from_file(value)
+        self.preview.set_from_file(os.path.join(self.MODEL["preview_path"], value))
 
     @property
     def preview_ratio_width(self):
@@ -175,6 +178,7 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         self.label = None
         self.label_ratio_x_offset = None
         self.progress_transition = Clutter.PropertyTransition.new("progress")
+        self.progress_transition_duration = 1000
         self.progress_transition.connect("stopped", self._update_label)
         self.connect("notify::width", self._allocate_label)
 
@@ -197,6 +201,7 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
     @counter_limit.setter
     def counter_limit(self, value):
         self._counter_limit = value
+        self._update_label()
 
     @property
     def progress(self):
@@ -204,8 +209,8 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
 
     @progress.setter
     def progress(self, value):
-        self.progress_transition.set_from_value(self.progress)
-        self.progress_transition.set_to_value(value)
+        self.progress_transition.set_from(self.progress)
+        self.progress_transition.set_to(value)
         self.bar.remove_transition("progress")
         self.bar.add_transition("progress", self.progress_transition)
 

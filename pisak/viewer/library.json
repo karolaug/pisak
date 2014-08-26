@@ -18,18 +18,16 @@
         "x-align": "start",
         "x-expand": true,
         "y-expand": true,
-        "ratio_margin-top": 0.0136,
+        "ratio-margin-top": 0.0136,
         "ratio-margin-bottom": 0.0136,
         "ratio-spacing": 0.0211,
         "orientation": "vertical",
-        "children": ["header", "middle_box", "progress_bar"]
+        "children": ["progress_bar", "middle_box", "header"]
     },
     {
         "id": "header",
         "type": "MxLabel",
-        "x-expand": "true",
         "text": "BIBLIOTEKA ZDJĘĆ",
-        "margin-right": 20,
         "x-align": "end"
     },
     {
@@ -41,10 +39,9 @@
     {
         "id": "button_menu",
         "type": "PisakBoxLayout",
-        "ratio-width": 0.2,
-        "ratio-height": 0.7,
         "orientation": "vertical",
-        "children": ["button_1", "button_2"]
+        "ratio-spacing": 0.0211,
+        "children": ["button_2", "button_1"]
     },
     {
         "id": "button_1",
@@ -56,7 +53,7 @@
     {
         "id": "button_2",
         "type": "PisakViewerButton",
-        "label": "przycisk 1",
+        "label": "przycisk 2",
         "ratio-width": 0.2,
         "ratio-height": 0.1
     },
@@ -71,15 +68,22 @@
         "id": "photo_tile",
         "type": "PisakViewerPhotoTile",
         "label-text": "kafelek",
-        "ratio-width": 0.3,
-        "ratio-height": 0.3
+        "background-color": "rgb(200, 100, 30)",
+        "preview-path": "jagoda.jpg",
+        "ratio-width": 0.2,
+        "ratio-height": 0.2,
+        "preview-ratio-width": 0.16,
+        "preview-ratio-height": 0.16,
+        "ratio-spacing": 0.008
     },
     {
         "id": "progress_bar",
         "type": "PisakViewerProgressBar",
         "x-expand": true,
-        "ratio-height": 0.1,
+        "progress": 0.3,
+        "progress-transition-duration": 1000,
+        "ratio-height": 0.05,
         "counter-limit": 10,
-        "label_ratio_x_offset": 0.8
+        "label-ratio-x-offset": 0.8
     }
 ]
