@@ -1,18 +1,18 @@
-PisakViewerProgressBarBar{
+MxProgressBar.PisakViewerProgressBar {
   border-image: url("viewer_progress_bar_background.png");
 }
 
-PisakViewerProgressBarLabel{
+MxLabel.PisakViewerProgressBar {
   font-face: Kelson Sans;
   font-size: 20;
   color: white;
 }
 
-PisakViewerProgressBarBar MxProgressBarFill {
+MxProgressBarFill.PisakViewerProgressBar {
   border-image: url("viewer_progress_bar_fill.png");
 }
 
-PisakViewerPhotoTileLabel {
+MxLabel.PisakViewerPhotoTile {
   font-face: Kelson Sans;
   font-size: 20;
   color: black;
