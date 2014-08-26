@@ -1,36 +1,44 @@
 [
     {
-        "id": "main",
+        "id": "main_library",
         "type": "PisakBinLayout",
         "x-expand": true,
         "y-expand": true,
-        "children": ["main_box", "background_box"]
+        "children": ["library_main_box", "library_background_box"]
     },
     {
-        "id": "background_box",
+        "id": "library_background_box",
         "type": "PisakBackgroundPattern",
         "x-expand": true,
         "y-expand": true
     },
     {
-        "id": "main_box",
+        "id": "library_main_box",
         "type": "PisakBoxLayout",
         "x-expand": true,
         "y-expand": true,
         "orientation": "vertical",
-        "children": ["header", "middle_box", "progress_bar"]
+        "children": ["library_header", "library_middle_box", "library_progress_bar"]
     },
     {
-        "id": "middle_box",
+        "id": "library_header",
+        "type": "PisakViewerHeader"
+    },
+    {
+        "id": "library_middle_box",
         "type": "PisakBoxLayout",
-        "children": ["pager", "button_menu"]
+        "children": ["library_pager", "library_button_menu"]
     },
     {
-        "id": "logic",
-        "type": "PisakViewerLogic"
+        "id": "library_button_menu",
+        "type": "PisakBoxLayout",
     },
     {
-        "id": "progress_bar",
+        "id": "library_pager",
+        "type": "PisakPagerWidget"
+    },
+    {
+        "id": "library_progress_bar",
         "type": "PisakProgressBar",
         "bar": {"type": "PisakViewerProgressBarBar"},
         "label": {"type": "PisakViewerProgressBarLabel"},
@@ -41,17 +49,114 @@
         "label_ratio_x_offset": 0.8
     },
     {
-        "id": "photo_tile",
-        "type": "PisakPhotoTile",
-        "label": {"type": "PisakViewerPhotoTileLabel"},
-        "label-text": "bla",
-        "preview-path": "bla/bla",
-        "preview-ratio-width": 0.15,
-        "preview-ratio-height": 0.15,
-        "scale-mode": "crop",
-        "ratio-width": 0.2,
-        "ratio-height": 0.2,
-        "ratio-spacing": 0.01,
-        "background-color": "blue"
+        "id": "main_album",
+        "type": "PisakBinLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "children": ["album_main_box", "album_background_box"]
+    },
+    {
+        "id": "album_background_box",
+        "type": "PisakBackgroundPattern",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "album_main_box",
+        "type": "PisakBoxLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "orientation": "vertical",
+        "children": ["album_header", "album_middle_box", "album_progress_bar"]
+    },
+    {
+        "id": "album_header",
+        "type": "PisakViewerHeader"
+    },
+    {
+        "id": "album_middle_box",
+        "type": "PisakBoxLayout",
+        "children": ["album_pager", "album_button_menu"]
+    },
+    {
+        "id": "album_button_menu",
+        "type": "PisakBoxLayout",
+    },
+    {
+        "id": "album_pager",
+        "type": "PisakPagerWidget"
+    },
+    {
+        "id": "album_progress_bar",
+        "type": "PisakProgressBar",
+        "bar": {"type": "PisakViewerProgressBarBar"},
+        "label": {"type": "PisakViewerProgressBarLabel"},
+        "ratio-width": 0.5,
+        "ratio-height": 0.05,
+        "counter-limit": 10,
+        "progress": 0.25,
+        "label_ratio_x_offset": 0.8
+    },
+    {
+        "id": "main_photo",
+        "type": "PisakBinLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "children": ["photo_main_box", "photo_background_box"]
+    },
+    {
+        "id": "photo_background_box",
+        "type": "PisakBackgroundPattern",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "photo_main_box",
+        "type": "PisakBoxLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "orientation": "vertical",
+        "children": ["photo_header", "photo_middle_box", "photo_progress_bar"]
+    },
+    {
+        "id": "photo_header",
+        "type": "PisakViewerHeader"
+    },
+    {
+        "id": "photo_middle_box",
+        "type": "PisakBoxLayout",
+        "children": ["photo_widget", "photo_button_menu"]
+    },
+    {
+        "id": "photo_button_menu",
+        "type": "PisakBoxLayout",
+    },
+    {
+        "id": "photo_widget",
+        "type": "PisakBinLayout",
+        "children": ["photo_slide"]
+    },
+    {
+        "id": "photo_slide",
+        "type": "PisakViewerPhotoSlide"
+    },
+    {
+        "id": "photo_slide",
+        "type": "PisakViewerPhotoSlide"
+    },
+    {
+        "id": "photo_progress_bar",
+        "type": "PisakProgressBar",
+        "bar": {"type": "PisakViewerProgressBarBar"},
+        "label": {"type": "PisakViewerProgressBarLabel"},
+        "ratio-width": 0.5,
+        "ratio-height": 0.05,
+        "counter-limit": 10,
+        "progress": 0.25,
+        "label_ratio_x_offset": 0.8
+    },
+    {
+        "id": "logic",
+        "type": "PisakViewerLogic"
     }
 ]
