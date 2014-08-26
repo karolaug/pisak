@@ -1,6 +1,8 @@
+import os.path
+
 from gi.repository import Mx, GObject
 
-from pisak import widgets, layout
+from pisak import widgets, layout, res
 
 
 class ProgressBar(widgets.NewProgressBar):
@@ -29,7 +31,7 @@ class Button(widgets.Button):
 
 class PhotoSlide(layout.Bin):
     __gtype_name__ = "PisakViewerPhotoSlide"
-    __groperties__ = {
+    __gproperties__ = {
         "photo_path": (
             GObject.TYPE_STRING,
             "path to photo",
@@ -41,9 +43,12 @@ class PhotoSlide(layout.Bin):
             "duration of photo transition", 0,
             GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE)
     }
+    MODEL = {
+        "photo_path": res.PATH
+    }
 
     def __init__(self):
-        super().__init()
+        super().__init__()
         self.photo = Mx.Image()
         self.photo.set_scale_mode(Mx.ImageScaleMode.FIT)
         self.add_child(self.photo)
@@ -55,7 +60,7 @@ class PhotoSlide(layout.Bin):
     @photo_path.setter
     def photo_path(self, value):
         self._photo_path = value
-        self.photo.set_from_file(value)
+        self.photo.set_from_file(os.path.join(self.MODEL["photo_path"], value))
 
     @property
     def transition_duration(self):

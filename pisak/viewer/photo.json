@@ -22,13 +22,12 @@
         "ratio-margin-bottom": 0.0136,
         "ratio-spacing": 0.0211,
         "orientation": "vertical",
-        "children": ["header", "middle_box", "progress_bar"]
+        "children": ["progress_bar", "middle_box", "header"]
     },
     {
         "id": "header",
-        "type": "PisakViewerHeader",
-        "x-expand": "true",
-        "ratio_margin_right": 0.0211,
+        "type": "MxLabel",
+        "text": "ALBUM",
         "x-align": "end"
     },    
     {
@@ -40,8 +39,59 @@
     {
         "id": "button_menu",
         "type": "PisakBoxLayout",
+        "orientation": "vertical",
+        "ratio-spacing": 0.0211,
+        "children": ["button_7","button_6", "button_5", "button_4",
+                     "button_3", "button_2", "button_1"]
+    },
+    {
+        "id": "button_1",
+        "type": "PisakViewerButton",
+        "label": "POKAZ SLAJDÓW",
         "ratio-width": 0.2,
-        "ratio-height": 0.7
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_2",
+        "type": "PisakViewerButton",
+        "label": "POPRZEDNIE ZDJĘCIE",
+        "ratio-width": 0.2,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_3",
+        "type": "PisakViewerButton",
+        "label": "NASTĘPNE ZDJĘCIE",
+        "ratio-width": 0.2,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_4",
+        "type": "PisakViewerButton",
+        "label": "EDYCJA",
+        "ratio-width": 0.2,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_5",
+        "type": "PisakViewerButton",
+        "label": "ULUBIONE",
+        "ratio-width": 0.2,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_6",
+        "type": "PisakViewerButton",
+        "label": "POWRÓT",
+        "ratio-width": 0.2,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_7",
+        "type": "PisakViewerButton",
+        "label": "PANEL STARTOWY",
+        "ratio-width": 0.2,
+        "ratio-height": 0.1
     },
     {
         "id": "photo_widget",
@@ -52,13 +102,18 @@
     },
     {
         "id": "slide",
-        "type": "PisakViewerPhotoSlide"
+        "type": "PisakViewerPhotoSlide",
+        "photo-path": "jagoda.jpg",
+        "transition-duration": 500
     },
     {
         "id": "progress_bar",
         "type": "PisakViewerProgressBar",
         "x-expand": true,
-        "ratio-height": 0.1,
+        "progress": 0.3,
+        "progress-transition-duration": 1000,
+        "ratio-height": 0.05,
+        "counter-limit": 100,
         "label-ratio-x-offset": 0.8
     }
 ]

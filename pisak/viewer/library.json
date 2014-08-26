@@ -46,14 +46,14 @@
     {
         "id": "button_1",
         "type": "PisakViewerButton",
-        "label": "przycisk 1",
+        "label": "POWRÓT",
         "ratio-width": 0.2,
         "ratio-height": 0.1
     },
     {
         "id": "button_2",
         "type": "PisakViewerButton",
-        "label": "przycisk 2",
+        "label": "PANEL STARTOWY",
         "ratio-width": 0.2,
         "ratio-height": 0.1
     },
