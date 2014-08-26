@@ -43,6 +43,7 @@
         "type": "PisakBoxLayout",
         "ratio-width": 0.2,
         "ratio-height": 0.7,
+        "orientation": "vertical",
         "children": ["button_1", "button_2"]
     },
     {
