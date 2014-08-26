@@ -26,9 +26,10 @@
     },
     {
         "id": "header",
-        "type": "PisakViewerHeader",
+        "type": "MxLabel",
         "x-expand": "true",
-        "ratio-margin-right": 0.0211,
+        "text": "BIBLIOTEKA ZDJĘĆ",
+        "margin-right": 20,
         "x-align": "end"
     },
     {
@@ -41,21 +42,43 @@
         "id": "button_menu",
         "type": "PisakBoxLayout",
         "ratio-width": 0.2,
-        "ratio-height": 0.7
+        "ratio-height": 0.7,
+        "children": ["button_1", "button_2"]
+    },
+    {
+        "id": "button_1",
+        "type": "PisakViewerButton",
+        "label": "przycisk 1",
+        "ratio-width": 0.2,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_2",
+        "type": "PisakViewerButton",
+        "label": "przycisk 1",
+        "ratio-width": 0.2,
+        "ratio-height": 0.1
     },
     {
         "id": "pager",
-        "type": "PisakPagerWidget",
-        "ratio-width": 0.7,
-        "ratio-height": 0.7
+        "type": "ClutterActor",
+        "width": 800,
+        "height": 600,
+        "children": ["photo_tile"]
+    },
+    {
+        "id": "photo_tile",
+        "type": "PisakViewerPhotoTile",
+        "label-text": "kafelek",
+        "ratio-width": 0.3,
+        "ratio-height": 0.3
     },
     {
         "id": "progress_bar",
-        "type": "PisakProgressBar",
-        "bar": {"type": "PisakViewerProgressBarBar"},
-        "label": {"type": "PisakViewerProgressBarLabel"},
+        "type": "PisakViewerProgressBar",
         "x-expand": true,
         "ratio-height": 0.1,
+        "counter-limit": 10,
         "label_ratio_x_offset": 0.8
     }
 ]

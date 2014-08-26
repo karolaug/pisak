@@ -18,9 +18,9 @@
         "x-align": "start",
         "x-expand": true,
         "y-expand": true,
-        "ratio_margin_top": 0.0136,
-        "ratio_margin_bottom": 0.0136,
-        "ratio_spacing": 0.0211,
+        "ratio-margin-top": 0.0136,
+        "ratio-margin-bottom": 0.0136,
+        "ratio-spacing": 0.0211,
         "orientation": "vertical",
         "children": ["header", "middle_box", "progress_bar"]
     },
@@ -34,6 +34,7 @@
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
+        "ratio-spacing": 0.0211,
         "children": ["photo_widget", "button_menu"]
     },
     {
@@ -55,11 +56,9 @@
     },
     {
         "id": "progress_bar",
-        "type": "PisakProgressBar",
-        "bar": {"type": "PisakViewerProgressBarBar"},
-        "label": {"type": "PisakViewerProgressBarLabel"},
+        "type": "PisakViewerProgressBar",
         "x-expand": true,
         "ratio-height": 0.1,
-        "label_ratio_x_offset": 0.8
+        "label-ratio-x-offset": 0.8
     }
 ]
