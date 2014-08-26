@@ -714,6 +714,17 @@ class Prediction(pisak.widgets.Button):
         self.idle_icon_name = "hourglass"
         self.icon_name = None
         self.icon_size = 50
+        self.connect("notify::mapped", self._init_whole_text)
+
+    def _init_whole_text(self, *args):
+        layout = self.get_children()[0]
+        clutter_text = layout.get_children()[1]
+        clutter_text.set_property("ellipsize", 0)
+        
+        text_width = clutter_text.get_width()
+        butt_width = self.get_width()
+        if text_width > butt_width:
+            clutter_text.set_scale(text_width/butt_width, 1)
 
     @property
     def idle_icon_name(self):
