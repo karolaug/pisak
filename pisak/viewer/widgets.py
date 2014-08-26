@@ -3,13 +3,14 @@ from gi.repository import Mx, GObject
 from pisak import widgets, layout
 
 
-class ProgressBar(widgets.ProgressBar):
+class ProgressBar(widgets.NewProgressBar):
     __gtype_name__ = "PisakViewerProgressBar"
     
     def __init__(self):
         super().__init__()
         self.label = Mx.Label()
         self.label.set_style_class("PisakViewerProgressBar")
+        self.bar.get_children()[0].set_style_class("PisakViewerProgressBar")
         self.bar.set_style_class("PisakViewerProgressBar")
 
 
