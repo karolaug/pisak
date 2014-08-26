@@ -1,6 +1,6 @@
 [
     {
-        "id": "library",
+        "id": "main",
         "type": "PisakBinLayout",
         "x-expand": true,
         "y-expand": true,
@@ -18,9 +18,9 @@
         "x-align": "start",
         "x-expand": true,
         "y-expand": true,
-        "ratio_margin_top": 0.0136,
-        "ratio_margin_bottom": 0.0136,
-        "ratio_spacing": 0.0211,
+        "ratio_margin-top": 0.0136,
+        "ratio-margin-bottom": 0.0136,
+        "ratio-spacing": 0.0211,
         "orientation": "vertical",
         "children": ["header", "middle_box", "progress_bar"]
     },
@@ -28,13 +28,13 @@
         "id": "header",
         "type": "PisakViewerHeader",
         "x-expand": "true",
-        "ratio_margin_right": 0.0211,
+        "ratio-margin-right": 0.0211,
         "x-align": "end"
     },
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
-        "ratio_spacing": 0.0211,
+        "ratio-spacing": 0.0211,
         "children": ["pager", "button_menu"]
     },
     {

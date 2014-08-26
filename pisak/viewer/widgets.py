@@ -1,4 +1,4 @@
-from gi.repository import Mx
+from gi.repository import Mx, GObject
 
 from pisak import widgets, layout
 
