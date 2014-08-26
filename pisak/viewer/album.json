@@ -1,0 +1,61 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBinLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "children": ["main_box", "background_box"]
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundPattern",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "main_box",
+        "type": "PisakBoxLayout",
+        "x-align": "start",
+        "x-expand": true,
+        "y-expand": true,
+        "ratio_margin_top": 0.0136,
+        "ratio_margin_bottom": 0.0136,
+        "ratio_spacing": 0.0211,
+        "orientation": "vertical",
+        "children": ["header", "middle_box", "progress_bar"]
+    },
+    {
+        "id": "header",
+        "type": "PisakViewerHeader",
+        "x-expand": "true",
+        "ratio_margin_right": 0.0211,
+        "x-align": "end"
+    },
+    {
+        "id": "middle_box",
+        "type": "PisakBoxLayout",
+        "ratio_spacing": 0.0211,
+        "children": ["pager", "button_menu"]
+    },
+    {
+        "id": "button_menu",
+        "type": "PisakBoxLayout",
+        "ratio-width": 0.2,
+        "ratio-height": 0.7
+    },
+    {
+        "id": "pager",
+        "type": "PisakPagerWidget",
+        "ratio-width": 0.7,
+        "ratio-height": 0.7
+    },
+    {
+        "id": "progress_bar",
+        "type": "PisakProgressBar",
+        "bar": {"type": "PisakViewerProgressBarBar"},
+        "label": {"type": "PisakViewerProgressBarLabel"},
+        "x-expand": true,
+        "ratio-height": 0.1,
+        "label_ratio_x_offset": 0.8
+    }
+]
