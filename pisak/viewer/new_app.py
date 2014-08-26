@@ -32,7 +32,7 @@ if __name__ == "__main__":
     Mx.Style.get_default().load_from_file(os.path.join(res.PATH, "css/viewer.css"))
     stage.set_fullscreen(True)
     script = Clutter.Script()
-    script.load_from_file(VIEWS["library"]["path"])
+    script.load_from_file(VIEWS["album"]["path"])
     main = script.get_object("main")
     stage.add_child(main)
     stage.connect("destroy", lambda _: Clutter.main_quit())
