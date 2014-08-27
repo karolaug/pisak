@@ -87,7 +87,7 @@
         "ratio-width": 1,
         "progress": 0.3,
         "progress-transition-duration": 1000,
-        "ratio-height": 0.01,
+        "ratio-height": 0.05,
         "counter-limit": 10,
         "label-ratio-x-offset": 0.8
     }
