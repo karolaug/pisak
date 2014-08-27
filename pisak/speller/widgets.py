@@ -739,6 +739,7 @@ class Prediction(pisak.widgets.Button):
             self.icon_name = None
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
+            self.clutter_text.set_scale(1, 1)
             self.set_label(new_label)
             text_width = self.clutter_text.get_width()
             butt_width = self.get_width()
@@ -747,7 +748,7 @@ class Prediction(pisak.widgets.Button):
                 self.set_offscreen_redirect(Clutter.OffscreenRedirect(2))
                 self.clutter_text.set_scale_full(butt_width/(text_width*1.3),
                                                  butt_width/(text_width*1.3),
-                                                 0, 0)
+                                                 0, self.get_height()/2)
         else:
             self.set_label("")
             self.set_disabled(True)
