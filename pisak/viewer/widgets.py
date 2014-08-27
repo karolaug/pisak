@@ -24,9 +24,9 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
     }
 
     def __init__(self):
-        self.data_generators = {"library": self._get_library,
-                                "album": self._get_album,
-                                "slideshow": self.get_slides}
+        self.data_generators = {"library": self._generate_library,
+                                "album": self._generate_album,
+                                "slideshow": self._generate_slides}
         self.album = None
         self.data_type = None
         self.tile_ratio_height = 0.2
@@ -55,7 +55,7 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
         if value in self.data_generators.keys():
             self.data_generators[value]()
 
-    def _get_library(self):
+    def _generate_library(self):
         data = database_agent.get_categories()
         for item in data:
             tile = PhotoTile()
@@ -69,7 +69,7 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
             #tile.connect("clicked", enter_album, item["category"])
             self.tiles.append(tile)
 
-    def _get_album(self):
+    def _generate_album(self):
         if self.album is not None:
             data = database_agent.get_photos_from_category(self.album)
             for item in data:
@@ -81,7 +81,7 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
                 #tile.connect("clicked", enter_slideshow, item, self.album)
                 self.tiles.append(tile)
 
-    def get_slides(self):
+    def _generate_slides(self):
         if self.album is not None:
             data = database_agent.get_photos_from_category(self.album)
             for item in data:
