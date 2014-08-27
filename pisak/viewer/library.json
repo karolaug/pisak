@@ -29,13 +29,13 @@
         "type": "MxLabel",
         "text": "BIBLIOTEKA ZDJĘĆ",
         "x-expand": true,
-        "margin-right": 30,
+        "margin-right": 100,
         "x-align": "end"
     },
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
-        "ratio-spacing": 0.0211,
+        "ratio-spacing": 0.1,
         "children": ["pager", "button_menu"]
     },
     {
@@ -45,6 +45,7 @@
         "ratio-spacing": 0.0211,
         "y-expand": true,
         "y-align": "end",
+        "ratio-width": 0.25,
         "children": ["button_2", "button_1"]
     },
     {
@@ -63,9 +64,9 @@
     },
     {
         "id": "pager",
-        "type": "ClutterActor",
-        "width": 800,
-        "height": 600,
+        "type": "PisakBinLayout",
+        "ratio-width": 0.65,
+        "ratio-height": 0.8,
         "children": ["photo_tile"]
     },
     {
