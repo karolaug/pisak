@@ -4,14 +4,15 @@ import sys
 from gi.repository import Clutter, Mx
 
 from pisak import switcher_app, signals, res, pager
-from pisak.viewer import widgets
+from pisak.viewer import widgets, model, database_agent
 
 
-_PATH = os.path.abspath(os.path.split(__file__)[0])
+_LIBRARY_PATH = os.getenv("HOME")
+_MODULE_PATH = os.path.abspath(os.path.split(__file__)[0])
 
 
 def _local_get(relative):
-    return os.path.join(_PATH, relative)
+    return os.path.join(_MODULE_PATH, relative)
 
 
 VIEWS = {
@@ -61,6 +62,13 @@ class PisakViewerApp(switcher_app.Application):
         return stage
 
 
+def generate_viewer_data():
+    model.LIBRARY_SUBDIR = ""
+    lib = model.Library(_LIBRARY_PATH)
+    all_photos = lib.scan()[-1]
+    database_agent.insert_many_photos(all_photos)
+
+    
 def usage():
     print("Usage: new_app.py VARIANT")
     print(
@@ -76,4 +84,5 @@ if __name__ == "__main__":
     elif sys.argv[1] not in VIEWS:
         usage()
     else:
+        generate_viewer_data()
         PisakViewerApp(sys.argv).main()

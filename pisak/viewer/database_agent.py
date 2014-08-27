@@ -44,6 +44,14 @@ def get_all_photos():
     db.close_connection()
     return photos
 
+def get_preview_of_category(category):
+    db = DatabaseConnector()
+    db.execute(_CREATE_PHOTOS)
+    query = "SELECT * FROM photos WHERE category='" + category + "' ORDER BY created_on DESC, added_on DESC LIMIT 1"
+    preview = db.execute(query)
+    db.close_connection()
+    return preview[0]
+
 def get_previews(categories_list):
     db = DatabaseConnector()
     db.execute(_CREATE_PHOTOS)

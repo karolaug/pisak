@@ -49,9 +49,6 @@ class PhotoTile(Bin, properties.PropertyAdapter):
             None, None, 0, 1., 0,
             GObject.PARAM_READWRITE)
     }
-    MODEL = {
-        "preview_path": res.PATH
-    }
 
     def __init__(self):
         super().__init__()
@@ -87,7 +84,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
     @preview_path.setter
     def preview_path(self, value):
         self._preview_path = value
-        self.preview.set_from_file(os.path.join(self.MODEL["preview_path"], value))
+        self.preview.set_from_file(value)
 
     @property
     def preview_ratio_width(self):

@@ -2,10 +2,11 @@ import os.path
 
 from gi.repository import Mx, GObject
 
-from pisak import widgets, layout, res, pager
+from pisak import widgets, layout, res, pager, properties
+from pisak.viewer import database_agent
 
 
-class DataSource(pager.DataSource):
+class DataSource(pager.DataSource, properties.PropertyAdapter):
     __gtype_name__ = "PisakViewerDataSource"
     __gproperties__ = {
         "data_type": (
@@ -13,11 +14,87 @@ class DataSource(pager.DataSource):
             "data type",
             "type of the data",
             "noop",
+            GObject.PARAM_READWRITE),
+        "album": (
+            GObject.TYPE_STRING,
+            "album name",
+            "category of the photos",
+            "noop",
             GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
-        super().__init__()
+        self.data_generators = {"library": self._get_library,
+                                "album": self._get_album,
+                                "slideshow": self.get_slides}
+        self.album = None
+        self.data_type = None
+        self.tile_ratio_height = 0.2
+        self.tile_ratio_width = 0.15
+        self.tile_ratio_spacing = 0.01
+        self.tile_preview_ratio_width = 0.12
+        self.tile_preview_ratio_height = 0.7
+        self.tiles = []
+        self.index = 0
+
+    @property
+    def album(self):
+        return self._album
+
+    @album.setter
+    def album(self, value):
+        self._album = value
+
+    @property
+    def data_type(self):
+        return self._data_type
+
+    @data_type.setter
+    def data_type(self, value):
+        self._data_type = value
+        if value in self.data_generators.keys():
+            self.data_generators[value]()
+
+    def _get_library(self):
+        data = database_agent.get_categories()
+        for item in data:
+            tile = PhotoTile()
+            tile.label_text = item["category"]
+            tile.preview_path = database_agent.get_preview_of_category(item["category"])["path"]
+            tile.ratio_width = self.tile_ratio_width
+            tile.ratio_height = self.tile_ratio_height
+            tile.ratio_spacing = self.tile_ratio_spacing
+            tile.preview_ratio_height = self.tile_preview_ratio_height
+            tile.preview_ratio_widtht = self.tile_preview_ratio_width
+            #tile.connect("clicked", enter_album, item["category"])
+            self.tiles.append(tile)
+
+    def _get_album(self):
+        if self.album is not None:
+            data = database_agent.get_photos_from_category(self.album)
+            for item in data:
+                tile = PhotoTile()
+                tile.preview_path = item["path"]
+                tile.scale_mode = Mx.ImageScaleMode.FIT
+                tile.ratio_width = self.tile_ratio_width
+                tile.ratio_height = self.tile_ratio_height
+                #tile.connect("clicked", enter_slideshow, item, self.album)
+                self.tiles.append(tile)
+
+    def get_slides(self):
+        if self.album is not None:
+            data = database_agent.get_photos_from_category(self.album)
+            for item in data:
+                slide = PhotoSlide()
+                slide.photo_path = item["path"]
+                #tile.connect("clicked", enter_slideshow, item, self.album)
+                self.tiles.append(slide)
+            
+    def get_tiles(self, count):
+        tiles = self.tiles[self.index : count]
+        self.index = (self.index + count) % len(self.tiles)
+        return tiles
+        
 
 class ProgressBar(widgets.NewProgressBar):
     __gtype_name__ = "PisakViewerProgressBar"

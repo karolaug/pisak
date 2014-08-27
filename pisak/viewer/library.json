@@ -18,74 +18,59 @@
         "x-align": "start",
         "x-expand": true,
         "y-expand": true,
-        "ratio-margin-top": 0.0136,
-        "ratio-margin-bottom": 0.0136,
-        "ratio-spacing": 0.0211,
+        "ratio-margin-top": 0.12,
+        "ratio-margin-bottom": 0.04,
+        "ratio-spacing": 0.02,
         "orientation": "vertical",
         "children": ["progress_bar", "middle_box", "header"]
-    },
-    {
-        "id": "header",
-        "type": "MxLabel",
-        "text": "BIBLIOTEKA ZDJĘĆ",
-        "x-expand": true,
-        "margin-right": 100,
-        "x-align": "end"
     },
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.1,
-        "children": ["pager", "button_menu"]
+        "children": ["pager_space", "button_menu"]
     },
     {
         "id": "button_menu",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
-        "ratio-spacing": 0.0211,
+        "ratio-spacing": 0.01,
         "y-expand": true,
         "y-align": "end",
-        "ratio-width": 0.25,
         "children": ["button_2", "button_1"]
     },
     {
         "id": "button_1",
         "type": "PisakViewerButton",
         "label": "POWRÓT",
-        "ratio-width": 0.2,
+        "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
         "id": "button_2",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
-        "ratio-width": 0.2,
+        "ratio-width": 0.22,
         "ratio-height": 0.1
+    },
+    {
+        "id": "pager_space",
+        "type": "PisakBinLayout",
+        "ratio-width": 0.68,
+        "ratio-height": 0.7,
+        "children": ["pager"]
     },
     {
         "id": "pager",
         "type": "PisakPagerWidget",
-        "width": 1000,
-        "height": 800,
-        "data-source": "library_data",
-        "children": ["photo_tile"]
+        "x-expand": true,
+        "y-expand": true,
+        "data-source": "library_data"
     },
     {
         "id": "library_data",
         "type": "PisakViewerDataSource",
         "data-type": "library"
-    },
-    {
-        "id": "photo_tile",
-        "type": "PisakViewerPhotoTile",
-        "label-text": "kafelek",
-        "background-color": "rgb(200, 100, 30)",
-        "preview-path": "jagoda.jpg",
-        "ratio-width": 0.2,
-        "ratio-height": 0.2,
-        "preview-ratio-width": 0.16,
-        "preview-ratio-height": 0.16,
-        "ratio-spacing": 0.008
     },
     {
         "id": "progress_bar",
@@ -95,6 +80,6 @@
         "progress-transition-duration": 1000,
         "ratio-height": 0.05,
         "counter-limit": 10,
-        "label-ratio-x-offset": 0.8
+        "label-ratio-x-offset": 0.9
     }
 ]
