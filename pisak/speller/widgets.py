@@ -746,9 +746,7 @@ class Prediction(pisak.widgets.Button):
             self.set_disabled(False)
             if text_width + 27 > butt_width:
                 self.set_offscreen_redirect(Clutter.OffscreenRedirect(2))
-                self.clutter_text.set_scale_full(butt_width/(text_width*1.3),
-                                                 butt_width/(text_width*1.3),
-                                                 0, self.get_height()/2)
+                self.clutter_text.set_scale_full(butt_width/(text_width*1.3),butt_width/(text_width*1.3),0, self.get_height()/2)#-self.clutter_text.get_height()/2) - this cenetrs on y-axis but destroys rendering of some letters
         else:
             self.set_label("")
             self.set_disabled(True)
