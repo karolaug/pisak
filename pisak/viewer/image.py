@@ -12,9 +12,8 @@ class PhotoBuffer(object):
     PIXEL_FORMATS = {'1_1': Cogl.PixelFormat.G_8, 'L_1': Cogl.PixelFormat.A_8,
                      'RGB_2': Cogl.PixelFormat.RGB_565, 'RGB_3': Cogl.PixelFormat.RGB_888,
                      'RGBA_2': Cogl.PixelFormat.RGBA_4444, 'RGBA_4': Cogl.PixelFormat.RGBA_8888}
-    def __init__(self, view, photo, slide):
-        self.view = view
-        self.path = photo.path
+    def __init__(self, photo_path, slide):
+        self.path = photo_path
         self.slide = slide
         self.original_photo = Image.open(self.path)
         if self.original_photo.mode == 'P':
@@ -23,16 +22,16 @@ class PhotoBuffer(object):
         self.zoom_timer = None
         self.noise_timer = None
 
-    def mirror(self, source, event):
+    def mirror(self, *args):
         self.buffer = self.buffer.transpose(Image.FLIP_LEFT_RIGHT)
 
-    def grayscale(self, source, event):
+    def grayscale(self, *args):
         self.buffer = self.buffer.convert('L')
 
-    def rotate(self, source, event):
+    def rotate(self, *args):
         self.buffer = self.buffer.transpose(Image.ROTATE_90)
 
-    def solarize(self, source, event):
+    def solarize(self, *args):
         threshold = 80
         bands = self.buffer.getbands()
         source = self.buffer.split()
@@ -44,7 +43,7 @@ class PhotoBuffer(object):
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
 
-    def invert(self, source, event):
+    def invert(self, *args):
         bands = self.buffer.getbands()
         source = self.buffer.split()
         for idx in range(len(source)):
@@ -54,7 +53,7 @@ class PhotoBuffer(object):
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
 
-    def sepia(self, source, event):
+    def sepia(self, *args):
         level = 50
         grayscale = self.buffer.convert('L')
         red = grayscale.point(lambda i: i + level*1.5)
@@ -68,7 +67,7 @@ class PhotoBuffer(object):
             alpha = source[bands.index('A')]
             self.buffer = Image.merge('RGBA', (red, green, blue, alpha))
 
-    def edges(self, source, event):
+    def edges(self, *args):
         bands = self.buffer.getbands()
         source = self.buffer.split()
         for idx in range(len(source)):
@@ -78,7 +77,7 @@ class PhotoBuffer(object):
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
 
-    def contour(self, source, event):
+    def contour(self, *args):
         bands = self.buffer.getbands()
         source = self.buffer.split()
         for idx in range(len(source)):
@@ -88,7 +87,7 @@ class PhotoBuffer(object):
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
 
-    def noise(self, source, event):
+    def noise(self, *args):
         if not self.noise_timer:
             self.noise_timer = Clutter.Timeline.new(200)
             self.noise_timer.set_repeat_count(50)
@@ -109,7 +108,7 @@ class PhotoBuffer(object):
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
 
-    def zoom(self, source, event):
+    def zoom(self, *args):
         if not self.zoom_timer:
             self.zoom_timer = Clutter.Timeline.new(200)
             self.zoom_timer.set_repeat_count(35)
@@ -125,10 +124,10 @@ class PhotoBuffer(object):
         x1, y1 = width-x0, height-y0
         self.buffer = self.buffer.transform((width, height), Image.EXTENT, (x0, y0, x1, y1))
 
-    def original(self, source, event):
+    def original(self, *args):
         self.buffer = self.original_photo.copy()
 
-    def save(self, source, event):
+    def save(self, *args):
         raise NotImplementedError()
 
     def _pre_update(self):
@@ -146,7 +145,6 @@ class PhotoBuffer(object):
             cogl_pixel_format = self.PIXEL_FORMATS[pixel_format]
         return data, cogl_pixel_format, width, height, row_stride
 
-    def _update(self):
-        # pass these to the photo_actor and load from data
-        # data, pixel_format, width, height, row_stride = self._pre_update()
-        pass
+    def load(self):
+        data, pixel_format, width, height, row_stride = self._pre_update()
+        self.slide.set_from_data(data, pixel_format, width, height, row_stride)

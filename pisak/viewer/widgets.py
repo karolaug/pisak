@@ -3,7 +3,7 @@ import os.path
 from gi.repository import Mx, GObject
 
 from pisak import widgets, layout, res, pager, properties
-from pisak.viewer import database_agent
+from pisak.viewer import database_agent, image
 
 
 class DataSource(pager.DataSource, properties.PropertyAdapter):
@@ -140,6 +140,7 @@ class PhotoSlide(layout.Bin):
 
     def __init__(self):
         super().__init__()
+        self.image_buffer = None
         self.photo = Mx.Image()
         self.photo.set_scale_mode(Mx.ImageScaleMode.FIT)
         self.add_child(self.photo)
@@ -152,6 +153,7 @@ class PhotoSlide(layout.Bin):
     def photo_path(self, value):
         self._photo_path = value
         self.photo.set_from_file(os.path.join(self.MODEL["photo_path"], value))
+        self.image_buffer = photo.PhotoBuffer(value, self)
 
     @property
     def transition_duration(self):
