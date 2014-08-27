@@ -28,6 +28,8 @@
         "id": "header",
         "type": "MxLabel",
         "text": "BIBLIOTEKA ZDJĘĆ",
+        "x-expand": true,
+        "margin-right": 30,
         "x-align": "end"
     },
     {
@@ -41,6 +43,8 @@
         "type": "PisakBoxLayout",
         "orientation": "vertical",
         "ratio-spacing": 0.0211,
+        "y-expand": true,
+        "y-align": "end",
         "children": ["button_2", "button_1"]
     },
     {
