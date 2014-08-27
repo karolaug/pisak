@@ -3,7 +3,7 @@ import sys
 
 from gi.repository import Clutter, Mx
 
-from pisak import switcher_app, signals, res
+from pisak import switcher_app, signals, res, pager
 from pisak.viewer import widgets
 
 

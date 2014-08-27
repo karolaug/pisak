@@ -64,10 +64,16 @@
     },
     {
         "id": "pager",
-        "type": "PisakBinLayout",
-        "ratio-width": 0.65,
-        "ratio-height": 0.8,
+        "type": "PisakPagerWidget",
+        "width": 1000,
+        "height": 800,
+        "data-source": "library_data",
         "children": ["photo_tile"]
+    },
+    {
+        "id": "library_data",
+        "type": "PisakViewerDataSource",
+        "data-type": "library"
     },
     {
         "id": "photo_tile",

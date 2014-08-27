@@ -2,8 +2,22 @@ import os.path
 
 from gi.repository import Mx, GObject
 
-from pisak import widgets, layout, res
+from pisak import widgets, layout, res, pager
 
+
+class DataSource(pager.DataSource):
+    __gtype_name__ = "PisakViewerDataSource"
+    __gproperties__ = {
+        "data_type": (
+            GObject.TYPE_STRING,
+            "data type",
+            "type of the data",
+            "noop",
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
 
 class ProgressBar(widgets.NewProgressBar):
     __gtype_name__ = "PisakViewerProgressBar"
