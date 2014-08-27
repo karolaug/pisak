@@ -84,7 +84,7 @@
     {
         "id": "progress_bar",
         "type": "PisakViewerProgressBar",
-        "x-expand": true,
+        "ratio-width": 1,
         "progress": 0.3,
         "progress-transition-duration": 1000,
         "ratio-height": 0.01,
