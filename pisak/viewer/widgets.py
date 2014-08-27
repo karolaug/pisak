@@ -31,6 +31,8 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
         self.data_type = None
         self.tile_ratio_height = 0.2
         self.tile_ratio_width = 0.15
+        self.slide_ratio_height = 0.7
+        self.slide_ratio_width = 0.68
         self.tile_ratio_spacing = 0.01
         self.tile_preview_ratio_width = 0.12
         self.tile_preview_ratio_height = 0.12
@@ -86,6 +88,8 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
             data = database_agent.get_photos_from_category(self.album)
             for item in data:
                 slide = PhotoSlide()
+                slide.ratio_height = self.slide_ratio_height
+                slide.ratio_width = self.slide_ratio_width
                 slide.photo_path = item["path"]
                 #tile.connect("clicked", enter_slideshow, item, self.album)
                 self.tiles.append(slide)
@@ -152,8 +156,9 @@ class PhotoSlide(layout.Bin):
     @photo_path.setter
     def photo_path(self, value):
         self._photo_path = value
-        self.photo.set_from_file(os.path.join(self.MODEL["photo_path"], value))
-        self.image_buffer = image.PhotoBuffer(value, self)
+        absolute_path = os.path.join(self.MODEL["photo_path"], value)
+        self.photo.set_from_file(absolute_path)
+        self.image_buffer = image.PhotoBuffer(absolute_path, self)
 
     @property
     def transition_duration(self):

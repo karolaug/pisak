@@ -1,9 +1,11 @@
 '''
 Module with operations on image data.
 '''
+import random
+
 from PIL import Image, ImageFilter
 from gi.repository import Cogl, Clutter
-import random
+
 
 class PhotoBuffer(object):
     """
@@ -17,19 +19,22 @@ class PhotoBuffer(object):
         self.slide = slide
         self.original_photo = Image.open(self.path)
         if self.original_photo.mode == 'P':
-            self.original_photo = self.original_photo.convert() #translates through built-in palette
+            self.original_photo = self.original_photo.convert()  # translates through built-in palette
         self.buffer = self.original_photo.copy()
         self.zoom_timer = None
         self.noise_timer = None
 
     def mirror(self, *args):
         self.buffer = self.buffer.transpose(Image.FLIP_LEFT_RIGHT)
+        self._load()
 
     def grayscale(self, *args):
         self.buffer = self.buffer.convert('L')
+        self._load()
 
     def rotate(self, *args):
         self.buffer = self.buffer.transpose(Image.ROTATE_90)
+        self._load()
 
     def solarize(self, *args):
         threshold = 80
@@ -42,6 +47,7 @@ class PhotoBuffer(object):
                 source[idx].paste(out, None, mask)
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
+        self._load()
 
     def invert(self, *args):
         bands = self.buffer.getbands()
@@ -52,6 +58,7 @@ class PhotoBuffer(object):
                 source[idx].paste(out, None)
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
+        self._load()
 
     def sepia(self, *args):
         level = 50
@@ -66,6 +73,7 @@ class PhotoBuffer(object):
             source = self.buffer.split()
             alpha = source[bands.index('A')]
             self.buffer = Image.merge('RGBA', (red, green, blue, alpha))
+        self._load()
 
     def edges(self, *args):
         bands = self.buffer.getbands()
@@ -76,6 +84,7 @@ class PhotoBuffer(object):
                 source[idx].paste(out, None)
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
+        self._load()
 
     def contour(self, *args):
         bands = self.buffer.getbands()
@@ -86,18 +95,22 @@ class PhotoBuffer(object):
                 source[idx].paste(out, None)
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
+        self._load()
 
     def noise(self, *args):
         if not self.noise_timer:
             self.noise_timer = Clutter.Timeline.new(200)
             self.noise_timer.set_repeat_count(50)
             self.noise_timer.connect('completed', self._noise_update)
+            self.noise_timer.connect('stopped', self._noise_finish)
             self.noise_timer.start()
         else:
             self.noise_timer.stop()
-            self.noise_timer = None
 
-    def _noise_update(self, event):
+    def _noise_finish(self, *args):
+        self.noise_timer = None
+
+    def _noise_update(self, *args):
         level = 40
         bands = self.buffer.getbands()
         source = self.buffer.split()
@@ -107,30 +120,36 @@ class PhotoBuffer(object):
                 source[idx].paste(out, None)
         mode = self.buffer.mode
         self.buffer = Image.merge(mode, source)
+        self._load()
 
     def zoom(self, *args):
         if not self.zoom_timer:
             self.zoom_timer = Clutter.Timeline.new(200)
             self.zoom_timer.set_repeat_count(35)
             self.zoom_timer.connect('completed', self._zoom_update)
+            self.zoom_timer.connect('stopped', self._zoom_finish)
             self.zoom_timer.start()
         else:
             self.zoom_timer.stop()
-            self.zoom_timer = None
 
-    def _zoom_update(self, event):
+    def _zoom_finish(self, *args):
+        self.zoom_timer = None
+
+    def _zoom_update(self, *args):
         width, height = self.buffer.size[0], self.buffer.size[1]
         x0, y0 = width/50, height/50
         x1, y1 = width-x0, height-y0
         self.buffer = self.buffer.transform((width, height), Image.EXTENT, (x0, y0, x1, y1))
+        self._load()
 
     def original(self, *args):
         self.buffer = self.original_photo.copy()
+        self._load()
 
     def save(self, *args):
         raise NotImplementedError()
 
-    def _pre_load(self):
+    def _load(self):
         data = self.buffer.tobytes()
         width, height = self.buffer.size[0], self.buffer.size[1]
         pixel_count = width*height
@@ -143,8 +162,4 @@ class PhotoBuffer(object):
             print('Pixel format {} not supported.'.format(pixel_format))
         else:
             cogl_pixel_format = self.PIXEL_FORMATS[pixel_format]
-        return data, cogl_pixel_format, width, height, row_stride
-
-    def load(self):
-        data, pixel_format, width, height, row_stride = self._pre_load()
-        self.slide.set_from_data(data, pixel_format, width, height, row_stride)
+        self.slide.set_from_data(data, cogl_pixel_format, width, height, row_stride)

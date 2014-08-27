@@ -4,7 +4,7 @@ import sys
 from gi.repository import Clutter, Mx
 
 from pisak import switcher_app, signals, res, pager
-from pisak.viewer import widgets, model, database_agent
+from pisak.viewer import widgets, model, database_agent, handlers
 
 
 _LIBRARY_PATH = os.getenv("HOME")
@@ -24,6 +24,9 @@ VIEWS = {
     },
     "photo": {
         "path": _local_get("photo.json")
+    },
+    "photo_edition": {
+        "path": _local_get("photo_edition.json")
     }
 }
 
@@ -75,7 +78,8 @@ def usage():
         "Where variant is on of:\n"
         "  album\n"
         "  library\n"
-        "  photo\n")
+        "  photo\n"
+        "  photo_edition")
 
 
 if __name__ == "__main__":

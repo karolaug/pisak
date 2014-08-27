@@ -28,7 +28,7 @@
         "id": "middle_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.1,
-        "children": ["pager_space", "button_menu"]
+        "children": ["slide", "button_menu"]
     },
     {
         "id": "button_menu",
@@ -90,32 +90,11 @@
         "ratio-height": 0.1
     },
     {
-        "id": "photo_space",
-        "type": "PisakBinLayout",
+        "id": "slide",
+        "type": "PisakViewerPhotoSlide",
         "ratio-width": 0.68,
         "ratio-height": 0.7,
-        "children": ["slide"]
-    },
-    {
-        "id": "pager_space",
-        "type": "PisakBinLayout",
-        "ratio-width": 0.68,
-        "ratio-height": 0.7,
-        "children": ["pager"]
-    },
-    {
-        "id": "pager",
-        "type": "PisakPagerWidget",
-        "x-expand": true,
-        "y-expand": true,
-        "rows": 1,
-        "columns": 1,
-        "data-source": "library_data"
-    },
-    {
-        "id": "library_data",
-        "type": "PisakViewerDataSource",
-        "data-type": "slideshow"
+        "photo_path": "jagoda.jpg"
     },
     {
         "id": "progress_bar",
