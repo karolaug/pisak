@@ -187,8 +187,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self.before = before
             self.after = after
             assert pos >= 0, "Invalid position"
-            assert len(before) > 0, "Not a replacement"
-            assert len(after) > 0, "Not a replacement"
 
         def _replace(self, text, before, after):
             text.clutter_text.delete_text(self.pos, self.pos + len(before) + 1)
