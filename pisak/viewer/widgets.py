@@ -33,7 +33,7 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
         self.tile_ratio_width = 0.15
         self.tile_ratio_spacing = 0.01
         self.tile_preview_ratio_width = 0.12
-        self.tile_preview_ratio_height = 0.7
+        self.tile_preview_ratio_height = 0.12
         self.tiles = []
         self.index = 0
 
