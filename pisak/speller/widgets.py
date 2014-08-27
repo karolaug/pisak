@@ -96,9 +96,18 @@ class Cursor(Clutter.Actor):
     
 class Text(Mx.Label, properties.PropertyAdapter):
     class Insertion(object):
+        """
+        Text replacement operation
+        """
         def __init__(self, pos, value):
+            """
+            Creates text insertion
+            :param: pos position of insertion
+            :param: value nonempty string to be inserted
+            """
             self.pos = pos
             self.value = value
+            assert len(self.value) > 0, "Invalid insertion"
 
         def apply(self, text):
             text.clutter_text.insert_text(self.value, self.pos)
@@ -124,9 +133,18 @@ class Text(Mx.Label, properties.PropertyAdapter):
             return "+ {} @ {}".format(self.value, self.pos)
 
     class Deletion(object):
+        """
+        Text deletion operation
+        """
         def __init__(self, pos, value):
+            """
+            Creates text deletion
+            :param: pos position of deletion
+            :param: value nonempty string to be deleted
+            """
             self.pos = pos
             self.value = value
+            assert len(self.value), "Invalid deletion"
 
         def apply(self, text):
             end = self.pos + len(self.value)
@@ -153,7 +171,16 @@ class Text(Mx.Label, properties.PropertyAdapter):
             return "- {} @ {}".format(self.value, self.pos)
 
     class Replacement(object):
+        """
+        Replacement operation
+        """
         def __init__(self, pos, before, after):
+            """
+            Creates text insertion
+            :param: pos position of replacement
+            :param: before nonempty string to be deleted
+            :param: after nonemty string to be inserted
+            """
             self.pos = pos
             self.before = before
             self.after = after
@@ -166,7 +193,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self._replace(text, self.before, self.after)
 
         def revert(self, text):
-            self._replace(text)
+            self._replace(text, self.after, self.before)
 
         def compose(self, *args):
             return False
@@ -267,8 +294,10 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Clear the entire text buffer
         """
-        operation = Text.Deletion(0, self.get_text())
-        self.add_operation(operation)
+        text = self.get_text()
+        if len(text) > 0:
+            operation = Text.Deletion(0, self.get_text())
+            self.add_operation(operation)
 
 
     def get_endmost_triplet(self):
