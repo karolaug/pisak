@@ -67,7 +67,7 @@ class CursorGroup(Clutter.Actor):
         self.cursor.set_y(0)
         
     def move_cursor(self, event):
-        cursor_pos = self.text.clutter_text.get_cursor_position()
+        cursor_pos = self.text.get_cursor_position()
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
         self.cursor.set_x(coords[1])
         self.cursor.set_y(coords[2])
@@ -102,11 +102,12 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def __init__(self, pos, value):
             """
             Creates text insertion
-            :param: pos position of insertion
+            :param: pos absolute position of insertion
             :param: value nonempty string to be inserted
             """
             self.pos = pos
             self.value = value
+            assert pos >= 0, "Invalid position"
             assert len(self.value) > 0, "Invalid insertion"
 
         def apply(self, text):
@@ -119,8 +120,8 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def compose(self, operation):
             if isinstance(operation, Text.Insertion):
                 consecutive = self.pos + len(self.value) == operation.pos
-                compatible = self.value[-1].isspace() or \
-                    not operation.value[0].isspace()
+                compatible = not self.value[-1].isspace() or \
+                    operation.value[0].isspace()
                 if consecutive and compatible:
                     self.value = self.value + operation.value
                     return True
@@ -139,11 +140,12 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def __init__(self, pos, value):
             """
             Creates text deletion
-            :param: pos position of deletion
+            :param: pos absolute position of deletion
             :param: value nonempty string to be deleted
             """
             self.pos = pos
             self.value = value
+            assert pos >= 0, "Invalid position"
             assert len(self.value), "Invalid deletion"
 
         def apply(self, text):
@@ -184,6 +186,9 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self.pos = pos
             self.before = before
             self.after = after
+            assert pos >= 0, "Invalid position"
+            assert len(before) > 0, "Not a replacement"
+            assert len(after) > 0, "Not a replacement"
 
         def _replace(self, text, before, after):
             text.clutter_text.delete_text(self.pos, self.pos + len(before) + 1)
@@ -220,6 +225,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         if len(self.history) == 0 or not self.history[-1].compose(operation):
             self.history.append(operation)
         operation.apply(self)
+        print (list(map(str, self.history)))
     
     def revert_operation(self):
         if len(self.history) > 0:
@@ -241,24 +247,19 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         return len(self.clutter_text.get_text())
 
+
+    def get_cursor_position(self):
+        pos = self.clutter_text.get_cursor_position()
+        return pos if pos > 0 else len(self.get_text())
+
     def type_text(self, text):
         """
         Insert the given text to the text buffer on the
         current cursor position
         @param text string passed after a user's actions
         """
-        pos = self.clutter_text.get_cursor_position()
+        pos = self.get_cursor_position()
         operation = Text.Insertion(pos, text)
-        self.add_operation(operation)
-
-    def type_unicode_char(self, char):
-        """
-        Append the given unicode character to the text buffer
-        @param char unicode character in the form of unicode escape sequence
-        :deprecated:
-        """ 
-        # TODO: remove
-        operation = Text.Insertion(self.get_text_length(), char)
         self.add_operation(operation)
 
     def delete_char(self):
@@ -266,13 +267,8 @@ class Text(Mx.Label, properties.PropertyAdapter):
         Delete the single character from behind the
         current cursor position
         """
-        pos = self.clutter_text.get_cursor_position()
-        if pos == -1:
-            if self.get_text_length() > 0:
-                pos = self.get_text_length() - 1
-            else:
-                return False
-        elif pos == 0:
+        pos = self.get_cursor_position()
+        if pos == 0:
             return
         elif pos > 0:
             pos -= 1
@@ -360,7 +356,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one position forward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         if current_position < self.get_text_length():
             self.clutter_text.set_cursor_position(current_position+1)
 
@@ -368,7 +364,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one position backward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text_length = self.get_text_length()
         if current_position > 0:
             self.clutter_text.set_cursor_position(current_position-1)
@@ -379,7 +375,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one word backward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text = self.clutter_text.get_text()
         if current_position == 0:
             pass
@@ -401,7 +397,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one word forward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text = self.clutter_text.get_text()
         if current_position <= -1:
             pass
@@ -426,7 +422,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         
         layout = self.clutter_text.get_layout()
         text = self.get_text()
-        cursor_pos = self.clutter_text.get_cursor_position()
+        cursor_pos = self.get_cursor_position()
         if cursor_pos == 0:
             index_ = 0
         else:
