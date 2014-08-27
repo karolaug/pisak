@@ -130,7 +130,7 @@ class PhotoBuffer(object):
     def save(self, *args):
         raise NotImplementedError()
 
-    def _pre_update(self):
+    def _pre_load(self):
         data = self.buffer.tobytes()
         width, height = self.buffer.size[0], self.buffer.size[1]
         pixel_count = width*height
@@ -146,5 +146,5 @@ class PhotoBuffer(object):
         return data, cogl_pixel_format, width, height, row_stride
 
     def load(self):
-        data, pixel_format, width, height, row_stride = self._pre_update()
+        data, pixel_format, width, height, row_stride = self._pre_load()
         self.slide.set_from_data(data, pixel_format, width, height, row_stride)
