@@ -2,7 +2,7 @@
 Pager widget tests
 '''
 import unittest
-from gi.repository import Clutter, GObject
+from gi.repository import Clutter
 from pisak import pager, scanning
 
 
@@ -16,9 +16,13 @@ class Test(unittest.TestCase):
         pager_actor = pager.PagerWidget()
         parent_group.add_child(pager_actor)
         subgroups = list(parent_group.get_subgroups())
-        self.assertEqual(subgroups, [], "Failed to get valid subgroups")
+        self.assertEqual(len(subgroups), 1, "Failed to get valid subgroups")
+        pager_actor.flip()
+        subgroups = list(parent_group.get_subgroups())
+        self.assertEqual(len(subgroups), pager_actor.columns + 1, "Incorrect group count")
     
     def test_data_source(self):
+        """Test data source setting"""
         pager_actor = pager.PagerWidget()
         data_source = pager_actor.get_property("data-source")
         self.assertEqual(data_source, None, "Incorrect initialization")
