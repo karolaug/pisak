@@ -16,10 +16,7 @@ class LauncherStage(Clutter.Stage):
         self.set_layout_manager(self.layout)
         self.views = descriptor.get("views")
         self.initial = descriptor.get("initial-view")
-        color = descriptor.get("background-color")
-        if color:
-            self.set_background_color(Clutter.Color.from_string(color)[1])
-        initial_data = descriptor.get("initial-data")
+        self.initial_data = descriptor.get("initial-data")
         self.load_view(self.initial, initial_data)
 
     def load_view(self, name, data):
