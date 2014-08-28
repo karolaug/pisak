@@ -40,6 +40,19 @@
     },
     {
         "id": "button_menu",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+        "children": ["button_menu_box"],
+        "scanning-hilite": true,
+        "strategy": {
+            "id": "menu_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800,
+            "max-cycle-count": 2
+        }
+    },
+    {
+        "id": "button_menu_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
         "ratio-spacing": 0.01,
