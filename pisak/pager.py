@@ -21,7 +21,7 @@ class _Page(Clutter.Actor):
         for _column in range(columns):
             group = scanning.Group()
             group_box = Clutter.Actor()
-            group_box_layout = Clutter.Box()
+            group_box_layout = Clutter.BoxLayout()
             group_box_layout.set_orientation(Clutter.Orientation.VERTICAL)
             group_box.set_layout_manager(group_box_layout)
             group.add_child(group_box)
@@ -53,11 +53,11 @@ class PagerWidget(Clutter.Actor, properties.PropertyAdapter):
         "columns": (GObject.TYPE_UINT, "", "", 1, GObject.G_MAXUINT, 3, GObject.PARAM_READWRITE),
     }
 
-    def __init__(self):
+    def __init__(self, rows=4, columns=3):
         super().__init__()
         self._data_source = None
-        self._rows = 4
-        self._columns = 3
+        self._rows = rows
+        self._columns = columns
         self._current_page = None
         self._flip_group = _FlipGroup(self)
         self.add_child(self._flip_group)
@@ -88,7 +88,7 @@ class PagerWidget(Clutter.Actor, properties.PropertyAdapter):
     
     def flip(self):
         if self.data_source is not None:
-            tiles = self.data_source.get_tiles(12)
+            tiles = self.data_source.get_tiles(self.columns * self.rows)
         else:
             tiles = []
         if self._current_page is not None:
