@@ -30,6 +30,7 @@ class PhotoBuffer(object):
 
     def grayscale(self, *args):
         self.buffer = self.buffer.convert('L')
+        self.invert()
         self._load()
 
     def rotate(self, *args):
