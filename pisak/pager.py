@@ -69,6 +69,7 @@ class PagerWidget(Clutter.Actor, properties.PropertyAdapter):
     @data_source.setter
     def data_source(self, value):
         self._data_source = value
+        self.flip()
     
     @property
     def rows(self):
