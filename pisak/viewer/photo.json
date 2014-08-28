@@ -50,55 +50,56 @@
         "ratio-spacing": 0.01,
         "y-expand": true,
         "y-align": "end",
-        "children": ["button_7","button_6", "button_5", "button_4",
-                     "button_3", "button_2", "button_1"]
+        "children": ["button_library","button_album", "button_favourite", 
+		     "button_edition", "button_next", "button_previous", 
+		     "button_slide"]
     },
     {
-        "id": "button_1",
+        "id": "button_slide",
         "type": "PisakViewerButton",
         "label": "POKAZ SLAJDÓW",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
-        "id": "button_2",
+        "id": "button_previous",
         "type": "PisakViewerButton",
         "label": "POPRZEDNIE ZDJĘCIE",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
-        "id": "button_3",
+        "id": "button_next",
         "type": "PisakViewerButton",
         "label": "NASTĘPNE ZDJĘCIE",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
-        "id": "button_4",
+        "id": "button_edition",
         "type": "PisakViewerButton",
         "label": "EDYCJA",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
-        "id": "button_5",
+        "id": "button_favourite",
         "type": "PisakViewerButton",
         "label": "ULUBIONE",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
-        "id": "button_6",
+        "id": "button_album",
         "type": "PisakViewerButton",
-        "label": "POWRÓT",
+        "label": "Album",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
-        "id": "button_7",
+        "id": "button_library",
         "type": "PisakViewerButton",
-        "label": "PANEL STARTOWY",
+        "label": "Biblioteka",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },

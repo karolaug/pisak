@@ -61,14 +61,14 @@
         "children": ["button_2", "button_1"]
     },
     {
-        "id": "button_1",
+        "id": "button_library",
         "type": "PisakViewerButton",
-        "label": "POWRÓT",
+        "label": "Biblioteka",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
-        "id": "button_2",
+        "id": "button_start",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
         "ratio-width": 0.22,
