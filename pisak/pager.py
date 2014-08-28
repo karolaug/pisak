@@ -23,12 +23,13 @@ class _Page(Clutter.Actor):
             group_box = Clutter.Actor()
             group_box_layout = Clutter.Box()
             group_box_layout.set_orientation(Clutter.Orientation.VERTICAL)
-            group_box.set_layout_manager(Clutter.BoxLayout())
+            group_box.set_layout_manager(group_box_layout)
             group.add_child(group_box)
             self.add_child(group)
             for _row in range(rows):
                 actor = tiles[index] if index < len(tiles) else Clutter.Actor()
                 group_box.add_child(actor)
+                index += 1
 
 
 class _FlipGroup(scanning.Group):
