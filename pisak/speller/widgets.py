@@ -43,7 +43,7 @@ class CursorGroup(Clutter.Actor):
         self.connect("notify::mapped", self.init_content)
     
     def init_content(self, *args):
-        self.text = [i for i in self.get_children() 
+        self.text = [i for i in self.get_children()
                      if type(i) == Text][0]
         self.init_cursor()
         self.text.clutter_text.connect('text-changed', self.move_cursor)
@@ -67,7 +67,7 @@ class CursorGroup(Clutter.Actor):
         self.cursor.set_y(0)
         
     def move_cursor(self, event):
-        cursor_pos = self.text.clutter_text.get_cursor_position()
+        cursor_pos = self.text.get_cursor_position()
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
         self.cursor.set_x(coords[1])
         self.cursor.set_y(coords[2])
@@ -96,9 +96,19 @@ class Cursor(Clutter.Actor):
     
 class Text(Mx.Label, properties.PropertyAdapter):
     class Insertion(object):
+        """
+        Text replacement operation
+        """
         def __init__(self, pos, value):
+            """
+            Creates text insertion
+            :param: pos absolute position of insertion
+            :param: value nonempty string to be inserted
+            """
             self.pos = pos
             self.value = value
+            assert pos >= 0, "Invalid position"
+            assert len(self.value) > 0, "Invalid insertion"
 
         def apply(self, text):
             text.clutter_text.insert_text(self.value, self.pos)
@@ -110,8 +120,8 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def compose(self, operation):
             if isinstance(operation, Text.Insertion):
                 consecutive = self.pos + len(self.value) == operation.pos
-                compatible = self.value[-1].isspace() or \
-                    not operation.value[0].isspace()
+                compatible = not self.value[-1].isspace() or \
+                    operation.value[0].isspace()
                 if consecutive and compatible:
                     self.value = self.value + operation.value
                     return True
@@ -124,9 +134,19 @@ class Text(Mx.Label, properties.PropertyAdapter):
             return "+ {} @ {}".format(self.value, self.pos)
 
     class Deletion(object):
+        """
+        Text deletion operation
+        """
         def __init__(self, pos, value):
+            """
+            Creates text deletion
+            :param: pos absolute position of deletion
+            :param: value nonempty string to be deleted
+            """
             self.pos = pos
             self.value = value
+            assert pos >= 0, "Invalid position"
+            assert len(self.value), "Invalid deletion"
 
         def apply(self, text):
             end = self.pos + len(self.value)
@@ -153,10 +173,20 @@ class Text(Mx.Label, properties.PropertyAdapter):
             return "- {} @ {}".format(self.value, self.pos)
 
     class Replacement(object):
+        """
+        Replacement operation
+        """
         def __init__(self, pos, before, after):
+            """
+            Creates text insertion
+            :param: pos position of replacement
+            :param: before nonempty string to be deleted
+            :param: after nonemty string to be inserted
+            """
             self.pos = pos
             self.before = before
             self.after = after
+            assert pos >= 0, "Invalid position"
 
         def _replace(self, text, before, after):
             text.clutter_text.delete_text(self.pos, self.pos + len(before) + 1)
@@ -166,7 +196,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self._replace(text, self.before, self.after)
 
         def revert(self, text):
-            self._replace(text)
+            self._replace(text, self.after, self.before)
 
         def compose(self, *args):
             return False
@@ -179,7 +209,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
         "ratio_height": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE)}
-    
+
     def __init__(self):
         super().__init__()
         self.history = []
@@ -193,15 +223,15 @@ class Text(Mx.Label, properties.PropertyAdapter):
         if len(self.history) == 0 or not self.history[-1].compose(operation):
             self.history.append(operation)
         operation.apply(self)
-    
+
     def revert_operation(self):
         if len(self.history) > 0:
             self.history.pop().revert(self)
-        
+
     def _set_text_params(self):
         self.clutter_text.set_line_wrap(True)
         self.clutter_text.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
-        
+
     def get_text(self):
         """
         Return the entire text from the text buffer
@@ -214,13 +244,18 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         return len(self.clutter_text.get_text())
 
+
+    def get_cursor_position(self):
+        pos = self.clutter_text.get_cursor_position()
+        return pos if pos > 0 else len(self.get_text())
+
     def type_text(self, text):
         """
         Insert the given text to the text buffer on the
         current cursor position
         @param text string passed after a user's actions
         """
-        pos = self.clutter_text.get_cursor_position()
+        pos = self.get_cursor_position()
         operation = Text.Insertion(pos, text)
         self.add_operation(operation)
 
@@ -239,20 +274,15 @@ class Text(Mx.Label, properties.PropertyAdapter):
         Delete the single character from behind the
         current cursor position
         """
-        pos = self.clutter_text.get_cursor_position()
-        if pos == -1:
-            if self.get_text_length() > 0:
-                pos = self.get_text_length() - 1
-            else:
-                return False
-        elif pos == 0:
+        pos = self.get_cursor_position()
+        if pos == 0:
             return
         elif pos > 0:
             pos -= 1
         text = self.get_text()[pos]
         operation = Text.Deletion(pos, text)
         self.add_operation(operation)
-        
+
         #self.clutter_text.delete_text(pos, pos+1)
 
     def delete_text(self, start_pos, end_pos):
@@ -267,25 +297,27 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Clear the entire text buffer
         """
-        operation = Text.Deletion(0, self.get_text())
-        self.add_operation(operation)
+        text = self.get_text()
+        if len(text) > 0:
+            operation = Text.Deletion(0, self.get_text())
+            self.add_operation(operation)
 
 
     def get_endmost_triplet(self):
         """
         Look for and return the first three-word string of characters
         with no commas, starting from the end of the text buffer.
-        This function is used to send word from the text buffer to be used in prediction. 
+        This function is used to send word from the text buffer to be used in prediction.
         When the words in the buffer are unsuited to be used in prediction the funciton returns ' '.
         """
 
         text = self.get_text()
-        if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions                     
+        if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
             if text.rstrip():
-                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: 
+                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
                     return ' '
         else:
-            return ' '    
+            return ' '
 
         if text.rstrip():
             last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
@@ -331,7 +363,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one position forward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         if current_position < self.get_text_length():
             self.clutter_text.set_cursor_position(current_position+1)
 
@@ -339,7 +371,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one position backward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text_length = self.get_text_length()
         if current_position > 0:
             self.clutter_text.set_cursor_position(current_position-1)
@@ -350,7 +382,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one word backward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text = self.clutter_text.get_text()
         if current_position == 0:
             pass
@@ -372,7 +404,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one word forward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text = self.clutter_text.get_text()
         if current_position <= -1:
             pass
@@ -394,10 +426,10 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one line up
         """
-        
+
         layout = self.clutter_text.get_layout()
         text = self.get_text()
-        cursor_pos = self.clutter_text.get_cursor_position()
+        cursor_pos = self.get_cursor_position()
         if cursor_pos == 0:
             index_ = 0
         else:
@@ -418,7 +450,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         index_, trailing = layout.x_to_index(layout_line, x)
 
-        #pos = 
+        #pos =
 
     def move_line_down(self):
         """
@@ -448,7 +480,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
     def ratio_height(self, value):
         self._ratio_height = value
         self.set_height(unit.h(value))
-        
+
 
 class Key(pisak.widgets.Button):
     __gtype_name__ = "PisakSpellerKey"
@@ -500,7 +532,7 @@ class Key(pisak.widgets.Button):
             operation = self.undo_chain.pop()
             if callable(operation) and operation in self.allowed_undos:
                 operation(self)
-        
+
     def set_pre_special_label(self):
         if self.pre_special_text:
             self.set_label(self.pre_special_text)
@@ -533,7 +565,7 @@ class Key(pisak.widgets.Button):
                     self.set_label(self.altgr_text.upper())
         except AttributeError:
             return None
-        
+
     def set_swap_altgr_label(self):
         try:
             label = self.get_label()
@@ -572,7 +604,7 @@ class Key(pisak.widgets.Button):
     def on_activate(self, source):
         if self.target:
             self.target.type_text(self.get_label())
-        
+
     @property
     def default_text(self):
         return self._default_text
@@ -631,7 +663,7 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         self.content = []
 
     def get_suggestion(self, accuracy_level):
-        if accuracy_level < len(self.content): 
+        if accuracy_level < len(self.content):
             return self.content[accuracy_level]
 
     def do_prediction(self): #function to preform in a separate thread
@@ -714,17 +746,12 @@ class Prediction(pisak.widgets.Button):
         self.idle_icon_name = "hourglass"
         self.icon_name = None
         self.icon_size = 50
-        self.connect("notify::mapped", self._init_whole_text)
+        self.set_layout_manager(Clutter.BinLayout())
+        self.layout = self.get_children()[0]
+        self.clutter_text = [i for i in self.layout.get_children()
+                            if type(i) == Clutter.Text][0]
+        self.clutter_text.set_property("ellipsize", 0)
 
-    def _init_whole_text(self, *args):
-        layout = self.get_children()[0]
-        clutter_text = layout.get_children()[1]
-        clutter_text.set_property("ellipsize", 0)
-        
-        text_width = clutter_text.get_width()
-        butt_width = self.get_width()
-        if (text_width + self.get_margin_left() * 2) > butt_width:
-            clutter_text.set_scale(text_width/butt_width, 1)
 
     @property
     def idle_icon_name(self):
@@ -744,8 +771,14 @@ class Prediction(pisak.widgets.Button):
             self.icon_name = None
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
+            self.clutter_text.set_scale(1, 1)
             self.set_label(new_label)
+            text_width = self.clutter_text.get_width()
+            butt_width = self.get_width()
             self.set_disabled(False)
+            if text_width + 27 > butt_width:
+                self.set_offscreen_redirect(Clutter.OffscreenRedirect(2))
+                self.clutter_text.set_scale_full(butt_width/(text_width*1.3),butt_width/(text_width*1.3),0, self.get_height()/2)#-self.clutter_text.get_height()/2) - this cenetrs on y-axis but destroys rendering of some letters
         else:
             self.set_label("")
             self.set_disabled(True)
@@ -811,11 +844,11 @@ class PopUp(layout.Box):
             GObject.PARAM_READWRITE),
          "row_count": (
             GObject.TYPE_INT64, "number of rows",
-            "number of rows with buttons", 0, 10, 3, 
+            "number of rows with buttons", 0, 10, 3,
             GObject.PARAM_READWRITE),
         "column_count":  (
             GObject.TYPE_INT64, "number of columns",
-            "number of coolumns with buttons", 0, 10, 3, 
+            "number of coolumns with buttons", 0, 10, 3,
             GObject.PARAM_READWRITE),
         "tile_ratio_width": (
             GObject.TYPE_FLOAT, None, None,
@@ -918,7 +951,7 @@ class PopUp(layout.Box):
             button.set_label(self.exit_button_label)
         else:
             button.set_label(self.continue_button_label)
-        
+
     def _on_select(self, button, path):
         if self.mode == "save":
             new_text = self.target.get_text()
@@ -930,7 +963,7 @@ class PopUp(layout.Box):
             self.target.clear_all()
             self.target.type_text(text)
         self._close()
-        
+
     def _close(self, *args):
         self.stage.pending_group = self.background_scene
         self.background_scene.remove_effect(self.background_effect)
