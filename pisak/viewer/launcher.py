@@ -44,7 +44,7 @@ def run(descriptor):
         ''' 
         def create_stage(self, argv):
             stage = LauncherStage(self.context, descriptor)
-            stage.set_size(1366, 768)
+            stage.set_size(1920, 1080)
             stage.set_fullscreen(True)
             return stage
     
