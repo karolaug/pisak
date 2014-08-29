@@ -1,13 +1,13 @@
 '''
 Module which processes and launches brain flippers
 '''
-from pisak import switcher_app
+from pisak import switcher_app, signals
 from gi.repository import Clutter
 import sys
 
 import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
-import pisak.viewer.widgets # @UnusedImport
+from pisak.viewer import widgets, handlers # @UnusedImport 
 
 class LauncherStage(Clutter.Stage):
     def __init__(self, context, descriptor):
@@ -23,6 +23,7 @@ class LauncherStage(Clutter.Stage):
         view_path, prepare = self.views.get(name)
         self.script = Clutter.Script()
         self.script.load_from_file(view_path)
+        self.script.connect_signals_full(signals.connect_registered)
         prepare(self, self.script, data)
         children = self.get_children()
         main_actor = self.script.get_object("main")
