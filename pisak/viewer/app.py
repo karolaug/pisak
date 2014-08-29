@@ -69,5 +69,4 @@ VIEWER_APP = {
 
 
 if __name__ == "__main__":
-    print(VIEWER_APP)
     launcher.run(VIEWER_APP)
