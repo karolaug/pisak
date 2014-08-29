@@ -767,18 +767,23 @@ class Prediction(pisak.widgets.Button):
             self.target.replace_endmost_string(label)
 
     def _update_button(self, source):
-        if self.icon_name is not None:  # if there is a need to call icon setter
-            self.icon_name = None
+        self.icon_name = None
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
+            button_width = self.get_width()
+            button_height = self.get_height()
+            self.clutter_text.set_pivot_point(0.5, 0.5)
             self.clutter_text.set_scale(1, 1)
             self.set_label(new_label)
             text_width = self.clutter_text.get_width()
-            butt_width = self.get_width()
+            text_height = self.clutter_text.get_height()
             self.set_disabled(False)
-            if text_width + 27 > butt_width:
-                self.set_offscreen_redirect(Clutter.OffscreenRedirect(2))
-                self.clutter_text.set_scale_full(butt_width/(text_width*1.3),butt_width/(text_width*1.3),0, self.get_height()/2)#-self.clutter_text.get_height()/2) - this cenetrs on y-axis but destroys rendering of some letters
+            point = Clutter.Point((1, 1))
+            if text_width + 27 > button_width:
+                self.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS)
+                self.clutter_text.set_pivot_point(0, 0.5)
+                self.clutter_text.set_scale(button_width/(text_width*1.3),
+                                            button_width/(text_width*1.3))
         else:
             self.set_label("")
             self.set_disabled(True)
@@ -797,8 +802,10 @@ class Prediction(pisak.widgets.Button):
     def _stop_following_dictionary(self):
         try:
             if self.dictionary is not None:
-                self.dictionary.disconnect_by_func("content-update", self._update_button)
-                self.dictionary.disconnect_by_func("processing-on", self._button_idle)
+                self.dictionary.disconnect_by_func("content-update", 
+                                                   self._update_button)
+                self.dictionary.disconnect_by_func("processing-on", 
+                                                   self._button_idle)
         except AttributeError:
             return None
 
