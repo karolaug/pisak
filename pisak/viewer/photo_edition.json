@@ -209,14 +209,14 @@
         ]
     },
     {
-        "id": "button_12",
+        "id": "button_photo",
         "type": "PisakViewerButton",
         "label": "POWRÓT",
         "ratio-width": 0.22,
         "ratio-height": 0.05
     },
     {
-        "id": "button_13",
+        "id": "button_start",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
         "ratio-width": 0.22,
