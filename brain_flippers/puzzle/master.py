@@ -111,7 +111,6 @@ class PuzzleBoard(Clutter.Actor):
             img = [i for i in button.get_children() if type(i) == Mx.Image][0]
             data = part_photo[0].tostring()
             (width, height) = part_photo[0].size
-            print(width, height)
             row_stride = len(data) / height
             img.set_scale_mode(1)
             img.set_from_data(data, Cogl.PixelFormat.RGB_888, width, height,
