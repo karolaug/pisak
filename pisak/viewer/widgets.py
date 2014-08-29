@@ -32,6 +32,7 @@ class SlideShow(layout.Bin):
         self.slide = None
         self.slideshow_on = False
         self.album_length = None
+        self.set_clip_to_allocation(True)
 
     @property
     def data_source(self):
@@ -181,7 +182,7 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
             self.tiles.append(tile)
 
     def _generate_album(self):
-        if self.album is not None:
+        if self.album is not None and self.data_type is not None:
             data = database_agent.get_photos_from_category(self.album)
             for item in data:
                 tile = PhotoTile()
@@ -192,7 +193,7 @@ class DataSource(pager.DataSource, properties.PropertyAdapter):
                 self.tiles.append(tile)
 
     def _generate_slides(self):
-        if self.album is not None:
+        if self.album is not None and self.data_type is not None:
             data = database_agent.get_photos_from_category(self.album)
             for item in data:
                 slide = PhotoSlide()
