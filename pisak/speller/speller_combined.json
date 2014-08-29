@@ -557,12 +557,7 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/altgr_chars",
-                           "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/swap_altgr_chars_on_select",
+                           "handler": "speller/swap_altgr_chars",
                            "object": "keyboard_panel"
                        }
                    ]
@@ -580,12 +575,7 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/special_chars",
-                           "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/swap_special_chars_on_select",
+                           "handler": "speller/swap_special_chars",
                            "object": "keyboard_panel"
                        }
                    ]
