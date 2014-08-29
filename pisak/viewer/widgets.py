@@ -41,8 +41,6 @@ class SlideShow(layout.Bin):
     @data_source.setter
     def data_source(self, value):
         self._data_source = value
-        if value is not None:
-            self.album_length = len(value.get_data())
 
     @property
     def transition_duration(self):
@@ -62,12 +60,13 @@ class SlideShow(layout.Bin):
         self._idle_duration = value
 
     def show_initial_slide(self, initial_index=0):
+        self.album_length = len(self.data_source.slides)
         if initial_index is None:
             self.index = 0
         else:
             self.index = initial_index
         if self.data_source is not None:
-            self.slide = self.data_source.get_data()[self.index]
+            self.slide = self.data_source.slides[self.index]
             self.add_child(self.slide)
 
     def slideshow_timeout(self, *args):
@@ -80,7 +79,7 @@ class SlideShow(layout.Bin):
     def next_slide(self, *args):
         self.index = (self.index + 1) % self.album_length
         if self.new_slide is None:
-            self.new_slide = self.data_source.get_data()[self.index]
+            self.new_slide = self.data_source.slides[self.index]
             self.new_slide.set_x(unit.size_pix[0])
             self.new_slide_transition.set_from(unit.size_pix[0])
             self.new_slide_transition.set_to(0)
@@ -92,7 +91,7 @@ class SlideShow(layout.Bin):
     def previous_slide(self):
         self.index = self.index - 1 if self.index > 0 else self.album_length - 1
         if self.new_slide is None:
-            self.new_slide = self.data_source.get_data()[self.index]
+            self.new_slide = self.data_source.slides[self.index]
             self.new_slide.set_x(-1*unit.size_pix[0])
             self.new_slide_transition.set_from(-1*unit.size_pix[0])
             self.new_slide_transition.set_to(0)
@@ -116,6 +115,98 @@ class SlideShow(layout.Bin):
     def stop(self):
         self.slideshow_on = False
         
+
+class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
+    __gtype_name__ = "PisakViewerPhotoSlidesSource"
+
+    def __init__(self):
+        super().__init__()
+        self.slide_ratio_height = 0.7
+        self.slide_ratio_width = 0.68
+        self.slides = []
+        self.album = None
+
+    @property
+    def album(self):
+        return self._album
+
+    @album.setter
+    def album(self, value):
+        self._album = value
+        if value is not None:
+            self._generate_slides()
+
+    def _generate_slides(self):
+        data = database_agent.get_photos_from_category(self.album)
+        for item in data:
+            slide = PhotoSlide()
+            slide.ratio_height = self.slide_ratio_height
+            slide.ratio_width = self.slide_ratio_width
+            slide.photo_path = item["path"]
+            self.slides.append(slide)
+
+
+class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
+    __gtype_name__ = "PisakViewerLibraryTilesSource"
+    
+    def __init__(self):
+        super().__init__()
+        self.tile_ratio_height = 0.2
+        self.tile_ratio_width = 0.15
+        self.tile_ratio_spacing = 0.01
+        self.tile_preview_ratio_width = 0.12
+        self.tile_preview_ratio_height = 0.12
+        self.tiles = []
+        self.index = 0
+        self._generate_tiles()
+
+    def _generate_tiles(self):
+        data = database_agent.get_categories()
+        for item in data:
+            tile = PhotoTile()
+            tile.label_text = item["category"]
+            tile.preview_path = database_agent.get_preview_of_category(item["category"])["path"]
+            tile.ratio_width = self.tile_ratio_width
+            tile.ratio_height = self.tile_ratio_height
+            tile.ratio_spacing = self.tile_ratio_spacing
+            tile.preview_ratio_height = self.tile_preview_ratio_height
+            tile.preview_ratio_widtht = self.tile_preview_ratio_width
+            self.tiles.append(tile)
+            
+    def get_tiles(self, count):
+        tiles = self.tiles[self.index : count]
+        self.index = (self.index + count) % len(self.tiles) if len(self.tiles) > 0 else self.index
+        return tiles
+
+
+class AlbumTilesSource(LibraryTilesSource):
+    __gtype_name__ = "PisakViewerAlbumTilesSource"
+
+    def __init__(self):
+        self.album = None
+        super().__init__()
+
+    @property
+    def album(self):
+        return self._album
+
+    @album.setter
+    def album(self, value):
+        self._album = value
+        if value is not None:
+            self._generate_tiles()
+
+    def _generate_tiles(self):
+        if self.album is not None:
+            data = database_agent.get_photos_from_category(self.album)
+            for item in data:
+                tile = PhotoTile()
+                tile.preview_path = item["path"]
+                tile.scale_mode = Mx.ImageScaleMode.FIT
+                tile.ratio_width = self.tile_ratio_width
+                tile.ratio_height = self.tile_ratio_height
+                self.tiles.append(tile)
+
 
 class DataSource(pager.DataSource, properties.PropertyAdapter):
     __gtype_name__ = "PisakViewerDataSource"

@@ -50,7 +50,7 @@
         "ratio-spacing": 0.01,
         "y-expand": true,
         "y-align": "end",
-        "children": ["button_13", "button_12", "button_11", "button_10",
+        "children": ["button_start", "button_photo", "button_11", "button_10",
                      "button_9", "button_8", "button_7","button_6",
                      "button_5", "button_4", "button_3", "button_2", "button_1"]
     },

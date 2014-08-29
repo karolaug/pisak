@@ -58,7 +58,7 @@
         "ratio-spacing": 0.01,
         "y-expand": true,
         "y-align": "end",
-        "children": ["button_2", "button_1"]
+        "children": ["button_library", "button_start"]
     },
     {
         "id": "button_library",
@@ -90,8 +90,7 @@
     },
     {
         "id": "library_data",
-        "type": "PisakViewerDataSource",
-        "data-type": "album"
+        "type": "PisakViewerAlbumTilesSource"
     },
     {
         "id": "progress_bar",

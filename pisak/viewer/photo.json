@@ -133,9 +133,7 @@
     },
     {
         "id": "photo_data_source",
-        "type": "PisakViewerDataSource",
-        "album": "/home/bj",
-        "data_type": "slideshow"
+        "type": "PisakViewerPhotoSlidesSource"
     },
     {
         "id": "progress_bar",

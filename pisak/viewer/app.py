@@ -2,50 +2,57 @@
 Module with app-specific code for photo viewer.
 '''
 from pisak.viewer import launcher
-import os.path
+import os
 
-def button_to_stage(stage, script, button_name, stage_to_load):
+def button_to_stage(stage, script, button_name, stage_to_load, data=None):
     button = script.get_object(button_name)
-    button.connect("activate", lambda *_: stage.load_view(stage_to_load, button))
+    button.connect("activate", lambda *_: stage.load_view(stage_to_load, data))
 
-def prepare_photo_view(stage, script, initial_photo_index):
+def prepare_photo_view(stage, script, data):
 
-    button_to_stage(stage, script, "button_edition", "photo_edition")
+    slideshow = script.get_object("slideshow_widget")
+    button_to_stage(stage, script, "button_edition", "photo_edition", {"slideshow": slideshow})
 
     button_to_stage(stage, script, "button_album", "album")
 
     button_to_stage(stage, script, "button_library", "library")
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
+    data_source = script.get_object("photo_data_source")
+    data_source.album = os.getenv("HOME")  # data["album_name"]
+    slideshow.show_initial_slide(None)  # data["index"]
 
-    slideshow = script.get_object("slideshow_widget")
-    slideshow.show_initial_slide(initial_photo_index)
-
-def prepare_album_view(stage, script, album_name):
+def prepare_album_view(stage, script, data):
 
     button_to_stage(stage, script, "button_library", "library")
 
     library = script.get_object("library_data")
     for index, photo in enumerate(library.tiles):
-        photo.connect("activate", lambda *_: stage.load_view("photo", index))
+        photo.connect("activate", lambda *_: stage.load_view(
+                                                    "photo",
+                                                    {"index": index,
+                                                    "album": data["album_name"]}))
 
     album = script.get_object("library_data")
-    album.album = album_name # also through set property should page the new album
+    album.album = None  # data["album_name"]  # also through set property should page the new album
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
         
 def prepare_library_view(stage, script, data):
 
-    button_to_stage(stage, script, "button_library", "library")
+    #button_to_stage(stage, script, "button_library", "library")
 
+    library = script.get_object("library_data")
     for album in library.tiles:
-        album.connect("activate", lambda *_: stage.load_view("album", album))
+        album.connect("activate", lambda *_: stage.load_view("album", {"album_name": album["category"]}))
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
 
 def prepare_photo_edition_view(stage, script, data):
 
+    
     photo = script.get_object("slide")
+    photo.photo_path = data["slideshow"].slide.photo_path
 
     button = script.get_object("button_photo")
     button.connect("activate", lambda *_: stage.load_view("photo", photo))

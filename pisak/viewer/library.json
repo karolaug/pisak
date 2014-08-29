@@ -82,8 +82,7 @@
     },
     {
         "id": "library_data",
-        "type": "PisakViewerDataSource",
-        "data-type": "library"
+        "type": "PisakViewerLibraryTilesSource"
     },
     {
         "id": "progress_bar",
