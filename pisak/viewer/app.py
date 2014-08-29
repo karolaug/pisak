@@ -27,7 +27,7 @@ def prepare_album_view(stage, script, album_name):
 
     library = script.get_object("library_data")
     for photo in library.tiles:
-        photo.connect("activate", lambda *_: stage.load_view("photo", photo)
+        photo.connect("activate", lambda *_: stage.load_view("photo", photo))
 
     album = script.get_object("library_data")
     album.album = album_name # also through set property should page the new album
@@ -39,12 +39,18 @@ def prepare_library_view(stage, script, data):
     button_to_stage(stage, script, "button_library", "library")
 
     for album in library.tiles:
-        album.connect("activate", lambda *_: stage.load_view("album", album)
+        album.connect("activate", lambda *_: stage.load_view("album", album))
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
 
 def prepare_photo_edition_view(stage, script, data):
 
+    photo = script.get_object("slide")
+
+    button = script.get_object("button_photo")
+    button.connect("activate", lambda *_: stage.load_view("photo", photo))
+
+    #button_to_stage(stage, script, "button_start", "start") -> start panel
 
 def fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
