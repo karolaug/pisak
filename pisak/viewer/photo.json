@@ -28,7 +28,7 @@
         "id": "middle_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.1,
-        "children": ["slide", "button_menu"]
+        "children": ["slideshow_widget", "button_menu"]
     },
     {
         "id": "button_menu",
@@ -59,21 +59,42 @@
         "type": "PisakViewerButton",
         "label": "POKAZ SLAJDÓW",
         "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/slideshow_toggle",
+                "object": "slideshow_widget"
+            }
+        ]
     },
     {
         "id": "button_previous",
         "type": "PisakViewerButton",
         "label": "POPRZEDNIE ZDJĘCIE",
         "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/previous_slide",
+                "object": "slideshow_widget"
+            }
+        ]
     },
     {
         "id": "button_next",
         "type": "PisakViewerButton",
         "label": "NASTĘPNE ZDJĘCIE",
         "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/next_slide",
+                "object": "slideshow_widget"
+            }
+        ]
     },
     {
         "id": "button_edition",
@@ -104,11 +125,17 @@
         "ratio-height": 0.1
     },
     {
-        "id": "slide",
-        "type": "PisakViewerPhotoSlide",
+        "id": "slideshow_widget",
+        "type": "PisakViewerSlideShow",
+        "data-source": "photo_data_source",
         "ratio-width": 0.68,
-        "ratio-height": 0.7,
-        "photo_path": "jagoda.jpg"
+        "ratio-height": 0.7
+    },
+    {
+        "id": "photo_data_source",
+        "type": "PisakViewerDataSource",
+        "album": "/home/bj",
+        "data_type": "slideshow"
     },
     {
         "id": "progress_bar",

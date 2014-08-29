@@ -8,7 +8,7 @@ def button_to_stage(stage, script, button_name, stage_to_load):
     button = script.get_object(button_name)
     button.connect("activate", lambda *_: stage.load_view(stage_to_load, button))
 
-def prepare_photo_view(stage, script, photo):
+def prepare_photo_view(stage, script, initial_photo_index):
 
     button_to_stage(stage, script, "button_edition", "photo_edition")
 
@@ -18,16 +18,16 @@ def prepare_photo_view(stage, script, photo):
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
 
-    photo = script.get_object("slide")
-    photo.set_property("photo_path", photo.photo_path) # setter should set the pic
+    slideshow = script.get_object("slideshow_widget")
+    slideshow.show_initial_slide(initial_photo_index)
 
 def prepare_album_view(stage, script, album_name):
 
     button_to_stage(stage, script, "button_library", "library")
 
     library = script.get_object("library_data")
-    for photo in library.tiles:
-        photo.connect("activate", lambda *_: stage.load_view("photo", photo))
+    for index, photo in enumerate(library.tiles):
+        photo.connect("activate", lambda *_: stage.load_view("photo", index))
 
     album = script.get_object("library_data")
     album.album = album_name # also through set property should page the new album
@@ -59,7 +59,7 @@ VIEWER_APP = {
     "views": {
         "photo": (fix_path("photo.json"), prepare_photo_view),
         "album": (fix_path("album.json"), prepare_album_view),
-        "library": ("library.json", prepare_library_view),
+        "library": (fix_path("library.json"), prepare_library_view),
         "photo_edition": (fix_path("photo_edition.json"), 
                           prepare_photo_edition_view),
     },
@@ -69,4 +69,5 @@ VIEWER_APP = {
 
 
 if __name__ == "__main__":
+    print(VIEWER_APP)
     launcher.run(VIEWER_APP)

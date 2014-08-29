@@ -11,6 +11,24 @@ def previous_page(pager):
     pager.previous_page()
 
 
+@signals.registered_handler("viewer/slideshow_toggle")
+def slideshow_toggle(slideshow_widget):
+    if slideshow_widget.slideshow_on is True:
+        slideshow_widget.stop()
+    else:
+        slideshow_widget.run()
+
+
+@signals.registered_handler("viewer/next_slide")
+def next_slide(slideshow_widget):
+    slideshow_widget.next_slide()
+
+
+@signals.registered_handler("viewer/previous_slide")
+def previous_slide(slideshow_widget):
+    slideshow_widget.previous_slide()
+
+
 @signals.registered_handler("viewer/zoom")
 def zoom(photo):
     photo.image_buffer.zoom()
