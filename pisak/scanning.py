@@ -1,7 +1,7 @@
 '''
 Classes for defining scanning in JSON layouts
 '''
-from gi.repository import Clutter, GObject, Mx
+from gi.repository import Clutter, GObject, Mx, Gdk
 
 from pisak import properties
 
@@ -139,9 +139,16 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         if self.selector == 'mouse':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
+            
         elif self.selector == 'keyboard':
             self._handler_token = self.connect("key-release-event", 
                                                self.key_release)
+        elif self.selector == 'mouse-switch':
+            self._handler_token = self.stage.connect("button-release-event",
+                                                     self.button_release)
+            
+            
+
         else:
             print("Unknown selector: ", self.selector)
             return None
