@@ -127,6 +127,8 @@
     {
         "id": "slideshow_widget",
         "type": "PisakViewerSlideShow",
+        "transition-duration": 1000,
+        "idle-duration": 1000,
         "data-source": "photo_data_source",
         "ratio-width": 0.68,
         "ratio-height": 0.7
