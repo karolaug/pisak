@@ -6,7 +6,7 @@ import os.path
 
 def button_to_stage(stage, script, button_name, stage_to_load):
     button = script.get_object(button_name)
-    button.connect("activate", lambda *_: stage.load_view(stage_to_load))
+    button.connect("activate", lambda *_: stage.load_view(stage_to_load, button))
 
 def prepare_photo_view(stage, script, photo):
 
@@ -19,7 +19,7 @@ def prepare_photo_view(stage, script, photo):
     #button_to_stage(stage, script, "button_start", "start") -> start panel
 
     photo = script.get_object("slide")
-    photo.set_property("photo_path", photo.get_path()) # setter should set the pic
+    photo.set_property("photo_path", photo.photo_path) # setter should set the pic
 
 def prepare_album_view(stage, script, album_name):
 
@@ -69,4 +69,5 @@ VIEWER_APP = {
 
 
 if __name__ == "__main__":
+    print(VIEWER_APP)
     launcher.run(VIEWER_APP)

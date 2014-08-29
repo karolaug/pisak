@@ -17,7 +17,7 @@ class LauncherStage(Clutter.Stage):
         self.views = descriptor.get("views")
         self.initial = descriptor.get("initial-view")
         self.initial_data = descriptor.get("initial-data")
-        self.load_view(self.initial, initial_data)
+        self.load_view(self.initial, self.initial_data)
 
     def load_view(self, name, data):
         view_path, prepare = self.views.get(name)
