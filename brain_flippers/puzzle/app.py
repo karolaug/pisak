@@ -11,12 +11,12 @@ import pisak.layout  # @UnusedImport
 import brain_flippers.puzzle.master  # @UnusedImport
 
 VIEW_PATHS = {
-  "high_scores": "brain_flippers/high_scores_screen.json",
-  "player_success": "brain_flippers/player_success_screen.json",
-  "player_fail": "brain_flippers/player_fail_screen.json",
-  "player_death": "brain_flippers/player_death_screen.json",
-  "welcome_screen": "brain_flippers/welcome_screen.json",
-  "game_screen": "brain_flippers/puzzle/main_game_screen.json",
+  "high_scores": "../high_scores_screen.json",
+  "player_success": "../player_success_screen.json",
+  "player_fail": "../player_fail_screen.json",
+  "player_death": "../player_death_screen.json",
+  "welcome_screen": "../welcome_screen.json",
+  "game_screen": "main_game_screen.json",
 }
 
 
@@ -63,8 +63,9 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
 
     def load_view_from_script(self, name):
         self.script = Clutter.Script()
+        current_path = os.path.split(__file__)[0]
         path = VIEW_PATHS[name]
-        self.script.load_from_file(path)
+        self.script.load_from_file(os.path.join(current_path, path))
         if self.get_children():
             self.remove_all_children()
         view_actor = self.script.get_object("main")
@@ -248,3 +249,6 @@ class BrainPuzzleApp(switcher_app.Application):
         stage.set_size(unit.size_pix[0], unit.size_pix[1])
         stage.set_fullscreen(True)
         return stage
+
+if __name__ == '__main__':
+    BrainPuzzleApp(sys.argv).main()
