@@ -9,8 +9,12 @@ from pisak.viewer import database_agent, image
 class SlideShow(layout.Bin):
     __gtype_name__ = "PisakViewerSlideShow"
     __gsignals__ = {
-        "progressed": (GObject.SIGNAL_RUN_FIRST, None, (GObject.TYPE_FLOAT,)),
-        "limit-set": (GObject.SIGNAL_RUN_FIRST, None, (GObject.TYPE_INT64,))
+        "progressed": (
+            GObject.SIGNAL_RUN_FIRST, None,
+            (GObject.TYPE_FLOAT, GObject.TYPE_INT64)),
+        "limit-declared": (
+            GObject.SIGNAL_RUN_FIRST, None,
+            (GObject.TYPE_INT64,))
     }
     __gproperties__ = {
         "data-source": (
@@ -23,7 +27,7 @@ class SlideShow(layout.Bin):
             GObject.TYPE_INT64, "idle duration",
             "duration of one slide exposition", 0,
             GObject.G_MAXUINT, 5000, GObject.PARAM_READWRITE),
-        "slideshow_fullscreen": (
+        "slideshow-fullscreen": (
             GObject.TYPE_BOOLEAN, "if fullscreen",
             "if slideshow on fullscreen", False,
             GObject.PARAM_READWRITE)
@@ -80,7 +84,7 @@ class SlideShow(layout.Bin):
 
     def show_initial_slide(self, initial_index=0):
         self.album_length = len(self.data_source.slides)
-        self.emit("limit-set", self.album_length)
+        self.emit("limit-declared", self.album_length)
         if initial_index is None:
             self.index = 0
         else:
@@ -88,7 +92,7 @@ class SlideShow(layout.Bin):
         if self.data_source is not None:
             self.slide = self.data_source.slides[self.index]
             self.add_child(self.slide)
-        self.emit("progressed", float(self.index / self.album_length))
+        self.emit("progressed", float(self.index+1) / self.album_length, self.index+1)
         
     def slideshow_timeout(self, *args):
         if self.slideshow_on:
@@ -112,7 +116,7 @@ class SlideShow(layout.Bin):
                 self.add_child(self.new_slide)
             self.slide.add_transition("x", self.old_slide_transition)
             self.new_slide.add_transition("x", self.new_slide_transition)
-            self.emit("progressed", float(self.index / self.album_length))
+            self.emit("progressed", float(self.index+1) / self.album_length, self.index+1)
         
     def previous_slide(self):
         if self.new_slide is None:
@@ -129,7 +133,7 @@ class SlideShow(layout.Bin):
                 self.add_child(self.new_slide)
             self.slide.add_transition("x", self.old_slide_transition)
             self.new_slide.add_transition("x", self.new_slide_transition)
-            self.emit("progressed", float(self.index / self.album_length))
+            self.emit("progressed", float(self.index+1) / self.album_length, self.index+1)
 
     def clean_up(self, *args):
         if self.slide is not None:

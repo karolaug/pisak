@@ -177,7 +177,9 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         super().__init__()
         self._init_bar()
         self.label = None
+        self.step = None
         self.label_ratio_x_offset = None
+        self.counter_limit = None
         self.progress_transition = Clutter.PropertyTransition.new("progress")
         self.progress_transition_duration = 1000
         self.progress_transition.connect("stopped", self._update_label)
@@ -203,8 +205,8 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
     @related_object.setter
     def related_object(self, value):
         self._related_object = value
-        value.connect("limit-set", self._set_counter_limit)
-        value.connect("progressed", self._update_bar)
+        value.connect("limit-declared", self._set_counter_limit)
+        value.connect("progressed", self._set_progress)
 
     @property
     def counter_limit(self):
@@ -213,6 +215,8 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
     @counter_limit.setter
     def counter_limit(self, value):
         self._counter_limit = value
+        if value is not None:
+            self.step = int(self.progress*value)
         self._update_label()
 
     @property
@@ -225,6 +229,8 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         self.progress_transition.set_to(value)
         self.bar.remove_transition("progress")
         self.bar.add_transition("progress", self.progress_transition)
+        if self.counter_limit is not None:
+            self.step = int(value*self.counter_limit)
 
     @property
     def progress_transition_duration(self):
@@ -256,19 +262,18 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
                 self.label.set_x(px_x_offset)
 
     def _set_counter_limit(self, source, limit):
-        print(limit)
         self.counter_limit = limit
 
-    def _update_bar(self, source, progress):
-        print(progress)
+    def _set_progress(self, source, progress, custom_step):
         self.progress = progress
+        self.step = custom_step
 
     def _update_label(self, *args):
         if self.label is not None:
-            new_text = " / ".join([str(int(ceil(self.progress*self.counter_limit))),
-                                   str(self.counter_limit)])
+            new_text = " / ".join([str(self.step),
+                                str(self.counter_limit)])
             self.label.set_text(new_text)
-
+                
 
 class Header(Mx.Image, properties.PropertyAdapter):
 
