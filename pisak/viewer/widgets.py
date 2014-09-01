@@ -19,6 +19,10 @@ class SlideShow(layout.Bin):
             GObject.TYPE_INT64, "idle duration",
             "duration of one slide exposition", 0,
             GObject.G_MAXUINT, 5000, GObject.PARAM_READWRITE),
+        "slideshow_fullscreen": (
+            GObject.TYPE_BOOLEAN, "if fullscreen",
+            "if slideshow on fullscreen", False,
+            GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
@@ -28,9 +32,12 @@ class SlideShow(layout.Bin):
         self.old_slide_transition = Clutter.PropertyTransition.new("x")
         self.transition_duration = 1000
         self.idle_duration = 1000
+        self.slideshow_fullscreen = True
         self.new_slide = None
         self.slide = None
+        self.stage = None
         self.slideshow_on = False
+        self.fullscreen_on = False
         self.album_length = None
         self.set_clip_to_allocation(True)
 
@@ -41,7 +48,6 @@ class SlideShow(layout.Bin):
     @data_source.setter
     def data_source(self, value):
         self._data_source = value
-        # take album length and sign assign it to the variable
 
     @property
     def transition_duration(self):
@@ -60,6 +66,14 @@ class SlideShow(layout.Bin):
     def idle_duration(self, value):
         self._idle_duration = value
 
+    @property
+    def slideshow_fullscreen(self):
+        return self._slideshow_fullscreen
+
+    @slideshow_fullscreen.setter
+    def slideshow_fullscreen(self, value):
+        self._slideshow_fullscreen = value
+
     def show_initial_slide(self, initial_index=0):
         self.album_length = len(self.data_source.slides)
         if initial_index is None:
@@ -69,7 +83,7 @@ class SlideShow(layout.Bin):
         if self.data_source is not None:
             self.slide = self.data_source.slides[self.index]
             self.add_child(self.slide)
-
+        
     def slideshow_timeout(self, *args):
         if self.slideshow_on:
             self.next_slide()
@@ -85,7 +99,11 @@ class SlideShow(layout.Bin):
             self.new_slide_transition.set_from(unit.size_pix[0])
             self.new_slide_transition.set_to(0)
             self.old_slide_transition.set_to(-1*unit.size_pix[0])
-            self.add_child(self.new_slide)
+            if self.fullscreen_on:
+                self.cover_frame.add_child(self.new_slide)
+                self.new_slide.set_size(unit.size_pix[0], unit.size_pix[1])
+            else:
+                self.add_child(self.new_slide)
             self.slide.add_transition("x", self.old_slide_transition)
             self.new_slide.add_transition("x", self.new_slide_transition)
         
@@ -97,7 +115,11 @@ class SlideShow(layout.Bin):
             self.new_slide_transition.set_from(-1*unit.size_pix[0])
             self.new_slide_transition.set_to(0)
             self.old_slide_transition.set_to(unit.size_pix[0])
-            self.add_child(self.new_slide)
+            if self.fullscreen_on:
+                self.cover_frame.add_child(self.new_slide)
+                self.new_slide.set_size(unit.size_pix[0], unit.size_pix[1])
+            else:
+                self.add_child(self.new_slide)
             self.slide.add_transition("x", self.old_slide_transition)
             self.new_slide.add_transition("x", self.new_slide_transition)
 
@@ -105,16 +127,40 @@ class SlideShow(layout.Bin):
         if self.slide is not None:
             if self.contains(self.slide):
                 self.remove_child(self.slide)
+            elif self.cover_frame.contains(self.slide):
+                self.cover_frame.remove_child(self.slide)
         self.slide = self.new_slide
+        self.slide_width, self.slide_height = self.slide.get_size()
         self.new_slide = None
         self.slide.remove_transition("x")
 
     def run(self):
+        if self.slideshow_fullscreen is True:
+            self.fullscreen_on = True
+            self.stage = self.get_stage()
+            self.cover_frame = Clutter.Actor()
+            self.cover_frame.set_size(unit.size_pix[0], unit.size_pix[1])
+            self.slide_width, self.slide_height = self.slide.get_size()
+            self.remove_child(self.slide)
+            self.cover_frame.add_child(self.slide)
+            self.cover_frame.set_background_color(Clutter.Color.new(0, 0, 0, 255))
+            self.cover_frame.connect("button-press-event", self.stop)
+            self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
+            self.stage.add_child(self.cover_frame)
+            self.hide()
         self.slideshow_on = True
         Clutter.threads_add_timeout(0, self.idle_duration, self.slideshow_timeout, None)
 
-    def stop(self):
+    def stop(self, *args):
         self.slideshow_on = False
+        if self.slideshow_fullscreen is True:
+            self.fullscreen_on = False
+            self.show()
+            self.stage.remove_child(self.cover_frame)
+            self.cover_frame.remove_child(self.slide)
+            self.slide.set_width(self.slide_width)
+            self.slide.set_height(self.slide_height)
+            self.add_child(self.slide)
         
 
 class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
