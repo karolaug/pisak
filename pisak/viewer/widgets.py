@@ -41,6 +41,7 @@ class SlideShow(layout.Bin):
     @data_source.setter
     def data_source(self, value):
         self._data_source = value
+        # take album length and sign assign it to the variable
 
     @property
     def transition_duration(self):
@@ -77,8 +78,8 @@ class SlideShow(layout.Bin):
             return False
 
     def next_slide(self, *args):
-        self.index = (self.index + 1) % self.album_length
         if self.new_slide is None:
+            self.index = (self.index + 1) % self.album_length
             self.new_slide = self.data_source.slides[self.index]
             self.new_slide.set_x(unit.size_pix[0])
             self.new_slide_transition.set_from(unit.size_pix[0])
@@ -89,8 +90,8 @@ class SlideShow(layout.Bin):
             self.new_slide.add_transition("x", self.new_slide_transition)
         
     def previous_slide(self):
-        self.index = self.index - 1 if self.index > 0 else self.album_length - 1
         if self.new_slide is None:
+            self.index = self.index - 1 if self.index > 0 else self.album_length - 1
             self.new_slide = self.data_source.slides[self.index]
             self.new_slide.set_x(-1*unit.size_pix[0])
             self.new_slide_transition.set_from(-1*unit.size_pix[0])
