@@ -36,7 +36,7 @@ class SlideShow(layout.Bin):
     def __init__(self):
         self.index = 0
         self.new_slide_transition = Clutter.PropertyTransition.new("x")
-        self.new_slide_transition.connect("stopped", self.clean_up)
+        self.new_slide_transition.connect("stopped", self._clean_up)
         self.old_slide_transition = Clutter.PropertyTransition.new("x")
         self.set_clip_to_allocation(True)
         self.transition_duration = 1000
@@ -138,18 +138,6 @@ class SlideShow(layout.Bin):
             self.slide.add_transition("x", self.new_slide_transition)
             self.emit("progressed", float(self.index+1) / self.album_length, self.index+1)
 
-    def clean_up(self, *args):
-        if self.old_slide is not None:
-            if self.contains(self.old_slide):
-                self.remove_child(self.old_slide)
-            elif self.slideshow_on_fullscreen:
-                if self.cover_frame.contains(self.old_slide):
-                    self.cover_frame.remove_child(self.old_slide)
-        if self.cached_slide_width is not None and self.cached_slide_width is not None:
-            self.old_slide.set_size(self.cached_slide_width, self.cached_slide_height)
-        self.old_slide = None
-        self.slide.remove_transition("x")
-
     def run(self):
         if self.slideshow_on_fullscreen:
             self.fullscreen_on = True
@@ -175,6 +163,18 @@ class SlideShow(layout.Bin):
             self.slide.set_x(0)
             self.add_child(self.slide)
             self.fullscreen_on = False
+
+    def _clean_up(self, *args):
+        if self.old_slide is not None:
+            if self.contains(self.old_slide):
+                self.remove_child(self.old_slide)
+            elif self.slideshow_on_fullscreen:
+                if self.cover_frame.contains(self.old_slide):
+                    self.cover_frame.remove_child(self.old_slide)
+        if self.cached_slide_width is not None and self.cached_slide_width is not None:
+            self.old_slide.set_size(self.cached_slide_width, self.cached_slide_height)
+        self.old_slide = None
+        self.slide.remove_transition("x")
         
 
 class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
