@@ -10,6 +10,7 @@ class Stage(Clutter.Stage):
         super().__init__()
         self.button = Mx.Button()
         self.button.connect("clicked", self.move_cursor)
+        self.button.set_label("Click me to move cursor to (0, 0) position")
         
         self.display = Gdk.Display.get_default()
         self.screen = self.display.get_default_screen()
@@ -17,7 +18,6 @@ class Stage(Clutter.Stage):
         self.add_child(self.button)
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-        self.hide_cursor()
 
     def move_cursor(self, *args):
         self.display.warp_pointer(self.screen, 0, 0)
