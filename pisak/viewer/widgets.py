@@ -269,7 +269,6 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         super().__init__()
         self.tiles = []
         self.index = 0
-        self._generate_tiles()
 
     @property
     def tile_ratio_height(self):
@@ -311,7 +310,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     def tile_preview_ratio_width(self, value):
         self._tile_preview_ratio_width = value
 
-    def _generate_tiles(self):
+    def generate_tiles(self):
         self.data = database_agent.get_categories()
         for item in self.data:
             tile = PhotoTile()
