@@ -208,8 +208,8 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
             self._generate_slides()
 
     def _generate_slides(self):
-        data = database_agent.get_photos_from_category(self.album)
-        for item in data:
+        self.data = database_agent.get_photos_from_category(self.album)
+        for item in self.data:
             slide = PhotoSlide()
             slide.ratio_height = self.slide_ratio_height
             slide.ratio_width = self.slide_ratio_width
@@ -284,8 +284,8 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         self._tile_preview_ratio_width = value
 
     def _generate_tiles(self):
-        data = database_agent.get_categories()
-        for item in data:
+        self.data = database_agent.get_categories()
+        for item in self.data:
             tile = PhotoTile()
             tile.label_text = item["category"]
             tile.preview_path = database_agent.get_preview_of_category(item["category"])["path"]
@@ -321,8 +321,8 @@ class AlbumTilesSource(LibraryTilesSource):
 
     def _generate_tiles(self):
         if self.album is not None:
-            data = database_agent.get_photos_from_category(self.album)
-            for item in data:
+            self.data = database_agent.get_photos_from_category(self.album)
+            for item in self.data:
                 tile = PhotoTile()
                 tile.preview_path = item["path"]
                 tile.scale_mode = Mx.ImageScaleMode.FIT

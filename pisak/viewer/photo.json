@@ -108,7 +108,14 @@
         "type": "PisakViewerButton",
         "label": "ULUBIONE",
         "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/add_to_favourite_photos",
+                "object": "slideshow_widget"
+            }
+        ]
     },
     {
         "id": "button_album",
