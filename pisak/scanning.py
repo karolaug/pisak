@@ -3,7 +3,7 @@ Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx, Gdk
 
-from pisak import properties
+from pisak import properties, unit
 
 
 class Strategy(GObject.GObject):
@@ -146,6 +146,9 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         elif self.selector == 'mouse-switch':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
+            display = Gdk.Display.get_default()
+            screen = display.get_default_screen()
+            display.warp_pointer(screen, unit.w(1), unit.h(1))
             
             
 
@@ -159,6 +162,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
 
     def stop_cycle(self):
         action = {'mouse': self.stage.disconnect, 
+                  'mouse-switch': self.stage.disconnect,
                   'keyboard': self.disconnect}
         self.get_stage().set_key_focus(None)
         try:
