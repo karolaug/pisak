@@ -82,7 +82,12 @@
     },
     {
         "id": "library_data",
-        "type": "PisakViewerLibraryTilesSource"
+        "type": "PisakViewerLibraryTilesSource",
+        "tile-ratio-height": 0.2,
+        "tile-ratio-width": 0.15,
+        "tile-ratio-spacing": 0.01,
+        "tile-preview-ratio-width": 0.12,
+        "tile-preview-ratio-height": 0.12
     },
     {
         "id": "progress_bar",

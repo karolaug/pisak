@@ -135,7 +135,9 @@
     },
     {
         "id": "photo_data_source",
-        "type": "PisakViewerPhotoSlidesSource"
+        "type": "PisakViewerPhotoSlidesSource",
+        "slide-ratio-width": 0.63,
+        "slide-ratio-height": 0.65
     },
     {
         "id": "progress_bar",

@@ -119,6 +119,14 @@ class SlideShow(layout.Bin):
 
 class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
     __gtype_name__ = "PisakViewerPhotoSlidesSource"
+    __gproperties__ = {
+        "slide_ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "slide_ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE)
+    }
 
     def __init__(self):
         super().__init__()
@@ -126,6 +134,22 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         self.slide_ratio_width = 0.68
         self.slides = []
         self.album = None
+
+    @property
+    def slide_ratio_width(self):
+        return self._slide_ratio_width
+
+    @slide_ratio_width.setter
+    def slide_ratio_width(self, value):
+        self._slide_ratio_width = value
+
+    @property
+    def slide_ratio_height(self):
+        return self._slide_ratio_height
+
+    @slide_ratio_height.setter
+    def slide_ratio_height(self, value):
+        self._slide_ratio_height = value
 
     @property
     def album(self):
@@ -149,17 +173,69 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
 
 class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     __gtype_name__ = "PisakViewerLibraryTilesSource"
+    __gproperties__ = {
+        "tile_ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "tile_ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "tile_ratio_spacing": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "tile_preview_ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "tile_preview_ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE)
+    }
     
     def __init__(self):
         super().__init__()
-        self.tile_ratio_height = 0.2
-        self.tile_ratio_width = 0.15
-        self.tile_ratio_spacing = 0.01
-        self.tile_preview_ratio_width = 0.12
-        self.tile_preview_ratio_height = 0.12
         self.tiles = []
         self.index = 0
         self._generate_tiles()
+
+    @property
+    def tile_ratio_height(self):
+        return self._tile_ratio_height
+
+    @tile_ratio_height.setter
+    def tile_ratio_height(self, value):
+        self._tile_ratio_height = value
+
+    @property
+    def tile_ratio_width(self):
+        return self._tile_ratio_width
+
+    @tile_ratio_width.setter
+    def tile_ratio_width(self, value):
+        self._tile_ratio_width = value
+
+    @property
+    def tile_ratio_spacing(self):
+        return self._tile_ratio_spacing
+
+    @tile_ratio_spacing.setter
+    def tile_ratio_spacing(self, value):
+        self._tile_ratio_spacing = value
+
+    @property
+    def tile_preview_ratio_height(self):
+        return self._tile_preview_ratio_height
+
+    @tile_preview_ratio_height.setter
+    def tile_preview_ratio_height(self, value):
+        self._tile_preview_ratio_height = value
+
+    @property
+    def tile_preview_ratio_width(self):
+        return self._tile_preview_ratio_width
+
+    @tile_preview_ratio_width.setter
+    def tile_preview_ratio_width(self, value):
+        self._tile_preview_ratio_width = value
 
     def _generate_tiles(self):
         data = database_agent.get_categories()
