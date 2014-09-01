@@ -93,8 +93,10 @@ class SlideShow(layout.Bin):
         if self.data_source is not None:
             self.slide = self.data_source.slides[self.index]
             self.add_child(self.slide)
-        self.emit("progressed", float(self.index+1) / self.album_length, self.index+1)
-        
+        self.emit("progressed",
+                  float(self.index+1) / self.album_length,
+                  self.index+1)
+
     def slideshow_timeout(self, *args):
         if self.slideshow_on:
             self.next_slide()
@@ -118,11 +120,14 @@ class SlideShow(layout.Bin):
             self.old_slide_transition.set_to(-1*unit.size_pix[0])
             self.old_slide.add_transition("x", self.old_slide_transition)
             self.slide.add_transition("x", self.new_slide_transition)
-            self.emit("progressed", float(self.index+1) / self.album_length, self.index+1)
-            
+            self.emit("progressed",
+                      float(self.index+1) / self.album_length,
+                      self.index+1)
+
     def previous_slide(self):
         if self.old_slide is None:
-            self.index = self.index - 1 if self.index > 0 else self.album_length - 1
+            self.index = self.index - 1 if self.index > 0 \
+                else self.album_length - 1
             self.old_slide = self.slide
             self.slide = self.data_source.slides[self.index]
             self.slide.set_x(-1*unit.size_pix[0])
@@ -136,7 +141,9 @@ class SlideShow(layout.Bin):
             self.old_slide_transition.set_to(unit.size_pix[0])
             self.old_slide.add_transition("x", self.old_slide_transition)
             self.slide.add_transition("x", self.new_slide_transition)
-            self.emit("progressed", float(self.index+1) / self.album_length, self.index+1)
+            self.emit("progressed",
+                      float(self.index+1) / self.album_length,
+                      self.index+1)
 
     def run(self):
         if self.slideshow_on_fullscreen:
@@ -146,20 +153,25 @@ class SlideShow(layout.Bin):
             self.cover_frame.set_size(unit.size_pix[0], unit.size_pix[1])
             self.remove_child(self.slide)
             self.cover_frame.add_child(self.slide)
-            self.cover_frame.set_background_color(Clutter.Color.new(0, 0, 0, 255))
-            if self.cached_slide_width is None and self.cached_slide_height is None:
-                self.cached_slide_width, self.cached_slide_height = self.slide.get_size()
+            cover_frame_color = Clutter.Color.new(0, 0, 0, 255)
+            self.cover_frame.set_background_color(cover_frame_color)
+            if (self.cached_slide_width is None and
+                    self.cached_slide_height is None):
+                self.cached_slide_width, self.cached_slide_height = \
+                    self.slide.get_size()
             self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
             self.stage.add_child(self.cover_frame)
         self.slideshow_on = True
-        Clutter.threads_add_timeout(0, self.idle_duration, self.slideshow_timeout, None)
+        Clutter.threads_add_timeout(0, self.idle_duration,
+                                    self.slideshow_timeout, None)
 
     def stop(self, *args):
         self.slideshow_on = False
         if self.slideshow_on_fullscreen:
             self.stage.remove_child(self.cover_frame)
             self.cover_frame.remove_child(self.slide)
-            self.slide.set_size(self.cached_slide_width, self.cached_slide_height)
+            self.slide.set_size(self.cached_slide_width,
+                                self.cached_slide_height)
             self.slide.set_x(0)
             self.add_child(self.slide)
             self.fullscreen_on = False
@@ -171,11 +183,13 @@ class SlideShow(layout.Bin):
             elif self.slideshow_on_fullscreen:
                 if self.cover_frame.contains(self.old_slide):
                     self.cover_frame.remove_child(self.old_slide)
-        if self.cached_slide_width is not None and self.cached_slide_width is not None:
-            self.old_slide.set_size(self.cached_slide_width, self.cached_slide_height)
+        if (self.cached_slide_width is not None and
+                self.cached_slide_width is not None):
+            self.old_slide.set_size(self.cached_slide_width,
+                                    self.cached_slide_height)
         self.old_slide = None
         self.slide.remove_transition("x")
-        
+
 
 class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
     __gtype_name__ = "PisakViewerPhotoSlidesSource"
@@ -250,7 +264,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE)
     }
-    
+
     def __init__(self):
         super().__init__()
         self.tiles = []
@@ -302,17 +316,19 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         for item in self.data:
             tile = PhotoTile()
             tile.label_text = item["category"]
-            tile.preview_path = database_agent.get_preview_of_category(item["category"])["path"]
+            tile.preview_path = database_agent.get_preview_of_category(
+                item["category"])["path"]
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
             tile.ratio_spacing = self.tile_ratio_spacing
             tile.preview_ratio_height = self.tile_preview_ratio_height
             tile.preview_ratio_widtht = self.tile_preview_ratio_width
             self.tiles.append(tile)
-            
+
     def get_tiles(self, count):
-        tiles = self.tiles[self.index : count]
-        self.index = (self.index + count) % len(self.tiles) if len(self.tiles) > 0 else self.index
+        tiles = self.tiles[self.index:count]
+        self.index = (self.index + count) % len(self.tiles) if \
+            len(self.tiles) > 0 else self.index
         return tiles
 
 
@@ -343,11 +359,11 @@ class AlbumTilesSource(LibraryTilesSource):
                 tile.ratio_width = self.tile_ratio_width
                 tile.ratio_height = self.tile_ratio_height
                 self.tiles.append(tile)
-        
+
 
 class ProgressBar(widgets.NewProgressBar):
     __gtype_name__ = "PisakViewerProgressBar"
-    
+
     def __init__(self):
         super().__init__()
         self.label = Mx.Label()
@@ -358,7 +374,7 @@ class ProgressBar(widgets.NewProgressBar):
 
 class PhotoTile(widgets.PhotoTile):
     __gtype_name__ = "PisakViewerPhotoTile"
-    
+
     def __init__(self):
         super().__init__()
         self.label = Mx.Label()
@@ -415,4 +431,3 @@ class PhotoSlide(layout.Bin):
 
     def set_from_data(self, data, mode, width, height, row_stride):
         self.photo.set_from_data(data, mode, width, height, row_stride)
-        
