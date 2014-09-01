@@ -64,9 +64,12 @@ PisakViewerButton {
 
 }
 
-PisakViewerButton:scanning {
+PisakViewerButton:hover {
   color: black;
-  border-image: url("viewer_scanning_button.png");
+  font-size: 18 pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("viewer_hover_button.png");
 }
 
 

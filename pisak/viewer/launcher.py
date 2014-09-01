@@ -7,6 +7,7 @@ import sys
 
 import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
+import pisak.handlers
 from pisak.viewer import widgets, handlers # @UnusedImport 
 
 class LauncherStage(Clutter.Stage):

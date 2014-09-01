@@ -35,13 +35,18 @@
         "type": "PisakScanningGroup",
 	"selector": "mouse",
         "children": ["button_menu_box"],
-        "scanning-hilite": true,
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2
-        }
+        },
+        "signals": [
+            {
+                "name": "notify::mapped",
+                "handler": "general/start_group"
+            }
+        ]
     },
     {
         "id": "button_menu_box",
