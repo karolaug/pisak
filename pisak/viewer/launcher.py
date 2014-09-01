@@ -1,7 +1,7 @@
 '''
 Module which processes and launches brain flippers
 '''
-from pisak import switcher_app, signals
+from pisak import switcher_app, signals, unit
 from gi.repository import Clutter
 import sys
 
@@ -42,7 +42,7 @@ def run(descriptor):
         ''' 
         def create_stage(self, argv):
             stage = LauncherStage(self.context, descriptor)
-            stage.set_size(1920, 1080)
+            stage.set_size(unit.size_pix[0], unit.size_pix[1])
             stage.set_fullscreen(True)
             return stage
     
