@@ -1,5 +1,6 @@
 import collections
 import os.path
+from numpy import ceil
 
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
@@ -166,7 +167,10 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         "counter_limit": (
             GObject.TYPE_INT64, "counter limit",
             "max counter value", 0, GObject.G_MAXUINT,
-            10, GObject.PARAM_READWRITE)
+            10, GObject.PARAM_READWRITE),
+        "related-object": (
+            Clutter.Actor.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
     }  
 
     def __init__(self):
@@ -178,6 +182,7 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         self.progress_transition_duration = 1000
         self.progress_transition.connect("stopped", self._update_label)
         self.connect("notify::width", self._allocate_label)
+        
 
     @property
     def label(self):
@@ -190,6 +195,16 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
             value.set_y_expand(True)
             value.set_y_align(Clutter.ActorAlign.START)
             self.insert_child_above(value, None)
+
+    @property
+    def related_object(self):
+        return self._related_object
+
+    @related_object.setter
+    def related_object(self, value):
+        self._related_object = value
+        value.connect("limit-set", self._set_counter_limit)
+        value.connect("progressed", self._update_bar)
 
     @property
     def counter_limit(self):
@@ -240,9 +255,17 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
                 px_x_offset = self.label_ratio_x_offset * self.get_width()
                 self.label.set_x(px_x_offset)
 
+    def _set_counter_limit(self, source, limit):
+        print(limit)
+        self.counter_limit = limit
+
+    def _update_bar(self, source, progress):
+        print(progress)
+        self.progress = progress
+
     def _update_label(self, *args):
         if self.label is not None:
-            new_text = " / ".join([str(int(self.progress*self.counter_limit)),
+            new_text = " / ".join([str(int(ceil(self.progress*self.counter_limit))),
                                    str(self.counter_limit)])
             self.label.set_text(new_text)
 

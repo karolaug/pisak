@@ -8,6 +8,10 @@ from pisak.viewer import database_agent, image
 
 class SlideShow(layout.Bin):
     __gtype_name__ = "PisakViewerSlideShow"
+    __gsignals__ = {
+        "progressed": (GObject.SIGNAL_RUN_FIRST, None, (GObject.TYPE_FLOAT,)),
+        "limit-set": (GObject.SIGNAL_RUN_FIRST, None, (GObject.TYPE_INT64,))
+    }
     __gproperties__ = {
         "data-source": (
             pager.DataSource.__gtype__, "", "", GObject.PARAM_READWRITE),
@@ -76,6 +80,7 @@ class SlideShow(layout.Bin):
 
     def show_initial_slide(self, initial_index=0):
         self.album_length = len(self.data_source.slides)
+        self.emit("limit-set", self.album_length)
         if initial_index is None:
             self.index = 0
         else:
@@ -83,6 +88,7 @@ class SlideShow(layout.Bin):
         if self.data_source is not None:
             self.slide = self.data_source.slides[self.index]
             self.add_child(self.slide)
+        self.emit("progressed", float(self.index / self.album_length))
         
     def slideshow_timeout(self, *args):
         if self.slideshow_on:
@@ -106,6 +112,7 @@ class SlideShow(layout.Bin):
                 self.add_child(self.new_slide)
             self.slide.add_transition("x", self.old_slide_transition)
             self.new_slide.add_transition("x", self.new_slide_transition)
+            self.emit("progressed", float(self.index / self.album_length))
         
     def previous_slide(self):
         if self.new_slide is None:
@@ -122,13 +129,15 @@ class SlideShow(layout.Bin):
                 self.add_child(self.new_slide)
             self.slide.add_transition("x", self.old_slide_transition)
             self.new_slide.add_transition("x", self.new_slide_transition)
+            self.emit("progressed", float(self.index / self.album_length))
 
     def clean_up(self, *args):
         if self.slide is not None:
             if self.contains(self.slide):
                 self.remove_child(self.slide)
-            elif self.cover_frame.contains(self.slide):
-                self.cover_frame.remove_child(self.slide)
+            elif self.slideshow_fullscreen:
+                if self.cover_frame.contains(self.slide):
+                    self.cover_frame.remove_child(self.slide)
         self.slide = self.new_slide
         self.slide_width, self.slide_height = self.slide.get_size()
         self.new_slide = None
