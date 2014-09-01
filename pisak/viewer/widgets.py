@@ -267,8 +267,8 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
 
     def __init__(self):
         super().__init__()
-        self.tiles = []
         self.index = 0
+        self.data = database_agent.get_categories()
 
     @property
     def tile_ratio_height(self):
@@ -310,9 +310,9 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     def tile_preview_ratio_width(self, value):
         self._tile_preview_ratio_width = value
 
-    def generate_tiles(self):
-        self.data = database_agent.get_categories()
-        for item in self.data:
+    def _generate_tiles(self, count):
+        tiles = []
+        for item in self.data[self.index:count]:
             tile = PhotoTile()
             tile.label_text = item["category"]
             tile.preview_path = database_agent.get_preview_of_category(
@@ -322,12 +322,13 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
             tile.ratio_spacing = self.tile_ratio_spacing
             tile.preview_ratio_height = self.tile_preview_ratio_height
             tile.preview_ratio_widtht = self.tile_preview_ratio_width
-            self.tiles.append(tile)
+            tiles.append(tile)
+        return tiles
 
     def get_tiles(self, count):
-        tiles = self.tiles[self.index:count]
-        self.index = (self.index + count) % len(self.tiles) if \
-            len(self.tiles) > 0 else self.index
+        tiles = self._generate_tiles(count)
+        self.index = (self.index + count) % len(self.data) if \
+            len(self.data) > 0 else self.index
         return tiles
 
 
@@ -337,6 +338,7 @@ class AlbumTilesSource(LibraryTilesSource):
     def __init__(self):
         self.album = None
         super().__init__()
+        self.data = None
 
     @property
     def album(self):
@@ -346,18 +348,18 @@ class AlbumTilesSource(LibraryTilesSource):
     def album(self, value):
         self._album = value
         if value is not None:
-            self._generate_tiles()
+            self.data = database_agent.get_photos_from_category(value)
 
-    def _generate_tiles(self):
-        if self.album is not None:
-            self.data = database_agent.get_photos_from_category(self.album)
-            for item in self.data:
-                tile = PhotoTile()
-                tile.preview_path = item["path"]
-                tile.scale_mode = Mx.ImageScaleMode.FIT
-                tile.ratio_width = self.tile_ratio_width
-                tile.ratio_height = self.tile_ratio_height
-                self.tiles.append(tile)
+    def _generate_tiles(self, count):
+        tiles = []
+        for item in self.data[self.index:count]:
+            tile = PhotoTile()
+            tile.preview_path = item["path"]
+            tile.scale_mode = Mx.ImageScaleMode.FIT
+            tile.ratio_width = self.tile_ratio_width
+            tile.ratio_height = self.tile_ratio_height
+            tiles.append(tile)
+            return tiles
 
 
 class ProgressBar(widgets.NewProgressBar):

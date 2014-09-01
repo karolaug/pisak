@@ -27,11 +27,11 @@ def prepare_album_view(stage, script, data):
     button_to_stage(stage, script, "button_library", "library")
 
     library = script.get_object("library_data")
-    for index, photo in enumerate(library.tiles):
-        photo.connect("activate", lambda *_: stage.load_view(
-                                                    "photo",
-                                                    {"index": index,
-                                                    "album": data["album_name"]}))
+    #for index, photo in enumerate(library.tiles):
+        #photo.connect("activate", lambda *_: stage.load_view(
+                                                    #"photo",
+                                                    #{"index": index,
+                                                    #"album": data["album_name"]}))
 
     album = script.get_object("library_data")
     album.album = None  # data["album_name"]  # also through set property should page the new album
@@ -43,8 +43,8 @@ def prepare_library_view(stage, script, data):
     #button_to_stage(stage, script, "button_library", "library")
 
     library = script.get_object("library_data")
-    for album in library.tiles:
-        album.connect("activate", lambda *_: stage.load_view("album", {"album_name": album["category"]}))
+    #for album in library.data:
+        #album.connect("activate", lambda *_: stage.load_view("album", {"album_name": album["category"]}))
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
 
