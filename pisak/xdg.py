@@ -12,8 +12,12 @@ FOLDERS = {"desktop" : GLib.USER_DIRECTORY_DESKTOP,
            "templates" : GLib.USER_DIRECTORY_TEMPLATES,
            "videos" : GLib.USER_DIRECTORY_VIDEOS}
 
-def get_dir(which):
-    return GLib.get_user_special_dir(FOLDERS[which])
+def get_dir(folder):
+    '''Returns path to XDG folder
+    :param: folder - folder name as str, lowercase, possible are:
+    desktop, documents, downloads, music, pictures, public, templates, videos
+    '''
+    return GLib.get_user_special_dir(FOLDERS[folder])
 
 if __name__ == '__main__':
     print("Your XDG paths are:")
