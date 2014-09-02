@@ -105,7 +105,7 @@ class SlideShow(layout.Bin):
             return False
 
     def next_slide(self, *args):
-        if self.old_slide is None:
+        if self.old_slide is None and self.album_length > 1:
             self.index = (self.index + 1) % self.album_length
             self.old_slide = self.slide
             self.slide = self.data_source.slides[self.index]
@@ -125,7 +125,7 @@ class SlideShow(layout.Bin):
                       self.index+1)
 
     def previous_slide(self):
-        if self.old_slide is None:
+        if self.old_slide is None and self.album_length > 1:
             self.index = self.index - 1 if self.index > 0 \
                 else self.album_length - 1
             self.old_slide = self.slide
@@ -168,8 +168,9 @@ class SlideShow(layout.Bin):
     def stop(self, *args):
         self.slideshow_on = False
         if self.slideshow_on_fullscreen:
-            self.stage.remove_child(self.cover_frame)
+            self.slide.remove_transition("x")
             self.cover_frame.remove_child(self.slide)
+            self.stage.remove_child(self.cover_frame)
             self.slide.set_size(self.cached_slide_width,
                                 self.cached_slide_height)
             self.slide.set_x(0)
