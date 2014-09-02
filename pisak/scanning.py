@@ -5,6 +5,8 @@ from gi.repository import Clutter, GObject, Mx, Gdk
 
 from pisak import properties, unit
 
+import subprocess as sp
+
 
 class Strategy(GObject.GObject):
     """
@@ -149,7 +151,10 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             display = Gdk.Display.get_default()
             screen = display.get_default_screen()
             display.warp_pointer(screen, unit.w(1), unit.h(1))
-            
+            #disable the touchpad            
+            sp.call( ['synclient', 'TouchpadOff=1'] )
+            #optionaly use xinput to disable other pointer devices
+            #sp.call(['xinput', 'set-int-prop', '10', '"Device Enabled"', '8', '0'])
             
 
         else:
