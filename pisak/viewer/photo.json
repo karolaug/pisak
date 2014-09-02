@@ -39,7 +39,7 @@
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": 2
+            "max-cycle-count": -1
         },
         "signals": [
             {
