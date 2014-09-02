@@ -1,7 +1,7 @@
 '''
 Module with app-specific code for photo viewer.
 '''
-from pisak.viewer import launcher
+from pisak import launcher
 import os.path
 
 def button_to_stage(stage, script, button_name, stage_to_load):
