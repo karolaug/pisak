@@ -1,104 +1,82 @@
 import os
 from datetime import datetime
+from contextlib import contextmanager
 
 from gi.repository import GExiv2, GObject
+from sqlalchemy import Column, DateTime, String, Integer, func, create_engine, desc, insert
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import UniqueConstraint
 
-from pisak.database_manager import DatabaseConnector
-
-
-_CREATE_PHOTOS = "CREATE TABLE IF NOT EXISTS photos ( \
-                                    id INTEGER PRIMARY KEY, \
-                                    path TEXT NOT NULL, \
-                                    category TEXT NOT NULL, \
-                                    created_on TIMESTAMP NOT NULL, \
-                                    added_on TIMESTAMP NOT NULL, \
-                                    UNIQUE (path, category))"
-
-_CREATE_FAVOURITE_PHOTOS = "CREATE TABLE IF NOT EXISTS favourite_photos ( \
-                                            id INTEGER PRIMARY KEY, \
-                                            path TEXT UNIQUE NOT NULL REFERENCES photos(path), \
-                                            category TEXT NOT NULL REFERENCES photos(category))"
+from pisak import res
 
 
-def get_categories():
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    query = "SELECT DISTINCT category FROM photos"
-    categories = db.execute(query)
-    db.close_connection()
-    return categories
+_PHOTOS_DB_PATH = os.path.join(res.PATH, "photos_database.db")
 
-def get_photos_from_category(category):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    query = "SELECT * FROM photos WHERE category='" + category + "' ORDER BY created_on ASC, added_on ASC"
-    photos = db.execute(query)
-    db.close_connection()
+_ENGINE_URL = "sqlite:///" + _PHOTOS_DB_PATH
+
+
+Base = declarative_base()
+
+
+class Photo(Base):
+    __tablename__ = "photos"
+    __table_args__ = (
+        UniqueConstraint("path", "album"),
+    )
+    id = Column(Integer, primary_key=True)
+    path = Column(String, nullable=False)
+    album = Column(String, nullable=False)
+    created_on = Column(DateTime, nullable=False)
+    added_on = Column(DateTime, nullable=False, default=func.now())
+    rating = Column(Integer)
+
+    
+@contextmanager
+def _establish_session():
+    engine = create_engine(_ENGINE_URL)
+    Base.metadata.create_all(engine)
+    session = sessionmaker()
+    session.configure(bind=engine)
+    db_session = session()
+    try:
+        yield db_session
+        db_session.expunge_all()
+        db_session.commit()
+    except:
+        db_session.rollback()
+        raise
+    finally:
+        db_session.close()
+
+
+def get_albums():
+    with _establish_session() as sess:
+        albums = sess.query(Photo.album).distinct().all()
+    return albums
+
+
+def get_photos_from_album(album):
+    with _establish_session() as sess:
+        photos = sess.query(Photo).filter(Photo.album==album).order_by(
+            Photo.created_on, desc(Photo.added_on)).all()
     return photos
+
 
 def get_all_photos():
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    query = "SELECT * FROM photos"
-    photos = db.execute(query)
-    db.close_connection()
+    with _establish_session() as sess:
+        photos = sess.query(Photo).order_by(
+            Photo.created_on, desc(Photo.added_on)).all()
     return photos
 
-def get_preview_of_category(category):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    query = "SELECT * FROM photos WHERE category='" + category + "' ORDER BY created_on DESC, added_on DESC LIMIT 1"
-    preview = db.execute(query)
-    db.close_connection()
-    return preview[0]
 
-def get_previews(categories_list):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    previews = {}
-    query = "SELECT * FROM photos WHERE category='{}' ORDER BY created_on DESC, added_on DESC LIMIT 1"
-    for category in categories_list:
-        previews[category] = db.execute(query.format(category))[0]
-    db.close_connection()
-    return previews
+def get_preview_of_album(album):
+    with _establish_session() as sess:
+        preview = sess.query(Photo).filter(Photo.album==album).one()
+    return preview
 
-def get_favourite_photos():
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "SELECT favs.id, favs.path, favs.category, created_on, added_on FROM favourite_photos AS favs JOIN \
-                photos ON photos.path=favs.path AND photos.category=favs.category ORDER BY favs.id DESC, created_on ASC, added_on ASC"
-    favourite_photos = db.execute(query)
-    db.close_connection()
-    return favourite_photos
 
-def add_to_favourite_photos(path, category):
-    if is_in_favourite_photos(path):
-        return False
-    else:
-        db = DatabaseConnector()
-        db.execute(_CREATE_FAVOURITE_PHOTOS)
-        db.execute(_CREATE_PHOTOS)
-        values = (path, category,)
-        query = "INSERT INTO favourite_photos (path, category) VALUES (?, ?)"
-        db.execute(query, values)
-        db.commit()
-        db.close_connection()
-        return True
-
-def is_in_favourite_photos(path):
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "SELECT * FROM favourite_photos WHERE path='" + path + "'"
-    favourite_photos = db.execute(query)
-    db.close_connection()
-    if favourite_photos:
-        return True
-    else:
-        return False
-
-def insert_photo(path, category):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
+def insert_photo(path, album):
     try:
         meta = GExiv2.Metadata(path)
         if meta.has_tag("Exif.Photo.DateTimeOriginal"):
@@ -107,37 +85,21 @@ def insert_photo(path, category):
             created_on = datetime.fromtimestamp(os.path.getctime(path))
     except GObject.GError:
         created_on = datetime.fromtimestamp(os.path.getctime(path))
-    added_on = db.generate_timestamp()
-    query = "INSERT OR IGNORE INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
-    values = (path, category, created_on, added_on,)
-    db.execute(query, values)
-    db.commit()
-    db.close_connection()
+    photo = {"path": path, "album": album, "created_on": created_on}
+    with _establish_session() as sess:
+        sess.execute(insert(Photo.__table__, values=photo).prefix_with("OR IGNORE"))
+    
 
 def insert_many_photos(photos_list):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    added_on = db.generate_timestamp()
-    for photo in photos_list:
+    for idx, photo in enumerate(photos_list):
         try:
             meta = GExiv2.Metadata(photo[0])  # photo path as the first item
             if meta.has_tag("Exif.Photo.DateTimeOriginal"):
                 photo.append(meta.get_date_time())
             else:
                 photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
-        except GObject.GError:
+        except GObject.GErrordistinct:
             photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
-        photo.append(added_on)
-    query = "INSERT OR IGNORE INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
-    db.executemany(query, photos_list)
-    db.commit()
-    db.close_connection()
-
-def remove_from_favourite_photos(path):
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "DELETE FROM favourite_photos WHERE path='" + path + "'"
-    db.execute(query)
-    db.commit()
-    db.close_connection()
-
+        photos_list[idx] = {"path": photo[0], "album": photo[1], "created_on": photo[2]}
+    with _establish_session() as sess:
+        sess.execute(insert(Photo.__table__, values=photos_list).prefix_with("OR IGNORE"))

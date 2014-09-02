@@ -1,8 +1,15 @@
 '''
 Module with app-specific code for photo viewer.
 '''
-from pisak.viewer import launcher
 import os
+
+from gi.repository import GLib
+
+from pisak.viewer import launcher, model, database_agent
+
+
+_LIBRARY_PATH = GLib.get_user_special_dir(GLib.USER_DIRECTORY_PICTURES)
+
 
 def button_to_stage(stage, script, button_name, stage_to_load, data=None):
     button = script.get_object(button_name)
@@ -19,7 +26,7 @@ def prepare_photo_view(stage, script, data):
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
-    data_source.album = os.getenv("HOME")  # data["album_name"]
+    data_source.album =   _LIBRARY_PATH  # data["album_name"]
     slideshow.show_initial_slide(None)  # data["index"]
 
 def prepare_album_view(stage, script, data):
@@ -61,7 +68,17 @@ def prepare_photo_edition_view(stage, script, data):
 
 def fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
+
   
+def generate_viewer_data():
+    model.LIBRARY_SUBDIR = ""
+    lib = model.Library(_LIBRARY_PATH)
+    print(_LIBRARY_PATH)
+    all_photos = lib.scan()[-1]
+    print(all_photos)
+    database_agent.insert_many_photos(all_photos)
+    
+
 VIEWER_APP = {
     "views": {
         "photo": (fix_path("photo.json"), prepare_photo_view),
@@ -76,5 +93,5 @@ VIEWER_APP = {
 
 
 if __name__ == "__main__":
-    print(VIEWER_APP)
+    generate_viewer_data()
     launcher.run(VIEWER_APP)
