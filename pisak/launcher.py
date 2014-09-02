@@ -1,5 +1,5 @@
 '''
-Module which processes and launches brain flippers
+Module which processes and launches pisak apps
 '''
 from pisak import switcher_app, signals
 from gi.repository import Clutter
@@ -7,7 +7,8 @@ import sys
 
 import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
-from pisak.viewer import widgets, handlers # @UnusedImport 
+from pisak.viewer import widgets, handlers  # @UnusedImport
+
 
 class LauncherStage(Clutter.Stage):
     def __init__(self, context, descriptor):
@@ -39,12 +40,12 @@ def run(descriptor):
     class LauncherApp(switcher_app.Application):
         '''
         Implementation of switcher app for JSON descriptors.
-        ''' 
+        '''
         def create_stage(self, argv):
             stage = LauncherStage(self.context, descriptor)
             stage.set_size(1920, 1080)
             stage.set_fullscreen(True)
             return stage
-    
+
     app = LauncherApp(sys.argv)
     app.main()
