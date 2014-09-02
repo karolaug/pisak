@@ -1,6 +1,5 @@
 import collections
 import os.path
-from numpy import ceil
 
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
