@@ -15,6 +15,7 @@ def button_to_stage(stage, script, button_name, stage_to_load, data=None):
     button = script.get_object(button_name)
     button.connect("activate", lambda *_: stage.load_view(stage_to_load, data))
 
+
 def prepare_photo_view(stage, script, data):
 
     slideshow = script.get_object("slideshow_widget")
@@ -26,10 +27,11 @@ def prepare_photo_view(stage, script, data):
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
-    data_source.album =   _LIBRARY_PATH  # data["album_name"]
+    data_source.album = _LIBRARY_PATH  # data["album_name"]
     slideshow.show_initial_slide(None)  # data["index"]
+    
 
-def prepare_album_view(stage, script, data):
+def prepare_album_view(stage, script, album_name):
 
     button_to_stage(stage, script, "button_library", "library")
 
@@ -40,11 +42,12 @@ def prepare_album_view(stage, script, data):
                                                     #{"index": index,
                                                     #"album": data["album_name"]}))
 
-    album = script.get_object("library_data")
-    album.album = None  # data["album_name"]  # also through set property should page the new album
+    library.album = album_name
+    # also through set property should page the new album
 
-    #button_to_stage(stage, script, "button_start", "start") -> start panel
-        
+    # button_to_stage(stage, script, "button_start", "start") -> start panel
+
+
 def prepare_library_view(stage, script, data):
 
     #button_to_stage(stage, script, "button_library", "library")
@@ -53,7 +56,9 @@ def prepare_library_view(stage, script, data):
     #for album in library.data:
         #album.connect("activate", lambda *_: stage.load_view("album", {"album_name": album["category"]}))
 
-    #button_to_stage(stage, script, "button_start", "start") -> start panel
+
+    # button_to_stage(stage, script, "button_start", "start") -> start panel
+
 
 def prepare_photo_edition_view(stage, script, data):
 
@@ -64,12 +69,13 @@ def prepare_photo_edition_view(stage, script, data):
     button = script.get_object("button_photo")
     button.connect("activate", lambda *_: stage.load_view("photo", photo))
 
-    #button_to_stage(stage, script, "button_start", "start") -> start panel
+    # button_to_stage(stage, script, "button_start", "start") -> start panel
+
 
 def fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
 
-  
+
 def generate_viewer_data():
     model.LIBRARY_SUBDIR = ""
     lib = model.Library(_LIBRARY_PATH)
@@ -82,7 +88,7 @@ VIEWER_APP = {
         "photo": (fix_path("photo.json"), prepare_photo_view),
         "album": (fix_path("album.json"), prepare_album_view),
         "library": (fix_path("library.json"), prepare_library_view),
-        "photo_edition": (fix_path("photo_edition.json"), 
+        "photo_edition": (fix_path("photo_edition.json"),
                           prepare_photo_edition_view),
     },
     "initial-view": "photo",
