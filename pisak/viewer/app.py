@@ -20,7 +20,7 @@ def prepare_photo_view(stage, script, data):
     #button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
     data_source.album = os.getenv("HOME")  # data["album_name"]
-    slideshow.show_initial_slide(None)  # data["index"]
+    slideshow.show_initial_slide(0)  # data["index"]
 
 def prepare_album_view(stage, script, data):
 

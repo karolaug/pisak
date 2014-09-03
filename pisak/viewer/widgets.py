@@ -86,10 +86,7 @@ class SlideShow(layout.Bin):
     def show_initial_slide(self, initial_index=0):
         self.album_length = len(self.data_source.slides)
         self.emit("limit-declared", self.album_length)
-        if initial_index is None:
-            self.index = 0
-        else:
-            self.index = initial_index
+        self.index = initial_index
         if self.data_source is not None:
             self.slide = self.data_source.slides[self.index]
             self.add_child(self.slide)
