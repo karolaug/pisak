@@ -3,9 +3,7 @@ Module with app-specific code for photo viewer.
 '''
 import os
 
-from gi.repository import GLib
-
-from pisak.viewer import model, database_agent, data_loader
+from pisak.viewer import data_loader
 from pisak import launcher
 
 
@@ -25,7 +23,7 @@ def prepare_photo_view(stage, script, data):
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
-    data_source.album = _LIBRARY_PATH  # data["album_name"]
+    data_source.album = data_loader.LIBRARY_DIR  # data["album_name"]
     slideshow.show_initial_slide(None)  # data["index"]
     
 
@@ -72,12 +70,6 @@ def prepare_photo_edition_view(stage, script, data):
 
 def fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
-
-
-def load_viewer_data():
-    new_albums, new_photos = data_loader.get_new_library_items()
-    database_agent.insert_many_albums(new_albums)
-    database_agent.insert_many_photos(new_photos)
     
 
 VIEWER_APP = {
@@ -94,5 +86,5 @@ VIEWER_APP = {
 
 
 if __name__ == "__main__":
-    load_viewer_data()
+    data_loader.load_new()
     launcher.run(VIEWER_APP)
