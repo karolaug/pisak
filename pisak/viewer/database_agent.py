@@ -63,6 +63,10 @@ def _establish_session():
         db_session.close()
 
 
+def get_db_last_modification_time():
+    return os.path.getmtime(_PHOTOS_DB_PATH)
+
+
 def get_last_photo_insertion_time():
     with _establish_session() as sess:
         item = sess.execute(select([Photo.added_on]).order_by(

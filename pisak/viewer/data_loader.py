@@ -33,6 +33,9 @@ else:
     ALBUM_REF_TIME = 0
 
 
+REF_TIME = database_agent.get_db_last_modification_time()
+
+
 LIBRARY_DIR = xdg.get_dir("pictures")
 
 
@@ -42,11 +45,11 @@ EXTENSIONS = (".png", ".jpg", ".jpeg", ".tiff", ".gif", ".raw", ".bmp")
 def load_new():
     path_generator = os.walk(LIBRARY_DIR)
     for current, subdirs, files in path_generator:
-        if os.path.getmtime(current) > ALBUM_REF_TIME:
+        if os.path.getmtime(current) > REF_TIME:
             database_agent.insert_album(current)
             new_photos = []
             for photo_path in [os.path.join(current, name) for name in files]:
-                if os.path.getctime(photo_path) > PHOTO_REF_TIME:
+                if os.path.getctime(photo_path) > REF_TIME:
                     if os.path.splitext(photo_path)[-1].lower() in EXTENSIONS:
                         try:
                             meta = GExiv2.Metadata(photo_path)
