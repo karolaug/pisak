@@ -49,7 +49,7 @@ def load_new():
                 if os.path.getctime(photo_path) > PHOTO_REF_TIME:
                     if os.path.splitext(photo_path)[-1].lower() in EXTENSIONS:
                         try:
-                            meta = GExiv2.Metadata(photo_path)  # photo path as the first item
+                            meta = GExiv2.Metadata(photo_path)
                             if meta.has_tag("Exif.Photo.DateTimeOriginal"):
                                 created_on = meta.get_date_time()
                                 if not isinstance(created_on, datetime):
