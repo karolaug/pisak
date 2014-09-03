@@ -25,8 +25,7 @@ class Photo(Base):
     id = Column(Integer, primary_key=True)
     path = Column(String, unique=True, nullable=False)
     albums = relationship("Album", secondary="photo_album_link", collection_class=set,
-                        backref=backref("albums", lazy='noload',
-                        uselist=True, passive_updates=False))
+                        backref=backref("albums", lazy='noload', passive_updates=False))
     created_on = Column(DateTime, nullable=False)
     is_favourite = Column(Boolean, nullable=False, default=False)
     added_on = Column(DateTime, nullable=False, default=func.now())
@@ -37,8 +36,7 @@ class Album(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False)
     photos = relationship("Photo", secondary="photo_album_link", collection_class=set,
-                        backref=backref("photos", lazy='noload', uselist=True,
-                        passive_updates=False))
+                        backref=backref("photos", lazy='noload', passive_updates=False))
     added_on = Column(DateTime, nullable=False, default=func.now())
 
 

@@ -36,7 +36,7 @@ else:
 LIBRARY_DIR = xdg.get_dir("pictures")
 
 
-EXTENSIONS = (".png", ".jpg", ".jpeg", ".tiff", ".gif", ".raw", ".bmp", ".svg")
+EXTENSIONS = (".png", ".jpg", ".jpeg", ".tiff", ".gif", ".raw", ".bmp")
 
 
 def load_new():
