@@ -6,6 +6,60 @@ from gi.repository import Clutter, GObject, Mx
 from pisak import properties
 
 
+class Scannable(object):
+    """
+    Interface of object scannable by switcher groups. Switcher groups expect
+    widgets implement this interface.
+    """
+    def activate(self):
+        """
+        Performs widgets action.
+        """
+        raise NotImplementedError()
+
+    def enable_hilite(self):
+        """
+        Enables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+    def disable_hilite(self):
+        """
+        Disables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+    def enable_scanned(self):
+        """
+        Enables scanned style for this widget.
+        """
+        raise NotImplementedError()
+
+    def disable_scanned(self):
+        """
+        Enables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+
+class StylableScannable(object):
+    """
+    Partial implementation of Scannable interface for stylable widgets.
+    Hilighted and scanned widgets are marked with CSS pseudoclasses.
+    """
+    def enable_hilite(self):
+        self.style_pseudo_class_add("hilite")
+
+    def disable_hilite(self):
+        self.style_pseudo_class_remove("hilite")
+
+    def enable_scanned(self):
+        self.style_pseudo_class_add("scanning")
+
+    def disable_scanned(self):
+        self.style_pseudo_class_remove("scanning")
+
+
 class Strategy(GObject.GObject):
     """
     Abstract base class for scanning strategies.
