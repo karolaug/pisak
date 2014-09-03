@@ -1,14 +1,17 @@
 '''
 Module which processes and launches pisak apps
 '''
-from pisak import switcher_app, signals, unit
-from gi.repository import Clutter
 import sys
+
+from gi.repository import Clutter
+
+from pisak import switcher_app, signals, unit
 
 import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
 import pisak.handlers # @UnusedImport
-from pisak.viewer import widgets, handlers # @UnusedImport 
+from pisak.viewer import widgets, handlers  # @UnusedImport
+
 
 class LauncherStage(Clutter.Stage):
     def __init__(self, context, descriptor):

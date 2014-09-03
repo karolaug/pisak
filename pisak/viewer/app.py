@@ -1,8 +1,11 @@
 '''
 Module with app-specific code for photo viewer.
 '''
-from pisak import launcher
 import os
+
+from pisak.viewer import data_loader
+from pisak import launcher
+
 
 def button_to_stage(stage, script, button_name, stage_to_load, data=None):
     button = script.get_object(button_name)
@@ -20,10 +23,12 @@ def prepare_photo_view(stage, script, data):
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
-    data_source.album = os.getenv("HOME")  # data["album_name"]
+    data_source.album = data_loader.LIBRARY_DIR  # data["album_name"]
     slideshow.show_initial_slide(0)  # data["index"]
 
-def prepare_album_view(stage, script, data):
+    
+
+def prepare_album_view(stage, script, album_name):
 
     button_to_stage(stage, script, "button_library", "library")
 
@@ -35,8 +40,11 @@ def prepare_album_view(stage, script, data):
                                                     #"album": data["album_name"]}))
 
     album = script.get_object("library_data")
-    album.album = None  # data["album_name"]  # also through set property should page the new album
+    album.album = data_loader.LIBRARY_DIR  # data["album_name"]  # also through set property should page the new album
     
+    # also through set property should page the new album
+
+    # button_to_stage(stage, script, "button_start", "start") -> start panel
 
 def prepare_library_view(stage, script, data):
 
@@ -64,6 +72,7 @@ def prepare_photo_edition_view(stage, script, data):
 
 def fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
+    
 
 VIEWER_APP = {
     "views": {
@@ -79,5 +88,5 @@ VIEWER_APP = {
 
 
 if __name__ == "__main__":
-    print(VIEWER_APP)
+    data_loader.load_new()
     launcher.run(VIEWER_APP)
