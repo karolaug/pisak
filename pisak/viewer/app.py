@@ -5,10 +5,8 @@ import os
 
 from gi.repository import GLib
 
-from pisak.viewer import launcher, model, database_agent
-
-
-_LIBRARY_PATH = GLib.get_user_special_dir(GLib.USER_DIRECTORY_PICTURES)
+from pisak.viewer import model, database_agent, data_loader
+from pisak import launcher
 
 
 def button_to_stage(stage, script, button_name, stage_to_load, data=None):
@@ -76,11 +74,10 @@ def fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
 
 
-def generate_viewer_data():
-    model.LIBRARY_SUBDIR = ""
-    lib = model.Library(_LIBRARY_PATH)
-    all_photos = lib.scan()[-1]
-    database_agent.insert_many_photos(all_photos)
+def load_viewer_data():
+    new_albums, new_photos = data_loader.get_new_library_items()
+    database_agent.insert_many_albums(new_albums)
+    database_agent.insert_many_photos(new_photos)
     
 
 VIEWER_APP = {
@@ -97,5 +94,5 @@ VIEWER_APP = {
 
 
 if __name__ == "__main__":
-    generate_viewer_data()
+    load_viewer_data()
     launcher.run(VIEWER_APP)

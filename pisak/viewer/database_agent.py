@@ -39,6 +39,7 @@ class Album(Base):
     photos = relationship("Photo", secondary="photo_album_link", collection_class=set,
                         backref=backref("photos", lazy='noload', uselist=True,
                         passive_updates=False))
+    added_on = Column(DateTime, nullable=False, default=func.now())
 
 
 class PhotoAlbumLink(Base):
@@ -66,16 +67,22 @@ def _establish_session():
 
 def get_last_photo_insertion_time():
     with _establish_session() as sess:
-        time = sess.execute(select([Photo.added_on]).order_by(
+        item = sess.execute(select([Photo.added_on]).order_by(
             desc(Photo.added_on))).fetchone()
-    return time
+    if item:
+        return item.added_on
+    else:
+        return None
 
 
 def get_last_album_insertion_time():
     with _establish_session() as sess:
-        time = sess.execute(select([Album.added_on]).order_by(
+        item = sess.execute(select([Album.added_on]).order_by(
             desc(Album.added_on))).fetchone()
-    return time
+    if item:
+        return item.added_on
+    else:
+        return None
                             
 
 def get_all_albums():
@@ -185,13 +192,13 @@ def insert_many_photos(photos_list):
             try:
                 meta = GExiv2.Metadata(photo[0])  # photo path as the first item
                 if meta.has_tag("Exif.Photo.DateTimeOriginal"):
-                    created_on.append(meta.get_date_time())
+                    created_on = meta.get_date_time()
                 else:
-                    created_on.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
+                    created_on = datetime.fromtimestamp(os.path.getctime(photo[0]))
             except GObject.GError:
-                created_on.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
+                created_on = datetime.fromtimestamp(os.path.getctime(photo[0]))
             album = sess.query(Album).filter(Album.name==photo[1]).first()
             new_photo = Photo(path=photo[0], created_on=created_on, is_favourite=False)
             album.photos.add(new_photo)
             photos_list[idx] = new_photo
-        sess.add_many(new_photo)
+        sess.add_all(photos_list)
