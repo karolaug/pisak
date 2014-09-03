@@ -146,24 +146,25 @@ class SlideShow(layout.Bin):
                       self.index+1)
 
     def run(self):
-        if self.slideshow_on_fullscreen:
-            self.fullscreen_on = True
-            self.stage = self.get_stage()
-            self.cover_frame = Clutter.Actor()
-            self.cover_frame.set_size(unit.size_pix[0], unit.size_pix[1])
-            self.remove_child(self.slide)
-            self.cover_frame.add_child(self.slide)
-            cover_frame_color = Clutter.Color.new(0, 0, 0, 255)
-            self.cover_frame.set_background_color(cover_frame_color)
-            if (self.cached_slide_width is None and
-                    self.cached_slide_height is None):
-                self.cached_slide_width, self.cached_slide_height = \
-                    self.slide.get_size()
-            self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
-            self.stage.add_child(self.cover_frame)
-        self.slideshow_on = True
-        Clutter.threads_add_timeout(0, self.idle_duration,
-                                    self.slideshow_timeout, None)
+        if self.old_slide is None:
+            if self.slideshow_on_fullscreen:
+                self.fullscreen_on = True
+                self.stage = self.get_stage()
+                self.cover_frame = Clutter.Actor()
+                self.cover_frame.set_size(unit.size_pix[0], unit.size_pix[1])
+                self.remove_child(self.slide)
+                self.cover_frame.add_child(self.slide)
+                cover_frame_color = Clutter.Color.new(0, 0, 0, 255)
+                self.cover_frame.set_background_color(cover_frame_color)
+                if (self.cached_slide_width is None and
+                        self.cached_slide_height is None):
+                    self.cached_slide_width, self.cached_slide_height = \
+                        self.slide.get_size()
+                self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
+                self.stage.add_child(self.cover_frame)
+            self.slideshow_on = True
+            Clutter.threads_add_timeout(0, self.idle_duration,
+                                        self.slideshow_timeout, None)
 
     def stop(self, *args):
         self.slideshow_on = False
