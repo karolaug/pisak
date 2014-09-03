@@ -101,8 +101,6 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self._strategy = value
         if self.strategy is not None:
             self.strategy.group = self
-        if self.selector == 'mouse-switch':
-            self.strategy.return_mouse = True
     
     @property
     def selector(self):
@@ -139,12 +137,18 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
 
     def start_cycle(self):
         self.stage = self.get_stage()
-        if self.selector == 'mouse' or self.selector == 'mouse-switch':
+        if self.selector == 'mouse':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
         elif self.selector == 'keyboard':
             self._handler_token = self.connect("key-release-event", 
                                                self.key_release)
+        elif self.selector == 'mouse-switch':
+            self._handler_token = self.stage.connect("button-release-event",
+                                                     self.button_release)
+            self.strategy.return_mouse = True
+        
+        
         else:
             print("Unknown selector: ", self.selector)
             return None
