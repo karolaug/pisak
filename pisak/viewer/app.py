@@ -73,9 +73,7 @@ def fix_path(path):
 def generate_viewer_data():
     model.LIBRARY_SUBDIR = ""
     lib = model.Library(_LIBRARY_PATH)
-    print(_LIBRARY_PATH)
     all_photos = lib.scan()[-1]
-    print(all_photos)
     database_agent.insert_many_photos(all_photos)
     
 

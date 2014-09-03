@@ -3,8 +3,9 @@ from datetime import datetime
 from contextlib import contextmanager
 
 from gi.repository import GExiv2, GObject
-from sqlalchemy import Column, DateTime, String, Integer, func, create_engine, desc, insert
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, DateTime, String, ForeignKey, Integer, Boolean, \
+     func, create_engine, desc, insert, select, update
+from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import UniqueConstraint
 
@@ -21,27 +22,40 @@ Base = declarative_base()
 
 class Photo(Base):
     __tablename__ = "photos"
-    __table_args__ = (
-        UniqueConstraint("path", "album"),
-    )
     id = Column(Integer, primary_key=True)
-    path = Column(String, nullable=False)
-    album = Column(String, nullable=False)
+    path = Column(String, unique=True, nullable=False)
+    albums = relationship("Album", secondary="photo_album_link", collection_class=set,
+                        backref=backref("albums", lazy='noload',
+                        uselist=True, passive_updates=False))
     created_on = Column(DateTime, nullable=False)
+    is_favourite = Column(Boolean, nullable=False, default=False)
     added_on = Column(DateTime, nullable=False, default=func.now())
-    rating = Column(Integer)
+    
+
+class Album(Base):
+    __tablename__ = "albums"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    photos = relationship("Photo", secondary="photo_album_link", collection_class=set,
+                        backref=backref("photos", lazy='noload', uselist=True,
+                        passive_updates=False))
+
+
+class PhotoAlbumLink(Base):
+    __tablename__ = "photo_album_link"
+    photo_id = Column(Integer, ForeignKey("photos.id"), primary_key=True)
+    album_id = Column(Integer, ForeignKey("albums.id"), primary_key=True)
 
     
 @contextmanager
 def _establish_session():
     engine = create_engine(_ENGINE_URL)
     Base.metadata.create_all(engine)
-    session = sessionmaker()
+    session = sessionmaker(autoflush=False)
     session.configure(bind=engine)
     db_session = session()
     try:
         yield db_session
-        db_session.expunge_all()
         db_session.commit()
     except:
         db_session.rollback()
@@ -50,33 +64,106 @@ def _establish_session():
         db_session.close()
 
 
-def get_albums():
+def get_last_photo_insertion_time():
     with _establish_session() as sess:
-        albums = sess.query(Photo.album).distinct().all()
+        time = sess.execute(select([Photo.added_on]).order_by(
+            desc(Photo.added_on))).fetchone()
+    return time
+
+
+def get_last_album_insertion_time():
+    with _establish_session() as sess:
+        time = sess.execute(select([Album.added_on]).order_by(
+            desc(Album.added_on))).fetchone()
+    return time
+                            
+
+def get_all_albums():
+    with _establish_session() as sess:
+        albums = sess.execute(select([Album])).fetchall()
     return albums
 
 
-def get_photos_from_album(album):
+def get_album_with_id(album_id):
     with _establish_session() as sess:
-        photos = sess.query(Photo).filter(Photo.album==album).order_by(
+        album = sess.execute(select([Album]).where(Album.id==album_id)).fetchone()
+    return album
+
+
+def get_photos_from_album(album_name):
+    with _establish_session() as sess:
+        photos = sess.query(Photo).filter(Photo.albums.any(Album.name==album_name)).order_by(
             Photo.created_on, desc(Photo.added_on)).all()
+        sess.expunge_all()
+    return photos
+
+
+def get_photos_from_album_with_id(album_id):
+    with _establish_session() as sess:
+        photos = sess.query(Photo).filter(Photo.albums.any(
+            Album.id==album_id)).order_by(Photo.created_on, desc(Photo.added_on)).all()
+        sess.expunge_all()
     return photos
 
 
 def get_all_photos():
     with _establish_session() as sess:
-        photos = sess.query(Photo).order_by(
-            Photo.created_on, desc(Photo.added_on)).all()
+        photos = sess.execute(select([Photo]).order_by(
+            Photo.created_on, desc(Photo.added_on))).fetchall()
     return photos
 
 
-def get_preview_of_album(album):
+def get_photo_with_id(photo_id):
     with _establish_session() as sess:
-        preview = sess.query(Photo).filter(Photo.album==album).one()
+        photo = sess.execute(select([Photo]).where(Photo.id==photo_id)).fetchone()
+    return photo
+
+
+def get_preview_of_album(album_name):
+    with _establish_session() as sess:
+        preview = sess.query(Photo).filter(Photo.albums.any(
+            Album.name==album_name)).first()
+        sess.expunge_all()
     return preview
 
 
-def insert_photo(path, album):
+def get_preview_of_album_with_id(album_id):
+    with _establish_session() as sess:
+        preview = sess.query(Photo).filter(Photo.albums.any(
+            Album.id==album_id)).first()
+        sess.expunge_all()
+    return preview
+
+
+def add_to_favourite_photos(photo_id):
+    with _establish_session() as sess:
+        sess.execute(update(Photo.__table__).where(id==photo_id).values(is_favourite=True))
+
+
+def remove_from_favourite_photos(photo_id):
+    with _establish_session() as sess:
+        sess.execute(update(Photo.__table__).where(id==photo_id).values(is_favourite=False))
+        
+
+def get_favourite_photos():
+    with _establish_session() as sess:
+        photos = sess.query(Photo).filter(Photo.is_favourite==True).all()
+        sess.expunge_all()
+    return photos
+
+
+def insert_album(album_name):
+    with _establish_session() as sess:
+        sess.execute(insert(Album.__table__, values={"name": album_name}).prefix_with("OR IGNORE"))
+
+
+def insert_many_albums(albums_list):
+    albums_list = [{"name": album} for album in albums_list]
+    with _establish_session() as sess:
+        sess.execute(insert(Album.__table__, values=albums_list).prefix_with("OR IGNORE"))
+        
+
+def insert_photo(path, album_name):
     try:
         meta = GExiv2.Metadata(path)
         if meta.has_tag("Exif.Photo.DateTimeOriginal"):
@@ -85,21 +172,26 @@ def insert_photo(path, album):
             created_on = datetime.fromtimestamp(os.path.getctime(path))
     except GObject.GError:
         created_on = datetime.fromtimestamp(os.path.getctime(path))
-    photo = {"path": path, "album": album, "created_on": created_on}
     with _establish_session() as sess:
-        sess.execute(insert(Photo.__table__, values=photo).prefix_with("OR IGNORE"))
-    
+        album = sess.query(Album).filter(Album.name==album_name).first()
+        new_photo = Photo(path=path, created_on=created_on, is_favourite=False)
+        album.photos.add(new_photo)
+        sess.add(new_photo)
+
 
 def insert_many_photos(photos_list):
-    for idx, photo in enumerate(photos_list):
-        try:
-            meta = GExiv2.Metadata(photo[0])  # photo path as the first item
-            if meta.has_tag("Exif.Photo.DateTimeOriginal"):
-                photo.append(meta.get_date_time())
-            else:
-                photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
-        except GObject.GErrordistinct:
-            photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
-        photos_list[idx] = {"path": photo[0], "album": photo[1], "created_on": photo[2]}
     with _establish_session() as sess:
-        sess.execute(insert(Photo.__table__, values=photos_list).prefix_with("OR IGNORE"))
+        for idx, photo in enumerate(photos_list):
+            try:
+                meta = GExiv2.Metadata(photo[0])  # photo path as the first item
+                if meta.has_tag("Exif.Photo.DateTimeOriginal"):
+                    created_on.append(meta.get_date_time())
+                else:
+                    created_on.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
+            except GObject.GError:
+                created_on.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
+            album = sess.query(Album).filter(Album.name==photo[1]).first()
+            new_photo = Photo(path=photo[0], created_on=created_on, is_favourite=False)
+            album.photos.add(new_photo)
+            photos_list[idx] = new_photo
+        sess.add_many(new_photo)
