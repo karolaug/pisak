@@ -63,6 +63,15 @@ def _establish_session():
         db_session.close()
 
 
+def if_db_is_empty():
+    with _establish_session() as sess:
+        item = sess.query(Album).first()
+    if item:
+        return False
+    else:
+        return True
+
+
 def get_db_last_modification_time():
     return os.path.getmtime(_PHOTOS_DB_PATH)
 
