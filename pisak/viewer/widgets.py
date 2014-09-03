@@ -236,7 +236,6 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
 
     def _generate_slides(self):
         self.data = database_agent.get_photos_from_album(self.album)
-        print(self.data)
         for item in self.data:
             slide = PhotoSlide()
             slide.ratio_height = self.slide_ratio_height
