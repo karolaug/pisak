@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 from contextlib import contextmanager
 
-from gi.repository import GExiv2, GObject
 from sqlalchemy import Column, DateTime, String, ForeignKey, Integer, Boolean, \
      func, create_engine, desc, insert, select, update
 from sqlalchemy.orm import sessionmaker, relationship, backref
