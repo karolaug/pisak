@@ -181,19 +181,11 @@ def insert_many_albums(albums_list):
         sess.execute(insert(Album.__table__, values=albums_list).prefix_with("OR IGNORE"))
         
 
-def insert_photo(path, created_on, album_name):
-    with _establish_session() as sess:
-        album = sess.query(Album).filter(Album.name==album_name).first()
-        new_photo = Photo(path=path, created_on=created_on, is_favourite=False)
-        album.photos.add(new_photo)
-        sess.add(new_photo)
-
-
 def insert_many_photos(photos_list):
     with _establish_session() as sess:
         for idx, photo in enumerate(photos_list):
-            album = sess.query(Album).filter(Album.name==photo[1]).first()
-            new_photo = Photo(path=photo[0], created_on=photo[1], is_favourite=False)
+            album = sess.query(Album).filter(Album.name==photo[2]).first()
+            new_photo = Photo(path=photo[0], created_on=photo[1])
             album.photos.add(new_photo)
             photos_list[idx] = new_photo
         sess.add_all(photos_list)
@@ -203,7 +195,7 @@ def insert_many_photos_to_album(photos_list, album_name):
   with _establish_session() as sess:
         album = sess.query(Album).filter(Album.name==album_name).first()
         for idx, photo in enumerate(photos_list):
-            new_photo = Photo(path=photo[0], created_on=photo[1], is_favourite=False)
+            new_photo = Photo(path=photo[0], created_on=photo[1])
             album.photos.add(new_photo)
             photos_list[idx] = new_photo
         sess.add_all(photos_list)
