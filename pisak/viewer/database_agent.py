@@ -142,12 +142,12 @@ def get_preview_of_album_with_id(album_id):
 
 def add_to_favourite_photos(photo_id):
     with _establish_session() as sess:
-        sess.execute(update(Photo.__table__).where(id==photo_id).values(is_favourite=True))
+        sess.execute(update(Photo.__table__).where(Photo.id==photo_id).values(is_favourite=True))
 
 
 def remove_from_favourite_photos(photo_id):
     with _establish_session() as sess:
-        sess.execute(update(Photo.__table__).where(id==photo_id).values(is_favourite=False))
+        sess.execute(update(Photo.__table__).where(Photo.id==photo_id).values(is_favourite=False))
         
 
 def get_favourite_photos():
