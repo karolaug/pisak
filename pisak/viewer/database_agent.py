@@ -62,7 +62,7 @@ def _establish_session():
         db_session.close()
 
 
-def if_db_is_empty():
+def is_db_empty():
     with _establish_session() as sess:
         item = sess.query(Album).first()
     if item:

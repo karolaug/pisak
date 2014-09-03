@@ -69,7 +69,7 @@ def _load_all():
 
 
 def load_new():
-    if database_agent.if_db_is_empty():
+    if database_agent.is_db_empty():
         _load_all()
         return
     path_generator = os.walk(LIBRARY_DIR)
