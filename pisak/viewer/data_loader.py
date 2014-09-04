@@ -67,8 +67,8 @@ def _load_new_since(ref_time=0):
             database_agent.insert_album(current)
             new_photos = []
             for photo_path in [os.path.join(current, name) for name in files]:
-                if os.path.getctime(photo_path) > ref_time:
-                    if os.path.splitext(photo_path)[-1].lower() in EXTENSIONS:
-                        created_on = _get_photo_creation_time(photo_path)
-                        new_photos.append([photo_path, created_on])
+                if (os.path.getctime(photo_path) > ref_time and 
+                        os.path.splitext(photo_path)[-1].lower() in EXTENSIONS):
+                    created_on = _get_photo_creation_time(photo_path)
+                    new_photos.append([photo_path, created_on])
             database_agent.insert_many_photos_to_album(new_photos, current)
