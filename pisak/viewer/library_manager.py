@@ -1,4 +1,5 @@
 import os
+#import imghdr  # another possibility
 
 from pisak import xdg
 
@@ -14,9 +15,12 @@ def get_all_albums():
 
 
 def get_photos_from_album(album):
-    return [os.path.join(album, file) for file in os.listdir(album) if os.path.splitext(file)[-1].lower()
-            in EXTENSIONS]
+    return [os.path.join(album, file) for file in os.listdir(album) if
+            os.path.splitext(file)[-1].lower() in EXTENSIONS]
 
 
 def get_preview_of_album(album):
-    return get_photos_from_album(album)[0]
+    for file in os.listdir(album):
+        if os.path.splitext(file)[-1].lower() in EXTENSIONS:
+            return os.path.join(album, file)
+    return None
