@@ -63,13 +63,17 @@ class Group(Clutter.Actor):
     def read_coords(self):
         line = sys.stdin.readline()
         try:
+            line = line.strip()
             fields = line.split(" ")
-            coords = int(fields[0]), int(fields[1])
+            print(fields)
+            coords = int(float(fields[0])), int(float(fields[1]))
             return coords
         except:
-            raise Exception("Protocol error")
+            coords = 0, 0
+            return coords
     
     def update_sprite(self, coords):
+        print(coords)
         x, y = (coords[0] - self.sprite.get_width() / 2), (coords[1] - self.sprite.get_height() / 2)
         self.sprite.set_position(x, y)
     
