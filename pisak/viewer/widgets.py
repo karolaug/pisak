@@ -417,9 +417,8 @@ class PhotoSlide(layout.Bin):
     @photo_path.setter
     def photo_path(self, value):
         self._photo_path = value
-        absolute_path = os.path.join(self.MODEL["photo_path"], value)
-        self.photo.set_from_file(absolute_path)
-        self.image_buffer = image.PhotoBuffer(absolute_path, self)
+        self.photo.set_from_file(value)
+        self.image_buffer = image.PhotoBuffer(value, self)
 
     @property
     def transition_duration(self):
