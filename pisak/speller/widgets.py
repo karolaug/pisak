@@ -516,7 +516,7 @@ class Key(pisak.widgets.Button):
         self.undo_chain = []
         self.allowed_undos = set()
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("activate", self.on_activate)
+        self.connect("clicked", self.on_activate)
         self.connect("notify::default-text", self._set_initial_label)
 
     def _set_initial_label(self, source, spec):
@@ -742,7 +742,7 @@ class Prediction(pisak.widgets.Button):
     def __init__(self):
         super().__init__()
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("activate", self._on_activate)
+        self.connect("clicked", self._on_activate)
         self.idle_icon_name = "hourglass"
         self.icon_name = None
         self.icon_size = 50

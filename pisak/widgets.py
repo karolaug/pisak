@@ -4,7 +4,7 @@ import os.path
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
 
-from pisak import switcher_app, unit, res, properties
+from pisak import switcher_app, unit, res, properties, scanning
 from pisak.layout import Box, Bin
 from pisak.res import colors, dims
 
@@ -276,19 +276,21 @@ class Header(Mx.Image, properties.PropertyAdapter):
                            pixbuf.get_height(), 
                            pixbuf.get_rowstride())
 
-class Button(Mx.Button, properties.PropertyAdapter):
+class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
     """
     Generic Pisak button widget with label and icon.
     """
-    __gsignals__ = {
-        "activate": (GObject.SIGNAL_RUN_FIRST, None, ()),
-        "inactivate": (GObject.SIGNAL_RUN_FIRST, None, ())
-    }
+    
+    # removing these signals due to functionality duplication
+    #__gsignals__ = {
+    #    "activate": (GObject.SIGNAL_RUN_FIRST, None, ()),
+    #    "inactivate": (GObject.SIGNAL_RUN_FIRST, None, ())
+    #}
     
     __gproperties__ = {
-        "disabled": (GObject.TYPE_BOOLEAN, "State of button",
-                     "If state of button is disabled.", False, 
-                     GObject.PARAM_READWRITE),
+        #"disabled": (GObject.TYPE_BOOLEAN, "State of button",
+        #             "If state of button is disabled.", False, 
+        #             GObject.PARAM_READWRITE),
         "ratio_width": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
@@ -337,19 +339,19 @@ class Button(Mx.Button, properties.PropertyAdapter):
         self.connect("clicked", self.on_click_activate)
         #self.connect("enter-event", lambda *_: self.hilite_on())
         #self.connect("leave-event", lambda *_: self.hilite_off())
-        self.connect("inactivate", lambda *_: self.inactivate())
+        #self.connect("inactivate", lambda *_: self.inactivate())
         self.connect("notify::style-pseudo-class", self._change_icon_style)
         self.connect("notify::mapped", self.set_space)
         self.set_reactive(True)
 
-    @property
-    def disabled(self):
-        return self._disabled
+    #@property
+    #def disabled(self):
+    #    return self._disabled
 
-    @disabled.setter
-    def disabled(self, value):
-        self._disabled = value
-        self.set_disabled(value)
+    #@disabled.setter
+    #def disabled(self, value):
+    #    self._disabled = value
+    #    self.set_disabled(value)
 
     @property
     def ratio_width(self):
@@ -539,7 +541,6 @@ class Button(Mx.Button, properties.PropertyAdapter):
                                  pixbuf.get_height(), 
                                  pixbuf.get_rowstride())
 
-
     def change_icon_white(self):
         try:
             if self.icon_name:
@@ -570,18 +571,12 @@ class Button(Mx.Button, properties.PropertyAdapter):
                                                  pixbuf.get_rowstride())
         except AttributeError:
             pass
-            
-    def hilite_off(self):
-        self.style_pseudo_class_remove("hover")
-    
-    def hilite_on(self):
-        self.style_pseudo_class_add("hover")
 
-    def select_on(self):
-        self.style_pseudo_class_add("active")
+    #def select_on(self):
+    #    self.style_pseudo_class_add("active")
 
-    def inactivate(self):
-        self.style_pseudo_class_remove("active")
+    #def inactivate(self):
+    #    self.style_pseudo_class_remove("active")
 
     def on_select_hilite_off(self, token):
         if token == self.timeout_token:
@@ -592,7 +587,14 @@ class Button(Mx.Button, properties.PropertyAdapter):
             self.style_pseudo_class_add("active")
             self.timeout_token = object()
             Clutter.threads_add_timeout(0, self.on_select_hilite_duration, self.on_select_hilite_off, self.timeout_token)
-        self.emit("activate")
+        #self.emit("activate")
+    
+    def activate(self):
+        """
+        Completion of scannable interafece.
+        :see: Scannable
+        """
+        self.emit("clicked")
 
 
 class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
