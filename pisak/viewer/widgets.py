@@ -3,7 +3,7 @@ import os.path
 from gi.repository import Mx, GObject, Clutter
 
 from pisak import widgets, layout, res, pager, properties, unit
-from pisak.viewer import database_agent, image
+from pisak.viewer import database_agent, library_manager, image
 
 
 class SlideShow(layout.Bin):
@@ -235,12 +235,12 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
             self._generate_slides()
 
     def _generate_slides(self):
-        self.data = database_agent.get_photos_from_album(self.album)
+        self.data = library_manager.get_photos_from_album(self.album)
         for item in self.data:
             slide = PhotoSlide()
             slide.ratio_height = self.slide_ratio_height
             slide.ratio_width = self.slide_ratio_width
-            slide.photo_path = item.path
+            slide.photo_path = item
             self.slides.append(slide)
 
 
@@ -267,7 +267,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.index = 0
-        self.data = database_agent.get_all_albums()
+        self.data = library_manager.get_all_albums()
 
     @property
     def tile_ratio_height(self):
@@ -313,9 +313,8 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         tiles = []
         for item in self.data[self.index:count]:
             tile = PhotoTile()
-            tile.label_text = item.name
-            tile.preview_path = database_agent.get_preview_of_album(
-                item.name).path
+            tile.label_text = item
+            tile.preview_path = library_manager.get_preview_of_album(item)
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
             tile.ratio_spacing = self.tile_ratio_spacing
@@ -347,13 +346,13 @@ class AlbumTilesSource(LibraryTilesSource):
     def album(self, value):
         self._album = value
         if value is not None:
-            self.data = database_agent.get_photos_from_album(value)
+            self.data = library_manager.get_photos_from_album(value)
 
     def _generate_tiles(self, count):
         tiles = []
         for item in self.data[self.index:count]:
             tile = PhotoTile()
-            tile.preview_path = item.path
+            tile.preview_path = item
             tile.scale_mode = Mx.ImageScaleMode.FIT
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
