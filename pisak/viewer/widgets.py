@@ -114,6 +114,7 @@ class SlideShow(layout.Bin):
                 self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
             else:
                 self.add_child(self.slide)
+            self.pending_slides = self.data_source.get_pending_slides(self.index)
             self.new_slide_transition.set_from(unit.size_pix[0])
             self.new_slide_transition.set_to(0)
             self.old_slide_transition.set_to(-1*unit.size_pix[0])
@@ -135,6 +136,7 @@ class SlideShow(layout.Bin):
                 self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
             else:
                 self.add_child(self.slide)
+            self.pending_slides = self.data_source.get_pending_slides(self.index)
             self.new_slide_transition.set_from(-1*unit.size_pix[0])
             self.new_slide_transition.set_to(0)
             self.old_slide_transition.set_to(unit.size_pix[0])
@@ -190,7 +192,6 @@ class SlideShow(layout.Bin):
                 self.cached_slide_width is not None):
             self.old_slide.set_size(self.cached_slide_width,
                                     self.cached_slide_height)
-        self.pending_slides = self.data_source.get_pending_slides(self.index)
         self.old_slide = None
 
 
@@ -432,7 +433,6 @@ class PhotoSlide(layout.Bin):
     def photo_path(self, value):
         self._photo_path = value
         self.photo.set_from_file(value)
-        self.image_buffer = image.PhotoBuffer(value, self)
 
     @property
     def transition_duration(self):
