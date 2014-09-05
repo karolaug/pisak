@@ -141,7 +141,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
     def hilite_off(self):
         # turn the hilite_tool off
         pass
-        
+
     def hilite_on(self):
         # turn the hilite_tool on
         pass
@@ -166,14 +166,19 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         "counter_limit": (
             GObject.TYPE_INT64, "counter limit",
             "max counter value", 0, GObject.G_MAXUINT,
-            10, GObject.PARAM_READWRITE)
-    }  
+            10, GObject.PARAM_READWRITE),
+        "related-object": (
+            Clutter.Actor.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
+    }
 
     def __init__(self):
         super().__init__()
         self._init_bar()
         self.label = None
+        self.step = None
         self.label_ratio_x_offset = None
+        self.counter_limit = None
         self.progress_transition = Clutter.PropertyTransition.new("progress")
         self.progress_transition_duration = 1000
         self.progress_transition.connect("stopped", self._update_label)
@@ -192,12 +197,24 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
             self.insert_child_above(value, None)
 
     @property
+    def related_object(self):
+        return self._related_object
+
+    @related_object.setter
+    def related_object(self, value):
+        self._related_object = value
+        value.connect("limit-declared", self._set_counter_limit)
+        value.connect("progressed", self._set_progress)
+
+    @property
     def counter_limit(self):
         return self._counter_limit
 
     @counter_limit.setter
     def counter_limit(self, value):
         self._counter_limit = value
+        if value is not None:
+            self.step = int(self.progress*value)
         self._update_label()
 
     @property
@@ -210,6 +227,8 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         self.progress_transition.set_to(value)
         self.bar.remove_transition("progress")
         self.bar.add_transition("progress", self.progress_transition)
+        if self.counter_limit is not None:
+            self.step = int(value*self.counter_limit)
 
     @property
     def progress_transition_duration(self):
@@ -240,10 +259,17 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
                 px_x_offset = self.label_ratio_x_offset * self.get_width()
                 self.label.set_x(px_x_offset)
 
+    def _set_counter_limit(self, source, limit):
+        self.counter_limit = limit
+
+    def _set_progress(self, source, progress, custom_step):
+        self.progress = progress
+        self.step = custom_step
+
     def _update_label(self, *args):
         if self.label is not None:
-            new_text = " / ".join([str(int(self.progress*self.counter_limit)),
-                                   str(self.counter_limit)])
+            new_text = " / ".join([str(self.step),
+                                str(self.counter_limit)])
             self.label.set_text(new_text)
 
 
@@ -252,7 +278,7 @@ class Header(Mx.Image, properties.PropertyAdapter):
     __gtype_name__ = "PisakMenuHeader"
 
     __gproperties__ = {
-        "name": (GObject.TYPE_STRING, None, None, "funkcjenapis", 
+        "name": (GObject.TYPE_STRING, None, None, "funkcjenapis",
                  GObject.PARAM_READWRITE)}
 
     def __init__(self):
@@ -266,15 +292,16 @@ class Header(Mx.Image, properties.PropertyAdapter):
     @name.setter
     def name(self, value):
         self._name = value
-        svg_path = os.path.join(res.PATH, 'icons', 
+        svg_path = os.path.join(res.PATH, 'icons',
                                 ''.join([self.name, ".svg"]))
         self.svg = self.handle.new_from_file(svg_path)
         pixbuf = self.svg.get_pixbuf()
         self.set_from_data(pixbuf.get_pixels(),
-                           Cogl.PixelFormat.RGBA_8888, 
-                           pixbuf.get_width(), 
-                           pixbuf.get_height(), 
+                           Cogl.PixelFormat.RGBA_8888,
+                           pixbuf.get_width(),
+                           pixbuf.get_height(),
                            pixbuf.get_rowstride())
+
 
 class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
     """

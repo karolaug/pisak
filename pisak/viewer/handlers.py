@@ -1,4 +1,5 @@
 from pisak import signals
+from pisak.viewer import database_agent
 
 
 @signals.registered_handler("viewer/next_page")
@@ -10,6 +11,31 @@ def next_page(pager):
 def previous_page(pager):
     pager.previous_page()
 
+
+@signals.registered_handler("viewer/slideshow_toggle")
+def slideshow_toggle(slideshow_widget):
+    if slideshow_widget.slideshow_on is True:
+        slideshow_widget.stop()
+    else:
+        slideshow_widget.run()
+
+
+@signals.registered_handler("viewer/next_slide")
+def next_slide(slideshow_widget):
+    slideshow_widget.next_slide()
+
+
+@signals.registered_handler("viewer/previous_slide")
+def previous_slide(slideshow_widget):
+    slideshow_widget.previous_slide()
+
+
+@signals.registered_handler("viewer/add_to_favourite_photos")
+def add_to_favourite_photos(slideshow_widget):
+    path = slideshow_widget.slide.photo_path
+    album = slideshow_widget.data_source.data[slideshow_widget.index]["category"]
+    database_agent.add_to_favourite_photos(path, album)
+    
 
 @signals.registered_handler("viewer/zoom")
 def zoom(photo):

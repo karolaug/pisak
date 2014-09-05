@@ -1,12 +1,15 @@
 '''
 Module which processes and launches pisak apps
 '''
-from pisak import switcher_app, signals
-from gi.repository import Clutter
 import sys
+
+from gi.repository import Clutter
+
+from pisak import switcher_app, signals, unit
 
 import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
+import pisak.handlers # @UnusedImport
 from pisak.viewer import widgets, handlers  # @UnusedImport
 
 
@@ -43,7 +46,7 @@ def run(descriptor):
         '''
         def create_stage(self, argv):
             stage = LauncherStage(self.context, descriptor)
-            stage.set_size(1920, 1080)
+            stage.set_size(unit.size_pix[0], unit.size_pix[1])
             stage.set_fullscreen(True)
             return stage
 
