@@ -99,7 +99,8 @@
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": 2
+            "max-cycle-count": 2,
+	    "unwind-to": "main"
         }
     },
     {
@@ -427,7 +428,8 @@
             "id": "main_panel_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": 2
+            "max-cycle-count": 2,
+	    "unwind-to": "main"
         }
     },
     {

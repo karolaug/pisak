@@ -27,13 +27,13 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         "preview_ratio_height": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
-        "label": (
-            Mx.Label.__gtype__,
-            "", "", GObject.PARAM_READWRITE),
         "scale_mode": (
             Mx.ImageScaleMode.__gtype__,
             "image scale mode", "scale mode", "crop",
             GObject.PARAM_READWRITE),
+        "label": (
+            Mx.Label.__gtype__,
+            "", "", GObject.PARAM_READWRITE),
         "label_text": (
             GObject.TYPE_STRING,
             "label under the tile",
@@ -66,17 +66,16 @@ class PhotoTile(Bin, properties.PropertyAdapter):
     def label(self, value):
         self._label = value
         if value is not None:
-            self.box.add_child(value)
+            if not self.box.contains(value):
+                self.box.add_child(value)
 
     @property
     def label_text(self):
-        if self.label is not None:
-            return self.label.get_text()
+        return self.label.get_text()
 
     @label_text.setter
     def label_text(self, value):
-        if self.label is not None:
-            self.label.set_text(value)
+        self.label.set_text(value)
 
     @property
     def preview_path(self):
@@ -151,15 +150,16 @@ class PhotoTile(Bin, properties.PropertyAdapter):
 class NewProgressBar(Bin, properties.PropertyAdapter):
     __gtype_name__ = "PisakProgressBar"
     __gproperties__ = {
-        "bar": (
-            Mx.ProgressBar.__gtype__,
-            "", "", GObject.PARAM_READWRITE),
         "label": (
             Mx.Label.__gtype__,
             "", "", GObject.PARAM_READWRITE),
         "progress": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
+        "progress_transition_duration": (
+            GObject.TYPE_INT64, "transition duration",
+            "duration of progress transition in msc", 0,
+            GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE),
         "label_ratio_x_offset": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
@@ -171,20 +171,13 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
 
     def __init__(self):
         super().__init__()
+        self._init_bar()
         self.label = None
         self.label_ratio_x_offset = None
+        self.progress_transition = Clutter.PropertyTransition.new("progress")
+        self.progress_transition_duration = 1000
+        self.progress_transition.connect("stopped", self._update_label)
         self.connect("notify::width", self._allocate_label)
-
-    @property
-    def bar(self):
-        return self._bar
-
-    @bar.setter
-    def bar(self, value):
-        self._bar = value
-        value.set_x_expand(True)
-        value.set_y_expand(True)
-        self.insert_child_below(value, None)
 
     @property
     def label(self):
@@ -205,6 +198,7 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
     @counter_limit.setter
     def counter_limit(self, value):
         self._counter_limit = value
+        self._update_label()
 
     @property
     def progress(self):
@@ -212,8 +206,18 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
 
     @progress.setter
     def progress(self, value):
-        self.bar.set_progress(value)
-        self._update_label()
+        self.progress_transition.set_from(self.progress)
+        self.progress_transition.set_to(value)
+        self.bar.remove_transition("progress")
+        self.bar.add_transition("progress", self.progress_transition)
+
+    @property
+    def progress_transition_duration(self):
+        return self.progress_transition.get_duration()
+
+    @progress_transition_duration.setter
+    def progress_transition_duration(self, value):
+        self.progress_transition.set_duration(value)
 
     @property
     def label_ratio_x_offset(self):
@@ -224,13 +228,19 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         self._label_ratio_x_offset = value
         self._allocate_label()
 
+    def _init_bar(self):
+        self.bar = Mx.ProgressBar()
+        self.bar.set_x_expand(True)
+        self.bar.set_y_expand(True)
+        self.insert_child_below(self.bar, None)
+
     def _allocate_label(self, *args):
         if self.label is not None:
             if self.get_width() and self.label_ratio_x_offset is not None:
                 px_x_offset = self.label_ratio_x_offset * self.get_width()
                 self.label.set_x(px_x_offset)
 
-    def _update_label(self):
+    def _update_label(self, *args):
         if self.label is not None:
             new_text = " / ".join([str(int(self.progress*self.counter_limit)),
                                    str(self.counter_limit)])
