@@ -385,7 +385,8 @@ class PhotoTile(widgets.PhotoTile):
 class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
     __gtype_name__ = "PisakViewerAperture"
     __gproperties__ = {
-        'cover': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
+        'cover': (GObject.TYPE_FLOAT, None, None,
+                  0, 1, 0, GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
@@ -420,7 +421,7 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
         context.set_source_rgba(0, 0.894, 0.765, 0.66)
         context.fill()
         context.set_operator(cairo.OPERATOR_CLEAR)
-        a = 1 - (self.cover)
+        a = 1 - self.cover
         x, y = (0.5 - a / 2) * w, (0.5 - a / 2) * h
         rw, rh = a * w, a * h
         context.rectangle(x, y, rw, rh)
@@ -457,9 +458,6 @@ class PhotoSlide(layout.Bin):
             GObject.TYPE_INT64, "transition duration",
             "duration of photo transition", 0,
             GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE)
-    }
-    MODEL = {
-        "photo_path": res.PATH
     }
 
     def __init__(self):
