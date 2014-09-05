@@ -1,6 +1,7 @@
 import os.path
 
 from gi.repository import Mx, GObject, Clutter
+import cairo
 
 from pisak import widgets, layout, res, pager, properties, unit
 from pisak.viewer import database_agent, library_manager, image
@@ -390,13 +391,14 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
     }
 
     def __init__(self):
+        super().__init__()
         self.set_x_expand(True)
         self.set_y_expand(True)
-        self.color = rescolors.HILITE_1
+        self.color = res.colors.HILITE_1
         self.cover_off = 0
         self.cover_on = 0.4
         self._init_content()
-        self.connect("notify::cover", self.canvas.invalidate)
+        self.connect("notify::cover", lambda *_: self.canvas.invalidate())
         self.cover_transition = Clutter.PropertyTransition.new("cover")
         self._cover = 0
 

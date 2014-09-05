@@ -145,6 +145,8 @@ class PhotoTile(Bin, properties.PropertyAdapter):
     @hilite_tool.setter
     def hilite_tool(self, value):
         self._hilite_tool = value
+        if value is not None:
+            self.add_child(value)
 
     def _init_box(self):
         self.box = Box()
@@ -167,7 +169,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         if self.hilite_tool is not None:
             self.hilite_tool.turn_off()
 
-   def enable_scanned(self):
+    def enable_scanned(self):
         pass
 
     def disable_scanned(self):
