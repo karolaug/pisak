@@ -4,9 +4,27 @@ import os.path
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
 
-from pisak import switcher_app, unit, res, properties
+from pisak import switcher_app, unit, res, properties, scanning
 from pisak.layout import Box, Bin
 from pisak.res import colors, dims
+
+
+class HiliteTool(Clutter.Actor):
+    """
+    Interface of object used for applying hilite to objects which are
+    Scannable but not Stylable.
+    """
+    def turn_on(self):
+        """
+        Perform the hilition bevaviour.
+        """
+        raise NotImplementedError()
+
+    def turn_off(self):
+        """
+        Restore the rest state.
+        """
+        raise NotImplementedError()
 
 
 class PhotoTile(Bin, properties.PropertyAdapter):
@@ -138,12 +156,21 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         self.preview.set_allow_upscale(True)
         self.box.add_child(self.preview)
 
-    def hilite_off(self):
-        # turn the hilite_tool off
+    def activate(self):
+        self.emit("activate")
+
+    def enable_hilite(self):
+        if self.hilite_tool is not None:
+            self.hilite_tool.turn_on()
+
+    def disable_hilite(self):
+        if self.hilite_tool is not None:
+            self.hilite_tool.turn_off()
+
+   def enable_scanned(self):
         pass
 
-    def hilite_on(self):
-        # turn the hilite_tool on
+    def disable_scanned(self):
         pass
 
 
