@@ -7,6 +7,11 @@ from pisak.viewer import database_agent, library_manager, image
 
 
 class SlideShow(layout.Bin):
+    """
+    Widget for displaying and managing one photo and for running
+    and managing slideshow that can be displayed
+    either on fullscreen or in the standard view.
+    """
     __gtype_name__ = "PisakViewerSlideShow"
     __gsignals__ = {
         "progressed": (
@@ -191,6 +196,10 @@ class SlideShow(layout.Bin):
 
 
 class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
+    """
+    Communicate with the library manager and dynamically
+    generate PhotoSlides, each for one photo from the specified album.
+    """
     __gtype_name__ = "PisakViewerPhotoSlidesSource"
     __gproperties__ = {
         "slide_ratio_width": (
@@ -245,6 +254,11 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
 
 
 class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
+    """
+    Communicate with the library manager and dynamically generates the
+    required number of PhotoTiles, each representing one album from
+    the library.
+    """
     __gtype_name__ = "PisakViewerLibraryTilesSource"
     __gproperties__ = {
         "tile_ratio_width": (
@@ -331,6 +345,11 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
 
 
 class AlbumTilesSource(LibraryTilesSource):
+    """
+    Communicate with the library manager and dynamically
+    generate the required number of PhotoTiles, each representing
+    one photo from the specified album.
+    """
     __gtype_name__ = "PisakViewerAlbumTilesSource"
 
     def __init__(self):
@@ -361,6 +380,9 @@ class AlbumTilesSource(LibraryTilesSource):
 
 
 class ProgressBar(widgets.NewProgressBar):
+    """
+    Widget indicating progress, with label on top, can by styled by CSS.
+    """
     __gtype_name__ = "PisakViewerProgressBar"
 
     def __init__(self):
@@ -372,6 +394,9 @@ class ProgressBar(widgets.NewProgressBar):
 
 
 class PhotoTile(widgets.PhotoTile):
+    """
+    Tile containing image and label that can be styled by CSS.
+    """
     __gtype_name__ = "PisakViewerPhotoTile"
 
     def __init__(self):
@@ -381,10 +406,16 @@ class PhotoTile(widgets.PhotoTile):
 
 
 class Button(widgets.Button):
+    """
+    Menu button that can be styled by CSS.
+    """
     __gtype_name__ = "PisakViewerButton"
 
 
 class PhotoSlide(layout.Bin):
+    """
+    Display a single image fitted within the given allocation.
+    """
     __gtype_name__ = "PisakViewerPhotoSlide"
     __gproperties__ = {
         "photo_path": (
