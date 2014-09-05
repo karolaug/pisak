@@ -59,7 +59,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
             "noop",
             GObject.PARAM_READWRITE),
         "hilite_tool": (
-            Clutter.Actor.__gtype__,
+            HiliteTool.__gtype__,
             "actor to hilite", "hiliting tool",
             GObject.PARAM_READWRITE),
         "ratio_spacing": (

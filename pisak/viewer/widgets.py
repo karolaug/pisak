@@ -314,6 +314,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         for item in self.data[self.index:count]:
             tile = PhotoTile()
             tile.label_text = item
+            tile.hilite_tool = Aperture()
             tile.preview_path = library_manager.get_preview_of_album(item)
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
@@ -353,6 +354,7 @@ class AlbumTilesSource(LibraryTilesSource):
         for item in self.data[self.index:count]:
             tile = PhotoTile()
             tile.preview_path = item
+            tile.hilite_tool = Aperture()
             tile.scale_mode = Mx.ImageScaleMode.FIT
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
@@ -378,6 +380,64 @@ class PhotoTile(widgets.PhotoTile):
         super().__init__()
         self.label = Mx.Label()
         self.label.set_style_class("PisakViewerPhotoTile")
+
+
+class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
+    __gtype_name__ = "PisakViewerAperture"
+    __gproperties__ = {
+        'cover': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        self.set_x_expand(True)
+        self.set_y_expand(True)
+        self.color = rescolors.HILITE_1
+        self.cover_off = 0
+        self.cover_on = 0.4
+        self._init_content()
+        self.connect("notify::cover", self.canvas.invalidate)
+        self.cover_transition = Clutter.PropertyTransition.new("cover")
+        self._cover = 0
+
+    @property
+    def cover(self):
+        return self._cover
+
+    @cover.setter
+    def cover(self, value):
+        self.remove_transition("cover")
+        self.cover_transition.set_from(self.cover)
+        self._cover = value
+        self.cover_transition.set_to(value)
+        self.cover_transition.set_duration(166)
+        self.add_transition("cover", self.cover_transition)
+
+    def draw(self, canvas, context, w, h):
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        context.paint()
+        context.set_operator(cairo.OPERATOR_OVER)
+        context.rectangle(0, 0, w, h)
+        context.set_source_rgba(0, 0.894, 0.765, 0.66)
+        context.fill()
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        a = 1 - (self.cover)
+        x, y = (0.5 - a / 2) * w, (0.5 - a / 2) * h
+        rw, rh = a * w, a * h
+        context.rectangle(x, y, rw, rh)
+        context.fill()
+        return True
+
+    def _init_content(self):
+        self.canvas = Clutter.Canvas()
+        self.canvas.set_size(140, 140)
+        self.canvas.connect("draw", self.draw)
+        self.set_content(self.canvas)
+
+    def turn_on(self):
+        self.cover = self.cover_on
+
+    def turn_off(self):
+        self.cover = self.cover_off
 
 
 class Button(widgets.Button):
