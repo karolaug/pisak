@@ -3,11 +3,13 @@
         "id": "main",
         "type": "PisakScanningGroup",
 	"selector": "mouse",
-        "strategy": {
+        "unwind-to": "main",
+	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
                         "interval": 800,
-                        "max-cycle-count": -1
+                        "max-cycle-count": -1,
+	                "unwind-to": "main"
                     },
         "signals": [
                        {
@@ -305,7 +307,7 @@
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2,
-            "unwind-to": "main_panel"
+            "unwind-to": "main"
         }
     },
     {
