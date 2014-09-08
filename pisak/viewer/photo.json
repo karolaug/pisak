@@ -28,20 +28,25 @@
         "id": "middle_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.1,
-        "children": ["slide", "button_menu"]
+        "children": ["slideshow_widget", "button_menu"]
     },
     {
         "id": "button_menu",
         "type": "PisakScanningGroup",
 	"selector": "mouse",
         "children": ["button_menu_box"],
-        "scanning-hilite": true,
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": 2
-        }
+            "max-cycle-count": -1
+        },
+        "signals": [
+            {
+                "name": "notify::mapped",
+                "handler": "general/start_group"
+            }
+        ]
     },
     {
         "id": "button_menu_box",
@@ -59,21 +64,42 @@
         "type": "PisakViewerButton",
         "label": "POKAZ SLAJDÓW",
         "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/slideshow_toggle",
+                "object": "slideshow_widget"
+            }
+        ]
     },
     {
         "id": "button_previous",
         "type": "PisakViewerButton",
         "label": "POPRZEDNIE ZDJĘCIE",
         "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/previous_slide",
+                "object": "slideshow_widget"
+            }
+        ]
     },
     {
         "id": "button_next",
         "type": "PisakViewerButton",
         "label": "NASTĘPNE ZDJĘCIE",
         "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/next_slide",
+                "object": "slideshow_widget"
+            }
+        ]
     },
     {
         "id": "button_edition",
@@ -87,7 +113,14 @@
         "type": "PisakViewerButton",
         "label": "ULUBIONE",
         "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/add_to_favourite_photos",
+                "object": "slideshow_widget"
+            }
+        ]
     },
     {
         "id": "button_album",
@@ -104,20 +137,28 @@
         "ratio-height": 0.1
     },
     {
-        "id": "slide",
-        "type": "PisakViewerPhotoSlide",
+        "id": "slideshow_widget",
+        "type": "PisakViewerSlideShow",
+        "transition-duration": 1000,
+        "idle-duration": 1000,
+        "slideshow-on-fullscreen": true,
+        "data-source": "photo_data_source",
         "ratio-width": 0.68,
-        "ratio-height": 0.7,
-        "photo_path": "jagoda.jpg"
+        "ratio-height": 0.7
+    },
+    {
+        "id": "photo_data_source",
+        "type": "PisakViewerPhotoSlidesSource",
+        "slide-ratio-width": 0.63,
+        "slide-ratio-height": 0.65
     },
     {
         "id": "progress_bar",
         "type": "PisakViewerProgressBar",
+        "related-object": "slideshow_widget",
         "ratio-width": 1,
-        "progress": 0.3,
         "progress-transition-duration": 1000,
         "ratio-height": 0.05,
-        "counter-limit": 100,
-        "label-ratio-x-offset": 0.9
+        "label-ratio-x-offset": 0.8
     }
 ]

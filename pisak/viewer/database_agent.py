@@ -1,143 +1,292 @@
+"""
+Module for managing photos specific database.
+"""
 import os
-from datetime import datetime
+from contextlib import contextmanager
 
-from gi.repository import GExiv2, GObject
+from sqlalchemy import Column, DateTime, String, ForeignKey, Integer, \
+    Boolean, func, create_engine, desc, insert, select, update
+from sqlalchemy.orm import sessionmaker, relationship, backref
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import UniqueConstraint
 
-from pisak.database_manager import DatabaseConnector
-
-
-_CREATE_PHOTOS = "CREATE TABLE IF NOT EXISTS photos ( \
-                                    id INTEGER PRIMARY KEY, \
-                                    path TEXT NOT NULL, \
-                                    category TEXT NOT NULL, \
-                                    created_on TIMESTAMP NOT NULL, \
-                                    added_on TIMESTAMP NOT NULL, \
-                                    UNIQUE (path, category))"
-
-_CREATE_FAVOURITE_PHOTOS = "CREATE TABLE IF NOT EXISTS favourite_photos ( \
-                                            id INTEGER PRIMARY KEY, \
-                                            path TEXT UNIQUE NOT NULL REFERENCES photos(path), \
-                                            category TEXT NOT NULL REFERENCES photos(category))"
+from pisak import res
 
 
-def get_categories():
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    query = "SELECT DISTINCT category FROM photos"
-    categories = db.execute(query)
-    db.close_connection()
-    return categories
+_PHOTOS_DB_PATH = os.path.join(res.PATH, "photos_database.db")
 
-def get_photos_from_category(category):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    query = "SELECT * FROM photos WHERE category='" + category + "' ORDER BY created_on ASC, added_on ASC"
-    photos = db.execute(query)
-    db.close_connection()
+_ENGINE_URL = "sqlite:///" + _PHOTOS_DB_PATH
+
+
+Base = declarative_base()
+
+
+class Photo(Base):
+    __tablename__ = "photos"
+    id = Column(Integer, primary_key=True)
+    path = Column(String, unique=True, nullable=False)
+    albums = relationship("Album", secondary="photo_album_link",
+                          collection_class=set, backref=backref(
+                              "albums", lazy='noload', passive_updates=False))
+    created_on = Column(DateTime, nullable=False)
+    is_favourite = Column(Boolean, nullable=False, default=False)
+    added_on = Column(DateTime, nullable=False, default=func.now())
+
+
+class Album(Base):
+    __tablename__ = "albums"
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, nullable=False)
+    photos = relationship("Photo", secondary="photo_album_link",
+                          collection_class=set, backref=backref(
+                              "photos", lazy='noload', passive_updates=False))
+    added_on = Column(DateTime, nullable=False, default=func.now())
+
+
+class PhotoAlbumLink(Base):
+    __tablename__ = "photo_album_link"
+    photo_id = Column(Integer, ForeignKey("photos.id"), primary_key=True)
+    album_id = Column(Integer, ForeignKey("albums.id"), primary_key=True)
+
+
+@contextmanager
+def _establish_session():
+    engine = create_engine(_ENGINE_URL)
+    Base.metadata.create_all(engine)
+    session = sessionmaker(autoflush=False)
+    session.configure(bind=engine)
+    db_session = session()
+    try:
+        yield db_session
+        db_session.commit()
+    except:
+        db_session.rollback()
+        raise
+    finally:
+        db_session.close()
+
+
+def is_db_empty():
+    """
+    Check if there are any records in the database.
+    """
+    with _establish_session() as sess:
+        item = sess.query(Album).first()
+    if item:
+        return False
+    else:
+        return True
+
+
+def get_db_last_modification_time():
+    """
+    Return time of the last modification of the database.
+    """
+    return os.path.getmtime(_PHOTOS_DB_PATH)
+
+
+def get_last_photo_insertion_time():
+    """
+    Return the last photo insertion time.
+    """
+    with _establish_session() as sess:
+        item = sess.execute(select([Photo.added_on]).order_by(
+            desc(Photo.added_on))).fetchone()
+    if item:
+        return item.added_on
+    else:
+        return None
+
+
+def get_last_album_insertion_time():
+    """
+    Return the last album insertion time.
+    """
+    with _establish_session() as sess:
+        item = sess.execute(select([Album.added_on]).order_by(
+            desc(Album.added_on))).fetchone()
+    if item:
+        return item.added_on
+    else:
+        return None
+
+
+def get_all_albums():
+    """
+    Return all records from the albums table.
+    """
+    with _establish_session() as sess:
+        albums = sess.execute(select([Album])).fetchall()
+    return albums
+
+
+def get_album_with_id(album_id):
+    """
+    Return record from the albums table with the given id.
+    :param album_id: id of the album as integer
+    """
+    with _establish_session() as sess:
+        album = sess.execute(select([Album]).where(
+            Album.id == album_id)).fetchone()
+    return album
+
+
+def get_photos_from_album(album_name):
+    """
+    Return all records from the photos table which are related to
+    the given album.
+    :param album_name: name of the album as string
+    """
+    with _establish_session() as sess:
+        photos = sess.query(Photo).filter(Photo.albums.any(
+            Album.name == album_name)).order_by(Photo.created_on,
+                                                desc(Photo.added_on)).all()
+        sess.expunge_all()
     return photos
+
+
+def get_photos_from_album_with_id(album_id):
+    """
+    Return all records from the photos table which are related to the
+    album with the given id.
+    :param album_id: id of the album as integer
+    """
+    with _establish_session() as sess:
+        photos = sess.query(Photo).filter(Photo.albums.any(
+            Album.id == album_id)).order_by(Photo.created_on,
+                                            desc(Photo.added_on)).all()
+        sess.expunge_all()
+    return photos
+
 
 def get_all_photos():
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    query = "SELECT * FROM photos"
-    photos = db.execute(query)
-    db.close_connection()
+    """
+    Return all records from the photos table.
+    """
+    with _establish_session() as sess:
+        photos = sess.execute(select([Photo]).order_by(
+            Photo.created_on, desc(Photo.added_on))).fetchall()
     return photos
 
-def get_preview_of_category(category):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    query = "SELECT * FROM photos WHERE category='" + category + "' ORDER BY created_on DESC, added_on DESC LIMIT 1"
-    preview = db.execute(query)
-    db.close_connection()
-    return preview[0]
 
-def get_previews(categories_list):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    previews = {}
-    query = "SELECT * FROM photos WHERE category='{}' ORDER BY created_on DESC, added_on DESC LIMIT 1"
-    for category in categories_list:
-        previews[category] = db.execute(query.format(category))[0]
-    db.close_connection()
-    return previews
+def get_photo_with_id(photo_id):
+    """
+    Return record from the photos table with the given id.
+    :param photo_id: id of the photo as integer
+    """
+    with _establish_session() as sess:
+        photo = sess.execute(select([Photo]).where(
+            Photo.id == photo_id)).fetchone()
+    return photo
+
+
+def get_preview_of_album(album_name):
+    """
+    Return one record from the photos table which is related
+    to the given album.
+    :param album_name: name of the album as string
+    """
+    with _establish_session() as sess:
+        preview = sess.query(Photo).filter(Photo.albums.any(
+            Album.name == album_name)).first()
+        sess.expunge_all()
+    return preview
+
+
+def get_preview_of_album_with_id(album_id):
+    """
+    Return one record from the photos table which is related
+    to the album with the given id.
+    :param album_id: id of the album as integer
+    """
+    with _establish_session() as sess:
+        preview = sess.query(Photo).filter(Photo.albums.any(
+            Album.id == album_id)).first()
+        sess.expunge_all()
+    return preview
+
+
+def add_to_favourite_photos(photo_id):
+    """
+    Set the given photo is_favourite column True.
+    :param photo_id: id of the photo as integer
+    """
+    with _establish_session() as sess:
+        sess.execute(update(Photo.__table__).where(
+            Photo.id == photo_id).values(is_favourite=True))
+
+
+def remove_from_favourite_photos(photo_id):
+    """
+    Set the given photo is_favourite column False.
+    :param photo_id: id of the photo as integer
+    """
+    with _establish_session() as sess:
+        sess.execute(update(Photo.__table__).where(
+            Photo.id == photo_id).values(is_favourite=False))
+
 
 def get_favourite_photos():
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "SELECT favs.id, favs.path, favs.category, created_on, added_on FROM favourite_photos AS favs JOIN \
-                photos ON photos.path=favs.path AND photos.category=favs.category ORDER BY favs.id DESC, created_on ASC, added_on ASC"
-    favourite_photos = db.execute(query)
-    db.close_connection()
-    return favourite_photos
+    """
+    Return all records from the photos table whose is_favourite columns
+    are setted True.
+    """
+    with _establish_session() as sess:
+        photos = sess.query(Photo).filter(Photo.is_favourite == True).all()
+        sess.expunge_all()
+    return photos
 
-def add_to_favourite_photos(path, category):
-    if is_in_favourite_photos(path):
-        return False
-    else:
-        db = DatabaseConnector()
-        db.execute(_CREATE_FAVOURITE_PHOTOS)
-        db.execute(_CREATE_PHOTOS)
-        values = (path, category,)
-        query = "INSERT INTO favourite_photos (path, category) VALUES (?, ?)"
-        db.execute(query, values)
-        db.commit()
-        db.close_connection()
-        return True
 
-def is_in_favourite_photos(path):
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "SELECT * FROM favourite_photos WHERE path='" + path + "'"
-    favourite_photos = db.execute(query)
-    db.close_connection()
-    if favourite_photos:
-        return True
-    else:
-        return False
+def insert_album(album_name):
+    """
+    Insert a record representing given album to the albums table.
+    :param album_name: name of the album as string
+    """
+    with _establish_session() as sess:
+        sess.execute(insert(Album.__table__,
+                            values={"name": album_name}).prefix_with(
+                                "OR IGNORE"))
 
-def insert_photo(path, category):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    try:
-        meta = GExiv2.Metadata(path)
-        if meta.has_tag("Exif.Photo.DateTimeOriginal"):
-            created_on = meta.get_date_time()
-        else:
-            created_on = datetime.fromtimestamp(os.path.getctime(path))
-    except GObject.GError:
-        created_on = datetime.fromtimestamp(os.path.getctime(path))
-    added_on = db.generate_timestamp()
-    query = "INSERT OR IGNORE INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
-    values = (path, category, created_on, added_on,)
-    db.execute(query, values)
-    db.commit()
-    db.close_connection()
+
+def insert_many_albums(albums_list):
+    """
+    Insert records, each representing one album from the given list,
+    to the albums table.
+    :param albums_list: list of albums names as strings
+    """
+    albums_list = [{"name": album} for album in albums_list]
+    with _establish_session() as sess:
+        sess.execute(insert(Album.__table__,
+                            values=albums_list).prefix_with("OR IGNORE"))
+
 
 def insert_many_photos(photos_list):
-    db = DatabaseConnector()
-    db.execute(_CREATE_PHOTOS)
-    added_on = db.generate_timestamp()
-    for photo in photos_list:
-        try:
-            meta = GExiv2.Metadata(photo[0])  # photo path as the first item
-            if meta.has_tag("Exif.Photo.DateTimeOriginal"):
-                photo.append(meta.get_date_time())
-            else:
-                photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
-        except GObject.GError:
-            photo.append(datetime.fromtimestamp(os.path.getctime(photo[0])))
-        photo.append(added_on)
-    query = "INSERT OR IGNORE INTO photos (path, category, created_on, added_on) VALUES (?, ?, ?, ?)"
-    db.executemany(query, photos_list)
-    db.commit()
-    db.close_connection()
+    """
+    Insert records, each representing one photo from the given list,
+    to the photos table.
+    :param photos_list: each photo has a name as string, creation
+    time in datetime format and related album name as string
+    """
+    with _establish_session() as sess:
+        for idx, photo in enumerate(photos_list):
+            album = sess.query(Album).filter(Album.name == photo[2]).first()
+            new_photo = Photo(path=photo[0], created_on=photo[1])
+            album.photos.add(new_photo)
+            sess.add(new_photo)
 
-def remove_from_favourite_photos(path):
-    db = DatabaseConnector()
-    db.execute(_CREATE_FAVOURITE_PHOTOS)
-    query = "DELETE FROM favourite_photos WHERE path='" + path + "'"
-    db.execute(query)
-    db.commit()
-    db.close_connection()
 
+def insert_many_photos_to_album(photos_list, album_name):
+    """
+    Insert records, each representing one photo from the given list,
+    to the photos table, and create a relationship between a photo and
+    the given album.
+    :param photos_list: each photo has a name as string and creation
+    time in datetime format
+    :param album_name: name of the related album as string
+    """
+    with _establish_session() as sess:
+        album = sess.query(Album).filter(Album.name == album_name).first()
+        for idx, photo in enumerate(photos_list):
+            new_photo = Photo(path=photo[0], created_on=photo[1])
+            album.photos.add(new_photo)
+            sess.add(new_photo)
