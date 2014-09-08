@@ -421,7 +421,6 @@ class PhotoSlide(layout.Bin):
         super().__init__()
         self.image_buffer = None
         self.photo = Mx.Image()
-        self.photo.set_load_async(True)
         self.photo.set_scale_mode(Mx.ImageScaleMode.FIT)
         self.add_child(self.photo)
 
