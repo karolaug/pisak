@@ -400,7 +400,7 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
         self._init_content()
         self.connect("notify::cover", lambda *_: self.canvas.invalidate())
         self.cover_transition = Clutter.PropertyTransition.new("cover")
-        self._cover = 0
+        self.set_property("cover", 0)
 
     @property
     def cover(self):
@@ -408,12 +408,17 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
 
     @cover.setter
     def cover(self, value):
-        self.remove_transition("cover")
-        self.cover_transition.set_from(self.cover)
         self._cover = value
+
+    def set_cover(self, value):
+        self.remove_transition("cover")
+        self.cover_transition.set_from(self.get_property("cover"))
         self.cover_transition.set_to(value)
         self.cover_transition.set_duration(166)
         self.add_transition("cover", self.cover_transition)
+
+    def _redraw_cover(self):
+        self.canvas.invalidate()
 
     def draw(self, canvas, context, w, h):
         context.set_operator(cairo.OPERATOR_CLEAR)
@@ -423,7 +428,7 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
         context.set_source_rgba(0, 0.894, 0.765, 0.66)
         context.fill()
         context.set_operator(cairo.OPERATOR_CLEAR)
-        a = 1 - self.cover
+        a = 1 - self.get_property("cover")
         x, y = (0.5 - a / 2) * w, (0.5 - a / 2) * h
         rw, rh = a * w, a * h
         context.rectangle(x, y, rw, rh)
@@ -437,10 +442,10 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
         self.set_content(self.canvas)
 
     def turn_on(self):
-        self.cover = self.cover_on
+        self.cover = self.set_cover(self.cover_on)
 
     def turn_off(self):
-        self.cover = self.cover_off
+        self.cover = self.set_cover(self.cover_off)
 
 
 class Button(widgets.Button):
