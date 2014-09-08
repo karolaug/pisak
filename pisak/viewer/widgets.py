@@ -3,7 +3,7 @@ import os.path
 from gi.repository import Mx, GObject, Clutter
 
 from pisak import widgets, layout, res, pager, properties, unit
-from pisak.viewer import database_agent, library_manager, image
+from pisak.viewer import library_manager, image
 
 
 class SlideShow(layout.Bin):
@@ -41,7 +41,7 @@ class SlideShow(layout.Bin):
     def __init__(self):
         self.index = 0
         self.new_slide_transition = Clutter.PropertyTransition.new("x")
-        self.new_slide_transition.connect("stopped", lambda *_: self._clean_up())
+        self.new_slide_transition.connect("stopped", self._clean_up)
         self.old_slide_transition = Clutter.PropertyTransition.new("x")
         self.set_clip_to_allocation(True)
         self.transition_duration = 1000
@@ -184,7 +184,12 @@ class SlideShow(layout.Bin):
             self.add_child(self.slide)
             self.fullscreen_on = False
 
-    def _clean_up(self):
+    def _clean_up(self, source, event):
+        """
+        Func used as a signal handler. Clean up after stoppage of the
+        new photo slide 'x' transition. Remove transitions and
+        free the old slide.
+        """
         self.slide.remove_transition("x")
         self.old_slide.remove_transition("x")
         if self.old_slide is not None:
@@ -245,9 +250,16 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
     def album(self, value):
         self._album = value
         if value is not None:
-            self.data = database_agent.get_photos_from_album(value)
+            self.data = library_manager.get_photos_from_album(value)
 
     def get_pending_slides(self, index):
+        """
+        Return the list consisting of two photo slide instances.
+        One corresponding to the data item prior to the given index
+        and one to the following item.
+        :param index: index pointing to the data list between the
+        indexes of demanding slides
+        """
         return (self._generate_slide(index-1),
                 self._generate_slide((index+1)%len(self.data)),)
             
@@ -264,8 +276,9 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         slide = PhotoSlide()
         slide.ratio_height = self.slide_ratio_height
         slide.ratio_width = self.slide_ratio_width
-        slide.photo_path = self.data[index].path
+        slide.photo_path = self.data[index]
         return slide
+
 
 class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     """
@@ -442,9 +455,6 @@ class PhotoSlide(layout.Bin):
             GObject.TYPE_INT64, "transition duration",
             "duration of photo transition", 0,
             GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE)
-    }
-    MODEL = {
-        "photo_path": res.PATH
     }
 
     def __init__(self):
