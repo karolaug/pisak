@@ -427,7 +427,10 @@ class PhotoSlide(layout.Bin):
         "transition_duration": (
             GObject.TYPE_INT64, "transition duration",
             "duration of photo transition", 0,
-            GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE)
+            GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE),
+        "image_buffer": (
+            image.ImageBuffer.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
     }
     MODEL = {
         "photo_path": res.PATH
@@ -441,6 +444,14 @@ class PhotoSlide(layout.Bin):
         self.add_child(self.photo)
 
     @property
+    def image_buffer(self):
+        return self._image_buffer
+
+    @image_buffer.setter
+    def image_buffer(self):
+        self._image_buffer = value
+
+    @property
     def photo_path(self):
         return self._photo_path
 
@@ -448,7 +459,9 @@ class PhotoSlide(layout.Bin):
     def photo_path(self, value):
         self._photo_path = value
         self.photo.set_from_file(value)
-        self.image_buffer = image.PhotoBuffer(value, self)
+        if self.image_buffer is not None:
+            self.image_buffer.slide = self
+            self.image_buffer.path = value
 
     @property
     def transition_duration(self):

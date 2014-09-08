@@ -4,25 +4,57 @@ Module with operations on image data.
 import random
 
 from PIL import Image, ImageFilter
-from gi.repository import Cogl, Clutter
+from gi.repository import Cogl, Clutter, GObject
+
+from pisak import properties
+import pisak.viewer.widgets
 
 
-class PhotoBuffer(object):
+class ImageBuffer(GObject.GObject, properties.PropertyAdapter):
     """
     Buffer containing a currently edited photo.
     """
+    __gtype_name__ = "PisakImageBuffer"
+    __gproperties__ = {
+        "path": (
+            GObject.TYPE_STRING,
+            "path to photo",
+            "path to photo slide",
+            "noop",
+            GObject.PARAM_READWRITE),
+        "slide": (
+            pisak.viewer.widgets.PhotoSlide.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
+    }
     PIXEL_FORMATS = {'1_1': Cogl.PixelFormat.G_8, 'L_1': Cogl.PixelFormat.A_8,
                      'RGB_2': Cogl.PixelFormat.RGB_565, 'RGB_3': Cogl.PixelFormat.RGB_888,
                      'RGBA_2': Cogl.PixelFormat.RGBA_4444, 'RGBA_4': Cogl.PixelFormat.RGBA_8888}
-    def __init__(self, photo_path, slide):
-        self.path = photo_path
-        self.slide = slide
-        self.original_photo = Image.open(self.path)
-        if self.original_photo.mode == 'P':
-            self.original_photo = self.original_photo.convert()  # translates through built-in palette
-        self.buffer = self.original_photo.copy()
+    def __init__(self):
+        self.buffer = None
+        self.original_photo = None
         self.zoom_timer = None
         self.noise_timer = None
+
+    @property
+    def path(self):
+        return self._path
+
+    @path.setter
+    def path(self, value):
+        self._path = value
+        if value is not None:
+            self.original_photo = Image.open(self.path)
+            if self.original_photo.mode == 'P':
+                self.original_photo = self.original_photo.convert()  # translates through built-in palette
+            self.buffer = self.original_photo.copy()
+
+    @property
+    def slide(self):
+        return self._slide
+
+    @slide.setter
+    def slide(self, value):
+        self._slide = value
 
     def mirror(self, *args):
         self.buffer = self.buffer.transpose(Image.FLIP_LEFT_RIGHT)
@@ -30,7 +62,6 @@ class PhotoBuffer(object):
 
     def grayscale(self, *args):
         self.buffer = self.buffer.convert('L')
-        self.invert()
         self._load()
 
     def rotate(self, *args):

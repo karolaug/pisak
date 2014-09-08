@@ -226,8 +226,7 @@
         "id": "slide",
         "type": "PisakViewerPhotoSlide",
         "ratio-width": 0.68,
-        "ratio-height": 0.7,
-        "photo_path": "jagoda.jpg"
+        "ratio-height": 0.7
     },
     {
         "id": "progress_bar",
