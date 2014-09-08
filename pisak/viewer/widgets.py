@@ -94,7 +94,8 @@ class SlideShow(layout.Bin):
         self.emit("limit-declared", self.album_length)
         self.index = initial_index
         if self.data_source is not None:
-            self.pending_slides = self.data_source.get_pending_slides(self.index)
+            self.pending_slides = self.data_source.get_pending_slides(
+                self.index)
             self.slide = self.data_source.get_slide(self.index)
             self.add_child(self.slide)
         self.emit("progressed",
@@ -109,6 +110,9 @@ class SlideShow(layout.Bin):
             return False
 
     def next_slide(self):
+        """
+        Display the photo slide following the currently displayed one.
+        """
         if self.old_slide is None and self.album_length > 1:
             self.index = (self.index + 1) % self.album_length
             self.old_slide = self.slide
@@ -119,7 +123,8 @@ class SlideShow(layout.Bin):
                 self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
             else:
                 self.add_child(self.slide)
-            self.pending_slides = self.data_source.get_pending_slides(self.index)
+            self.pending_slides = self.data_source.get_pending_slides(
+                self.index)
             self.new_slide_transition.set_from(unit.size_pix[0])
             self.new_slide_transition.set_to(0)
             self.old_slide_transition.set_to(-1*unit.size_pix[0])
@@ -130,6 +135,9 @@ class SlideShow(layout.Bin):
                       self.index+1)
 
     def previous_slide(self):
+        """
+        Display the photo slide previous to the currently displayed one.
+        """
         if self.old_slide is None and self.album_length > 1:
             self.index = self.index - 1 if self.index > 0 \
                 else self.album_length - 1
@@ -141,7 +149,8 @@ class SlideShow(layout.Bin):
                 self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
             else:
                 self.add_child(self.slide)
-            self.pending_slides = self.data_source.get_pending_slides(self.index)
+            self.pending_slides = self.data_source.get_pending_slides(
+                self.index)
             self.new_slide_transition.set_from(-1*unit.size_pix[0])
             self.new_slide_transition.set_to(0)
             self.old_slide_transition.set_to(unit.size_pix[0])
@@ -152,6 +161,10 @@ class SlideShow(layout.Bin):
                       self.index+1)
 
     def run(self):
+        """
+        Run automatic slideshow. Turn on the fullscreen mode if the
+        corresponding property is setted to True.
+        """
         if self.old_slide is None:
             if self.slideshow_on_fullscreen:
                 self.fullscreen_on = True
@@ -170,9 +183,14 @@ class SlideShow(layout.Bin):
                 self.stage.add_child(self.cover_frame)
             self.slideshow_on = True
             Clutter.threads_add_timeout(0, self.idle_duration,
-                                        lambda _: self.slideshow_timeout(), None)
+                                        lambda _: self.slideshow_timeout(),
+                                        None)
 
     def stop(self):
+        """
+        Stop the currently running, automatic slideshow.
+        If in fullscreen mode- exit fullscreen mode.
+        """
         self.slideshow_on = False
         if self.slideshow_on_fullscreen:
             self.slide.remove_transition("x")
@@ -264,12 +282,24 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
                 self._generate_slide((index+1)%len(self.data)),)
             
     def get_slide(self, index):
+        """
+        Return photo slide instance corresponding to the
+        data item at the given index.
+        """
         return self._generate_slide(index)
 
     def get_slide_backward(self, index):
+        """
+        Return photo slide instance corresponding to the
+        data item prior to the one at given index.
+        """
         return self._generate_slide(index-1)
         
     def get_slide_forward(self, index):
+        """
+        Return photo slide instance corresponding to the
+        data item following the one at the given index.
+        """
         return self._generate_slide((index+1)%len(self.data))
 
     def _generate_slide(self, index):
