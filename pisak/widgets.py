@@ -10,6 +10,9 @@ from pisak.res import colors, dims
 
 
 class PhotoTile(Bin, properties.PropertyAdapter):
+    """
+    Tile containing image and label that can be styled by CSS.
+    """
     __gtype_name__ = "PisakPhotoTile"
     __gsignals__ = {
         "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
@@ -148,6 +151,9 @@ class PhotoTile(Bin, properties.PropertyAdapter):
 
 
 class NewProgressBar(Bin, properties.PropertyAdapter):
+    """
+    Widget indicating progress, with label on top, can by styled by CSS.
+    """
     __gtype_name__ = "PisakProgressBar"
     __gproperties__ = {
         "label": (

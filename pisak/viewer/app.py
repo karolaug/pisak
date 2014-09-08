@@ -3,7 +3,7 @@ Module with app-specific code for photo viewer.
 '''
 import os
 
-from pisak.viewer import data_loader
+from pisak.viewer import library_manager
 from pisak import launcher
 
 
@@ -23,7 +23,7 @@ def prepare_photo_view(stage, script, data):
 
     #button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
-    data_source.album = data_loader.LIBRARY_DIR  # data["album_name"]
+    data_source.album = library_manager.LIBRARY_DIR  # data["album_name"]
     slideshow.show_initial_slide(0)  # data["index"]
 
     
@@ -88,5 +88,4 @@ VIEWER_APP = {
 
 
 if __name__ == "__main__":
-    data_loader.load_new()
     launcher.run(VIEWER_APP)

@@ -3,10 +3,15 @@ import os.path
 from gi.repository import Mx, GObject, Clutter
 
 from pisak import widgets, layout, res, pager, properties, unit
-from pisak.viewer import database_agent, image
+from pisak.viewer import database_agent, library_manager, image
 
 
 class SlideShow(layout.Bin):
+    """
+    Widget for displaying and managing one photo and for running
+    and managing slideshow that can be displayed
+    either on fullscreen or in the standard view.
+    """
     __gtype_name__ = "PisakViewerSlideShow"
     __gsignals__ = {
         "progressed": (
@@ -196,6 +201,10 @@ class SlideShow(layout.Bin):
 
 
 class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
+    """
+    Communicate with the library manager and dynamically
+    generate PhotoSlides, each for one photo from the specified album.
+    """
     __gtype_name__ = "PisakViewerPhotoSlidesSource"
     __gproperties__ = {
         "slide_ratio_width": (
@@ -259,6 +268,11 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         return slide
 
 class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
+    """
+    Communicate with the library manager and dynamically generates the
+    required number of PhotoTiles, each representing one album from
+    the library.
+    """
     __gtype_name__ = "PisakViewerLibraryTilesSource"
     __gproperties__ = {
         "tile_ratio_width": (
@@ -281,7 +295,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.index = 0
-        self.data = database_agent.get_all_albums()
+        self.data = library_manager.get_all_albums()
 
     @property
     def tile_ratio_height(self):
@@ -327,9 +341,8 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         tiles = []
         for item in self.data[self.index:count]:
             tile = PhotoTile()
-            tile.label_text = item.name
-            tile.preview_path = database_agent.get_preview_of_album(
-                item.name).path
+            tile.label_text = item
+            tile.preview_path = library_manager.get_preview_of_album(item)
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
             tile.ratio_spacing = self.tile_ratio_spacing
@@ -346,6 +359,11 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
 
 
 class AlbumTilesSource(LibraryTilesSource):
+    """
+    Communicate with the library manager and dynamically
+    generate the required number of PhotoTiles, each representing
+    one photo from the specified album.
+    """
     __gtype_name__ = "PisakViewerAlbumTilesSource"
 
     def __init__(self):
@@ -361,13 +379,13 @@ class AlbumTilesSource(LibraryTilesSource):
     def album(self, value):
         self._album = value
         if value is not None:
-            self.data = database_agent.get_photos_from_album(value)
+            self.data = library_manager.get_photos_from_album(value)
 
     def _generate_tiles(self, count):
         tiles = []
         for item in self.data[self.index:count]:
             tile = PhotoTile()
-            tile.preview_path = item.path
+            tile.preview_path = item
             tile.scale_mode = Mx.ImageScaleMode.FIT
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
@@ -376,6 +394,9 @@ class AlbumTilesSource(LibraryTilesSource):
 
 
 class ProgressBar(widgets.NewProgressBar):
+    """
+    Widget indicating progress, with label on top, can by styled by CSS.
+    """
     __gtype_name__ = "PisakViewerProgressBar"
 
     def __init__(self):
@@ -387,6 +408,9 @@ class ProgressBar(widgets.NewProgressBar):
 
 
 class PhotoTile(widgets.PhotoTile):
+    """
+    Tile containing image and label that can be styled by CSS.
+    """
     __gtype_name__ = "PisakViewerPhotoTile"
 
     def __init__(self):
@@ -396,10 +420,16 @@ class PhotoTile(widgets.PhotoTile):
 
 
 class Button(widgets.Button):
+    """
+    Menu button that can be styled by CSS.
+    """
     __gtype_name__ = "PisakViewerButton"
 
 
 class PhotoSlide(layout.Bin):
+    """
+    Display a single image fitted within the given allocation.
+    """
     __gtype_name__ = "PisakViewerPhotoSlide"
     __gproperties__ = {
         "photo_path": (
