@@ -2,4 +2,5 @@
 from pisak.viewer import application
 import sys
 
-application.PisakViewApp(sys.argv).main()
+if __name__ == "__main__":
+    application.PisakViewApp(sys.argv).main()

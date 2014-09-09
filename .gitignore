@@ -5,3 +5,5 @@
 .\#*
 *.npy
 eyetracker/version
+*.db
+pisak/speller/pressagio
