@@ -48,6 +48,7 @@
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
+        "ratio-spacing": 0.05,
         "children": ["right_button", "middle_object", "left_button"]
     },
     {
