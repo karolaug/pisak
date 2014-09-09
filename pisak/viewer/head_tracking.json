@@ -29,7 +29,22 @@
     {
         "id": "upper_box",
         "type": "PisakBoxLayout",
-        "children": ["upper_button"]
+        "ratio-spacing": 0.05,
+        "children": ["upper_right_button", "upper_button", "upper_left_button"]
+    },
+    {
+        "id": "upper_left_button",
+        "type": "PisakViewerButton",
+        "ratio-width": 0.4,
+        "ratio-height": 0.2,
+        "label": "ZRÓB ZDJĘCIE",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/take_photo",
+                "object": "middle_object"
+            }
+        ]
     },
     {
         "id": "upper_button",
@@ -41,6 +56,20 @@
             {
                 "name": "clicked",
                 "handler": "viewer/sepia",
+                "object": "middle_object"
+            }
+        ]
+    },
+    {
+        "id": "upper_right_button",
+        "type": "PisakViewerButton",
+        "ratio-width": 0.4,
+        "ratio-height": 0.2,
+        "label": "ODWRÓĆ KOLORY",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/invert",
                 "object": "middle_object"
             }
         ]
@@ -90,7 +119,23 @@
     {
         "id": "bottom_box",
         "type": "PisakBoxLayout",
-        "children": ["bottom_button"]
+        "ratio-spacing": 0.05,
+        "children": ["bottom_right_button", "bottom_button",
+                     "bottom_left_button"]
+    },
+    {
+        "id": "bottom_left_button",
+        "type": "PisakViewerButton",
+        "ratio-width": 0.4,
+        "ratio-height": 0.2,
+        "label": "PSYCHO",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/noise",
+                "object": "middle_object"
+            }
+        ]
     },
     {
         "id": "bottom_button",
@@ -102,6 +147,20 @@
             {
                 "name": "clicked",
                 "handler": "viewer/mirror",
+                "object": "middle_object"
+            }
+        ]
+    },
+    {
+        "id": "bottom_right_button",
+        "type": "PisakViewerButton",
+        "ratio-width": 0.4,
+        "ratio-height": 0.2,
+        "label": "KONTURY",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/contour",
                 "object": "middle_object"
             }
         ]
