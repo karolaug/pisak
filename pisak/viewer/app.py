@@ -3,7 +3,7 @@ Module with app-specific code for photo viewer.
 '''
 import os
 
-from pisak.viewer import library_manager, image
+from pisak.viewer import library_manager
 from pisak import launcher
 
 
@@ -15,7 +15,7 @@ def button_to_stage(stage, script, button_name, stage_to_load, data=None):
 def prepare_photo_view(stage, script, data):
 
     slideshow = script.get_object("slideshow_widget")
-    button_to_stage(stage, script, "button_edition", "photo_edition", {"slideshow": slideshow})
+    button_to_stage(stage, script, "button_edition", "photo_editing", {"slideshow": slideshow})
 
     button_to_stage(stage, script, "button_album", "album")
 
@@ -62,7 +62,6 @@ def prepare_photo_editing_view(stage, script, data):
 
     
     photo = script.get_object("slide")
-    photo.image_buffer = image.ImageBuffer()
     photo.photo_path = data["slideshow"].slide.photo_path
 
     button = script.get_object("button_photo")

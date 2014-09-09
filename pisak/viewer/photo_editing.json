@@ -225,6 +225,7 @@
     {
         "id": "slide",
         "type": "PisakViewerPhotoSlide",
+        "image_buffer": {"type": "PisakImageBuffer"},
         "ratio-width": 0.68,
         "ratio-height": 0.7
     },

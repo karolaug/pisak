@@ -7,7 +7,6 @@ from PIL import Image, ImageFilter
 from gi.repository import Cogl, Clutter, GObject
 
 from pisak import properties
-from pisak.viewer.widgets import PhotoSlide
 
 
 class ImageBuffer(GObject.GObject, properties.PropertyAdapter):
@@ -23,7 +22,7 @@ class ImageBuffer(GObject.GObject, properties.PropertyAdapter):
             "noop",
             GObject.PARAM_READWRITE),
         "slide": (
-            PhotoSlide.__gtype__,
+            Clutter.Actor.__gtype__,
             "", "", GObject.PARAM_READWRITE)
     }
     PIXEL_FORMATS = {'1_1': Cogl.PixelFormat.G_8, 'L_1': Cogl.PixelFormat.A_8,

@@ -448,7 +448,7 @@ class PhotoSlide(layout.Bin):
         return self._image_buffer
 
     @image_buffer.setter
-    def image_buffer(self):
+    def image_buffer(self, value):
         self._image_buffer = value
 
     @property
