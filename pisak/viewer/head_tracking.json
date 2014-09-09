@@ -67,6 +67,8 @@
     {
         "id": "middle_object",
         "type": "PisakViewerPhotoSlide",
+        "ratio-width": 0.5,
+        "ratio-height": 0.5,
         "image_buffer": {"type": "PisakImageBuffer"},
         "photo_path": "../res/krolikarnia.jpg"
     },
