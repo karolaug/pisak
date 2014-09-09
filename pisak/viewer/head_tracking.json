@@ -18,39 +18,32 @@
         "x-align": "start",
         "x-expand": true,
         "y-expand": true,
-        "ratio-margin-top": 0.05,
-        "ratio-margin-bottom": 0.05,
-        "ratio-margin-left": 0.05,
-        "ratio-margin-right": 0.05,
-        "ratio-spacing": 0.05,
+        "ratio-margin-top": 0.02,
+        "ratio-margin-bottom": 0.02,
+        "ratio-margin-left": 0.02,
+        "ratio-margin-right": 0.02,
+        "ratio-spacing": 0.02,
         "orientation": "vertical",
         "children": ["upper_box", "middle_box", "bottom_box"]
     },
     {
         "id": "upper_box",
         "type": "PisakBoxLayout",
-        "ratio-spacing": 0.05,
+        "ratio-spacing": 0.02,
         "children": ["upper_right_button", "upper_button", "upper_left_button"]
     },
     {
         "id": "upper_left_button",
         "type": "PisakViewerButton",
-        "ratio-width": 0.4,
-        "ratio-height": 0.2,
-        "label": "ZRÓB ZDJĘCIE",
-        "signals": [
-            {
-                "name": "clicked",
-                "handler": "viewer/take_photo",
-                "object": "middle_object"
-            }
-        ]
+        "ratio-width": 0.3,
+        "ratio-height": 0.18,
+        "label": "ZRÓB ZDJĘCIE"
     },
     {
         "id": "upper_button",
         "type": "PisakViewerButton",
-        "ratio-width": 0.4,
-        "ratio-height": 0.2,
+        "ratio-width": 0.3,
+        "ratio-height": 0.18,
         "label": "SEPIA",
         "signals": [
             {
@@ -63,8 +56,8 @@
     {
         "id": "upper_right_button",
         "type": "PisakViewerButton",
-        "ratio-width": 0.4,
-        "ratio-height": 0.2,
+        "ratio-width": 0.3,
+        "ratio-height": 0.18,
         "label": "ODWRÓĆ KOLORY",
         "signals": [
             {
@@ -77,14 +70,14 @@
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
-        "ratio-spacing": 0.05,
+        "ratio-spacing": 0.02,
         "children": ["right_button", "middle_object", "left_button"]
     },
     {
         "id": "left_button",
         "type": "PisakViewerButton",
-        "ratio-width": 0.4,
-        "ratio-height": 0.2,
+        "ratio-width": 0.18,
+        "ratio-height": 0.45,
         "label": "ORYGINAŁ",
         "signals": [
             {
@@ -97,17 +90,17 @@
     {
         "id": "middle_object",
         "type": "PisakViewerPhotoSlide",
-        "ratio-width": 0.5,
-        "ratio-height": 0.5,
+        "ratio-width": 0.55,
+        "ratio-height": 0.55,
         "image_buffer": {"type": "PisakImageBuffer"},
-        "photo_path": "../res/krolikarnia.jpg"
+        "photo_path": "./pisak/res/krolikarnia.jpg"
     },
     {
         "id": "right_button",
         "type": "PisakViewerButton",
-        "ratio-width": 0.4,
-        "ratio-height": 0.2,
-        "label": "SEPIA",
+        "ratio-width": 0.18,
+        "ratio-height": 0.45,
+        "label": "OBRÓĆ",
         "signals": [
             {
                 "name": "clicked",
@@ -119,15 +112,15 @@
     {
         "id": "bottom_box",
         "type": "PisakBoxLayout",
-        "ratio-spacing": 0.05,
+        "ratio-spacing": 0.02,
         "children": ["bottom_right_button", "bottom_button",
                      "bottom_left_button"]
     },
     {
         "id": "bottom_left_button",
         "type": "PisakViewerButton",
-        "ratio-width": 0.4,
-        "ratio-height": 0.2,
+        "ratio-width": 0.3,
+        "ratio-height": 0.18,
         "label": "PSYCHO",
         "signals": [
             {
@@ -140,8 +133,8 @@
     {
         "id": "bottom_button",
         "type": "PisakViewerButton",
-        "ratio-width": 0.4,
-        "ratio-height": 0.2,
+        "ratio-width": 0.3,
+        "ratio-height": 0.18,
         "label": "LUSTRO",
         "signals": [
             {
@@ -154,8 +147,8 @@
     {
         "id": "bottom_right_button",
         "type": "PisakViewerButton",
-        "ratio-width": 0.4,
-        "ratio-height": 0.2,
+        "ratio-width": 0.3,
+        "ratio-height": 0.18,
         "label": "KONTURY",
         "signals": [
             {
