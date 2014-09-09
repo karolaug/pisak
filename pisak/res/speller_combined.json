@@ -37,7 +37,7 @@
                                     {
                                         "id": "key_1_1",
                                         "type": "PisakSpellerKey",
-                                        "text": "Q",
+                                        "default-text": "Q",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -45,7 +45,7 @@
                                     {
                                         "id": "key_1_2",
                                         "type": "PisakSpellerKey",
-                                        "text": "W",
+                                        "default-text": "W",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -53,7 +53,7 @@
                                     {
                                         "id": "key_1_3",
                                         "type": "PisakSpellerKey",
-                                        "text": "E",
+                                        "default-text": "E",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -61,7 +61,7 @@
                                     {
                                         "id": "key_1_4",
                                         "type": "PisakSpellerKey",
-                                        "text": "R",
+                                        "default-text": "R",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true		
@@ -69,7 +69,7 @@
                                     {
                                         "id": "key_1_5",
                                         "type": "PisakSpellerKey",
-                                        "text": "T",
+                                        "default-text": "T",
 					"target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -77,7 +77,7 @@
                                     {
                                         "id": "key_1_6",
                                         "type": "PisakSpellerKey",
-                                        "text": "Y",
+                                        "default-text": "Y",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -85,7 +85,7 @@
                                     {
                                         "id": "key_1_7",
                                         "type": "PisakSpellerKey",
-                                        "text": "U",
+                                        "default-text": "U",
 					"target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -93,7 +93,7 @@
                                     {
                                         "id": "key_1_8",
                                         "type": "PisakSpellerKey",
-                                        "text": "I",
+                                        "default-text": "I",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -101,7 +101,7 @@
                                     {
                                         "id": "key_1_9",
                                         "type": "PisakSpellerKey",
-                                        "text": "O",
+                                        "default-text": "O",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -109,7 +109,7 @@
                                     {
                                         "id": "key_1_10",
                                         "type": "PisakSpellerKey",
-                                        "text": "P",
+                                        "default-text": "P",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -124,7 +124,7 @@
                                     {
                                         "id": "key_2_1",
                                         "type": "PisakSpellerKey",
-                                        "text": "A",
+                                        "default-text": "A",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -132,7 +132,7 @@
                                     {
                                         "id": "key_2_2",
                                         "type": "PisakSpellerKey",
-                                        "text": "S",
+                                        "default-text": "S",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -140,7 +140,7 @@
                                     {
                                         "id": "key_2_3",
                                         "type": "PisakSpellerKey",
-                                        "text": "D",
+                                        "default-text": "D",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -148,7 +148,7 @@
                                     {
                                         "id": "key_2_4",
                                         "type": "PisakSpellerKey",
-                                        "text": "F",
+                                        "default-text": "F",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -156,7 +156,7 @@
                                     {
                                         "id": "key_2_5",
                                         "type": "PisakSpellerKey",
-                                        "text": "G",
+                                        "default-text": "G",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -164,7 +164,7 @@
                                     {
                                         "id": "key_2_6",
                                         "type": "PisakSpellerKey",
-                                        "text": "H",
+                                        "default-text": "H",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -172,7 +172,7 @@
                                     {
                                         "id": "key_2_7",
                                         "type": "PisakSpellerKey",
-                                        "text": "J",
+                                        "default-text": "J",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -180,7 +180,7 @@
                                     {
                                         "id": "key_2_8",
                                         "type": "PisakSpellerKey",
-                                        "text": "K",
+                                        "default-text": "K",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -188,7 +188,7 @@
                                     {
                                         "id": "key_2_9",
                                         "type": "PisakSpellerKey",
-                                        "text": "L",
+                                        "default-text": "L",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -196,7 +196,7 @@
                                     {
                                         "id": "key_2_10",
                                         "type": "PisakSpellerKey",
-                                        "text": "CH",
+                                        "default-text": "CH",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -211,7 +211,7 @@
                                     {
                                         "id": "key_3_1",
                                         "type": "PisakSpellerKey",
-                                        "text": "Z",
+                                        "default-text": "Z",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -219,7 +219,7 @@
                                     {
                                         "id": "key_3_2",
                                         "type": "PisakSpellerKey",
-                                        "text": "X",
+                                        "default-text": "X",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -227,7 +227,7 @@
                                     {
                                         "id": "key_3_3",
                                         "type": "PisakSpellerKey",
-                                        "text": "C",
+                                        "default-text": "C",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true
@@ -235,31 +235,31 @@
                                     {
                                         "id": "key_3_4",
                                         "type": "PisakSpellerKey",
-                                        "text": "V",
-                                        "target": "text_box",
+                                        "default-text": "V",
+                                        "target": "default-text_box",
 					"y-expand": true,
 					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_5",
                                         "type": "PisakSpellerKey",
-                                        "text": "B",
-                                        "target": "text_box",
+                                        "default-text": "B",
+                                        "target": "default-text_box",
 					"y-expand": true,
 					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_6",
                                         "type": "PisakSpellerKey",
-                                        "text": "N",
-                                        "target": "text_box",
+                                        "default-text": "N",
+                                        "target": "default-text_box",
 					"y-expand": true,
 					"x-expand": true
                                     },
                                     {
                                         "id": "key_3_7",
                                         "type": "PisakSpellerKey",
-                                        "text": "M",
+                                        "default-text": "M",
                                         "target": "text_box",
 					"y-expand": true,
 					"x-expand": true

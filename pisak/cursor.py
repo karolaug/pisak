@@ -9,7 +9,7 @@ import sys
 
 
 class Group(Clutter.Actor):
-    __gtype_name__ = "PisakCursorGroup"
+    __gtype_name__ = "PisakSpriteCursorGroup"
     
     __gproperties__ = {
         "timeout": (

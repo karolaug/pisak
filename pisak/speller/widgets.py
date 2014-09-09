@@ -203,9 +203,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         def __str__(self):
             return "{} -> {} @ {}".format(self.before, self.after, self.pos)
-
-
-class Text(Mx.Entry):
+        
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
@@ -515,6 +513,7 @@ class Key(pisak.widgets.Button):
         self.pre_special_text = None
         self.undo_chain = []
         self.allowed_undos = set()
+        self.target = None
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
         self.connect("activate", self.on_activate)
         self.connect("notify::default-text", self._set_initial_label)
