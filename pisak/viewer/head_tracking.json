@@ -1,0 +1,106 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBinLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "children": ["main_box", "background_box"]
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundPattern",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "main_box",
+        "type": "PisakBoxLayout",
+        "x-align": "start",
+        "x-expand": true,
+        "y-expand": true,
+        "ratio-margin-top": 0.05,
+        "ratio-margin-bottom": 0.05,
+        "ratio-margin-left": 0.05,
+        "ratio-margin-right": 0.05,
+        "ratio-spacing": 0.05,
+        "orientation": "vertical",
+        "children": ["upper_box", "middle_box", "bottom_box"]
+    },
+    {
+        "id": "upper_box",
+        "type": "PisakBoxLayout",
+        "children": ["upper_button"]
+    },
+    {
+        "id": "upper_button",
+        "type": "PisakViewerButton",
+        "ratio-width": 0.4,
+        "ratio-height": 0.2,
+        "label": "SEPIA",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/sepia",
+                "object": "middle_object"
+            }
+        ]
+    },
+    {
+        "id": "middle_box",
+        "type": "PisakBoxLayout",
+        "children": ["right_button", "middle_object", "left_button"]
+    },
+    {
+        "id": "left_button",
+        "type": "PisakViewerButton",
+        "ratio-width": 0.4,
+        "ratio-height": 0.2,
+        "label": "ORYGINAŁ",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/original",
+                "object": "middle_object"
+            }
+        ]
+    },
+    {
+        "id": "middle_object",
+        "type": "PisakViewerPhotoSlide",
+        "image_buffer": {"type": "PisakImageBuffer"},
+        "photo_path": "../res/krolikarnia.jpg"
+    },
+    {
+        "id": "right_button",
+        "type": "PisakViewerButton",
+        "ratio-width": 0.4,
+        "ratio-height": 0.2,
+        "label": "SEPIA",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/rotate",
+                "object": "middle_object"
+            }
+        ]
+    },
+    {
+        "id": "bottom_box",
+        "type": "PisakBoxLayout",
+        "children": ["bottom_button"]
+    },
+    {
+        "id": "bottom_button",
+        "type": "PisakViewerButton",
+        "ratio-width": 0.4,
+        "ratio-height": 0.2,
+        "label": "LUSTRO",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/mirror",
+                "object": "middle_object"
+            }
+        ]
+    }
+]
