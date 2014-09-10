@@ -1,5 +1,7 @@
-from pisak import signals
+from pisak import signals, res
 from pisak.viewer import database_agent, widgets
+import os.path
+import subprocess
 
 
 @signals.registered_handler("viewer/next_page")
@@ -122,3 +124,12 @@ def original(item):
         item.image_buffer.original()
     elif isinstance(item, widgets.SlideShow):
         item.slide.image_buffer.original()
+
+
+@signals.registered_handler("viewer/take_photo")
+def take_photo(item):
+    subprocess.call(['python', os.path.join(res.PATH, 'take_photo.py')])
+    if isinstance(item, widgets.PhotoSlide):
+        item.photo_path = os.path.join(res.PATH, 'zdjecie.jpg')
+    elif isinstance(item, widgets.SlideShow):
+        item.slide.photo_path = os.path.join(res.PATH, 'zdjecie.jpg')
