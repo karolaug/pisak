@@ -6,6 +6,7 @@ import time
 
 from gi.repository import GObject, Clutter, Mx
 import sys
+from pymouse import PyMouse as mouse
 
 
 class Group(Clutter.Actor):
@@ -36,6 +37,7 @@ class Group(Clutter.Actor):
         self.connect("allocation-changed", self._rescan)
         self.worker = threading.Thread(target=self.work, daemon=True)
         self.worker.start()
+        self.m = mouse()
 
     def _init_sprite(self):
         self.sprite = Clutter.Actor()
@@ -73,7 +75,6 @@ class Group(Clutter.Actor):
             return coords
     
     def update_sprite(self, coords):
-        print(coords)
         x, y = (coords[0] - self.sprite.get_width() / 2), (coords[1] - self.sprite.get_height() / 2)
         self.sprite.set_position(x, y)
     
@@ -105,6 +106,7 @@ class Group(Clutter.Actor):
 
     def work(self):
         time.sleep(1)
+        #Clutter.init()
         while True:
             coords = self.read_coords()
             Clutter.threads_enter()
@@ -114,10 +116,10 @@ class Group(Clutter.Actor):
             if actor is not None:
                 if actor == self.hover_actor:
                     if time.time() - self.hover_start > self._timeout:
-                        Clutter.threads_enter()
-                        actor.emit("clicked")
-                        Clutter.threads_leave()
                         self.hover_start = time.time() + 1.0 # dead time
+                        Clutter.threads_enter()
+                        self.m.click(coords[0], coords[1], 1)
+                        Clutter.threads_leave()
                 else:
                     # reset timeout
                     Clutter.threads_enter()

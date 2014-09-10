@@ -13,8 +13,9 @@ import pisak.layout
 class Image(Clutter.Actor):
     MODEL = os.path.join(res.PATH, 'zdjecie.jpg')
     PIXEL_FORMATS = {'RGB': Cogl.PixelFormat.RGB_888, 'L': Cogl.PixelFormat.A_8}
+
     def __init__(self):
-        super(Image, self).__init__()
+        super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         self._init_elements()
@@ -22,19 +23,25 @@ class Image(Clutter.Actor):
 
     def _init_elements(self):
         self.image = Mx.Image()
+        #self.image = Clutter.Image()
         self.image.set_scale_mode(Mx.ImageScaleMode.FIT)
         self.add_child(self.image)
-        self.original_photo = self.buffer = Im.open(self.MODEL)
+        self.original_photo = Im.open(self.MODEL)
+        self.buffer = self.original_photo.copy()
         self.zoom_timer = None
         self.noise_timer = None
 
     def set_image_from_data(self):
+        self.image = Mx.Image()
+        self.image.set_scale_mode(Mx.ImageScaleMode.FIT)
+        self.add_child(self.image)
         data = self.buffer.tostring()
         mode = self.PIXEL_FORMATS[self.buffer.mode]
         width, height = self.buffer.size[0], self.buffer.size[1]
         row_stride = len(data) / height
+        print(mode, width, height, row_stride)
         self.image.set_from_data(data, mode, width, height, row_stride)
-        
+
     def mirror(self, button):
         axis = [Im.FLIP_LEFT_RIGHT, Im.FLIP_TOP_BOTTOM]
         self.buffer = self.buffer.transpose(axis[random.randint(0, 1)])
