@@ -3,7 +3,6 @@
         "id": "main",
         "type": "PisakScanningGroup",
 	"selector": "mouse",
-        "unwind-to": "main",
 	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
