@@ -1,5 +1,5 @@
 from pisak import signals
-from pisak.viewer import database_agent, widgets
+from pisak.viewer import database_agent, image
 
 
 @signals.registered_handler("viewer/next_page")
@@ -38,87 +38,110 @@ def add_to_favourite_photos(slideshow_widget):
     
 
 @signals.registered_handler("viewer/zoom")
-def zoom(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.zoom()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.zoom()
+def zoom(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.zoom()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.zoom()
 
 
 @signals.registered_handler("viewer/contour")
-def contour(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.contour()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.contour()
+def contour(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.contour()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.contour()
 
 
 @signals.registered_handler("viewer/edges")
-def edges(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.edges()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.edges()
+def edges(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.edges()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.edges()
 
 
 @signals.registered_handler("viewer/sepia")
-def sepia(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.sepia()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.sepia()
+def sepia(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.sepia()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.sepia()
+        
 
 @signals.registered_handler("viewer/invert")
-def invert(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.invert()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.invert()
+def invert(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.invert()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.invert()
 
 
 @signals.registered_handler("viewer/rotate")
-def rotate(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.rotate()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.rotate()
+def rotate(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.rotate()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.rotate()
 
 
 @signals.registered_handler("viewer/mirror")
-def mirror(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.mirror()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.mirror()
+def mirror(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.mirror()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.mirror()
 
 
 @signals.registered_handler("viewer/grayscale")
-def grayscale(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.grayscale()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.grayscale()
+def grayscale(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.grayscale()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.grayscale()
 
 
 @signals.registered_handler("viewer/noise")
-def noise(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.noise()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.noise()
+def noise(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.noise()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.noise()
 
 
 @signals.registered_handler("viewer/solarize")
-def solarize(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.solarize()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.solarize()
+def solarize(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.solarize()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.solarize()
 
 
 @signals.registered_handler("viewer/original")
-def original(item):
-    if isinstance(item, widgets.PhotoSlide):
-        item.image_buffer.original()
-    elif isinstance(item, widgets.SlideShow):
-        item.slide.image_buffer.original()
+def original(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is not None:
+        slide.image_buffer.original()
+    else:
+        slide.image_buffer = image.ImageBuffer()
+        slide.image_buffer.original()

@@ -438,6 +438,7 @@ class PhotoSlide(layout.Bin):
 
     def __init__(self):
         super().__init__()
+        self.photo_path = None
         self.image_buffer = None
         self.photo = Mx.Image()
         self.photo.set_scale_mode(Mx.ImageScaleMode.FIT)
@@ -450,6 +451,9 @@ class PhotoSlide(layout.Bin):
     @image_buffer.setter
     def image_buffer(self, value):
         self._image_buffer = value
+        if self.photo_path is not None:
+            value.path = self.photo_path
+            value.slide = self
 
     @property
     def photo_path(self):
@@ -458,10 +462,11 @@ class PhotoSlide(layout.Bin):
     @photo_path.setter
     def photo_path(self, value):
         self._photo_path = value
-        self.photo.set_from_file(value)
-        if self.image_buffer is not None:
-            self.image_buffer.slide = self
-            self.image_buffer.path = value
+        if value is not None:
+            self.photo.set_from_file(value)
+            if self.image_buffer is not None:
+                self.image_buffer.slide = self
+                self.image_buffer.path = value
 
     @property
     def transition_duration(self):

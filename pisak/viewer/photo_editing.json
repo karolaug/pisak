@@ -28,7 +28,7 @@
         "id": "middle_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.1,
-        "children": ["slide", "button_menu"]
+        "children": ["slide_space", "button_menu"]
     },
     {
         "id": "button_menu",
@@ -64,7 +64,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/zoom",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -78,7 +78,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/rotate",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -92,7 +92,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/edges",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -106,7 +106,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/contour",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -120,7 +120,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/sepia",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -134,7 +134,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/invert",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -148,7 +148,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/mirror",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -162,7 +162,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/grayscale",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -176,7 +176,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/noise",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -190,7 +190,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/solarize",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -204,7 +204,7 @@
             {
                 "name": "clicked",
                 "handler": "viewer/original",
-                "object": "slide"
+                "object": "slide_space"
             }
         ]
     },
@@ -223,9 +223,15 @@
         "ratio-height": 0.05
     },
     {
+        "id": "slide_space",
+        "type": "PisakBinLayout",
+        "ratio-width": 0.68,
+        "ratio-height": 0.7,
+        "children": ["slide"]
+    },
+    {
         "id": "slide",
         "type": "PisakViewerPhotoSlide",
-        "image_buffer": {"type": "PisakImageBuffer"},
         "ratio-width": 0.68,
         "ratio-height": 0.7
     },
