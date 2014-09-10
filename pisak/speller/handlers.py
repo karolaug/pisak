@@ -2,7 +2,7 @@ import subprocess
 import os
 
 from pisak import signals
-from pisak.speller import widgets, database_agent
+from pisak.speller import widgets, documents_manager
 
 
 @signals.registered_handler("speller/undo")
@@ -44,12 +44,13 @@ def save(pop_up):
     files_limit = 9
     pop_up.mode = "save"
     text_box = pop_up.target
-    files = database_agent.get_text_files()
+    files = documents_manager.get_all_documents()
     text = text_box.get_text()
     if text:
         if len(files) < files_limit:
             name = file_name_base + str(len(files)+1)
-            file_path = database_agent.insert_text_file(name)
+            file_path = documents_manager.generate_new_path()
+            documents_manager.add_document(name, file_path)
             with open(file_path, "w") as file:
                 file.write(text)
             message = save_success_message + "\n\n" + '"' + name + '"'
@@ -65,7 +66,7 @@ def load(pop_up):
     files_present_message = "WYBIERZ PLIK"
     no_files_present_message = "BRAK PLIKÓW DO WCZYTANIA"
     pop_up.mode = "load"
-    files = database_agent.get_text_files()
+    files = documents_manager.get_all_documents()
     if files:
         pop_up.on_screen(files_present_message, files)
     else:
