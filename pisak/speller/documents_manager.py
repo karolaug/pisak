@@ -60,19 +60,32 @@ def remove_document(path):
         sess.query(Document).filter(Document.path == path).delete()
 
 
-def add_document(name):
+def add_document(name, path):
     """
     Insert new document related record to the database.
     Return path in the file system to the new document.
     :param name: name of the new document
+    :param path: path to the new document
     """
-    path = _generate_new_path()
+    if not is_in_database(path):
+        with _establish_session() as sess:
+            sess.add(Document(path=path, name=name))
+
+
+def is_in_database(path):
+    """
+    Check if document with the given path is already in the database.
+    :param path: path to the document file
+    """
     with _establish_session() as sess:
-        sess.add(Document(path=path, name=name))
-    return path
+        document = sess.query(Document).filter(Document.path == path).first()
+    if document:
+        return True
+    else:
+        return False
 
 
-def _generate_new_path():
+def generate_new_path():
     """
     Generate path for the new document file.
     """

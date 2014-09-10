@@ -49,7 +49,8 @@ def save(pop_up):
     if text:
         if len(files) < files_limit:
             name = file_name_base + str(len(files)+1)
-            file_path = documents_manager.add_document(name)
+            file_path = documents_manager.generate_new_path()
+            documents_manager.add_document(name, file_path)
             with open(file_path, "w") as file:
                 file.write(text)
             message = save_success_message + "\n\n" + '"' + name + '"'
