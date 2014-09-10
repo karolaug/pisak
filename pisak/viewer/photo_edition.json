@@ -22,12 +22,13 @@
         "ratio-margin-bottom": 0.04,
         "ratio-spacing": 0.02,
         "orientation": "vertical",
-        "children": ["progress_bar", "middle_box", "header"]
+        "children": ["middle_box", "header"]
     },
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.1,
+	"y-align": "center",
         "children": ["slide", "button_menu"]
     },
     {
@@ -59,7 +60,7 @@
         "type": "PisakViewerButton",
         "label": "ZOOM",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -73,7 +74,7 @@
         "type": "PisakViewerButton",
         "label": "OBRÓĆ",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -87,7 +88,7 @@
         "type": "PisakViewerButton",
         "label": "KRAWĘDZIE",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -101,7 +102,7 @@
         "type": "PisakViewerButton",
         "label": "KONTURY",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -115,7 +116,7 @@
         "type": "PisakViewerButton",
         "label": "SEPIA",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -129,7 +130,7 @@
         "type": "PisakViewerButton",
         "label": "NEGATYW",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -143,7 +144,7 @@
         "type": "PisakViewerButton",
         "label": "LUSTRO",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -157,7 +158,7 @@
         "type": "PisakViewerButton",
         "label": "SKALA SZAROŚCI",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -171,7 +172,7 @@
         "type": "PisakViewerButton",
         "label": "PSYCHO",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -185,7 +186,7 @@
         "type": "PisakViewerButton",
         "label": "PRZEŚWIETLENIE",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -199,7 +200,7 @@
         "type": "PisakViewerButton",
         "label": "ORYGINAŁ",
         "ratio-width": 0.22,
-        "ratio-height": 0.05,
+        "ratio-height": 0.065,
         "signals": [
             {
                 "name": "clicked",
@@ -213,29 +214,19 @@
         "type": "PisakViewerButton",
         "label": "POWRÓT",
         "ratio-width": 0.22,
-        "ratio-height": 0.05
+        "ratio-height": 0.065
     },
     {
         "id": "button_start",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
         "ratio-width": 0.22,
-        "ratio-height": 0.05
+        "ratio-height": 0.065
     },
     {
         "id": "slide",
         "type": "PisakViewerPhotoSlide",
         "ratio-width": 0.68,
         "ratio-height": 0.7
-    },
-    {
-        "id": "progress_bar",
-        "type": "PisakViewerProgressBar",
-        "ratio-width": 1,
-        "progress": 0.3,
-        "progress-transition-duration": 1000,
-        "ratio-height": 0.05,
-        "counter-limit": 100,
-        "label-ratio-x-offset": 0.9
     }
 ]
