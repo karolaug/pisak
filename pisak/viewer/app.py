@@ -9,7 +9,7 @@ from pisak import launcher
 
 def button_to_stage(stage, script, button_name, stage_to_load, data=None):
     button = script.get_object(button_name)
-    button.connect("activate", lambda *_: stage.load_view(stage_to_load, data))
+    button.connect("clicked", lambda *_: stage.load_view(stage_to_load, data))
 
 
 def prepare_photo_view(stage, script, data):
@@ -34,7 +34,7 @@ def prepare_album_view(stage, script, album_name):
 
     library = script.get_object("library_data")
     #for index, photo in enumerate(library.tiles):
-        #photo.connect("activate", lambda *_: stage.load_view(
+        #photo.connect("clicked", lambda *_: stage.load_view(
                                                     #"photo",
                                                     #{"index": index,
                                                     #"album": data["album_name"]}))
@@ -52,7 +52,7 @@ def prepare_library_view(stage, script, data):
 
     library = script.get_object("library_data")
     #for album in library.data:
-        #album.connect("activate", lambda *_: stage.load_view("album", {"album_name": album["category"]}))
+        #album.connect("clicked", lambda *_: stage.load_view("album", {"album_name": album["category"]}))
 
 
     # button_to_stage(stage, script, "button_start", "start") -> start panel
@@ -65,7 +65,7 @@ def prepare_photo_edition_view(stage, script, data):
     photo.photo_path = data["slideshow"].slide.photo_path
 
     button = script.get_object("button_photo")
-    button.connect("activate", lambda *_: stage.load_view("photo", photo))
+    button.connect("clicked", lambda *_: stage.load_view("photo", photo))
 
     # button_to_stage(stage, script, "button_start", "start") -> start panel
 
