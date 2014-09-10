@@ -442,9 +442,6 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
         self.cover_transition.set_duration(166)
         self.add_transition("cover", self.cover_transition)
 
-    def _redraw_cover(self):
-        self.canvas.invalidate()
-
     def draw(self, canvas, context, w, h):
         context.set_operator(cairo.OPERATOR_CLEAR)
         context.paint()
@@ -467,10 +464,10 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
         self.set_content(self.canvas)
 
     def turn_on(self):
-        self.cover = self.set_cover(self.cover_on)
+        self.set_cover(self.cover_on)
 
     def turn_off(self):
-        self.cover = self.set_cover(self.cover_off)
+        self.set_cover(self.cover_off)
 
 
 class Button(widgets.Button):

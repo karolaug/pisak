@@ -4,7 +4,7 @@ import os.path
 from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
 
-from pisak import switcher_app, unit, res, properties, scanning
+from pisak import switcher_app, unit, res, properties
 from pisak.layout import Box, Bin
 from pisak.res import colors, dims
 
