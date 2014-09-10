@@ -5,10 +5,7 @@ from pisak import cursor
 
 
 def prepare_head_editing_view(stage, script, data):
-    sprite = cursor.Group()
-    main = script.get_object("main")
-    sprite.add_child(main)
-    stage.add_child(sprite)
+    pass
     
 
 def fix_path(path):

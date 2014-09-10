@@ -1,6 +1,13 @@
 [
     {
         "id": "main",
+        "type": "PisakSpriteCursorGroup",
+        "x-expand": true,
+        "y-expand": true,
+        "children": ["view"]
+    },
+    {
+        "id": "view",
         "type": "PisakBinLayout",
         "x-expand": true,
         "y-expand": true,
