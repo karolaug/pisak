@@ -48,10 +48,10 @@ class StylableScannable(object):
     Hilighted and scanned widgets are marked with CSS pseudoclasses.
     """
     def enable_hilite(self):
-        self.style_pseudo_class_add("hilite")
+        self.style_pseudo_class_add("hover")
 
     def disable_hilite(self):
-        self.style_pseudo_class_remove("hilite")
+        self.style_pseudo_class_remove("hover")
 
     def enable_scanned(self):
         self.style_pseudo_class_add("scanning")
@@ -89,11 +89,11 @@ class Strategy(GObject.GObject):
             self.group.stop_cycle()
             element.parent_group = self.group
             element.start_cycle()
-        elif isinstance(element, Mx.Button):
+        elif hasattr(element, "activate"):
             self.group.stop_cycle()
             # set potential next group
             self.group.stage.pending_group = self.unwind_to
-            element.emit("clicked")
+            element.activate()
             # launch next group
             if self.group.stage.pending_group:
                 self.group.stage.pending_group.start_cycle()
@@ -234,31 +234,32 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.strategy.select()
         return False
 
-    def add_pseudoclass_all(self, pseudoclass):
+    def recursive_apply(self, test, operation):
         for s in self.get_subgroups():
-            if isinstance(s, Mx.Stylable):
-                s.style_pseudo_class_add(pseudoclass)
+            if test(s):
+                operation(s)
             elif isinstance(s, Group):
-                s.add_pseudoclass_all(pseudoclass)
-
-    def remove_pseudoclass_all(self, pseudoclass):
-        for s in self.get_subgroups():
-            if isinstance(s, Mx.Stylable):
-                s.style_pseudo_class_remove(pseudoclass)
-            elif isinstance(s, Group):
-                s.remove_pseudoclass_all(pseudoclass)
+                s.recursive_apply(test, operation)
 
     def enable_hilite(self):
-        self.add_pseudoclass_all("hover")
+        self.recursive_apply(
+            lambda s: hasattr(s, "enable_hilite"),
+            lambda s: s.enable_hilite())
 
     def disable_hilite(self):
-        self.remove_pseudoclass_all("hover")    
+        self.recursive_apply(
+            lambda s: hasattr(s, "disable_hilite"),
+            lambda s: s.disable_hilite())    
 
     def enable_scan_hilite(self):
-        self.add_pseudoclass_all("scanning")
+        self.recursive_apply(
+            lambda s: hasattr(s, "enable_scanning"),
+            lambda s: s.enable_scanning())
 
     def disable_scan_hilite(self):
-        self.remove_pseudoclass_all("scanning")
+        self.recursive_apply(
+            lambda s: hasattr(s, "disable_scanning"),
+            lambda s: s.disable_scanning())
 
 
 class RowStrategy(Strategy, properties.PropertyAdapter):
@@ -359,24 +360,24 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
     def _stop_cycle(self):
         if self.index is not None:
             selection = self._subgroups[self.index]
-            if isinstance(selection, Mx.Stylable):
-                selection.style_pseudo_class_remove("hover")
+            if hasattr(selection, "disable_hilite"):
+                selection.disable_hilite()
             elif isinstance(selection, Group):
                 selection.disable_hilite()
 
     def _expose_next(self):
         if self.index is not None:
             selection = self._subgroups[self.index]
-            if isinstance(selection, Mx.Stylable):
-                selection.style_pseudo_class_remove("hover")
+            if hasattr(selection, "disable_hilite"):
+                selection.disable_hilite()
             elif isinstance(selection, Group):
                 selection.disable_hilite()
             self.index = (self.index + 1) % len(self._subgroups)
         else:
             self.index = 0
         selection = self._subgroups[self.index]
-        if isinstance(selection, Mx.Stylable):
-            selection.style_pseudo_class_add("hover")
+        if hasattr(selection, "enable_hilite"):
+            selection.enable_hilite()
         elif isinstance(selection, Group):
             selection.enable_hilite()
         if self.index == len(self._subgroups) - 1:
