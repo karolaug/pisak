@@ -50,17 +50,10 @@
         "ratio-spacing": 0.01,
         "y-expand": true,
         "y-align": "end",
-        "children": ["button_2", "button_1"]
+        "children": ["button_start"]
     },
     {
-        "id": "button_1",
-        "type": "PisakViewerButton",
-        "label": "POWRÓT",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1
-    },
-    {
-        "id": "button_2",
+        "id": "button_start",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
         "ratio-width": 0.22,
