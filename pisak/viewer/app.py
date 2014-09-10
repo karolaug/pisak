@@ -16,8 +16,7 @@ def prepare_photo_view(stage, script, data):
 
     slideshow = script.get_object("slideshow_widget")
     button_to_stage(stage, script, "button_edition", 
-                    "photo_edition", {"slideshow": slideshow})
-
+                    "photo_editing", {"slideshow": slideshow})
     button_to_stage(stage, script, "button_album", "album")
 
     button_to_stage(stage, script, "button_library", "library")
@@ -59,7 +58,7 @@ def prepare_library_view(stage, script, data):
     # button_to_stage(stage, script, "button_start", "start") -> start panel
 
 
-def prepare_photo_edition_view(stage, script, data):
+def prepare_photo_editing_view(stage, script, data):
     photo = script.get_object("slide")
     photo.photo_path = data["slideshow"].slide.photo_path
 
@@ -78,8 +77,8 @@ VIEWER_APP = {
         "photo": (fix_path("photo.json"), prepare_photo_view),
         "album": (fix_path("album.json"), prepare_album_view),
         "library": (fix_path("library.json"), prepare_library_view),
-        "photo_edition": (fix_path("photo_edition.json"),
-                          prepare_photo_edition_view),
+        "photo_editing": (fix_path("photo_editing.json"),
+                          prepare_photo_editing_view),
     },
     "initial-view": "photo",
     "initial-data": None

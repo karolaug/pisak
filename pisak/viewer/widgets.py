@@ -549,15 +549,30 @@ class PhotoSlide(layout.Bin):
         "transition_duration": (
             GObject.TYPE_INT64, "transition duration",
             "duration of photo transition", 0,
-            GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE)
+            GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE),
+        "image_buffer": (
+            image.ImageBuffer.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
         super().__init__()
+        self.photo_path = None
         self.image_buffer = None
         self.photo = Mx.Image()
         self.photo.set_scale_mode(Mx.ImageScaleMode.FIT)
         self.add_child(self.photo)
+
+    @property
+    def image_buffer(self):
+        return self._image_buffer
+
+    @image_buffer.setter
+    def image_buffer(self, value):
+        self._image_buffer = value
+        if self.photo_path is not None:
+            value.path = self.photo_path
+            value.slide = self
 
     @property
     def photo_path(self):
@@ -566,7 +581,11 @@ class PhotoSlide(layout.Bin):
     @photo_path.setter
     def photo_path(self, value):
         self._photo_path = value
-        self.photo.set_from_file(value)
+        if value is not None:
+            self.photo.set_from_file(value)
+            if self.image_buffer is not None:
+                self.image_buffer.slide = self
+                self.image_buffer.path = value
 
     @property
     def transition_duration(self):
