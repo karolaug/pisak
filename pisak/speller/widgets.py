@@ -67,7 +67,7 @@ class CursorGroup(Clutter.Actor):
         self.cursor.set_y(0)
 
     def move_cursor(self, event):
-        cursor_pos = self.text.clutter_text.get_cursor_position()
+        cursor_pos = self.text.get_cursor_position()
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
         self.cursor.set_x(coords[1])
         self.cursor.set_y(coords[2])
@@ -96,9 +96,19 @@ class Cursor(Clutter.Actor):
 
 class Text(Mx.Label, properties.PropertyAdapter):
     class Insertion(object):
+        """
+        Text replacement operation
+        """
         def __init__(self, pos, value):
+            """
+            Creates text insertion
+            :param: pos absolute position of insertion
+            :param: value nonempty string to be inserted
+            """
             self.pos = pos
             self.value = value
+            assert pos >= 0, "Invalid position"
+            assert len(self.value) > 0, "Invalid insertion"
 
         def apply(self, text):
             text.clutter_text.insert_text(self.value, self.pos)
@@ -110,8 +120,8 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def compose(self, operation):
             if isinstance(operation, Text.Insertion):
                 consecutive = self.pos + len(self.value) == operation.pos
-                compatible = self.value[-1].isspace() or \
-                    not operation.value[0].isspace()
+                compatible = not self.value[-1].isspace() or \
+                    operation.value[0].isspace()
                 if consecutive and compatible:
                     self.value = self.value + operation.value
                     return True
@@ -124,9 +134,19 @@ class Text(Mx.Label, properties.PropertyAdapter):
             return "+ {} @ {}".format(self.value, self.pos)
 
     class Deletion(object):
+        """
+        Text deletion operation
+        """
         def __init__(self, pos, value):
+            """
+            Creates text deletion
+            :param: pos absolute position of deletion
+            :param: value nonempty string to be deleted
+            """
             self.pos = pos
             self.value = value
+            assert pos >= 0, "Invalid position"
+            assert len(self.value), "Invalid deletion"
 
         def apply(self, text):
             end = self.pos + len(self.value)
@@ -153,10 +173,20 @@ class Text(Mx.Label, properties.PropertyAdapter):
             return "- {} @ {}".format(self.value, self.pos)
 
     class Replacement(object):
+        """
+        Replacement operation
+        """
         def __init__(self, pos, before, after):
+            """
+            Creates text insertion
+            :param: pos position of replacement
+            :param: before nonempty string to be deleted
+            :param: after nonemty string to be inserted
+            """
             self.pos = pos
             self.before = before
             self.after = after
+            assert pos >= 0, "Invalid position"
 
         def _replace(self, text, before, after):
             text.clutter_text.delete_text(self.pos, self.pos + len(before) + 1)
@@ -166,7 +196,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self._replace(text, self.before, self.after)
 
         def revert(self, text):
-            self._replace(text)
+            self._replace(text, self.after, self.before)
 
         def compose(self, *args):
             return False
@@ -214,13 +244,18 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         return len(self.clutter_text.get_text())
 
+
+    def get_cursor_position(self):
+        pos = self.clutter_text.get_cursor_position()
+        return pos if pos > 0 else len(self.get_text())
+
     def type_text(self, text):
         """
         Insert the given text to the text buffer on the
         current cursor position
         @param text string passed after a user's actions
         """
-        pos = self.clutter_text.get_cursor_position()
+        pos = self.get_cursor_position()
         operation = Text.Insertion(pos, text)
         self.add_operation(operation)
 
@@ -239,13 +274,8 @@ class Text(Mx.Label, properties.PropertyAdapter):
         Delete the single character from behind the
         current cursor position
         """
-        pos = self.clutter_text.get_cursor_position()
-        if pos == -1:
-            if self.get_text_length() > 0:
-                pos = self.get_text_length() - 1
-            else:
-                return False
-        elif pos == 0:
+        pos = self.get_cursor_position()
+        if pos == 0:
             return
         elif pos > 0:
             pos -= 1
@@ -267,8 +297,10 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Clear the entire text buffer
         """
-        operation = Text.Deletion(0, self.get_text())
-        self.add_operation(operation)
+        text = self.get_text()
+        if len(text) > 0:
+            operation = Text.Deletion(0, self.get_text())
+            self.add_operation(operation)
 
 
     def get_endmost_triplet(self):
@@ -282,7 +314,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         text = self.get_text()
         if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
             if text.rstrip():
-                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')', ':', '"']:
+                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
                     return ' '
         else:
             return ' '
@@ -331,7 +363,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one position forward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         if current_position < self.get_text_length():
             self.clutter_text.set_cursor_position(current_position+1)
 
@@ -339,7 +371,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one position backward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text_length = self.get_text_length()
         if current_position > 0:
             self.clutter_text.set_cursor_position(current_position-1)
@@ -350,7 +382,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one word backward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text = self.clutter_text.get_text()
         if current_position == 0:
             pass
@@ -372,7 +404,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Move cursor one word forward
         """
-        current_position = self.clutter_text.get_cursor_position()
+        current_position = self.get_cursor_position()
         text = self.clutter_text.get_text()
         if current_position <= -1:
             pass
@@ -397,7 +429,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         layout = self.clutter_text.get_layout()
         text = self.get_text()
-        cursor_pos = self.clutter_text.get_cursor_position()
+        cursor_pos = self.get_cursor_position()
         if cursor_pos == 0:
             index_ = 0
         else:
@@ -714,6 +746,12 @@ class Prediction(pisak.widgets.Button):
         self.idle_icon_name = "hourglass"
         self.icon_name = None
         self.icon_size = 50
+        self.set_layout_manager(Clutter.BinLayout())
+        self.layout = self.get_children()[0]
+        self.clutter_text = [i for i in self.layout.get_children()
+                            if type(i) == Clutter.Text][0]
+        self.clutter_text.set_property("ellipsize", 0)
+
 
     @property
     def idle_icon_name(self):
@@ -729,12 +767,23 @@ class Prediction(pisak.widgets.Button):
             self.target.replace_endmost_string(label)
 
     def _update_button(self, source):
-        if self.icon_name is not None:  # if there is a need to call icon setter
-            self.icon_name = None
+        self.icon_name = None
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
+            button_width = self.get_width()
+            button_height = self.get_height()
+            self.clutter_text.set_pivot_point(0.5, 0.5)
+            self.clutter_text.set_scale(1, 1)
             self.set_label(new_label)
+            text_width = self.clutter_text.get_width()
+            text_height = self.clutter_text.get_height()
             self.set_disabled(False)
+            point = Clutter.Point((1, 1))
+            if text_width + 27 > button_width:
+                self.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS)
+                self.clutter_text.set_pivot_point(0, 0.5)
+                self.clutter_text.set_scale(button_width/(text_width*1.3),
+                                            button_width/(text_width*1.3))
         else:
             self.set_label("")
             self.set_disabled(True)
@@ -753,8 +802,10 @@ class Prediction(pisak.widgets.Button):
     def _stop_following_dictionary(self):
         try:
             if self.dictionary is not None:
-                self.dictionary.disconnect_by_func("content-update", self._update_button)
-                self.dictionary.disconnect_by_func("processing-on", self._button_idle)
+                self.dictionary.disconnect_by_func("content-update", 
+                                                   self._update_button)
+                self.dictionary.disconnect_by_func("processing-on", 
+                                                   self._button_idle)
         except AttributeError:
             return None
 

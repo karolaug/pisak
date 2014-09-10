@@ -5,8 +5,278 @@ from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
 import cairo
 
 from pisak import switcher_app, unit, res, properties
-from pisak.layout import Box
+from pisak.layout import Box, Bin
 from pisak.res import colors, dims
+
+
+class PhotoTile(Bin, properties.PropertyAdapter):
+    """
+    Tile containing image and label that can be styled by CSS.
+    """
+    __gtype_name__ = "PisakPhotoTile"
+    __gsignals__ = {
+        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
+    }
+    __gproperties__ = {
+        "preview_path": (
+            GObject.TYPE_STRING,
+            "path to preview photo",
+            "path to preview photo displayed on a tile",
+            "noop",
+            GObject.PARAM_READWRITE),
+        "preview_ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "preview_ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "scale_mode": (
+            Mx.ImageScaleMode.__gtype__,
+            "image scale mode", "scale mode", "crop",
+            GObject.PARAM_READWRITE),
+        "label": (
+            Mx.Label.__gtype__,
+            "", "", GObject.PARAM_READWRITE),
+        "label_text": (
+            GObject.TYPE_STRING,
+            "label under the tile",
+            "tile label text",
+            "noop",
+            GObject.PARAM_READWRITE),
+        "hilite_tool": (
+            Clutter.Actor.__gtype__,
+            "actor to hilite", "hiliting tool",
+            GObject.PARAM_READWRITE),
+        "ratio_spacing": (
+            GObject.TYPE_FLOAT,
+            None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self._init_box()
+        self._init_preview()
+        self.label = None
+        self.hilite_tool = None
+        self.scale_mode = Mx.ImageScaleMode.CROP
+
+    @property
+    def label(self):
+        return self._label
+
+    @label.setter
+    def label(self, value):
+        self._label = value
+        if value is not None:
+            if not self.box.contains(value):
+                self.box.add_child(value)
+
+    @property
+    def label_text(self):
+        return self.label.get_text()
+
+    @label_text.setter
+    def label_text(self, value):
+        self.label.set_text(value)
+
+    @property
+    def preview_path(self):
+        return self._preview_path
+
+    @preview_path.setter
+    def preview_path(self, value):
+        self._preview_path = value
+        self.preview.set_from_file(value)
+
+    @property
+    def preview_ratio_width(self):
+        return self._preview_ratio_width
+
+    @preview_ratio_width.setter
+    def preview_ratio_width(self, value):
+        self._preview_ratio_width = value
+        self.preview.set_width(unit.w(value))
+
+    @property
+    def preview_ratio_height(self):
+        return self._preview_ratio_height
+
+    @preview_ratio_height.setter
+    def preview_ratio_height(self, value):
+        self._preview_ratio_height = value
+        self.preview.set_height(unit.h(value))
+
+    @property
+    def ratio_spacing(self):
+        return self.box.ratio_spacing
+
+    @ratio_spacing.setter
+    def ratio_spacing(self, value):
+        self.box.ratio_spacing = value
+
+    @property
+    def scale_mode(self):
+        return self.preview.get_scale_mode()
+
+    @scale_mode.setter
+    def scale_mode(self, value):
+        self.preview.set_scale_mode(value)
+
+    @property
+    def hilite_tool(self):
+        return self._hilite_tool
+
+    @hilite_tool.setter
+    def hilite_tool(self, value):
+        self._hilite_tool = value
+
+    def _init_box(self):
+        self.box = Box()
+        self.box.orientation = Clutter.Orientation.VERTICAL
+        self.add_child(self.box)
+
+    def _init_preview(self):
+        self.preview = Mx.Image()
+        self.preview.set_allow_upscale(True)
+        self.box.add_child(self.preview)
+
+    def hilite_off(self):
+        # turn the hilite_tool off
+        pass
+
+    def hilite_on(self):
+        # turn the hilite_tool on
+        pass
+
+
+class NewProgressBar(Bin, properties.PropertyAdapter):
+    """
+    Widget indicating progress, with label on top, can by styled by CSS.
+    """
+    __gtype_name__ = "PisakProgressBar"
+    __gproperties__ = {
+        "label": (
+            Mx.Label.__gtype__,
+            "", "", GObject.PARAM_READWRITE),
+        "progress": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "progress_transition_duration": (
+            GObject.TYPE_INT64, "transition duration",
+            "duration of progress transition in msc", 0,
+            GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE),
+        "label_ratio_x_offset": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "counter_limit": (
+            GObject.TYPE_INT64, "counter limit",
+            "max counter value", 0, GObject.G_MAXUINT,
+            10, GObject.PARAM_READWRITE),
+        "related-object": (
+            Clutter.Actor.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self._init_bar()
+        self.label = None
+        self.step = None
+        self.label_ratio_x_offset = None
+        self.counter_limit = None
+        self.progress_transition = Clutter.PropertyTransition.new("progress")
+        self.progress_transition_duration = 1000
+        self.progress_transition.connect("stopped", self._update_label)
+        self.connect("notify::width", self._allocate_label)
+
+    @property
+    def label(self):
+        return self._label
+
+    @label.setter
+    def label(self, value):
+        self._label = value
+        if value is not None:
+            value.set_y_expand(True)
+            value.set_y_align(Clutter.ActorAlign.START)
+            self.insert_child_above(value, None)
+
+    @property
+    def related_object(self):
+        return self._related_object
+
+    @related_object.setter
+    def related_object(self, value):
+        self._related_object = value
+        value.connect("limit-declared", self._set_counter_limit)
+        value.connect("progressed", self._set_progress)
+
+    @property
+    def counter_limit(self):
+        return self._counter_limit
+
+    @counter_limit.setter
+    def counter_limit(self, value):
+        self._counter_limit = value
+        if value is not None:
+            self.step = int(self.progress*value)
+        self._update_label()
+
+    @property
+    def progress(self):
+        return self.bar.get_progress()
+
+    @progress.setter
+    def progress(self, value):
+        self.progress_transition.set_from(self.progress)
+        self.progress_transition.set_to(value)
+        self.bar.remove_transition("progress")
+        self.bar.add_transition("progress", self.progress_transition)
+        if self.counter_limit is not None:
+            self.step = int(value*self.counter_limit)
+
+    @property
+    def progress_transition_duration(self):
+        return self.progress_transition.get_duration()
+
+    @progress_transition_duration.setter
+    def progress_transition_duration(self, value):
+        self.progress_transition.set_duration(value)
+
+    @property
+    def label_ratio_x_offset(self):
+        return self._label_ratio_x_offset
+
+    @label_ratio_x_offset.setter
+    def label_ratio_x_offset(self, value):
+        self._label_ratio_x_offset = value
+        self._allocate_label()
+
+    def _init_bar(self):
+        self.bar = Mx.ProgressBar()
+        self.bar.set_x_expand(True)
+        self.bar.set_y_expand(True)
+        self.insert_child_below(self.bar, None)
+
+    def _allocate_label(self, *args):
+        if self.label is not None:
+            if self.get_width() and self.label_ratio_x_offset is not None:
+                px_x_offset = self.label_ratio_x_offset * self.get_width()
+                self.label.set_x(px_x_offset)
+
+    def _set_counter_limit(self, source, limit):
+        self.counter_limit = limit
+
+    def _set_progress(self, source, progress, custom_step):
+        self.progress = progress
+        self.step = custom_step
+
+    def _update_label(self, *args):
+        if self.label is not None:
+            new_text = " / ".join([str(self.step),
+                                str(self.counter_limit)])
+            self.label.set_text(new_text)
 
 
 class Header(Mx.Image, properties.PropertyAdapter):
@@ -37,6 +307,7 @@ class Header(Mx.Image, properties.PropertyAdapter):
                            pixbuf.get_width(),
                            pixbuf.get_height(),
                            pixbuf.get_rowstride())
+
 
 class Button(Mx.Button, properties.PropertyAdapter):
     """
@@ -948,6 +1219,9 @@ class ScrollingView(Clutter.Actor):
 
 
 class ProgressBar(Clutter.Actor):
+    """ 
+    Deprecated. Use NewProgressBar instead, in order to have JSON and CSS support.
+    """
     __gproperties__ = {
         'progress': (GObject.TYPE_FLOAT, None, None, 0, 1, 0, GObject.PARAM_READWRITE)
     }
@@ -1000,6 +1274,9 @@ class ProgressBar(Clutter.Actor):
 
 
 class SignedProgressBar(ProgressBar):
+    """ 
+    Deprecated. Use NewProgressBar instead, in order to have JSON and CSS support.
+    """
     def __init__(self, page_count='?', page=0):
         self.where = ''.join([str(page + 1), '/', str(page_count)])
         super().__init__()

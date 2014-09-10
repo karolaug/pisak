@@ -1,0 +1,242 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBinLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "children": ["main_box", "background_box"]
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundPattern",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "main_box",
+        "type": "PisakBoxLayout",
+        "x-align": "start",
+        "x-expand": true,
+        "y-expand": true,
+        "ratio-margin-top": 0.01,
+        "ratio-margin-bottom": 0.04,
+        "ratio-spacing": 0.02,
+        "orientation": "vertical",
+        "children": ["progress_bar", "middle_box", "header"]
+    },
+    {
+        "id": "middle_box",
+        "type": "PisakBoxLayout",
+        "ratio-spacing": 0.1,
+        "children": ["slide", "button_menu"]
+    },
+    {
+        "id": "button_menu",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+        "children": ["button_menu_box"],
+        "scanning-hilite": true,
+        "strategy": {
+            "id": "menu_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800,
+            "max-cycle-count": 2
+        }
+    },
+    {
+        "id": "button_menu_box",
+        "type": "PisakBoxLayout",
+        "orientation": "vertical",
+        "ratio-spacing": 0.01,
+        "y-expand": true,
+        "y-align": "end",
+        "children": ["button_start", "button_photo", "button_11", "button_10",
+                     "button_9", "button_8", "button_7","button_6",
+                     "button_5", "button_4", "button_3", "button_2", "button_1"]
+    },
+    {
+        "id": "button_1",
+        "type": "PisakViewerButton",
+        "label": "ZOOM",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/zoom",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_2",
+        "type": "PisakViewerButton",
+        "label": "OBRÓĆ",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/rotate",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_3",
+        "type": "PisakViewerButton",
+        "label": "KRAWĘDZIE",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/edges",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_4",
+        "type": "PisakViewerButton",
+        "label": "KONTURY",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/contour",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_5",
+        "type": "PisakViewerButton",
+        "label": "SEPIA",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/sepia",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_6",
+        "type": "PisakViewerButton",
+        "label": "NEGATYW",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/invert",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_7",
+        "type": "PisakViewerButton",
+        "label": "LUSTRO",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/mirror",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_8",
+        "type": "PisakViewerButton",
+        "label": "SKALA SZAROŚCI",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/grayscale",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_9",
+        "type": "PisakViewerButton",
+        "label": "PSYCHO",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/noise",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_10",
+        "type": "PisakViewerButton",
+        "label": "PRZEŚWIETLENIE",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/solarize",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_11",
+        "type": "PisakViewerButton",
+        "label": "ORYGINAŁ",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/original",
+                "object": "slide"
+            }
+        ]
+    },
+    {
+        "id": "button_photo",
+        "type": "PisakViewerButton",
+        "label": "POWRÓT",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05
+    },
+    {
+        "id": "button_start",
+        "type": "PisakViewerButton",
+        "label": "PANEL STARTOWY",
+        "ratio-width": 0.22,
+        "ratio-height": 0.05
+    },
+    {
+        "id": "slide",
+        "type": "PisakViewerPhotoSlide",
+        "ratio-width": 0.68,
+        "ratio-height": 0.7,
+        "photo_path": "jagoda.jpg"
+    },
+    {
+        "id": "progress_bar",
+        "type": "PisakViewerProgressBar",
+        "ratio-width": 1,
+        "progress": 0.3,
+        "progress-transition-duration": 1000,
+        "ratio-height": 0.05,
+        "counter-limit": 100,
+        "label-ratio-x-offset": 0.9
+    }
+]

@@ -3,11 +3,12 @@
         "id": "main",
         "type": "PisakScanningGroup",
 	"selector": "mouse",
-        "strategy": {
+	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
                         "interval": 800,
-                        "max-cycle-count": -1
+                        "max-cycle-count": -1,
+	                "unwind-to": "main"
                     },
         "signals": [
                        {
@@ -99,7 +100,8 @@
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": -1
+            "max-cycle-count": 2,
+	    "unwind-to": "main"
         }
     },
     {
@@ -303,8 +305,8 @@
             "id": "prediction_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": -1,
-            "unwind-to": "main_panel"
+            "max-cycle-count": 2,
+            "unwind-to": "main"
         }
     },
     {
@@ -427,7 +429,8 @@
             "id": "main_panel_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": -1
+            "max-cycle-count": 2,
+	    "unwind-to": "main"
         }
     },
     {
@@ -557,12 +560,7 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/altgr_chars",
-                           "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/swap_altgr_chars_on_select",
+                           "handler": "speller/swap_altgr_chars",
                            "object": "keyboard_panel"
                        }
                    ]
@@ -580,12 +578,7 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/special_chars",
-                           "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/swap_special_chars_on_select",
+                           "handler": "speller/swap_special_chars",
                            "object": "keyboard_panel"
                        }
                    ]

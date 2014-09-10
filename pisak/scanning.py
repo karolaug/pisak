@@ -1,9 +1,63 @@
 '''
 Classes for defining scanning in JSON layouts
 '''
-from gi.repository import Clutter, GObject, Mx
+from gi.repository import Clutter, GObject, Mx, Gdk
 
-from pisak import properties
+from pisak import properties, unit
+
+
+class Scannable(object):
+    """
+    Interface of object scannable by switcher groups. Switcher groups expect
+    widgets implement this interface.
+    """
+    def activate(self):
+        """
+        Performs widgets action.
+        """
+        raise NotImplementedError()
+
+    def enable_hilite(self):
+        """
+        Enables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+    def disable_hilite(self):
+        """
+        Disables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+    def enable_scanned(self):
+        """
+        Enables scanned style for this widget.
+        """
+        raise NotImplementedError()
+
+    def disable_scanned(self):
+        """
+        Enables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+
+class StylableScannable(object):
+    """
+    Partial implementation of Scannable interface for stylable widgets.
+    Hilighted and scanned widgets are marked with CSS pseudoclasses.
+    """
+    def enable_hilite(self):
+        self.style_pseudo_class_add("hilite")
+
+    def disable_hilite(self):
+        self.style_pseudo_class_remove("hilite")
+
+    def enable_scanned(self):
+        self.style_pseudo_class_add("scanning")
+
+    def disable_scanned(self):
+        self.style_pseudo_class_remove("scanning")
 
 
 class Strategy(GObject.GObject):
@@ -13,6 +67,7 @@ class Strategy(GObject.GObject):
     def __init__(self):
         super().__init__()
         self.group = None
+        self.return_mouse = False
 
     @property
     def group(self):
@@ -142,6 +197,12 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         elif self.selector == 'keyboard':
             self._handler_token = self.connect("key-release-event",
                                                self.key_release)
+        elif self.selector == 'mouse-switch':
+            self._handler_token = self.stage.connect("button-release-event",
+                                                     self.button_release)
+            self.strategy.return_mouse = True
+        
+        
         else:
             print("Unknown selector: ", self.selector)
             return None
@@ -152,6 +213,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
 
     def stop_cycle(self):
         action = {'mouse': self.stage.disconnect,
+                  'mouse-switch': self.stage.disconnect, 
                   'keyboard': self.disconnect}
         self.get_stage().set_key_focus(None)
         try:
@@ -270,6 +332,7 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
             selection.style_pseudo_class_remove("hover")
         self.compute_sequence()
 
+
     def compute_sequence(self):
         subgroups = list(self.group.get_subgroups())
         key_function = lambda a: list(reversed(a.get_transformed_position()))
@@ -327,6 +390,12 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
                 (self._cycle_count < self.max_cycle_count)
 
     def cycle_timeout(self, token):
+        #in case of mouse-click based switch selector, hide the mouse
+        if self.return_mouse:
+            display = Gdk.Display.get_default()
+            screen = display.get_default_screen()
+            display.warp_pointer(screen, unit.w(1), unit.h(1))
+
         if self.timeout_token != token:
             # timeout event not from current cycle
             return False

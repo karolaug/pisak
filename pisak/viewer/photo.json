@@ -1,0 +1,164 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBinLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "children": ["main_box", "background_box"]
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundPattern",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "main_box",
+        "type": "PisakBoxLayout",
+        "x-align": "start",
+        "x-expand": true,
+        "y-expand": true,
+        "ratio-margin-top": 0.12,
+        "ratio-margin-bottom": 0.04,
+        "ratio-spacing": 0.02,
+        "orientation": "vertical",
+        "children": ["progress_bar", "middle_box", "header"]
+    },
+    {
+        "id": "middle_box",
+        "type": "PisakBoxLayout",
+        "ratio-spacing": 0.1,
+        "children": ["slideshow_widget", "button_menu"]
+    },
+    {
+        "id": "button_menu",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+        "children": ["button_menu_box"],
+        "strategy": {
+            "id": "menu_group_strategy",
+            "type": "PisakRowStrategy",
+            "interval": 800,
+            "max-cycle-count": -1
+        },
+        "signals": [
+            {
+                "name": "notify::mapped",
+                "handler": "general/start_group"
+            }
+        ]
+    },
+    {
+        "id": "button_menu_box",
+        "type": "PisakBoxLayout",
+        "orientation": "vertical",
+        "ratio-spacing": 0.01,
+        "y-expand": true,
+        "y-align": "end",
+        "children": ["button_library","button_album", "button_favourite", 
+		     "button_edition", "button_next", "button_previous", 
+		     "button_slide"]
+    },
+    {
+        "id": "button_slide",
+        "type": "PisakViewerButton",
+        "label": "POKAZ SLAJDÓW",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/slideshow_toggle",
+                "object": "slideshow_widget"
+            }
+        ]
+    },
+    {
+        "id": "button_previous",
+        "type": "PisakViewerButton",
+        "label": "POPRZEDNIE ZDJĘCIE",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/previous_slide",
+                "object": "slideshow_widget"
+            }
+        ]
+    },
+    {
+        "id": "button_next",
+        "type": "PisakViewerButton",
+        "label": "NASTĘPNE ZDJĘCIE",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/next_slide",
+                "object": "slideshow_widget"
+            }
+        ]
+    },
+    {
+        "id": "button_edition",
+        "type": "PisakViewerButton",
+        "label": "EDYCJA",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_favourite",
+        "type": "PisakViewerButton",
+        "label": "ULUBIONE",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1,
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "viewer/add_to_favourite_photos",
+                "object": "slideshow_widget"
+            }
+        ]
+    },
+    {
+        "id": "button_album",
+        "type": "PisakViewerButton",
+        "label": "Album",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "button_library",
+        "type": "PisakViewerButton",
+        "label": "Biblioteka",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1
+    },
+    {
+        "id": "slideshow_widget",
+        "type": "PisakViewerSlideShow",
+        "transition-duration": 1000,
+        "idle-duration": 1000,
+        "slideshow-on-fullscreen": true,
+        "data-source": "photo_data_source",
+        "ratio-width": 0.68,
+        "ratio-height": 0.7
+    },
+    {
+        "id": "photo_data_source",
+        "type": "PisakViewerPhotoSlidesSource",
+        "slide-ratio-width": 0.63,
+        "slide-ratio-height": 0.65
+    },
+    {
+        "id": "progress_bar",
+        "type": "PisakViewerProgressBar",
+        "related-object": "slideshow_widget",
+        "ratio-width": 1,
+        "progress-transition-duration": 1000,
+        "ratio-height": 0.05,
+        "label-ratio-x-offset": 0.8
+    }
+]
