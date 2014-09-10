@@ -35,12 +35,12 @@ def prepare_album_view(stage, script, album_name):
     library = script.get_object("library_data")
     #for index, photo in enumerate(library.tiles):
         #photo.connect("activate", lambda *_: stage.load_view(
-                                                    #"photo",
-                                                    #{"index": index,
-                                                    #"album": data["album_name"]}))
+                                            #"photo",
+                                            #{"index": index,
+                                            #"album": data["album_name"]}))
 
     album = script.get_object("library_data")
-    album.album = data_loader.LIBRARY_DIR  # data["album_name"]  # also through set property should page the new album
+    album.album = library_manager.LIBRARY_DIR  # data["album_name"]  # also through set property should page the new album
     
     # also through set property should page the new album
 

@@ -1,5 +1,5 @@
 from pisak import signals
-from pisak.viewer import database_agent
+from pisak.viewer import library_manager
 
 
 @signals.registered_handler("viewer/next_page")
@@ -33,8 +33,13 @@ def previous_slide(slideshow_widget):
 @signals.registered_handler("viewer/add_to_favourite_photos")
 def add_to_favourite_photos(slideshow_widget):
     path = slideshow_widget.slide.photo_path
-    album = slideshow_widget.data_source.data[slideshow_widget.index]["category"]
-    database_agent.add_to_favourite_photos(path, album)
+    library_manager.add_to_favourite_photos(path)
+
+
+@signals.registered_handler("viewer/remove_from_favourite_photos")
+def remove_from_favourite_photos(slideshow_widget):
+    path = slideshow_widget.slide.photo_path
+    library_manager.remove_from_favourite_photos(path)
     
 
 @signals.registered_handler("viewer/zoom")
