@@ -40,108 +40,86 @@ def add_to_favourite_photos(slideshow_widget):
 @signals.registered_handler("viewer/zoom")
 def zoom(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.zoom()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.zoom()
+    slide.image_buffer.zoom()
 
 
 @signals.registered_handler("viewer/contour")
 def contour(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.contour()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.contour()
+    slide.image_buffer.contour()
 
 
 @signals.registered_handler("viewer/edges")
 def edges(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.edges()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.edges()
+    slide.image_buffer.edges()
 
 
 @signals.registered_handler("viewer/sepia")
 def sepia(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.sepia()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.sepia()
+    slide.image_buffer.sepia()
         
 
 @signals.registered_handler("viewer/invert")
 def invert(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.invert()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.invert()
+    slide.image_buffer.invert()
 
 
 @signals.registered_handler("viewer/rotate")
 def rotate(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.rotate()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.rotate()
+    slide.image_buffer.rotate()
 
 
 @signals.registered_handler("viewer/mirror")
 def mirror(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.mirror()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.mirror()
+    slide.image_buffer.mirror()
 
 
 @signals.registered_handler("viewer/grayscale")
 def grayscale(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.grayscale()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.grayscale()
+    slide.image_buffer.grayscale()
 
 
 @signals.registered_handler("viewer/noise")
 def noise(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.noise()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.noise()
+    slide.image_buffer.noise()
 
 
 @signals.registered_handler("viewer/solarize")
 def solarize(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.solarize()
-    else:
+    if slide.image_buffer is None:
         slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.solarize()
+    slide.image_buffer.solarize()
 
 
 @signals.registered_handler("viewer/original")
 def original(slide_space):
     slide = slide_space.get_children()[0]
-    if slide.image_buffer is not None:
-        slide.image_buffer.original()
-    else:
-        slide.image_buffer = image.ImageBuffer()
-        slide.image_buffer.original()
+    if slide.image_buffer is None:
+       slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.original()
