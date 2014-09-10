@@ -60,7 +60,7 @@ def get_preview_of_album(album):
         if os.path.splitext(file)[-1].lower() in EXTENSIONS:
             return os.path.join(album, file)
 
-        
+
 def add_to_favourite_photos(photo):
     """
     Mark the given photo as one of the favourites by adding
@@ -84,7 +84,7 @@ def is_in_favourite_photos(photo):
         return True
     else:
         return False
-    
+
 
 def remove_from_favourite_photos(photo):
     """
@@ -100,7 +100,8 @@ def remove_from_favourite_photos(photo):
 def get_favourite_photos():
     """
     Return a list of all favourite photos. Check every one if
-    still exists as a file in the file system and remove from favourites if not.
+    still exists as a file in the file system and remove from
+    favourites if not.
     """
     with _establish_session() as sess:
         favs = sess.query(FavouritePhoto).all()
@@ -128,7 +129,7 @@ def _establish_session():
     finally:
         db_session.close()
 
-        
+
 class FavouritePhoto(_Base):
     """
     Class representing a row in the favourite photos table in a database
