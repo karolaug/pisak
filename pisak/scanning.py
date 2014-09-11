@@ -196,7 +196,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
     def start_cycle(self):
         self.stage = self.get_stage()
         if self.stage is None:
-            message =
+            message = \
                 "Started cycle in unmapped group: {}".format(self.get_id())
             raise ScanningException(message)
         if self.selector == 'mouse':
