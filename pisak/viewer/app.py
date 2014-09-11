@@ -17,14 +17,14 @@ def prepare_photo_view(stage, script, data):
     slideshow = script.get_object("slideshow_widget")
     button_to_stage(stage, script, "button_edition", 
                     "photo_editing", {"slideshow": slideshow})
-    button_to_stage(stage, script, "button_album", "album")
+    button_to_stage(stage, script, "button_album", "album", {"album_name": data["album"]})
 
     button_to_stage(stage, script, "button_library", "library")
 
     # button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
-    data_source.album = library_manager.LIBRARY_DIR  # data["album_name"]
-    slideshow.show_initial_slide(0)  # data["index"]
+    data_source.album = data["album"]  # data["album_name"]
+    slideshow.show_initial_slide(data_source.data.index(data["photo"]))  # data["index"]
 
 
 
@@ -39,7 +39,7 @@ def prepare_album_view(stage, script, data):
                                             #{"index": index,
                                             #"album": data["album_name"]}))
 
-
+    library.tiles_handler = lambda tile, photo, album: stage.load_view("photo", {"photo": photo, "album": album})
     album = script.get_object("library_data")
     album.album = data["album_name"]  # data["album_name"]  # also through set property should page the new album
     print(album.album)
@@ -80,7 +80,7 @@ VIEWER_APP = {
         "photo_editing": (fix_path("photo_editing.json"),
                           prepare_photo_editing_view),
     },
-    "initial-view": "photo",
+    "initial-view": "library",
     "initial-data": None
 }
 

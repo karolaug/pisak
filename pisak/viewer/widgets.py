@@ -435,6 +435,7 @@ class AlbumTilesSource(LibraryTilesSource):
             tile = PhotoTile()
             tile.preview_path = item
             tile.hilite_tool = Aperture()
+            tile.connect("activate", self.tiles_handler, item, self.album)
             tile.scale_mode = Mx.ImageScaleMode.FIT
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
