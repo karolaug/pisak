@@ -76,7 +76,7 @@
         "ratio-spacing": 0.01,
         "y-expand": true,
         "y-align": "end",
-        "children": ["button_library", "button_start", "button_select_page", "button_next_page",
+        "children": ["button_library",  "button_select_page", "button_next_page",
                      "button_automatic"]
     },
     {
