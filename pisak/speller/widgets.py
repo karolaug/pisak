@@ -41,7 +41,7 @@ class CursorGroup(Clutter.Actor):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         self.connect("notify::mapped", self.init_content)
-    
+
     def init_content(self, *args):
         self.text = [i for i in self.get_children()
                      if type(i) == Text][0]
@@ -65,7 +65,7 @@ class CursorGroup(Clutter.Actor):
         self.add_child(self.cursor)
         self.cursor.set_x(0)
         self.cursor.set_y(0)
-        
+
     def move_cursor(self, event):
         cursor_pos = self.text.get_cursor_position()
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
@@ -93,7 +93,7 @@ class Cursor(Clutter.Actor):
         context.rectangle(0, 0, width, height)
         context.fill()
         return True
-    
+
 class Text(Mx.Label, properties.PropertyAdapter):
     class Insertion(object):
         """
@@ -155,7 +155,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def revert(self, text):
             text.clutter_text.insert_text(self.value, self.pos)
 
-        def compose(self, operation): 
+        def compose(self, operation):
             if isinstance(operation, Text.Deletion):
                 consecutive = operation.pos + len(operation.value) == self.pos
                 compatible = operation.value[-1].isspace() or \
@@ -264,7 +264,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         Append the given unicode character to the text buffer
         @param char unicode character in the form of unicode escape sequence
         :deprecated:
-        """ 
+        """
         # TODO: remove
         operation = Text.Insertion(self.get_text_length(), char)
         self.add_operation(operation)
@@ -321,7 +321,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         if text.rstrip():
             last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
-            return last_sentence.strip() + (text[-1]  == ' ')*' '
+            return last_sentence.strip() + (text[-1] == ' ')*' '
         else:
             return ' '
 
@@ -343,7 +343,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         current_text = self.get_text()
         if current_text: #if the text buffer is empty, or ends with whitespace, simply add predicted words. Otherwise, replace the last word.
-            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: #if the text buffer ends in a commas, add a space before adding the predicted word
+            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')', ':', '"']: #if the text buffer ends in a commas, add a space before adding the predicted word
                 self.type_text(' ' + text_after)
             elif current_text[-1] == ' ':
                 self.type_text(text_after)

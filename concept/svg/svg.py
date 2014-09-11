@@ -2,9 +2,9 @@
 
 import sys
 from gi.repository import Rsvg, Gtk
-    
+
 class SvgWindow(Gtk.Window):
-    
+
     def __init__(self, input_file):
 
         Gtk.Window.__init__(self, title='Edycja SVG poprzez CSS')

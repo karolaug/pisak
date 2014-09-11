@@ -13,7 +13,7 @@ class LibraryTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.library_path)
 
-        
+
 class LibraryPhotoTest(LibraryTest):
     TEST_IMAGE = ("/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgFBgcGBQgHBgcJCAgJDBMMDA"
         "sLDBgREg4THBgdHRsYGxofIywlHyEqIRobJjQnKi4vMTIxHiU2OjYwOiwwMTD"

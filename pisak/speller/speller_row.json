@@ -167,7 +167,7 @@
                                         "ratio-width": 0.1,
                                         "ratio-height": 0.1
                                     }
-				]    
+				]
 			    },
 			    {
 				"id": "menu_column_2",
@@ -215,7 +215,7 @@
                                         "ratio-width": 0.1,
                                         "ratio-height": 0.1
                                     }
-				]    
+				]
 			    }
 			]
 		    },
@@ -519,7 +519,7 @@
 				]
 			    }
 			]
-		    } 
+		    }
 		]
 	    }
 	]

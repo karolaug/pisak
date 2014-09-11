@@ -9,7 +9,7 @@ def main():
     cols = 20
     button_rows = []
     running = True
-    
+
     def cycle_callback():
         current_row = 0
         while running:
@@ -19,14 +19,14 @@ def main():
             for button in button_rows[current_row]:
                 button.get_style_context().remove_class("hilite")
             current_row = (current_row + 1) % rows
-    
+
     style = Gtk.CssProvider()
     style.load_from_path("style.css")
-    
+
     screen = Gdk.Screen.get_default()
     styleContext = Gtk.StyleContext()
     styleContext.add_provider_for_screen(screen, style, Gtk.STYLE_PROVIDER_PRIORITY_USER)
-    
+
     window = Gtk.Window()
     window.connect("destroy", lambda _: Gtk.main_quit())
     window.fullscreen()
@@ -43,11 +43,11 @@ def main():
             button_row.append(button)
             grid.attach(button, j, i, 1, 1)
         button_rows.append(button_row)
-        
+
     window.add(grid)
 
     window.show_all()
-    
+
     threading.Thread(target=cycle_callback).start()
     GLib.threads_init()
     Gtk.main()

@@ -6,7 +6,7 @@ from gi.repository import Clutter, GObject
 class TileTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
-        
+
     @tests.clutter.on_stage
     def test_create(self, stage):
         """
@@ -15,7 +15,7 @@ class TileTest(unittest.TestCase):
         tile = widgets.Tile()
         tile.set_label("test")
         stage.add_child(tile)
-    
+
     @tests.clutter.on_stage
     def test_model(self, stage):
         """
@@ -25,7 +25,7 @@ class TileTest(unittest.TestCase):
         tile = widgets.Tile()
         stage.add_child(tile)
         tile.set_model(model)
-    
+
     @tests.clutter.on_stage
     def test_model_bad(self, stage):
         """
@@ -36,7 +36,7 @@ class TileTest(unittest.TestCase):
         stage.add_child(tile)
         with self.assertRaises(GObject.GError):
             tile.set_model(model)
-    
+
     def test_hilite(self):
         """
         Highlight a tile.
@@ -51,7 +51,7 @@ class TileTest(unittest.TestCase):
 class PagedTileViewTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
-    
+
     @tests.clutter.on_stage
     def test_create(self, stage):
         """
@@ -60,7 +60,7 @@ class PagedTileViewTest(unittest.TestCase):
         view = widgets.PagedTileView()
         stage.add_child(view)
         stage.destroy()
-    
+
     @tests.clutter.on_stage
     def test_model(self, stage):
         """
@@ -69,7 +69,7 @@ class PagedTileViewTest(unittest.TestCase):
         view = widgets.PagedTileView()
         model = {"items": [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}], "page_interval": 3000}
         view.set_model(model)
-    
+
     def test_cycle(self):
         view = widgets.PagedTileView()
         model = {"items": [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}], "page_interval": 3000}
@@ -86,7 +86,7 @@ class PagedTileViewTest(unittest.TestCase):
 class TilePageTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
-        
+
     @tests.clutter.on_stage
     def test_create(self, stage):
         """
@@ -101,7 +101,7 @@ class TilePageTest(unittest.TestCase):
         page = widgets.TilePage(tiles)
         stage.add_child(page)
         stage.destroy()
-    
+
     def test_instatiate_cycle(self):
         """
         Get a cycle from a tile page.
@@ -115,7 +115,7 @@ class TilePageTest(unittest.TestCase):
         page = widgets.TilePage(tiles)
         cycle = widgets._TilePageCycle(page)
         cycle.has_next()
-        
+
     def test_select_cycle(self):
         """
         Test cycle selection
@@ -126,10 +126,10 @@ class TilePageTest(unittest.TestCase):
             def push_view(self, view):
                 self.pushed = True
         dummy_context = switcher_app.Context(DummyApplication())
-        
+
         def tile_activated(source):
             dummy_context.application.push_view(None)
-        
+
         items = [{"label": "a"}, {"label": "b"}, {"label": "c"}, {"label": "d"}]
         tiles = []
         for item in items:
@@ -144,7 +144,7 @@ class TilePageTest(unittest.TestCase):
         print(selection)
         selection(dummy_context)
         self.assertTrue(dummy_context.application.pushed)
-    
+
     @tests.clutter.on_stage
     def test_cycle(self, stage):
         """
@@ -161,7 +161,7 @@ class TilePageTest(unittest.TestCase):
         cycle.expose_next()
         cycle.expose_next()
         cycle.stop()
-    
+
     def test_expire(self):
         """
         Cycle expiration after 1 round.
@@ -178,7 +178,7 @@ class TilePageTest(unittest.TestCase):
             self.assertTrue(cycle.has_next())
             cycle.expose_next()
         self.assertFalse(cycle.has_next())
-            
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -346,10 +346,10 @@ class Button(Mx.Button, properties.PropertyAdapter):
         "activate": (GObject.SIGNAL_RUN_FIRST, None, ()),
         "inactivate": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
-    
+
     __gproperties__ = {
         "disabled": (GObject.TYPE_BOOLEAN, "State of button",
-                     "If state of button is disabled.", False, 
+                     "If state of button is disabled.", False,
                      GObject.PARAM_READWRITE),
         "ratio_width": (
             GObject.TYPE_FLOAT, None, None, 0, 1., 0,
@@ -370,13 +370,13 @@ class Button(Mx.Button, properties.PropertyAdapter):
             GObject.TYPE_STRING, "blank",
             "name of the icon displayed on the button",
             "blank", GObject.PARAM_READWRITE),
-        "alternative_icon_name":(
+        "alternative_icon_name": (
             GObject.TYPE_STRING, "blank",
             "name of the aternative icon displayed on the button",
             "blank", GObject.PARAM_READWRITE),
         "spacing": (
             GObject.TYPE_INT64, "space between icon and text",
-            "space between icon and text", 0, 1000, 100, 
+            "space between icon and text", 0, 1000, 100,
             GObject.PARAM_READWRITE),
         "on_select_hilite_duration": (
             GObject.TYPE_UINT, "hilite duration",
@@ -384,7 +384,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
             0, GObject.G_MAXUINT, 1000,
             GObject.PARAM_READWRITE)
     }
-    
+
     def __init__(self):
         super().__init__()
         self.properties = {}
@@ -446,11 +446,11 @@ class Button(Mx.Button, properties.PropertyAdapter):
     @alternative_text.setter
     def alternative_text(self, value):
         self._alternative_text = str(value)
-    
+
     @property
     def icon_name(self):
         return self._icon_name
-    
+
     @icon_name.setter
     def icon_name(self, value):
         self._icon_name = value
@@ -460,7 +460,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
     @property
     def alternative_icon_name(self):
         return self._alternative_icon_name
-    
+
     @alternative_icon_name.setter
     def alternative_icon_name(self, value):
         self._alternative_icon_name = value
@@ -549,9 +549,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
             if icon_size:
                 pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
             self.image.set_from_data(pixbuf.get_pixels(),
-                                     Cogl.PixelFormat.RGBA_8888, 
-                                     pixbuf.get_width(), 
-                                     pixbuf.get_height(), 
+                                     Cogl.PixelFormat.RGBA_8888,
+                                     pixbuf.get_width(),
+                                     pixbuf.get_height(),
                                      pixbuf.get_rowstride())
             try:
                 if self.disabled:
@@ -564,22 +564,22 @@ class Button(Mx.Button, properties.PropertyAdapter):
             except: # GError as error:
                 print("No PNG, trying JPG")
                 try:
-                    self.image.set_from_file(''.join([self.image_path, 
+                    self.image.set_from_file(''.join([self.image_path,
                                                       '.jpg']))
                 except: # GError as error:
-                    text = "No PNG, SVG or JPG icon found of name {}." 
+                    text = "No PNG, SVG or JPG icon found of name {}."
                     print(text.format(self.icon_name))
             self.image.set_scale_mode(1) #1 is FIT, 0 is None, 2 is CROP
             if icon_size:
                 image_size = self.image.get_size()
                 print(image_size, icon_size)
                 self.image.set_scale(icon_size * 10 / image_size[1],
-                                     icon_size * 10/ image_size[0])
+                                     icon_size * 10 / image_size[0])
 
     def read_svg(self):
         try:
             handle = Rsvg.Handle()
-            svg_path = ''.join([os.path.join(res.PATH,'icons',
+            svg_path = ''.join([os.path.join(res.PATH, 'icons',
                                              self.icon_name), '.svg'])
             self.svg = handle.new_from_file(svg_path)
         except:  # GError as error:
@@ -588,7 +588,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
 
     def set_image_white(self):
         handle = Rsvg.Handle()
-        svg_path = ''.join([os.path.join(res.PATH,'icons',
+        svg_path = ''.join([os.path.join(res.PATH, 'icons',
                                          self.icon_name), '_white', '.svg'])
         self.svg_white = handle.new_from_file(svg_path)
         icon_size = self.get_icon_size()
@@ -596,9 +596,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
         if icon_size:
             pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
         self.image.set_from_data(pixbuf.get_pixels(),
-                                 Cogl.PixelFormat.RGBA_8888, 
-                                 pixbuf.get_width(), 
-                                 pixbuf.get_height(), 
+                                 Cogl.PixelFormat.RGBA_8888,
+                                 pixbuf.get_width(),
+                                 pixbuf.get_height(),
                                  pixbuf.get_rowstride())
 
 
@@ -614,9 +614,9 @@ class Button(Mx.Button, properties.PropertyAdapter):
                         if icon_size:
                             pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
                             self.image.set_from_data(pixbuf.get_pixels(),
-                                                     Cogl.PixelFormat.RGBA_8888, 
-                                                     pixbuf.get_width(), 
-                                                     pixbuf.get_height(), 
+                                                     Cogl.PixelFormat.RGBA_8888,
+                                                     pixbuf.get_width(),
+                                                     pixbuf.get_height(),
                                                      pixbuf.get_rowstride())
                     elif not self.disabled and (self.style_pseudo_class_contains("scanning") or self.style_pseudo_class_contains("hover")):
                         self.set_image_white()
@@ -626,16 +626,16 @@ class Button(Mx.Button, properties.PropertyAdapter):
                     if icon_size:
                         pixbuf = pixbuf.scale_simple(icon_size, icon_size, 3)
                         self.image.set_from_data(pixbuf.get_pixels(),
-                                                 Cogl.PixelFormat.RGBA_8888, 
-                                                 pixbuf.get_width(), 
-                                                 pixbuf.get_height(), 
+                                                 Cogl.PixelFormat.RGBA_8888,
+                                                 pixbuf.get_width(),
+                                                 pixbuf.get_height(),
                                                  pixbuf.get_rowstride())
         except AttributeError:
             pass
-            
+
     def hilite_off(self):
         self.style_pseudo_class_remove("hover")
-    
+
     def hilite_on(self):
         self.style_pseudo_class_add("hover")
 
@@ -648,7 +648,7 @@ class Button(Mx.Button, properties.PropertyAdapter):
     def on_select_hilite_off(self, token):
         if token == self.timeout_token:
             self.style_pseudo_class_remove("active")
-    
+
     def on_click_activate(self, source):
         if self.on_select_hilite_duration:
             self.style_pseudo_class_add("active")
@@ -667,7 +667,7 @@ class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
             GObject.TYPE_FLOAT, None, None,
             0, 1., 0, GObject.PARAM_READWRITE)
     }
-    
+
 
     def __init__(self):
         super().__init__()
@@ -1088,7 +1088,7 @@ class SideMenu(Clutter.Actor):
         """
         super().__init__()
         self.context = context
-        
+
         self._init_layout()
         self._init_buttons()
 
@@ -1185,7 +1185,7 @@ class ScrollingView(Clutter.Actor):
         Abstract method which should create and return a menu actor.
         '''
         raise NotImplementedError("Menu creation not implemented")
-    
+
     def _init_menu(self):
         self.menu = self.create_menu()
         self.menu.set_y_expand(False)

@@ -11,7 +11,7 @@ pisak.speller.application module
     :members:
     :undoc-members:
     :show-inheritance:
-    
+
 pisak.speller.widgets module
 --------------------------------
 
