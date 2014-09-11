@@ -143,7 +143,6 @@ class ExecuteAction(object):
 		return 0
 
 
-
 class ToggleHilite(object):
 	def __init__(self, tile, toggle):
 		super(ToggleHilite, self).__init__()

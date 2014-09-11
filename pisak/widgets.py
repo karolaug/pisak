@@ -603,7 +603,6 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
                                  pixbuf.get_height(),
                                  pixbuf.get_rowstride())
 
-
     def change_icon_white(self):
         try:
             if self.icon_name:
@@ -676,7 +675,6 @@ class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
             GObject.TYPE_FLOAT, None, None,
             0, 1., 0, GObject.PARAM_READWRITE)
     }
-
 
     def __init__(self):
         super().__init__()

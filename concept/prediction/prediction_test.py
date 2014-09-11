@@ -51,9 +51,9 @@ while True: #test loop
             else:
                 for i in predictions:
                     print(i)
-
-
-        else: #if the string ends with a space predict the next word based on the previous ones
+#if the string ends with a space predict the
+#next word based on the previous ones
+        else:  
             for i in predictions:
                 print(string + i)
         print("\n")

@@ -20,7 +20,6 @@ class TestBoxLayout(unittest.TestCase):
     ]
     """
 
-
     def setUp(self):
         Clutter.init([])
 

@@ -46,7 +46,6 @@ class ViewActor(Clutter.Actor):
         self.set_x_expand(True)
 
 
-
 class ButtonStage(Clutter.Stage):
     '''
     Clutter stage with single button in the center

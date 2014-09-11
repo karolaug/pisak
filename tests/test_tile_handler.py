@@ -13,7 +13,6 @@ class TileHandlerTest(unittest.TestCase):
             {"label": "c"}, {"label": "d"}],
         "page_interval": 3000}
 
-
     def setUp(self):
         Clutter.init([])
 

@@ -15,7 +15,6 @@ class ButtonStage(Clutter.Stage):
         self._init_bg()
         self._init_layout()
 
-
     def _init_bg_content(self):
         def draw_canvas(canvas, context, w, h):
             context.scale(w, h)
@@ -43,8 +42,6 @@ class ButtonStage(Clutter.Stage):
     def _init_layout(self):
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
-
-
 
 
 class ButtonApp(switcher_app.Application):

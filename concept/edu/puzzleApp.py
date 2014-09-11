@@ -79,7 +79,6 @@ class PracticePanel(Clutter.Actor):
             self.action_buttons.append(one_button)
             self.layout.attach(one_button, col, self.letter_grid_row_count, 1, 1)
 
-
     def _init_text_field(self):
         self.text_field = buttons.TextField()
         self.text_field.set_font(self.font_name)

@@ -45,7 +45,6 @@ class Library(object):
         self.photos.add(photo)
         category.photos.add(photo)
 
-        
     def close(self):
         pass
 

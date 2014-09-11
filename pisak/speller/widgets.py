@@ -204,7 +204,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def __str__(self):
             return "{} -> {} @ {}".format(self.before, self.after, self.pos)
 
-
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
@@ -243,7 +242,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
         Return the number of characters in the text buffer
         """
         return len(self.clutter_text.get_text())
-
 
     def get_cursor_position(self):
         pos = self.clutter_text.get_cursor_position()
@@ -302,7 +300,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
             operation = Text.Deletion(0, self.get_text())
             self.add_operation(operation)
 
-
     def get_endmost_triplet(self):
         """
         Look for and return the first three-word string of characters
@@ -357,7 +354,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
                 #self.type_text(text)
         else:
             self.type_text(text_after)
-
 
     def move_cursor_forward(self):
         """
@@ -420,7 +416,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
             except IndexError:
                 current_position = -1
         self.clutter_text.set_cursor_position(current_position)
-
 
     def move_line_up(self):
         """
@@ -751,7 +746,6 @@ class Prediction(pisak.widgets.Button):
         self.clutter_text = [i for i in self.layout.get_children()
                             if type(i) == Clutter.Text][0]
         self.clutter_text.set_property("ellipsize", 0)
-
 
     @property
     def idle_icon_name(self):

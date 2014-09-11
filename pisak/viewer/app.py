@@ -27,7 +27,6 @@ def prepare_photo_view(stage, script, data):
     slideshow.show_initial_slide(0)  # data["index"]
 
 
-
 def prepare_album_view(stage, script, album_name):
 
     button_to_stage(stage, script, "button_library", "library")

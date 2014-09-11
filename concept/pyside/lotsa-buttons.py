@@ -36,10 +36,7 @@ class MainWindow(QtGui.QWidget):
         self.setStyleSheet("font: 8pt")
 
     def _init_buttons(self):
-
-
         grid = QtGui.QGridLayout()
-
         for i in range(self.rows):
            row = []
            for j in range(self.cols):

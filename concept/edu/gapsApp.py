@@ -69,7 +69,6 @@ class PracticePanel(Clutter.Actor):
         self.action_buttons = [self.set_action_button(index, action)
                                for index, action in enumerate(button_names)]
 
-
     def _init_text_field(self):
         self.text_field = buttons.TextField()
         self.text_field.set_font(self.font_name)
