@@ -13,7 +13,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
     Arranges children in single line using BoxLayout.
     """
     __gtype_name__ = "PisakBoxLayout"
-    
+
     __gproperties__ = {
         "orientation": (
             Clutter.Orientation.__gtype__,
@@ -57,7 +57,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
             None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
     }
-    
+
     def __init__(self):
         super().__init__()
         self.layout = Clutter.BoxLayout()
@@ -70,7 +70,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
             elif self.layout.get_orientation() == Clutter.Orientation.VERTICAL:
                 px_spacing = unit.h(self.ratio_spacing)
             self.layout.set_spacing(px_spacing)
-        
+
     @property
     def orientation(self):
         return self.layout.get_orientation()
@@ -113,7 +113,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
     def ratio_height(self, value):
         self._ratio_height = value
         self.set_height(unit.h(value))
-        
+
     @property
     def ratio_spacing(self):
         return self._ratio_spacing
@@ -186,7 +186,7 @@ class Bin(Clutter.Actor, properties.PropertyAdapter):
             None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
     }
-    
+
     def __init__(self):
         super().__init__()
         self.layout = Clutter.BinLayout()

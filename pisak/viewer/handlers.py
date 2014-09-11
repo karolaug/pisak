@@ -1,5 +1,5 @@
 from pisak import signals
-from pisak.viewer import database_agent
+from pisak.viewer import library_manager, image
 
 
 @signals.registered_handler("viewer/next_page")
@@ -33,60 +33,98 @@ def previous_slide(slideshow_widget):
 @signals.registered_handler("viewer/add_to_favourite_photos")
 def add_to_favourite_photos(slideshow_widget):
     path = slideshow_widget.slide.photo_path
-    album = slideshow_widget.data_source.data[slideshow_widget.index]["category"]
-    database_agent.add_to_favourite_photos(path, album)
+    library_manager.add_to_favourite_photos(path)
+
+
+@signals.registered_handler("viewer/remove_from_favourite_photos")
+def remove_from_favourite_photos(slideshow_widget):
+    path = slideshow_widget.slide.photo_path
+    library_manager.remove_from_favourite_photos(path)
     
 
 @signals.registered_handler("viewer/zoom")
-def zoom(photo):
-    photo.image_buffer.zoom()
+def zoom(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.zoom()
 
 
 @signals.registered_handler("viewer/contour")
-def contour(photo):
-    photo.image_buffer.contour()
+def contour(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.contour()
 
 
 @signals.registered_handler("viewer/edges")
-def edges(photo):
-    photo.image_buffer.edges()
+def edges(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.edges()
 
 
 @signals.registered_handler("viewer/sepia")
-def sepia(photo):
-    photo.image_buffer.sepia()
-
+def sepia(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.sepia()
+        
 
 @signals.registered_handler("viewer/invert")
-def invert(photo):
-    photo.image_buffer.invert()
+def invert(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.invert()
 
 
 @signals.registered_handler("viewer/rotate")
-def rotate(photo):
-    photo.image_buffer.rotate()
+def rotate(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.rotate()
 
 
 @signals.registered_handler("viewer/mirror")
-def mirror(photo):
-    photo.image_buffer.mirror()
+def mirror(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.mirror()
 
 
 @signals.registered_handler("viewer/grayscale")
-def grayscale(photo):
-    photo.image_buffer.grayscale()
+def grayscale(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.grayscale()
 
 
 @signals.registered_handler("viewer/noise")
-def noise(photo):
-    photo.image_buffer.noise()
+def noise(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.noise()
 
 
 @signals.registered_handler("viewer/solarize")
-def solarize(photo):
-    photo.image_buffer.solarize()
+def solarize(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+        slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.solarize()
 
 
 @signals.registered_handler("viewer/original")
-def original(photo):
-    photo.image_buffer.original()
+def original(slide_space):
+    slide = slide_space.get_children()[0]
+    if slide.image_buffer is None:
+       slide.image_buffer = image.ImageBuffer()
+    slide.image_buffer.original()

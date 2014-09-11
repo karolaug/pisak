@@ -10,6 +10,6 @@ class CycleSelectionTest(unittest.TestCase):
         actor = PagedTileView()
         actor.set_model(model)
         cycle = actor.create_cycle()
-        
+
         selection = cycle.select()
         selection(dummy_context)

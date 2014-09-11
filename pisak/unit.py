@@ -35,7 +35,7 @@ except ZeroDivisionError:
     SCREEN_DPMM = getattr(size_pix, 'width') / getattr(size_mm, 'width')
 
 SCREEN_DPI = SCREEN_DPMM * 25.4
-	
+
 
 def mm(value):
     return int(value * SCREEN_DPMM)

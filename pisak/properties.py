@@ -1,7 +1,7 @@
 class PropertyAdapter(object):
 
     def find_attribute(self, name):
-        name  = self._repair_prop_name(name)
+        name = self._repair_prop_name(name)
         for relative in self.__class__.mro():
             attribute = relative.__dict__.get(name)
             if attribute:
