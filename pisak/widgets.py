@@ -521,7 +521,7 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
                                      pixbuf.get_height(), 
                                      pixbuf.get_rowstride())
             try:
-                if self.disabled:
+                if self.get_property("disabled"):
                     self.image.set_opacity(100)
             except AttributeError: #if the disabled props is not yet set
                 pass
