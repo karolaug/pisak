@@ -23,7 +23,7 @@ class ButtonApp(switcher_app.Application):
         script.load_from_file(res.get("script.json"))
         print(script.list_objects())
         return script.get_object("stage")
-        
+
 
 if __name__ == '__main__':
     ButtonApp(sys.argv).main()

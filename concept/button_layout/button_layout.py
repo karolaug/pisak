@@ -13,7 +13,7 @@ import pisak.speller.handlers  # @UnusedImport
 
 class PisakSpellerStage(Clutter.Stage):
     STYLESHEET_PATH = ("pisak/speller/speller_stylesheet.css")
-    
+
     def __init__(self, context, script_path):
         super().__init__()
         self.context = context

@@ -34,15 +34,14 @@ def prepare_album_view(stage, script, data):
 
     library = script.get_object("library_data")
     # for index, photo in enumerate(library.tiles):
-        # photo.connect("activate", lambda *_: stage.load_view(
-                                            #"photo",
-                                            #{"index": index,
-                                            #"album": data["album_name"]}))
+        # photo.connect("clicked", lambda *_: stage.load_view(
+                                                    #"photo",
+                                                    #{"index": index,
+		                              	            #"album": data["album_name"]}))
 
     library.tiles_handler = lambda tile, photo, album: stage.load_view("photo", {"photo": photo, "album": album})
     album = script.get_object("library_data")
     album.album = data["album_name"]  # data["album_name"]  # also through set property should page the new album
-    print(album.album)
     # also through set property should page the new album
 
     button_to_stage(stage, script, "button_start", "photo") # -> start panel

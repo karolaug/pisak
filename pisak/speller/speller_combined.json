@@ -74,7 +74,7 @@
         "ratio-spacing": 0.07,
         "orientation": "vertical"
     },
-    {                                                                                                          
+    {
         "id": "main_box",
         "type": "PisakBoxLayout",
         "x-align": "start",
@@ -186,7 +186,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "ZAPISZ",
-        
+
         "icon-name": "zapisz",
         "signals": [
                        {
@@ -316,10 +316,10 @@
         "y-align": "end",
         "y-expand": true,
         "ratio-spacing": 0.0136,
-        "children": 
+        "children":
         [
-            "prediction_9", "prediction_8", "prediction_7","prediction_6", 
-            "prediction_5", "prediction_4","prediction_3", "prediction_2", 
+            "prediction_9", "prediction_8", "prediction_7","prediction_6",
+            "prediction_5", "prediction_4","prediction_3", "prediction_2",
             "prediction_1", "prediction_header"
         ]
     },
@@ -338,7 +338,7 @@
         "label": "Chciałbym",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
-    },  
+    },
     {
         "id": "prediction_2",
         "type": "PisakSpellerPrediction",
@@ -368,7 +368,7 @@
         "label": "Jestem",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
-    },  
+    },
     {
         "id": "prediction_5",
         "type": "PisakSpellerPrediction",
@@ -398,7 +398,7 @@
         "label": "Rzeczywiście",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
-    },  
+    },
     {
         "id": "prediction_8",
         "type": "PisakSpellerPrediction",
@@ -646,7 +646,7 @@
                            "object": "text_box"
                        }
                    ]
-    },                
+    },
     {
         "id": "keyboard_panel",
         "type": "PisakBoxLayout",

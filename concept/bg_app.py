@@ -31,7 +31,7 @@ class ButtonStage(Clutter.Stage):
         self.bg.set_content(background_image)
         self.bg.set_content_repeat(Clutter.ContentRepeat.BOTH)
         self.bg.set_content_scaling_filters(Clutter.ScalingFilter.LINEAR, Clutter.ScalingFilter.LINEAR)
-    
+
     def _init_bg(self):
         self.bg = Clutter.Actor()
         self.bg.set_background_color(Clutter.Color.new(0xcc, 0xcc, 0xcc, 0xFF))
@@ -53,7 +53,7 @@ class ButtonApp(switcher_app.Application):
     '''
     def create_stage(self, argv):
         return ButtonStage()
-        
+
 
 if __name__ == '__main__':
     ButtonApp(sys.argv).main()

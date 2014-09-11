@@ -23,12 +23,12 @@ stage.connect("destroy", lambda _: Clutter.main_quit())
 # create vertical stripes
 for _ in range(8):
     actor = Clutter.Actor()
-    
+
     actor.set_x_expand(True)
     actor.set_background_color(Clutter.Color.new(128, 128, 128, 255))
     actor.set_reactive(True)
     actor.connect("enter-event", hover)
-    
+
     stage.add_child(actor)
 
 # start the app

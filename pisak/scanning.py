@@ -126,12 +126,16 @@ class Strategy(GObject.GObject):
         raise NotImplementedError("Incomplete strategy implementation")
 
 
+class ScanningException(Exception):
+    pass
+
+
 class Group(Clutter.Actor, properties.PropertyAdapter):
     """
     Container for grouping widgets for scanning purposes.
     """
     __gtype_name__ = "PisakScanningGroup"
-    
+
     __gproperties__ = {
         "strategy": (
             Strategy.__gtype__,
@@ -142,7 +146,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             "", "", False,
             GObject.PARAM_READWRITE),
         "selector": (
-            GObject.TYPE_STRING, "", "", 
+            GObject.TYPE_STRING, "", "",
             "mouse", GObject.PARAM_READWRITE)
     }
 
@@ -167,7 +171,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self._strategy = value
         if self.strategy is not None:
             self.strategy.group = self
-    
+
     @property
     def selector(self):
         return self._selector
@@ -179,7 +183,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
     @property
     def scanning_hilite(self):
         return self._scanning_hilite
-    
+
     @scanning_hilite.setter
     def scanning_hilite(self, value):
         self._scanning_hilite = value
@@ -209,18 +213,20 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
 
     def start_cycle(self):
         self.stage = self.get_stage()
+        if self.stage is None:
+            message = \
+                "Started cycle in unmapped group: {}".format(self.get_id())
+            raise ScanningException(message)
         if self.selector == 'mouse':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
         elif self.selector == 'keyboard':
-            self._handler_token = self.connect("key-release-event", 
+            self._handler_token = self.connect("key-release-event",
                                                self.key_release)
         elif self.selector == 'mouse-switch':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
             self.strategy.return_mouse = True
-        
-        
         else:
             print("Unknown selector: ", self.selector)
             return None
@@ -354,7 +360,6 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
         if isinstance(selection, Mx.Stylable):
             selection.style_pseudo_class_remove("hover")
         self.compute_sequence()
-
 
     def compute_sequence(self):
         subgroups = list(self.group.get_subgroups())
