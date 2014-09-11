@@ -1,9 +1,10 @@
 import os.path
 
 from gi.repository import Mx, GObject, Clutter
+import cairo
 
 from pisak import widgets, layout, res, pager, properties, unit
-from pisak.viewer import database_agent, library_manager, image
+from pisak.viewer import library_manager, image
 
 
 class SlideShow(layout.Bin):
@@ -46,6 +47,7 @@ class SlideShow(layout.Bin):
         self.set_clip_to_allocation(True)
         self.transition_duration = 1000
         self.idle_duration = 1000
+        self.pending_slides = ()
         self.slideshow_on = False
         self.fullscreen_on = False
         self.slideshow_on_fullscreen = True
@@ -89,34 +91,41 @@ class SlideShow(layout.Bin):
         self._slideshow_on_fullscreen = value
 
     def show_initial_slide(self, initial_index=0):
-        self.album_length = len(self.data_source.slides)
+        self.album_length = len(self.data_source.data)
         self.emit("limit-declared", self.album_length)
         self.index = initial_index
         if self.data_source is not None:
-            self.slide = self.data_source.slides[self.index]
+            self.pending_slides = self.data_source.get_pending_slides(
+                self.index)
+            self.slide = self.data_source.get_slide(self.index)
             self.add_child(self.slide)
         self.emit("progressed",
                   float(self.index+1) / self.album_length,
                   self.index+1)
 
-    def slideshow_timeout(self, *args):
+    def slideshow_timeout(self):
         if self.slideshow_on:
             self.next_slide()
             return True
         else:
             return False
 
-    def next_slide(self, *args):
+    def next_slide(self):
+        """
+        Display the photo slide following the currently displayed one.
+        """
         if self.old_slide is None and self.album_length > 1:
             self.index = (self.index + 1) % self.album_length
             self.old_slide = self.slide
-            self.slide = self.data_source.slides[self.index]
+            self.slide = self.pending_slides[1]
             self.slide.set_x(unit.size_pix[0])
             if self.fullscreen_on:
                 self.cover_frame.add_child(self.slide)
                 self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
             else:
                 self.add_child(self.slide)
+            self.pending_slides = self.data_source.get_pending_slides(
+                self.index)
             self.new_slide_transition.set_from(unit.size_pix[0])
             self.new_slide_transition.set_to(0)
             self.old_slide_transition.set_to(-1*unit.size_pix[0])
@@ -127,17 +136,22 @@ class SlideShow(layout.Bin):
                       self.index+1)
 
     def previous_slide(self):
+        """
+        Display the photo slide previous to the currently displayed one.
+        """
         if self.old_slide is None and self.album_length > 1:
             self.index = self.index - 1 if self.index > 0 \
                 else self.album_length - 1
             self.old_slide = self.slide
-            self.slide = self.data_source.slides[self.index]
+            self.slide = self.pending_slides[0]
             self.slide.set_x(-1*unit.size_pix[0])
             if self.fullscreen_on:
                 self.cover_frame.add_child(self.slide)
                 self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
             else:
                 self.add_child(self.slide)
+            self.pending_slides = self.data_source.get_pending_slides(
+                self.index)
             self.new_slide_transition.set_from(-1*unit.size_pix[0])
             self.new_slide_transition.set_to(0)
             self.old_slide_transition.set_to(unit.size_pix[0])
@@ -148,6 +162,10 @@ class SlideShow(layout.Bin):
                       self.index+1)
 
     def run(self):
+        """
+        Run automatic slideshow. Turn on the fullscreen mode if the
+        corresponding property is setted to True.
+        """
         if self.old_slide is None:
             if self.slideshow_on_fullscreen:
                 self.fullscreen_on = True
@@ -166,9 +184,14 @@ class SlideShow(layout.Bin):
                 self.stage.add_child(self.cover_frame)
             self.slideshow_on = True
             Clutter.threads_add_timeout(0, self.idle_duration,
-                                        self.slideshow_timeout, None)
+                                        lambda _: self.slideshow_timeout(),
+                                        None)
 
-    def stop(self, *args):
+    def stop(self):
+        """
+        Stop the currently running, automatic slideshow.
+        If in fullscreen mode- exit fullscreen mode.
+        """
         self.slideshow_on = False
         if self.slideshow_on_fullscreen:
             self.slide.remove_transition("x")
@@ -180,7 +203,14 @@ class SlideShow(layout.Bin):
             self.add_child(self.slide)
             self.fullscreen_on = False
 
-    def _clean_up(self, *args):
+    def _clean_up(self, source, event):
+        """
+        Func used as a signal handler. Clean up after stoppage of the
+        new photo slide 'x' transition. Remove transitions and
+        free the old slide.
+        """
+        self.slide.remove_transition("x")
+        self.old_slide.remove_transition("x")
         if self.old_slide is not None:
             if self.contains(self.old_slide):
                 self.remove_child(self.old_slide)
@@ -192,7 +222,6 @@ class SlideShow(layout.Bin):
             self.old_slide.set_size(self.cached_slide_width,
                                     self.cached_slide_height)
         self.old_slide = None
-        self.slide.remove_transition("x")
 
 
 class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
@@ -214,7 +243,6 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         super().__init__()
         self.slide_ratio_height = 0.7
         self.slide_ratio_width = 0.68
-        self.slides = []
         self.album = None
 
     @property
@@ -241,16 +269,46 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
     def album(self, value):
         self._album = value
         if value is not None:
-            self._generate_slides()
+            self.data = library_manager.get_photos_from_album(value)
 
-    def _generate_slides(self):
-        self.data = library_manager.get_photos_from_album(self.album)
-        for item in self.data:
-            slide = PhotoSlide()
-            slide.ratio_height = self.slide_ratio_height
-            slide.ratio_width = self.slide_ratio_width
-            slide.photo_path = item
-            self.slides.append(slide)
+    def get_pending_slides(self, index):
+        """
+        Return the list consisting of two photo slide instances.
+        One corresponding to the data item prior to the given index
+        and one to the following item.
+        :param index: index pointing to the data list between the
+        indexes of demanding slides
+        """
+        return (self._generate_slide(index-1),
+                self._generate_slide((index+1)%len(self.data)),)
+            
+    def get_slide(self, index):
+        """
+        Return photo slide instance corresponding to the
+        data item at the given index.
+        """
+        return self._generate_slide(index)
+
+    def get_slide_backward(self, index):
+        """
+        Return photo slide instance corresponding to the
+        data item prior to the one at given index.
+        """
+        return self._generate_slide(index-1)
+        
+    def get_slide_forward(self, index):
+        """
+        Return photo slide instance corresponding to the
+        data item following the one at the given index.
+        """
+        return self._generate_slide((index+1)%len(self.data))
+
+    def _generate_slide(self, index):
+        slide = PhotoSlide()
+        slide.ratio_height = self.slide_ratio_height
+        slide.ratio_width = self.slide_ratio_width
+        slide.photo_path = self.data[index]
+        return slide
 
 
 class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
@@ -328,6 +386,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         for item in self.data[self.index:count]:
             tile = PhotoTile()
             tile.label_text = item
+            tile.hilite_tool = Aperture()
             tile.preview_path = library_manager.get_preview_of_album(item)
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
@@ -372,6 +431,7 @@ class AlbumTilesSource(LibraryTilesSource):
         for item in self.data[self.index:count]:
             tile = PhotoTile()
             tile.preview_path = item
+            tile.hilite_tool = Aperture()
             tile.scale_mode = Mx.ImageScaleMode.FIT
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
@@ -405,6 +465,68 @@ class PhotoTile(widgets.PhotoTile):
         self.label.set_style_class("PisakViewerPhotoTile")
 
 
+class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
+    __gtype_name__ = "PisakViewerAperture"
+    __gproperties__ = {
+        'cover': (GObject.TYPE_FLOAT, None, None,
+                  0, 1, 0, GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.set_x_expand(True)
+        self.set_y_expand(True)
+        self.color = res.colors.HILITE_1
+        self.cover_off = 0
+        self.cover_on = 0.4
+        self._init_content()
+        self.connect("notify::cover", lambda *_: self.canvas.invalidate())
+        self.cover_transition = Clutter.PropertyTransition.new("cover")
+        self.set_property("cover", 0)
+
+    @property
+    def cover(self):
+        return self._cover
+
+    @cover.setter
+    def cover(self, value):
+        self._cover = value
+
+    def set_cover(self, value):
+        self.remove_transition("cover")
+        self.cover_transition.set_from(self.get_property("cover"))
+        self.cover_transition.set_to(value)
+        self.cover_transition.set_duration(166)
+        self.add_transition("cover", self.cover_transition)
+
+    def draw(self, canvas, context, w, h):
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        context.paint()
+        context.set_operator(cairo.OPERATOR_OVER)
+        context.rectangle(0, 0, w, h)
+        context.set_source_rgba(0, 0.894, 0.765, 0.66)
+        context.fill()
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        a = 1 - self.get_property("cover")
+        x, y = (0.5 - a / 2) * w, (0.5 - a / 2) * h
+        rw, rh = a * w, a * h
+        context.rectangle(x, y, rw, rh)
+        context.fill()
+        return True
+
+    def _init_content(self):
+        self.canvas = Clutter.Canvas()
+        self.canvas.set_size(140, 140)
+        self.canvas.connect("draw", self.draw)
+        self.set_content(self.canvas)
+
+    def turn_on(self):
+        self.set_cover(self.cover_on)
+
+    def turn_off(self):
+        self.set_cover(self.cover_off)
+
+
 class Button(widgets.Button):
     """
     Menu button that can be styled by CSS.
@@ -427,18 +549,30 @@ class PhotoSlide(layout.Bin):
         "transition_duration": (
             GObject.TYPE_INT64, "transition duration",
             "duration of photo transition", 0,
-            GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE)
-    }
-    MODEL = {
-        "photo_path": res.PATH
+            GObject.G_MAXUINT, 500, GObject.PARAM_READWRITE),
+        "image_buffer": (
+            image.ImageBuffer.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
         super().__init__()
+        self.photo_path = None
         self.image_buffer = None
         self.photo = Mx.Image()
         self.photo.set_scale_mode(Mx.ImageScaleMode.FIT)
         self.add_child(self.photo)
+
+    @property
+    def image_buffer(self):
+        return self._image_buffer
+
+    @image_buffer.setter
+    def image_buffer(self, value):
+        self._image_buffer = value
+        if self.photo_path is not None:
+            value.path = self.photo_path
+            value.slide = self
 
     @property
     def photo_path(self):
@@ -447,8 +581,11 @@ class PhotoSlide(layout.Bin):
     @photo_path.setter
     def photo_path(self, value):
         self._photo_path = value
-        self.photo.set_from_file(value)
-        self.image_buffer = image.PhotoBuffer(value, self)
+        if value is not None:
+            self.photo.set_from_file(value)
+            if self.image_buffer is not None:
+                self.image_buffer.slide = self
+                self.image_buffer.path = value
 
     @property
     def transition_duration(self):

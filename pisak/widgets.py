@@ -9,6 +9,24 @@ from pisak.layout import Box, Bin
 from pisak.res import colors, dims
 
 
+class HiliteTool(Clutter.Actor):
+    """
+    Interface of object used for applying hilite to objects which are
+    Scannable but not Stylable.
+    """
+    def turn_on(self):
+        """
+        Perform the hilition bevaviour.
+        """
+        raise NotImplementedError()
+
+    def turn_off(self):
+        """
+        Restore the rest state.
+        """
+        raise NotImplementedError()
+
+
 class PhotoTile(Bin, properties.PropertyAdapter):
     """
     Tile containing image and label that can be styled by CSS.
@@ -44,7 +62,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
             "noop",
             GObject.PARAM_READWRITE),
         "hilite_tool": (
-            Clutter.Actor.__gtype__,
+            HiliteTool.__gtype__,
             "actor to hilite", "hiliting tool",
             GObject.PARAM_READWRITE),
         "ratio_spacing": (
@@ -130,6 +148,8 @@ class PhotoTile(Bin, properties.PropertyAdapter):
     @hilite_tool.setter
     def hilite_tool(self, value):
         self._hilite_tool = value
+        if value is not None:
+            self.add_child(value)
 
     def _init_box(self):
         self.box = Box()
@@ -141,12 +161,21 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         self.preview.set_allow_upscale(True)
         self.box.add_child(self.preview)
 
-    def hilite_off(self):
-        # turn the hilite_tool off
+    def activate(self):
+        self.emit("activate")
+
+    def enable_hilite(self):
+        if self.hilite_tool is not None:
+            self.hilite_tool.turn_on()
+
+    def disable_hilite(self):
+        if self.hilite_tool is not None:
+            self.hilite_tool.turn_off()
+
+    def enable_scanned(self):
         pass
 
-    def hilite_on(self):
-        # turn the hilite_tool on
+    def disable_scanned(self):
         pass
 
 

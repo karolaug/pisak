@@ -944,10 +944,10 @@ class PopUp(layout.Box):
                     row.spacing = self.spacing
                     self.space.add_child(row)
                 button = Button()
-                button.set_label(file["name"])
+                button.set_label(file.name)
                 button.ratio_width = self.tile_ratio_width
                 button.ratio_height = self.tile_ratio_height
-                button.connect("clicked", self._on_select, file["path"])
+                button.connect("clicked", self._on_select, file.path)
                 row.add_child(button)
         button = Button()
         button.ratio_width = self.tile_ratio_width
