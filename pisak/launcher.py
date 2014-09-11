@@ -9,7 +9,7 @@ from pisak import switcher_app, signals, unit
 
 import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
-import pisak.handlers # @UnusedImport
+import pisak.handlers  # @UnusedImport
 from pisak.viewer import widgets, handlers  # @UnusedImport
 
 

@@ -309,7 +309,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
 
         text = self.get_text()
-        if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
+        if text:  # if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
             if text.rstrip():
                 if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
                     return ' '
@@ -339,8 +339,8 @@ class Text(Mx.Label, properties.PropertyAdapter):
         @param text string passed after a user's action
         """
         current_text = self.get_text()
-        if current_text: #if the text buffer is empty, or ends with whitespace, simply add predicted words. Otherwise, replace the last word.
-            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')', ':', '"']: #if the text buffer ends in a commas, add a space before adding the predicted word
+        if current_text:  # if the text buffer is empty, or ends with whitespace, simply add predicted words. Otherwise, replace the last word.
+            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')', ':', '"']:  # if the text buffer ends in a commas, add a space before adding the predicted word
                 self.type_text(' ' + text_after)
             elif current_text[-1] == ' ':
                 self.type_text(text_after)
@@ -654,14 +654,14 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         self.target = None
         self.basic_content = ['Chciałbym', 'Czy', 'Jak', 'Jestem',
                               'Nie', 'Niestety', 'Rzeczywiście',
-                              'Super', 'Witam'] #this is subject to change, perhaps should be a class argument
+                              'Super', 'Witam']  # this is subject to change, perhaps should be a class argument
         self.content = []
 
     def get_suggestion(self, accuracy_level):
         if accuracy_level < len(self.content):
             return self.content[accuracy_level]
 
-    def do_prediction(self): #function to preform in a separate thread
+    def do_prediction(self):  # function to preform in a separate thread
         Clutter.threads_enter()
         string = self.target.get_endmost_triplet()
         Clutter.threads_leave()
@@ -670,15 +670,15 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         else:
             self.content = predictor.get_predictions(string)
         if len(self.content) == 1:
-            self.content[0] = self.content[0] + ' ' # automatic space if only  one suggestion
+            self.content[0] = self.content[0] + ' '  # automatic space if only  one suggestion
         Clutter.threads_enter()
         self.emit("content-update")
         Clutter.threads_leave()
 
     def _update_content(self, *args):
         self.emit("processing-on")
-        t = threading.Thread(target = self.do_prediction) #very simple solution, not sure
-        t.daemon = True #thread will be killed when the main program is killed
+        t = threading.Thread(target = self.do_prediction)  # very simple solution, not sure
+        t.daemon = True  # thread will be killed when the main program is killed
         t.start()
 
     def _follow_target(self):

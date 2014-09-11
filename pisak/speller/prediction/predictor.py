@@ -27,7 +27,7 @@ _CONFIG_PARSER.read(_CONFIG_FILE)
 def get_predictions(string):
     callback = CallbackClass(string)
     predictions = pressagio.Pressagio(callback, _CONFIG_PARSER).predict()
-    if string.rstrip().split()[-1][0].isupper() and string[-1] != ' ': #capital letters are handled here
+    if string.rstrip().split()[-1][0].isupper() and string[-1] != ' ':  # capital letters are handled here
         predictions = [p[0].upper() + p[1:] for p in predictions]
     if string in predictions:
         predictions.remove(string)

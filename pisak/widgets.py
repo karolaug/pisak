@@ -498,7 +498,7 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
             butt_width = self.get_width()
             self.space.set_width(butt_width - img_width - text_width - 26)
         except AttributeError:
-            pass #should write a new PisakButtonMenu
+            pass  # should write a new PisakButtonMenu
 
     def set_alternative_label(self):
         self.set_label(self.alternative_text)
@@ -558,20 +558,20 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
             try:
                 if self.get_property("disabled"):
                     self.image.set_opacity(100)
-            except AttributeError: #if the disabled props is not yet set
+            except AttributeError:  # if the disabled props is not yet set
                 pass
         else:
             try:
                 self.image.set_from_file(''.join([self.image_path, '.png']))
-            except: # GError as error:
+            except:  # GError as error:
                 print("No PNG, trying JPG")
                 try:
                     self.image.set_from_file(''.join([self.image_path,
                                                       '.jpg']))
-                except: # GError as error:
+                except:  # GError as error:
                     text = "No PNG, SVG or JPG icon found of name {}."
                     print(text.format(self.icon_name))
-            self.image.set_scale_mode(1) #1 is FIT, 0 is None, 2 is CROP
+            self.image.set_scale_mode(1)  # 1 is FIT, 0 is None, 2 is CROP
             if icon_size:
                 image_size = self.image.get_size()
                 print(image_size, icon_size)

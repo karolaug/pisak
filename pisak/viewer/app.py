@@ -43,7 +43,7 @@ def prepare_album_view(stage, script, album_name):
 
     # also through set property should page the new album
 
-    button_to_stage(stage, script, "button_start", "photo") # -> start panel
+    button_to_stage(stage, script, "button_start", "photo")  # -> start panel
 
 def prepare_library_view(stage, script, data):
 
@@ -54,7 +54,7 @@ def prepare_library_view(stage, script, data):
         # album.connect("activate", lambda *_:
         #stage.load_view("album", {"album_name": album["category"]}))
 
-    button_to_stage(stage, script, "button_start", "photo") # -> start panel
+    button_to_stage(stage, script, "button_start", "photo")  # -> start panel
 
 
 def prepare_photo_editing_view(stage, script, data):

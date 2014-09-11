@@ -40,10 +40,10 @@ class RewardPanel(Panel):
         self._init_reward()
 
     def _init_reward(self):
-        pass #self.reward = song/movie
+        pass  # self.reward = song/movie
 
     def run_reward(self, reward_file_path):
-        pass #self.reward.play
+        pass  # self.reward.play
 
 class ResultInfoPanel(Panel):
     def __init__(self, container):

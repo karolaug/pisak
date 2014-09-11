@@ -14,7 +14,7 @@ except ImportError:
 import pressagio.callback
 import pressagio
 
-class CallbackClass(pressagio.callback.Callback): #basic callback class
+class CallbackClass(pressagio.callback.Callback):  # basic callback class
     def __init__(self, buffer):
         super().__init__()
         self.buffer = buffer
@@ -26,23 +26,23 @@ class CallbackClass(pressagio.callback.Callback): #basic callback class
         return ''
 
 
-config_file = "prediction_profile.ini" #set configuration to use
+config_file = "prediction_profile.ini"  # set configuration to use
 
 config = configparser.ConfigParser()
 config.read(config_file)
 
 print('Enter string: \n')
-while True: #test loop
+while True:  # test loop
     string = input()
-    if string == '': #ending
+    if string == '':  # ending
         break
 
         callback = CallbackClass(string)
         prsgio = pressagio.Pressagio(callback, config)
         predictions = prsgio.predict()
-        if string[-1] != ' ': # if the string ends with a unfinished word predict it's ending
+        if string[-1] != ' ':  # if the string ends with a unfinished word predict it's ending
             n = len(string.split()[-1])
-            string = string[:-n-1] #format the string to display predictions
+            string = string[:-n-1]  # format the string to display predictions
 
             if len(string) != 0:
                 for i in predictions:

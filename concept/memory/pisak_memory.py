@@ -95,7 +95,7 @@ class ExecuteAction(object):
 		self.tile_label = action_tile.label.get_text()
 		self.row, self.column = None, None
 		if self.tile_label != 'zamknij' and self.tile_label != 'reset':
-			self.row, self.column = int(self.tile_label.split()[0]), int(self.tile_label.split()[1])  #zmienic?
+			self.row, self.column = int(self.tile_label.split()[0]), int(self.tile_label.split()[1])  # zmienic?
 
 		self.contents = contents
 
@@ -121,7 +121,7 @@ class ExecuteAction(object):
 		self.tiles[6 * self.row + self.column].set_icon_from_file('./' + str(int(self.contents.game.info_field[self.row, self.column])) + '.png')
 
 		if self.move_info == 'second-miss':
-				self.contents.revert = 3 #za 3 cykle timera nastapi revert
+				self.contents.revert = 3  # za 3 cykle timera nastapi revert
 				self.contents.row, self.contents.col = self.row, self.column
 
 		if self.move_info == 'first':
