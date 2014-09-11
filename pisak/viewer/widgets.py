@@ -166,24 +166,25 @@ class SlideShow(layout.Bin):
         Run automatic slideshow. Turn on the fullscreen mode if the
         corresponding property is setted to True.
         """
-        if self.old_slide is None:
-            if self.slideshow_on_fullscreen:
-                self.fullscreen_on = True
-                self.stage = self.get_stage()
-                self.cover_frame = Clutter.Actor()
-                self.cover_frame.set_size(unit.size_pix[0], unit.size_pix[1])
-                self.remove_child(self.slide)
-                self.cover_frame.add_child(self.slide)
-                cover_frame_color = Clutter.Color.new(0, 0, 0, 255)
-                self.cover_frame.set_background_color(cover_frame_color)
-                if (self.cached_slide_width is None and
-                        self.cached_slide_height is None):
-                    self.cached_slide_width, self.cached_slide_height = \
-                        self.slide.get_size()
-                self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
-                self.stage.add_child(self.cover_frame)
-            self.slideshow_on = True
-            Clutter.threads_add_timeout(0, self.idle_duration,
+        if self.slideshow_on_fullscreen:
+            self.fullscreen_on = True
+            self.stage = self.get_stage()
+            self.cover_frame = Clutter.Actor()
+            self.cover_frame.set_size(unit.size_pix[0], unit.size_pix[1])
+            self.slide.remove_transition("x")
+            self.remove_child(self.slide)
+            self.cover_frame.add_child(self.slide)
+            self.slide.set_x(0)
+            cover_frame_color = Clutter.Color.new(0, 0, 0, 255)
+            self.cover_frame.set_background_color(cover_frame_color)
+            if (self.cached_slide_width is None and
+                    self.cached_slide_height is None):
+                self.cached_slide_width, self.cached_slide_height = \
+                    self.slide.get_size()
+            self.slide.set_size(unit.size_pix[0], unit.size_pix[1])
+            self.stage.add_child(self.cover_frame)
+        self.slideshow_on = True
+        Clutter.threads_add_timeout(0, self.idle_duration,
                                         lambda _: self.slideshow_timeout(),
                                         None)
 
@@ -339,6 +340,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.index = 0
+        tiles_handler = None
         self.data = library_manager.get_all_albums()
 
     @property
@@ -386,20 +388,21 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         for item in self.data[self.index:count]:
             tile = PhotoTile()
             tile.label_text = item
+            tile.connect("activate", self.tiles_handler, item)
             tile.hilite_tool = Aperture()
-            tile.preview_path = library_manager.get_preview_of_album(item)
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
             tile.ratio_spacing = self.tile_ratio_spacing
             tile.preview_ratio_height = self.tile_preview_ratio_height
             tile.preview_ratio_widtht = self.tile_preview_ratio_width
+            tile.preview_path = library_manager.get_preview_of_album(item)
             tiles.append(tile)
         return tiles
 
     def get_tiles(self, count):
         tiles = self._generate_tiles(count)
-        self.index = (self.index + count) % len(self.data) if \
-            len(self.data) > 0 else self.index
+        self.index = self.index + count if (self.index + count
+                     < len(self.data)) else 0
         return tiles
 
 

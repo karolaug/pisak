@@ -27,7 +27,7 @@ class HiliteTool(Clutter.Actor):
         raise NotImplementedError()
 
 
-class PhotoTile(Bin, properties.PropertyAdapter):
+class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
     """
     Tile containing image and label that can be styled by CSS.
     """

@@ -86,25 +86,35 @@ class Strategy(GObject.GObject):
         """
         element = self.get_current_element()
         if isinstance(element, Group):
-            self.group.stop_cycle()
-            element.parent_group = self.group
-            element.start_cycle()
+            if not self.group.paused:
+                self.group.stop_cycle()
+            if not self.group.killed and not self.group.paused:
+                element.parent_group = self.group
+                element.start_cycle()
         elif hasattr(element, "activate"):
-            self.group.stop_cycle()
             # set potential next group
             self.group.stage.pending_group = self.unwind_to
-            element.activate()
-            # launch next group
-            if self.group.stage.pending_group:
-                self.group.stage.pending_group.start_cycle()
-            else:
-                self.group.start_cycle()
+            if not self.group.killed:
+                element.activate()
+            if not self.group.paused:
+                self.group.stop_cycle()
+            if not self.group.killed and not self.group.paused:
+                # launch next group
+                if self.group.stage.pending_group:
+                    self.group.stage.pending_group.start_cycle()
+                else:
+                    if self.group.get_stage():
+                        self.group.start_cycle()
         else:
             raise Exception("Unsupported selection")
 
     def unwind(self):
-        self.group.stop_cycle()
-        self.group.parent_group.start_cycle()
+        if self.unwind_to is not None:
+            self.group.stop_cycle()
+            self.unwind_to.start_cycle()
+        else:
+            self.group.stop_cycle()
+            self.group.parent_group.start_cycle()
 
     def get_current_element(self):
         """
@@ -138,6 +148,8 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
 
     def __init__(self):
         self._strategy = None
+        self.paused = False
+        self.killed = False
         self._scanning_hilite = False
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
@@ -181,7 +193,8 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         to_scan = self.get_children()
         while len(to_scan) > 0:
             current = to_scan.pop()
-            if isinstance(current, Group):
+            if isinstance(current, Group) \
+                    or isinstance(current, Scannable):
                 yield current
             elif isinstance(current, Mx.Button) \
                     and not current.get_disabled():
@@ -215,7 +228,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         action = {'mouse': self.stage.disconnect,
                   'mouse-switch': self.stage.disconnect, 
                   'keyboard': self.disconnect}
-        self.get_stage().set_key_focus(None)
+        self.stage.set_key_focus(None)
         try:
             action[self.selector](self._handler_token)
         except AttributeError:
@@ -401,7 +414,8 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
             # timeout event not from current cycle
             return False
         elif self._has_next():
-            self._expose_next()
+            if not self.group.paused:
+                self._expose_next()
             return True
         else:
             self.unwind()

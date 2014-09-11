@@ -28,7 +28,7 @@ def prepare_photo_view(stage, script, data):
 
 
 
-def prepare_album_view(stage, script, album_name):
+def prepare_album_view(stage, script, data):
 
     button_to_stage(stage, script, "button_library", "library")
 
@@ -41,8 +41,8 @@ def prepare_album_view(stage, script, album_name):
 
 
     album = script.get_object("library_data")
-    album.album = library_manager.LIBRARY_DIR  # data["album_name"]  # also through set property should page the new album
-
+    album.album = data["album_name"]  # data["album_name"]  # also through set property should page the new album
+    print(album.album)
     # also through set property should page the new album
 
     button_to_stage(stage, script, "button_start", "photo") # -> start panel
@@ -51,9 +51,9 @@ def prepare_library_view(stage, script, data):
 
     #button_to_stage(stage, script, "button_library", "library")
 
-    library = script.get_object("library_data")    # for album in library.data:
-        # album.connect("activate", lambda *_:
-        #stage.load_view("album", {"album_name": album["category"]}))
+    library = script.get_object("library_data")
+    library.tiles_handler = lambda tile, album: stage.load_view("album", {"album_name": album})
+
 
     button_to_stage(stage, script, "button_start", "photo") # -> start panel
 

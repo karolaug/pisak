@@ -41,7 +41,13 @@
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2
-        }
+        },
+        "signals": [
+            {
+                "name": "notify::mapped",
+                "handler": "general/start_group"
+            }
+        ]
     },
     {
         "id": "button_menu_box",
@@ -65,6 +71,11 @@
                 "name": "clicked",
                 "handler": "viewer/zoom",
                 "object": "slide_space"
+            },
+            {
+                "name": "clicked",
+                "handler": "scanning/toggle_pause_group",
+                "object": "button_menu"
             }
         ]
     },
@@ -177,6 +188,11 @@
                 "name": "clicked",
                 "handler": "viewer/noise",
                 "object": "slide_space"
+            },
+            {
+                "name": "clicked",
+                "handler": "scanning/toggle_pause_group",
+                "object": "button_menu"
             }
         ]
     },
