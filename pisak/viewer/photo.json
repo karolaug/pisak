@@ -130,14 +130,14 @@
     {
         "id": "button_album",
         "type": "PisakViewerButton",
-        "label": "Album",
+        "label": "ALBUM",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
     {
         "id": "button_library",
         "type": "PisakViewerButton",
-        "label": "Biblioteka",
+        "label": "BIBLIOTEKA",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
