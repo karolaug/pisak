@@ -16,7 +16,7 @@ def prepare_photo_view(stage, script, data):
 
     slideshow = script.get_object("slideshow_widget")
     button_to_stage(stage, script, "button_edition", 
-                    "photo_editing", {"slideshow": slideshow})
+                    "photo_editing", data)
     button_to_stage(stage, script, "button_album", "album", {"album_name": data["album"]})
 
     button_to_stage(stage, script, "button_library", "library")
@@ -59,10 +59,10 @@ def prepare_library_view(stage, script, data):
 
 def prepare_photo_editing_view(stage, script, data):
     photo = script.get_object("slide")
-    photo.photo_path = data["slideshow"].slide.photo_path
+    photo.photo_path = data["photo"]
 
     button = script.get_object("button_photo")
-    button.connect("clicked", lambda *_: stage.load_view("photo", photo))
+    button.connect("clicked", lambda *_: stage.load_view("photo", data))
 
     # button_to_stage(stage, script, "button_start", "start") -> start panel
 
