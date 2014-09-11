@@ -143,7 +143,7 @@ class PagerWidget(layout.Bin):
         self._columns = value
     
     def show_initial_page(self, source, event):
-        if self.data_source is not None:
+        if self.data_source is not None and self._current_page is None:
             tiles = self.data_source.get_tiles(self.columns * self.rows)
             self._current_page = _Page(self.rows, self.columns, tiles,
                 self.page_strategy, self.page_selector, self.page_ratio_spacing)

@@ -385,7 +385,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
 
     def _generate_tiles(self, count):
         tiles = []
-        for item in self.data[self.index:count]:
+        for item in self.data[self.index : self.index+count]:
             tile = PhotoTile()
             tile.label_text = item
             tile.connect("activate", self.tiles_handler, item)
@@ -431,7 +431,7 @@ class AlbumTilesSource(LibraryTilesSource):
 
     def _generate_tiles(self, count):
         tiles = []
-        for item in self.data[self.index:count]:
+        for item in self.data[self.index : self.index+count]:
             tile = PhotoTile()
             tile.preview_path = item
             tile.hilite_tool = Aperture()
@@ -440,7 +440,7 @@ class AlbumTilesSource(LibraryTilesSource):
             tile.ratio_width = self.tile_ratio_width
             tile.ratio_height = self.tile_ratio_height
             tiles.append(tile)
-            return tiles
+        return tiles
 
 
 class ProgressBar(widgets.NewProgressBar):
