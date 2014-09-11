@@ -116,6 +116,10 @@ class Strategy(GObject.GObject):
         raise NotImplementedError("Incomplete strategy implementation")
 
 
+class ScanningException(Exception):
+    pass
+
+
 class Group(Clutter.Actor, properties.PropertyAdapter):
     """
     Container for grouping widgets for scanning purposes.
@@ -191,6 +195,10 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
 
     def start_cycle(self):
         self.stage = self.get_stage()
+        if self.stage is None:
+            message =
+                "Started cycle in unmapped group: {}".format(self.get_id())
+            raise ScanningException(message)
         if self.selector == 'mouse':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
@@ -201,8 +209,6 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
             self.strategy.return_mouse = True
-        
-        
         else:
             print("Unknown selector: ", self.selector)
             return None
