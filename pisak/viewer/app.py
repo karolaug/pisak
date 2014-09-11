@@ -16,18 +16,19 @@ def prepare_photo_view(stage, script, data):
 
     slideshow = script.get_object("slideshow_widget")
     button_to_stage(stage, script, "button_edition", 
-                    "photo_editing", {"slideshow": slideshow})
-    button_to_stage(stage, script, "button_album", "album")
+                    "photo_editing", {"slideshow": slideshow, "album": data["album"]})
+    button_to_stage(stage, script, "button_album", "album", {"album_name": data["album"]})
 
     button_to_stage(stage, script, "button_library", "library")
 
     # button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
-    data_source.album = library_manager.LIBRARY_DIR  # data["album_name"]
-    slideshow.show_initial_slide(0)  # data["index"]
+    data_source.album = data["album"]  # data["album_name"]
+    slideshow.show_initial_slide(data_source.data.index(data["photo"]))  # data["index"]
 
 
-def prepare_album_view(stage, script, album_name):
+
+def prepare_album_view(stage, script, data):
 
     button_to_stage(stage, script, "button_library", "library")
 
@@ -36,25 +37,24 @@ def prepare_album_view(stage, script, album_name):
         # photo.connect("clicked", lambda *_: stage.load_view(
                                                     #"photo",
                                                     #{"index": index,
-                                                    #"album": data["album_name"]}))
+		                              	            #"album": data["album_name"]}))
 
+    library.tiles_handler = lambda tile, photo, album: stage.load_view("photo", {"photo": photo, "album": album})
     album = script.get_object("library_data")
-    album.album = library_manager.LIBRARY_DIR  # data["album_name"]  # also through set property should page the new album
-
+    album.album = data["album_name"]  # data["album_name"]  # also through set property should page the new album
     # also through set property should page the new album
 
-    button_to_stage(stage, script, "button_start", "photo")  # -> start panel
+    button_to_stage(stage, script, "button_start", "photo") # -> start panel
 
 def prepare_library_view(stage, script, data):
 
     #button_to_stage(stage, script, "button_library", "library")
 
     library = script.get_object("library_data")
-    # for album in library.data:
-        # album.connect("activate", lambda *_:
-        #stage.load_view("album", {"album_name": album["category"]}))
+    library.tiles_handler = lambda tile, album: stage.load_view("album", {"album_name": album})
 
-    button_to_stage(stage, script, "button_start", "photo")  # -> start panel
+
+    button_to_stage(stage, script, "button_start", "photo") # -> start panel
 
 
 def prepare_photo_editing_view(stage, script, data):
@@ -62,7 +62,7 @@ def prepare_photo_editing_view(stage, script, data):
     photo.photo_path = data["slideshow"].slide.photo_path
 
     button = script.get_object("button_photo")
-    button.connect("clicked", lambda *_: stage.load_view("photo", photo))
+    button.connect("clicked", lambda *_: stage.load_view("photo", {"photo": photo.photo_path, "album": data["album"]}))
 
     # button_to_stage(stage, script, "button_start", "start") -> start panel
 
@@ -79,7 +79,7 @@ VIEWER_APP = {
         "photo_editing": (fix_path("photo_editing.json"),
                           prepare_photo_editing_view),
     },
-    "initial-view": "photo",
+    "initial-view": "library",
     "initial-data": None
 }
 

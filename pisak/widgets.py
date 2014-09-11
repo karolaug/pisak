@@ -27,7 +27,7 @@ class HiliteTool(Clutter.Actor):
         raise NotImplementedError()
 
 
-class PhotoTile(Bin, properties.PropertyAdapter):
+class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
     """
     Tile containing image and label that can be styled by CSS.
     """
@@ -162,7 +162,7 @@ class PhotoTile(Bin, properties.PropertyAdapter):
         self.box.add_child(self.preview)
 
     def activate(self):
-        self.emit("clicked")
+        self.emit("activate")
 
     def enable_hilite(self):
         if self.hilite_tool is not None:

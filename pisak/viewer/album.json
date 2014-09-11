@@ -33,10 +33,22 @@
         "x-align": "end"
     },
     {
+        "id": "middle_box_group",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+        "children": ["middle_box"],
+        "scanning-hilite": true,
+        "strategy": {
+            "type": "PisakRowStrategy",
+            "interval": 800,
+            "max-cycle-count": -1
+        }
+    },
+    {
         "id": "middle_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.1,
-        "children": ["pager_space", "button_menu"]
+        "children": ["pager", "button_menu"]
     },
     {
         "id": "button_menu",
@@ -48,8 +60,14 @@
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": 2
-        }
+            "max-cycle-count": -1
+        },
+        "signals": [
+                       {
+                           "name": "notify::mapped",
+                           "handler": "general/start_group"
+                       }
+                    ]
     },
     {
         "id": "button_menu_box",
@@ -58,12 +76,13 @@
         "ratio-spacing": 0.01,
         "y-expand": true,
         "y-align": "end",
-        "children": ["button_start", "button_library"]
+        "children": ["button_library",  "button_select_page", "button_next_page",
+                     "button_automatic"]
     },
     {
         "id": "button_library",
         "type": "PisakViewerButton",
-        "label": "Biblioteka",
+        "label": "PANEL STARTOWY",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
@@ -75,17 +94,68 @@
         "ratio-height": 0.1
     },
     {
-        "id": "pager_space",
-        "type": "PisakBinLayout",
-        "ratio-width": 0.68,
-        "ratio-height": 0.7,
-        "children": ["pager"]
+        "id": "button_automatic",
+        "type": "PisakViewerButton",
+        "label": "AUTOMAT",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1,
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "pager/toggle_automatic",
+                           "object": "pager"
+                       },
+                       {
+                            "name": "clicked",
+                            "handler": "scanning/toggle_pause_group",
+                            "object": "button_menu"
+                        }
+                    ]
+    },
+    {
+        "id": "button_select_page",
+        "type": "PisakViewerButton",
+        "label": "WYBIERZ STRONĘ",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1,
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "pager/scan_page",
+                           "object": "pager"
+                       }
+                    ]
+    },
+    {
+        "id": "button_next_page",
+        "type": "PisakViewerButton",
+        "label": "NASTĘPNA STRONA",
+        "ratio-width": 0.22,
+        "ratio-height": 0.1,
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "pager/next_page",
+                           "object": "pager"
+                       }
+                    ]
     },
     {
         "id": "pager",
         "type": "PisakPagerWidget",
-        "x-expand": true,
-        "y-expand": true,
+        "page-ratio-spacing": 0.01,
+        "ratio-height": 0.7,
+        "ratio-width": 0.7,
+        "y-align": "start",
+        "rows": 3,
+        "columns": 3,
+        "page-selector": "mouse",
+        "page-strategy": {
+            "type": "PisakRowStrategy",
+            "interval": 800,
+            "max-cycle-count": 2,
+            "unwind-to": "button_menu"
+        },
         "data-source": "library_data"
     },
     {

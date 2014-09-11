@@ -86,25 +86,35 @@ class Strategy(GObject.GObject):
         """
         element = self.get_current_element()
         if isinstance(element, Group):
-            self.group.stop_cycle()
-            element.parent_group = self.group
-            element.start_cycle()
+            if not self.group.paused:
+                self.group.stop_cycle()
+                if not self.group.killed:
+                    element.parent_group = self.group
+                    element.start_cycle()
         elif hasattr(element, "activate"):
-            self.group.stop_cycle()
             # set potential next group
             self.group.stage.pending_group = self.unwind_to
-            element.activate()
-            # launch next group
-            if self.group.stage.pending_group:
-                self.group.stage.pending_group.start_cycle()
-            else:
-                self.group.start_cycle()
+            if not self.group.killed:
+                element.activate()
+            if not self.group.paused:
+                self.group.stop_cycle()
+            if not self.group.killed and not self.group.paused:
+                # launch next group
+                if self.group.stage.pending_group:
+                    self.group.stage.pending_group.start_cycle()
+                else:
+                    if self.group.get_stage():
+                        self.group.start_cycle()
         else:
             raise Exception("Unsupported selection")
 
     def unwind(self):
-        self.group.stop_cycle()
-        self.group.parent_group.start_cycle()
+        if self.unwind_to is not None:
+            self.group.stop_cycle()
+            self.unwind_to.start_cycle()
+        else:
+            self.group.stop_cycle()
+            self.group.parent_group.start_cycle()
 
     def get_current_element(self):
         """
@@ -142,6 +152,8 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
 
     def __init__(self):
         self._strategy = None
+        self.paused = False
+        self.killed = False
         self._scanning_hilite = False
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
@@ -178,18 +190,24 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         if not value:
             self.disable_scan_hilite("scanning")
 
-    def get_subgroups(self):
+    def get_subgroups(self, flag=None):
         '''
         Generator of all subgroups of the group.
         '''
         to_scan = self.get_children()
         while len(to_scan) > 0:
             current = to_scan.pop()
-            if isinstance(current, Group):
-                yield current
-            elif isinstance(current, Mx.Button) \
-                    and not current.get_disabled():
-                yield current
+            if flag == "all":
+                if isinstance(current, Group) \
+                        or isinstance(current, Scannable) \
+                        or isinstance(current, Mx.Button):
+                    yield current
+            else:
+                if isinstance(current, Group) \
+                        or isinstance(current, Scannable) \
+                        or (isinstance(current, Mx.Button)
+                        and not current.get_disabled()):
+                    yield current
             if not isinstance(current, Group):
                 to_scan.extend(current.get_children())
 
@@ -221,7 +239,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         action = {'mouse': self.stage.disconnect,
                   'mouse-switch': self.stage.disconnect, 
                   'keyboard': self.disconnect}
-        self.get_stage().set_key_focus(None)
+        self.stage.set_key_focus(None)
         try:
             action[self.selector](self._handler_token)
         except AttributeError:
@@ -240,12 +258,16 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.strategy.select()
         return False
 
-    def recursive_apply(self, test, operation):
-        for s in self.get_subgroups():
+    def recursive_apply(self, test, operation, flag=None):
+        if flag == "all":
+            subgroups = self.get_subgroups("all")
+        else:
+            subgroups = self.get_subgroups()
+        for s in subgroups:
             if test(s):
                 operation(s)
             elif isinstance(s, Group):
-                s.recursive_apply(test, operation)
+                s.recursive_apply(test, operation, flag)
 
     def enable_hilite(self):
         self.recursive_apply(
@@ -255,17 +277,17 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
     def disable_hilite(self):
         self.recursive_apply(
             lambda s: hasattr(s, "disable_hilite"),
-            lambda s: s.disable_hilite())    
+            lambda s: s.disable_hilite(), "all")    
 
     def enable_scan_hilite(self):
         self.recursive_apply(
-            lambda s: hasattr(s, "enable_scanning"),
-            lambda s: s.enable_scanning())
+            lambda s: hasattr(s, "enable_scanned"),
+            lambda s: s.enable_scanned())
 
     def disable_scan_hilite(self):
         self.recursive_apply(
-            lambda s: hasattr(s, "disable_scanning"),
-            lambda s: s.disable_scanning())
+            lambda s: hasattr(s, "disable_scanned"),
+            lambda s: s.disable_scanned(), "all")
 
 
 class RowStrategy(Strategy, properties.PropertyAdapter):
@@ -406,7 +428,8 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
             # timeout event not from current cycle
             return False
         elif self._has_next():
-            self._expose_next()
+            if not self.group.paused:
+                self._expose_next()
             return True
         else:
             self.unwind()
