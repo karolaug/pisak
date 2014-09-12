@@ -391,7 +391,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
             if item == pic_dir:
                 tile.label_text = item.split('/')[-1]
             else:        
-                tile.label_text = item.partition(pic_dir)[-1]
+                tile.label_text = item.partition(pic_dir)[-1][1:]
             tile.connect("activate", self.tiles_handler, item)
             tile.hilite_tool = Aperture()
             tile.ratio_width = self.tile_ratio_width
