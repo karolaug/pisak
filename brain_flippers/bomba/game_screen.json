@@ -7,7 +7,9 @@
     {
         "id": "game_panel",
         "type": "PisakBinLayout",
-        "children": ["status", "counter", "feedback", "video_feedback"]
+        "children": ["status", "counter", "feedback", "video_feedback"],
+	"width": 1366,
+	"height": 768
     },
     {
         "id": "status",
