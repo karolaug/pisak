@@ -2,7 +2,7 @@
 xset -dpms
 xset s off
 xset s noblank
-PYTHONPATH='~/pisak'
+PYTHONPATH=~/pisak
 while :
 do
     cd ~/pisak/brain_flippers/bomba
