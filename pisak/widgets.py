@@ -52,9 +52,6 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
             Mx.ImageScaleMode.__gtype__,
             "image scale mode", "scale mode", "crop",
             GObject.PARAM_READWRITE),
-        "label": (
-            Mx.Label.__gtype__,
-            "", "", GObject.PARAM_READWRITE),
         "label_text": (
             GObject.TYPE_STRING,
             "label under the tile",
@@ -78,17 +75,6 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         self.label = None
         self.hilite_tool = None
         self.scale_mode = Mx.ImageScaleMode.CROP
-
-    @property
-    def label(self):
-        return self._label
-
-    @label.setter
-    def label(self, value):
-        self._label = value
-        if value is not None:
-            if not self.box.contains(value):
-                self.box.add_child(value)
 
     @property
     def label_text(self):

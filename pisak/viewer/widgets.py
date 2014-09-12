@@ -4,7 +4,7 @@ from gi.repository import Mx, GObject, Clutter
 import cairo
 
 from pisak import widgets, layout, res, pager, properties, unit, xdg
-from pisak.viewer import library_manager, image
+from pisak.viewer import image, model
 
 
 class SlideShow(layout.Bin):
@@ -245,6 +245,7 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         self.slide_ratio_height = 0.7
         self.slide_ratio_width = 0.68
         self.album = None
+        self.library = model.get_library()
 
     @property
     def slide_ratio_width(self):
@@ -270,7 +271,7 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
     def album(self, value):
         self._album = value
         if value is not None:
-            self.data = library_manager.get_photos_from_album(value)
+            self._library_album = self.library.album_by_name(value)
 
     def get_pending_slides(self, index):
         """
@@ -340,8 +341,8 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.index = 0
-        tiles_handler = None
-        self.data = library_manager.get_all_albums()
+        self.library = model.get_library()
+        self.albums = list(self.library.categories)
 
     @property
     def tile_ratio_height(self):
@@ -385,28 +386,35 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
 
     def _generate_tiles(self, count):
         tiles = []
-        for item in self.data[self.index : self.index+count]:
-            tile = PhotoTile()
-            pic_dir = xdg.get_dir('pictures')
-            if item == pic_dir:
-                tile.label_text = item.split('/')[-1]
-            else:        
-                tile.label_text = item.partition(pic_dir)[-1][1:]
-            tile.connect("activate", self.tiles_handler, item)
-            tile.hilite_tool = Aperture()
-            tile.ratio_width = self.tile_ratio_width
-            tile.ratio_height = self.tile_ratio_height
-            tile.ratio_spacing = self.tile_ratio_spacing
-            tile.preview_ratio_height = self.tile_preview_ratio_height
-            tile.preview_ratio_widtht = self.tile_preview_ratio_width
-            tile.preview_path = library_manager.get_preview_of_album(item)
-            tiles.append(tile)
+        for index in range(self.index, self.index + count):
+            if index < len(self.albums):
+                album = self.albums[index]
+                tile = PhotoTile()
+                #pic_dir = xdg.get_dir('pictures')
+                #if item == pic_dir:
+                #    tile.label_text = item.split('/')[-1]
+                #else:        
+                #    tile.label_text = item.partition(pic_dir)[-1][1:]
+                tile.label_text = album.name
+                tile.preview_path = album.get_preview_path()
+                
+                tile.connect("activate", self.tiles_handler, album.id)
+                tile.hilite_tool = Aperture()
+                tile.ratio_width = self.tile_ratio_width
+                tile.ratio_height = self.tile_ratio_height
+                tile.ratio_spacing = self.tile_ratio_spacing
+                tile.preview_ratio_height = self.tile_preview_ratio_height
+                tile.preview_ratio_widtht = self.tile_preview_ratio_width
+                tiles.append(tile)
+            else:
+                tile = Clutter.Actor()
         return tiles
 
     def get_tiles(self, count):
         tiles = self._generate_tiles(count)
-        self.index = self.index + count if (self.index + count
-                     < len(self.data)) else 0
+        self.index += count
+        if (self.index > len(self.albums)):
+            self.index = 0
         return tiles
 
 
