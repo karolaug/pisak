@@ -2,6 +2,7 @@
 xset -dpms
 xset s off
 xset s noblank
+PYTHONPATH='~/pisak'
 
 while :
 do
