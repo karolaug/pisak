@@ -3,7 +3,7 @@ Module with app-specific code for photo viewer.
 '''
 import os
 
-from pisak.viewer import library_manager
+#from pisak.viewer import library_manager
 from pisak import launcher
 
 
