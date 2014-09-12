@@ -3,7 +3,7 @@ import os.path
 from gi.repository import Mx, GObject, Clutter
 import cairo
 
-from pisak import widgets, layout, res, pager, properties, unit
+from pisak import widgets, layout, res, pager, properties, unit, xdg
 from pisak.viewer import library_manager, image
 
 
@@ -387,7 +387,11 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         tiles = []
         for item in self.data[self.index : self.index+count]:
             tile = PhotoTile()
-            tile.label_text = item
+            pic_dir = xdg.get_dir('pictures')
+            if item == pic_dir:
+                tile.label_text = item.split('/')[-1]
+            else:        
+                tile.label_text = item.partition(pic_dir)[-1]
             tile.connect("activate", self.tiles_handler, item)
             tile.hilite_tool = Aperture()
             tile.ratio_width = self.tile_ratio_width
