@@ -2,7 +2,7 @@
 xset -dpms
 xset s off
 xset s noblank
-PYTHONPATH=~/pisak
+export PYTHONPATH=~/pisak
 
 while :
 do
