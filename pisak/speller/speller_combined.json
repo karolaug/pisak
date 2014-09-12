@@ -22,7 +22,7 @@
     },
     {
         "id": "background_box",
-        "type": "PisakBackgroundPattern",
+        "type": "PisakBackgroundImage",
         "x-expand": true,
         "y-expand": true
     },
