@@ -131,6 +131,8 @@
         "page-ratio-spacing": 0.01,
         "ratio-height": 0.7,
         "ratio-width": 0.7,
+        "transition-duration": 1000,
+        "idle-duration": 3000,
         "y-align": "start",
         "rows": 3,
         "columns": 3,

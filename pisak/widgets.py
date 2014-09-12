@@ -105,8 +105,14 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
     @preview_path.setter
     def preview_path(self, value):
         self._preview_path = value
-        self.preview.set_from_file(value)
-
+        width, height = self.preview.get_size()
+        if width <= 1 or height <= 1:  # 1 x 1 as unrenderable picture size
+            width, height = self.get_size()
+        if width > 1 and height > 1:
+            self.preview.set_from_file_at_size(value, width, height)
+        else:
+            self.preview.set_from_file(value)
+        
     @property
     def preview_ratio_width(self):
         return self._preview_ratio_width
