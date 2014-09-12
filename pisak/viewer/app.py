@@ -24,7 +24,8 @@ def prepare_photo_view(stage, script, data):
     # button_to_stage(stage, script, "button_start", "start") -> start panel
     data_source = script.get_object("photo_data_source")
     data_source.album = data["album"]  # data["album_name"]
-    slideshow.show_initial_slide(data_source.data.index(data["photo"]))  # data["index"]
+    print(data)
+    slideshow.show_initial_slide(data_source.photos.index(data["photo"]))  # data["index"]
 
 
 

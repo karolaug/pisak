@@ -271,7 +271,8 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
     def album(self, value):
         self._album = value
         if value is not None:
-            self._library_album = self.library.album_by_name(value)
+            print(value)
+            self._library_album = self.library.get_category_by_id(value)
 
     def get_pending_slides(self, index):
         """
@@ -405,9 +406,9 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
                 tile.ratio_spacing = self.tile_ratio_spacing
                 tile.preview_ratio_height = self.tile_preview_ratio_height
                 tile.preview_ratio_widtht = self.tile_preview_ratio_width
-                tiles.append(tile)
             else:
                 tile = Clutter.Actor()
+            tiles.append(tile)
         return tiles
 
     def get_tiles(self, count):
@@ -427,9 +428,11 @@ class AlbumTilesSource(LibraryTilesSource):
     __gtype_name__ = "PisakViewerAlbumTilesSource"
 
     def __init__(self):
-        self.album = None
         super().__init__()
-        self.data = None
+        self.album = None
+        self.photos = []
+        self.library = model.get_library()
+        
 
     @property
     def album(self):
@@ -439,18 +442,21 @@ class AlbumTilesSource(LibraryTilesSource):
     def album(self, value):
         self._album = value
         if value is not None:
-            self.data = library_manager.get_photos_from_album(value)
+            self.photos = self.library.get_category_by_id(value).photos
 
     def _generate_tiles(self, count):
         tiles = []
-        for item in self.data[self.index : self.index+count]:
-            tile = PhotoTile()
-            tile.preview_path = item
-            tile.hilite_tool = Aperture()
-            tile.connect("activate", self.tiles_handler, item, self.album)
-            tile.scale_mode = Mx.ImageScaleMode.FIT
-            tile.ratio_width = self.tile_ratio_width
-            tile.ratio_height = self.tile_ratio_height
+        for index in range(self.index, self.index + count):
+            if index < len(self.photos):
+                tile = PhotoTile()
+                tile.preview_path = self.photos[index].path
+                tile.hilite_tool = Aperture()
+                tile.connect("activate", self.tiles_handler, self.photos[index].path, self.album)
+                tile.scale_mode = Mx.ImageScaleMode.FIT
+                tile.ratio_width = self.tile_ratio_width
+                tile.ratio_height = self.tile_ratio_height
+            else:
+                tile = Clutter.Actor()
             tiles.append(tile)
         return tiles
 

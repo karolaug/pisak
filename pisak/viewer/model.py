@@ -45,6 +45,12 @@ class Library(object):
         self.categories.add(category)
         self.photos.add(photo)
         category.photos.append(photo)
+    
+    def get_category_by_id(self, category_id):
+        for category in self.categories:
+            if category.id == category_id:
+                return category
+        raise LibraryException("No such category id")
 
     def close(self):
         pass
