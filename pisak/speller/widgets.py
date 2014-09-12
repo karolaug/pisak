@@ -228,6 +228,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
             self.history.pop().revert(self)
 
     def _set_text_params(self):
+        self.clutter_text.set_max_length(120)
         self.clutter_text.set_line_wrap(True)
         self.clutter_text.set_line_wrap_mode(Pango.WrapMode.WORD_CHAR)
 
