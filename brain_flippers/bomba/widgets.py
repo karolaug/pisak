@@ -66,8 +66,8 @@ class GraphicalCountdown(Clutter.Actor):
 class TimingFeedback(brain_flippers.widgets.TextFeedback):
     __gtype_name__ = "BrainTimingFeedback"
 
-    SUCCESS_MESSAGE = "Udało Ci się rozbroić bombę!\n"
-    FAILURE_MESSAGE = "Niestety, w złym momencie zatrzymałeś licznik!\n" 
+    SUCCESS_MESSAGE = "BRAWO!!!\nUdało Ci się rozbroić bombę!\n"
+    FAILURE_MESSAGE = "Niestety, w złym momencie\nzatrzymałeś licznik!\n" 
 
     def __init__(self):
         super().__init__()
