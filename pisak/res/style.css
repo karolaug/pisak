@@ -16,6 +16,13 @@ BrainConsolation {
   font-weight: bold;
 }
 
+BrainDismissButton {
+  color: black;
+  font-size: 30;
+  font-weight: bold;
+  border-image: url('backgrounds/red.png');
+}
+
 BrainMalpaChangeRules {
   color: #ffffff;
   font-size: 30;

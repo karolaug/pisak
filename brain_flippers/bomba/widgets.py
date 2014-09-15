@@ -66,8 +66,8 @@ class GraphicalCountdown(Clutter.Actor):
 class TimingFeedback(brain_flippers.widgets.TextFeedback):
     __gtype_name__ = "BrainTimingFeedback"
 
-    SUCCESS_MESSAGE = "Udało Ci się rozbroić bombę!\n"
-    FAILURE_MESSAGE = "Niestety, buchnąłeś bombę!\n" 
+    SUCCESS_MESSAGE = "BRAWO!!!\nUdało Ci się rozbroić bombę!\n"
+    FAILURE_MESSAGE = "Niestety, w złym momencie\nzatrzymałeś licznik!\n" 
 
     def __init__(self):
         super().__init__()
@@ -75,7 +75,9 @@ class TimingFeedback(brain_flippers.widgets.TextFeedback):
     def success(self, time_difference):
         self.show_feedback(self.SUCCESS_MESSAGE, time_difference)
 
-    def failure(self, time_difference):
+    def failure(self, time_difference, custom_feedback=False):
+        if custom_feedback:
+            self.FAILURE_MESSAGE = custom_feedback
         self.show_feedback(self.FAILURE_MESSAGE, time_difference)
 
     def show_feedback(self, message, time_difference):
@@ -185,7 +187,10 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         
     def failure(self):
         self.lives -= 1
-        self.feedback.failure(round(time.time() - self.countdown.start_time, 1))
+        if self.lives == 0:
+            self.feedback.failure(round(time.time() - self.countdown.start_time, 1), custom_feedback="\nNiestety znowu nie udało się\nrozbroić BOMBY!\nZostaniesz, przeniesiony do ekranu\nkońcowego.\n")
+        else:
+            self.feedback.failure(round(time.time() - self.countdown.start_time, 1))
         self.video_feedback.show()
         self.video_feedback.play()
 

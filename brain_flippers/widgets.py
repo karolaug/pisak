@@ -219,7 +219,9 @@ class TextFeedback(Dismissable, PropertyAdapter):
         self.label = FeedbackLabel()
         self.box.add_actor(self.label)
 
-        self.dismiss_button = Mx.Button.new_with_label(">")
+        self.dismiss_button = DismissButton()
+        self.dismiss_button.set_label("Spróbuj jeszcze raz!")
+        self.dismiss_button.set_margin_top(200)
         self.dismiss_button.connect("clicked", self.dismiss)
         self.box.add_actor(self.dismiss_button)
 

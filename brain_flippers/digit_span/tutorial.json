@@ -1,0 +1,29 @@
+[
+    {
+	"id": "main",
+	"type": "PisakBoxLayout",
+	"orientation": "vertical",
+	"spacing": 50,
+	"children": [
+	    {
+		"id": "header",
+		"type": "BrainFeedbackLabel",
+		"text": "Intrukcje do gry"
+	    },
+	    {
+		"id": "text",
+		"type": "ClutterText",
+		"color": "white",
+		"font-name": "Kelson 40",
+		"line-wrap": true
+	    },
+	    {
+		"id": "backButton",
+		"type": "MxButton",
+		"height": 100,
+		"width": 100,
+		"label": "Menu"
+	    }
+	]
+    }
+]
