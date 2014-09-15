@@ -482,6 +482,7 @@ class PhotoTile(widgets.PhotoTile):
         super().__init__()
         self.label = Mx.Label()
         self.label.set_style_class("PisakViewerPhotoTile")
+        self.add_actor(self.label)
 
 
 class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
