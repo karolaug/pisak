@@ -6,6 +6,7 @@ import os.path
 
 def prepare_menu_view(stage, script, data):
     GAME_TITLE = "Bomba"
+    stage.check_view = False
     title = script.get_object("welcome_text")
     title.set_text(GAME_TITLE)
     
@@ -17,6 +18,7 @@ def prepare_menu_view(stage, script, data):
 
 def prepare_game_view(stage, script, data):
     logic = script.get_object("logic")
+    stage.check_view = True
     
     def show_results(*args):
         data = {"score": logic.score, "game": "bomba"}
@@ -30,6 +32,7 @@ def prepare_game_view(stage, script, data):
 
 def prepare_help_view(stage, script, data):
     text = script.get_object("text")
+    stage.check_view = True
     tuto = "W grze tej masz oszacować moment,\nw którym na zegarze bomby wybije 00:00\ni wtedy wcisnąć czerwony guzik."
     text.set_text(tuto)
     backButton = script.get_object("backButton")
@@ -44,6 +47,7 @@ def prepare_top_result_view(stage, script, data):
         data = {"score": score_logic.game_score}
         stage.load_view("top_list", data)
         
+    stage.check_view = True
     score_logic = script.get_object("logic")
     score_logic.game_score = data.get("score") 
     score_logic.game_name = "bomba"
@@ -53,6 +57,7 @@ def prepare_top_result_view(stage, script, data):
     score_logic.connect("move-on", show_top_list)
 
 def prepare_meh_result_view(stage, script, data):
+    stage.check_view = True
     score = data.get("score")
     score_message = str(score)
     message_label = script.get_object("player_score_value")
@@ -64,6 +69,7 @@ def prepare_top_list_view(stage, script, data):
     def back_to_menu(*args):
         stage.load_view("menu", None)
         
+    self.check_view = True
     title_text = "Dzisiejsze wyniki:"
     logic = script.get_object("logic")
     logic.game = "bomba"

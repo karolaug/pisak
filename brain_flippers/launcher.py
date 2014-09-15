@@ -4,6 +4,7 @@ Module which processes and launches brain flippers
 from pisak import switcher_app
 from gi.repository import Clutter
 import sys
+import time
 
 import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
@@ -19,11 +20,15 @@ class LauncherStage(Clutter.Stage):
         self.set_layout_manager(self.layout)
         self.views = descriptor.get("views")
         self.initial = descriptor.get("initial-view")
+        self.motion_on = time.time()
+        self.check_view = False
+        self.connect("motion-event", self.log_motion)
+        Clutter.threads_add_timeout(0, 1000, self.check_idle)
         color = descriptor.get("background-color")
         if color:
             self.set_background_color(Clutter.Color.from_string(color)[1])
-        initial_data = descriptor.get("initial-data")
-        self.load_view(self.initial, initial_data)
+        self.initial_data = descriptor.get("initial-data")
+        self.load_view(self.initial, self.initial_data)
 
     def load_view(self, name, data):
         view_path, prepare = self.views.get(name)
@@ -37,6 +42,17 @@ class LauncherStage(Clutter.Stage):
             self.replace_child(old_child, main_actor)
         else:
             self.add_child(main_actor)
+
+    def check_idle(self, *args):
+        print("checking idle")
+        if self.check_view:
+            print(self.check_view, self.motion_on, time.time())
+            if self.motion_on + 20 < time.time():
+                self.load_view(self.initial, self.initial_data)
+        return True
+
+    def log_motion(self, *args):
+        self.motion_on = time.time()
 
 
 def run(descriptor):
