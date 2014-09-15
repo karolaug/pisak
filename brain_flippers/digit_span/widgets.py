@@ -107,6 +107,8 @@ class Statusbar(Clutter.Actor):
     __gtype_name__ = "BrainDigitSpanStatus"
     
     def __init__(self):
+        self._score = 0
+        self._lives = 0
         super().__init__()
         self._init_layout()
         self._init_elements()
@@ -119,6 +121,9 @@ class Statusbar(Clutter.Actor):
         self.score_text = StatusLabel()
         self.add_actor(self.score_text)
 
+        self.lives_text = StatusLabel()
+        self.add_actor(self.lives_text)
+
         self.exit_button = Mx.Button()
         self.exit_button.set_label("Wyjście")
         self.add_actor(self.exit_button)
@@ -130,12 +135,25 @@ class Statusbar(Clutter.Actor):
     @score.setter
     def score(self, value):
         self._score = value
-        self.score_text.set_text("SCORE: {}".format(self.score))
+        self._update()
+
+    @property
+    def lives(self):
+        return self._lives
+
+    @lives.setter
+    def lives(self, value):
+        self._lives = value
+        self._update()
+
+    def _update(self):
+        self.score_text.set_text("punkty: {}".format(self.score))
+        self.lives_text.set_text(self.lives * "❤")
 
 
 class Stimulus(Clutter.Actor):
     __gtype_name__ = "BrainDigitSpanStimulus"
-    
+
     def __init__(self):
         super().__init__()
         self.stop_time = None
@@ -145,24 +163,24 @@ class Stimulus(Clutter.Actor):
         self._init_layout()
         self._init_elements()
         self.set_reactive(True)
-        
+
     def _init_elements(self):
         self.digit_label = StatusLabel()
         self.add_child(self.digit_label)
-    
+
     def _init_layout(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
-    
+
     def show_code(self, code, is_reversed):
         self._reversed = is_reversed
         self._code = list(reversed(code)) if is_reversed else code
         self._index = 0
-        
+
         self._show_direction()
         self.show()
         Clutter.threads_add_timeout(0, 2000, self._show_digits, None)
-    
+
     def _show_direction(self):
         if self._reversed:
             label = "Zapamiętaj kod w odwrotnej kolejności"
@@ -171,22 +189,22 @@ class Stimulus(Clutter.Actor):
         self.digit_label.set_text(label)
         self.digit_label.show()
         Clutter.threads_add_timeout(0, 1950, self._hide_label, None)
-    
+
     def _show_digits(self, data):
         self._show_digit()
         Clutter.threads_add_timeout(0, 1200, self._show_next_digit, None)
         return False
-    
+
     def _show_digit(self):
         digit_text = str(self._code[self._index])
         self.digit_label.set_text(digit_text)
         self.digit_label.show()
         Clutter.threads_add_timeout(0, 1050, self._hide_label, None)
-    
+
     def _hide_label(self, data):
         self.digit_label.hide()
         return False
-    
+
     def _show_next_digit(self, data):
         self._index += 1
         if self._index < len(self._code):
@@ -214,6 +232,9 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         "finished": (GObject.SIGNAL_RUN_FIRST, None, [])
     }
 
+    LIVES = 3
+    CODE_LIMIT = 13
+
     def __init__(self):
         super().__init__()
         self.set_fixed_position_set(True)  # bypass layout manager
@@ -228,24 +249,26 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self.score = 0
         self.success_count = 0
         self.trials = 0
-        self.status_bar.score = self.score
         self.code_length = 3
         self._start_round()
         self.score_summary.connect("dismissed", self._finish_round)
         self.fail_feedback.connect("dismissed", self._finish_round)
 
     def _start_round(self):
-        self.reversed = random.choice([True, False])
+        self.status_bar.score = self.score
+
+        self.status_bar.lives = self.LIVES - self.trials + self.success_count
+        self.reversed = random.choice([i == 0 for i in range(4)])
         self.code = self.generate_code(self.code_length)
         self.entered_code = []
         self.code_display.clear()
         self._key_handle = self.keypad.connect("digit", self._keypad_digit)
         self.stimulus.show_code(self.code, self.reversed)
-    
+
     def _finish_round(self, *args):
-        if self.success_count / self.trials <= 0.5:
+        if self.trials - self.success_count >= self.LIVES:
             self.emit("finished")
-        elif self.code_length >= 13:
+        elif self.code_length >= self.CODE_LIMIT:
             self.emit("finished")
         else:
             self._start_round()
