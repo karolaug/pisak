@@ -15,8 +15,6 @@ def prepare_menu_view(stage, script, data):
     help_button = script.get_object("tutorial_button")
     help_button.connect("activate", lambda *_: stage.load_view("help", None))
 
-
-
 def prepare_game_view(stage, script, data):
     logic = script.get_object("logic")
     
@@ -60,7 +58,7 @@ def prepare_meh_result_view(stage, script, data):
     message_label = script.get_object("player_score_value")
     message_label.set_text(score_message)
     button = script.get_object("try_again")
-    button.connect("activate", lambda *_: stage.load_view("game", None))
+    button.connect("activate", lambda *_: stage.load_view("menu", None))
 
 def prepare_top_list_view(stage, script, data):
     def back_to_menu(*args):
