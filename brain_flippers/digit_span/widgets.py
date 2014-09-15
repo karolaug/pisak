@@ -144,6 +144,7 @@ class Stimulus(Clutter.Actor):
         self._index = None
         self._init_layout()
         self._init_elements()
+        self.set_reactive(True)
         
     def _init_elements(self):
         self.digit_label = StatusLabel()
