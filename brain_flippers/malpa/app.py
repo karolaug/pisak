@@ -5,7 +5,7 @@ from brain_flippers import launcher, score_manager
 import os.path
 
 def prepare_menu_view(stage, script, data):
-    GAME_TITLE = "Malpa"
+    GAME_TITLE = "Małpa"
     title = script.get_object("welcome_text")
     title.set_text(GAME_TITLE)
     

@@ -4,12 +4,15 @@
 	"type": "PisakBoxLayout",
 	"orientation": "vertical",
 	"spacing": 50,
+	"y-align": "top",
 	"children": ["movie", "back_button"]
     },
     {
 	"id": "movie",
 	"type": "BrainVideoFeedback",
-	"path": "../../pisak/res/malpa/chimp.mp4"
+	"path": "../../pisak/res/malpa/chimp.mp4",
+	"width": 704,
+	"height": 524
     },
     {
 	"id": "back_button",

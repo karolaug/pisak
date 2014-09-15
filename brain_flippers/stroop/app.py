@@ -18,6 +18,7 @@ the beginning of a proper class.
 import sys
 import os.path
 import random
+import time
 
 from gi.repository import Clutter, Mx, GObject
 
@@ -48,11 +49,11 @@ COLORS_MAP = {
     "niebieski": Clutter.Color.from_string("#0000FF")[1]
 }
 RULES_CHANGED_TEXT = {
-    "-1": "REAGUJ NA NA KOLOR SŁÓW\n"
+    "-1": "REAGUJ NA KOLOR SŁÓW\n"
           "WYBIERAJĄC ODPOWIEDNIE POLA.\n"
           "IGNORUJ ICH ZNACZENIE.",
     "0": "UWAGA! ZMIANA REGUŁ GRY!\n"
-         "REAGUJ NA NA KOLOR SŁÓW\n"
+         "REAGUJ NA KOLOR SŁÓW\n"
          "WYBIERAJĄC ODPOWIEDNIE POLA.\n"
          "IGNORUJ ICH ZNACZENIE.",
     "1": "UWAGA! ZMIANA REGUŁ GRY!\n"
@@ -98,10 +99,11 @@ class BrainStroopGame(Clutter.Actor):
         self.player_errors = 0
         self.player_clock_quantum = 1000
         self.player_clock_ticking = False
-        self.player_score_coeff = 10
+        self.player_score_coeff = 1000000
         self.player_lives = 4
         self.player_lives_left = self.player_lives
         self.rules_changed_view_idle = 2000
+        self.activation_on = 1
 
     def _load_view_from_script(self, name):
         self.script = Clutter.Script()
@@ -123,7 +125,7 @@ class BrainStroopGame(Clutter.Actor):
     def enable_initial_view(self):
         start_button = self.script.get_object("start_button")
         start_button.connect("activate", self.enter_colors_view)
-        
+   
     def enter_colors_view(self, *args):
         self._load_view_from_script("colors")
         self.color_values_chain = self.color_repetition * list(COLORS_MAP.values())
@@ -321,6 +323,9 @@ class BrainStroopStage(Clutter.Stage):
         self.set_background_color(black)
         self.db_max_len = 10
         self.enter_initial_view()
+        self.motion_on = time.time()
+        self.connect("motion-event", self.log_motion)
+        Clutter.threads_add_timeout(0, 1000, self.check_idle)
 
     def _load_view_from_script(self, name):
         self.script = Clutter.Script()
@@ -335,6 +340,7 @@ class BrainStroopStage(Clutter.Stage):
         self.enter_main_menu_view()
 
     def enter_main_menu_view(self, *args):
+        self.check_view = False
         self._load_view_from_script("main_menu")
         self.adjust_main_menu_view()
         self.enable_main_menu_view()
@@ -365,14 +371,26 @@ class BrainStroopStage(Clutter.Stage):
 
     def enable_tutorial_view(self):
         tutorial_actor = self.script.get_object("main")
+        self.check_view = True
         tutorial_actor.connect("tutorial-end", self.enter_main_menu_view)
 
     def enter_game_view(self, *args):
         self._load_view_from_script("game")
         self.enable_game_view()
 
+    def log_motion(self, *args):
+        self.motion_on = time.time()
+     
+    def check_idle(self, *args):
+        if self.check_view:
+            if self.motion_on + 20 < time.time():
+                self.remove_all_children()
+                self.enter_initial_view()
+        return True
+
     def enable_game_view(self):
         game_actor = self.script.get_object("main")
+        self.check_view = True
         game_actor.connect("game-end", self.enter_player_result_view)
 
     def enter_player_result_view(self, game_outcome):
