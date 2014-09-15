@@ -48,11 +48,11 @@ COLORS_MAP = {
     "niebieski": Clutter.Color.from_string("#0000FF")[1]
 }
 RULES_CHANGED_TEXT = {
-    "-1": "REAGUJ NA NA KOLOR SŁÓW\n"
+    "-1": "REAGUJ NA KOLOR SŁÓW\n"
           "WYBIERAJĄC ODPOWIEDNIE POLA.\n"
           "IGNORUJ ICH ZNACZENIE.",
     "0": "UWAGA! ZMIANA REGUŁ GRY!\n"
-         "REAGUJ NA NA KOLOR SŁÓW\n"
+         "REAGUJ NA KOLOR SŁÓW\n"
          "WYBIERAJĄC ODPOWIEDNIE POLA.\n"
          "IGNORUJ ICH ZNACZENIE.",
     "1": "UWAGA! ZMIANA REGUŁ GRY!\n"
@@ -98,7 +98,7 @@ class BrainStroopGame(Clutter.Actor):
         self.player_errors = 0
         self.player_clock_quantum = 1000
         self.player_clock_ticking = False
-        self.player_score_coeff = 10
+        self.player_score_coeff = 1000000
         self.player_lives = 4
         self.player_lives_left = self.player_lives
         self.rules_changed_view_idle = 2000
