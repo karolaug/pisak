@@ -4,13 +4,22 @@ Module with app-specific code for Digit Span game.
 from brain_flippers import launcher, score_manager
 import os.path
 
+
+_INSTRUCTION_TEXT = \
+    "W tej grze musisz zapamiętać wyświetlony na ekranie kod, a następnie " \
+    "wpisać go na klawiaturze. Do punktacji liczy się liczba wpisanych " \
+    "kodów oraz czas."
+
 def prepare_menu_view(stage, script, data):
     GAME_TITLE = "Sejf"
     title = script.get_object("welcome_text")
     title.set_text(GAME_TITLE)
-    
+
     game_button = script.get_object("start_button")
     game_button.connect("activate", lambda *_: stage.load_view("game", None))
+
+    help_button = script.get_object("tutorial_button")
+    help_button.connect("activate", lambda *_: stage.load_view("help", None))
 
 
 def prepare_game_view(stage, script, data):
@@ -26,9 +35,12 @@ def prepare_game_view(stage, script, data):
     logic.connect("finished", show_results)
 
 
-def prepare_help_view(script, data):
-    # TODO: connect a view
-    pass
+def prepare_help_view(stage, script, data):
+    instruction_text = script.get_object("text")
+    instruction_text.set_text(_INSTRUCTION_TEXT)
+
+    back_button = script.get_object("backButton")
+    back_button.connect("clicked", lambda *_: stage.load_view("menu", None))
 
 
 def prepare_top_result_view(stage, script, data):
@@ -78,7 +90,7 @@ DIGIT_SPAN_APP = {
     "views": {
         "menu": (fix_path("../menu_screen.json"), prepare_menu_view),
         "game": (fix_path("game_screen.json"), prepare_game_view),
-        "help": ("/dev/null", prepare_help_view),
+        "help": (fix_path("tutorial.json"), prepare_help_view),
         "result_top": (fix_path("../player_success_screen.json"), prepare_top_result_view),
         "result_meh": (fix_path("../player_fail_screen.json"), prepare_meh_result_view),
         "top_list": (fix_path("../high_scores_screen.json"), prepare_top_list_view)
