@@ -26,7 +26,8 @@ class Category(object):
 
 
 class Photo(object):
-    def __init__(self, path):
+    def __init__(self, photo_id, path):
+        self.id = photo_id
         self.path = path
 
 
@@ -72,22 +73,33 @@ class Scanner(object):
         all_photos = []
         new_photos = set()
         old_photos = self.get_photo_paths()
-        next_id = 0
+        next_cat_id = 0
+        next_photo_id = 0
         path_generator = os.walk(self.library.path)
         for current, _subdirs, files in path_generator:
             if current.startswith("."):
                 continue
-            new_category = Category(next_id, current)
-            next_id += 1
+            category_name = self._generate_category_name(current)
+            new_category = Category(next_cat_id, category_name)
+            next_cat_id += 1
             for photo_path in [os.path.join(current, name) for name in files]:
                 if self._test_file(photo_path):
                     all_photos.append([photo_path, current])
                     if photo_path in old_photos:
                         continue
-                    new_photo = Photo(photo_path)
+                    new_photo = Photo(next_photo_id, photo_path)
+                    next_photo_id += 1
                     self.library.add_category_photo(new_category, new_photo)
                     new_photos.add(new_photo)
         return new_photos, all_photos
+    
+    @staticmethod
+    def _generate_category_name(path):
+        pic_dir = xdg.get_dir('pictures')
+        if path == pic_dir:
+            return os.path.split(path)[1]
+        else:        
+            return path.partition(pic_dir)[2][1:]
     
     def _test_file(self, path):
         file_type = self.magic.file(path)

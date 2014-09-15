@@ -391,12 +391,9 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
             if index < len(self.albums):
                 album = self.albums[index]
                 tile = PhotoTile()
-                #pic_dir = xdg.get_dir('pictures')
-                #if item == pic_dir:
-                #    tile.label_text = item.split('/')[-1]
-                #else:        
-                #    tile.label_text = item.partition(pic_dir)[-1][1:]
+                
                 tile.label_text = album.name
+                print(tile.label_text)
                 tile.preview_path = album.get_preview_path()
                 
                 tile.connect("activate", self.tiles_handler, album.id)
