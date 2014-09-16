@@ -4,20 +4,38 @@ MxButton:disabled {
   border-image: none;
 }
 
+
+MxLabel.MenuHeader {
+  font-family: "Kelson Sans";
+  color: #fff;
+  font-size: 48pt;
+  font-weight: bold;
+}
+
+MxButton.MenuButton {
+  font-family: "Kelson Sans";
+  font-size: 36pt;
+  color: #006;
+  border-image: url('bf_button.png') 24;
+}
+
 BrainFeedbackLabel {
   color: #ffffff;
+  font-family: "Kelson Sans";
   font-size: 60;
   font-weight: bold;
 }
 
 BrainConsolation {
   color: #ffffff;
+  font-family: "Kelson Sans";
   font-size: 30;
   font-weight: bold;
 }
 
 BrainDismissButton {
   color: black;
+  font-family: "Kelson Sans";
   font-size: 30;
   font-weight: bold;
   border-image: url('backgrounds/red.png');
@@ -25,6 +43,7 @@ BrainDismissButton {
 
 BrainMalpaChangeRules {
   color: #ffffff;
+  font-family: "Kelson Sans";
   font-size: 30;
   font-weight: bold;
 }
