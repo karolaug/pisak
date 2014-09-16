@@ -46,6 +46,9 @@ class Button(Mx.Button, PropertyAdapter):
     """
     Generic Pisak button widget with label and icon.
     """
+
+    __gtype_name__ = "PisakButton"
+
     __gsignals__ = {
         "activate": (GObject.SIGNAL_RUN_FIRST, None, ()),
         "inactivate": (GObject.SIGNAL_RUN_FIRST, None, ())
