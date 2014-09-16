@@ -48,27 +48,27 @@ def prepare_library_view(stage, script, data):
 def prepare_photo_editing_view(stage, script, data):
     photo = script.get_object("slide")
     photo.photo_path = data["slideshow"].slide.photo_path
-    button = script.get_object("button_photo")
-    button.connect("clicked", lambda *_: stage.load_view("photo",
-                        {"photo": photo.photo_path, "album": data["album"]}))
+    button_to_stage(stage, script, "button_photo", "viewer/photo",
+                        {"photo": photo.photo_path, "album": data["album"]})
+    
 
-
-def fix_path(path):
+def _fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
 
 
-VIEWER_APP = {
-    "views": {
-        "photo": (fix_path("photo.json"), prepare_photo_view),
-        "album": (fix_path("album.json"), prepare_album_view),
-        "library": (fix_path("library.json"), prepare_library_view),
-        "photo_editing": (fix_path("photo_editing.json"),
-                          prepare_photo_editing_view),
-    },
-    "initial-view": "library",
-    "initial-data": None
+VIEWS = {
+    "viewer/photo": (_fix_path("photo.json"), prepare_photo_view),
+    "viewer/album": (_fix_path("album.json"), prepare_album_view),
+    "viewer/library": (_fix_path("library.json"), prepare_library_view),
+    "viewer/photo_editing": (_fix_path("photo_editing.json"),
+                        prepare_photo_editing_view)
 }
 
 
 if __name__ == "__main__":
-    launcher.run(VIEWER_APP)
+    _viewer_app = {
+        "views": VIEWS,
+        "initial-view": "viewer/library",
+        "initial-data": None
+    }
+    launcher.run(_viewer_app)

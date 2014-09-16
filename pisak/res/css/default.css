@@ -1,38 +1,41 @@
 /* JSON part*/
 /* different properties for different types*/
 
-MxButton {
-  fixed-position-set: True;
-  some-other-property: foo-bar-bar;
-  fixed-x: 100.0;
-}
-
-PisakSpellerButton MxImage {
-
-}
-
-PisakSpellerButton {
-
-}
-
 PisakSpellerText {
-  border-image: url("../tlo_pola_tekstowego.png")
+    font-size: 48pt;
+    font-family: Kelson Sans;
+    border-image: url("../tlo_pola_tekstowego.png")
+    color: black;
 }
 
-PisakSpellerKey {
-  font-size: 20;
+PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
+    color: black;
+    font-size: 18 pt;
+    font-family: Kelson Sans;
+    font-weight: bold;
+    border-image: url("speller_rest_button.png") 5;
 }
 
-PisakSpellerPrediction {
-
+PisakSpellerButton:hover, PisakSpellerKey:hover, PisakSpellerPrediction:hover {
+    color: white;
+    border-image: url("speller_hover_button.png");
 }
 
-PisakProgressBar {
-
+PisakSpellerButton:active, PisakSpellerKey:active, PisakSpellerPrediction:active {
+    color: white;
+    border-image: url("speller_active_button.png");
 }
 
-PisakBoxLayout {
+MxButton:scanning {
+    color: #ccc;
+    border-image: url("speller_scanning_button.png");
+}
 
+MxButton:disabled{
+    color: black;
+    font-size: 20;
+    font-family: serif;
+    border-image: url("speller_disabled_button.png") 5;
 }
 
 MxProgressBar.PisakViewerProgressBar {
