@@ -1,53 +1,61 @@
 [
     {
         "id": "main",
-        "type": "PisakBoxLayout",
+        "type": "ClutterActor",
         "x-expand": true,
         "y-expand": true,
-        "orientation": "vertical",
-        "spacing": 200,
-	"margin-top": 100,
+        "margin-top": 24,
+        "margin-bottom": 24,
+        "layout-manager": {
+                "id": "main_layout",
+                "type": "ClutterBoxLayout",
+                "orientation": "vertical",
+                "spacing": 24
+        },
         "children": [
-	    {
-                "id": "welcome_text",
-                "type": "ClutterText",
-                "font-name": "Sans 30",
-              	"text": "GRA xx",
-		"color": "white"
+    	    {
+                    "id": "welcome_text",
+                    "type": "MxLabel",
+                    "style-class": "MenuHeader",
+                    "text": "???"
             },
-	    {
-		"type": "PisakBoxLayout",
-        	"x-expand": true,
-        	"y-expand": true,
-        	"orientation": "vertical",
-        	"spacing": 70,
-		"children": [
-            		{
-               			"id": "start_button",
-               			"type": "BrainPuzzleButton",
-               			"label": "GRAJ",
-                                "label-font": "Courier 40",
-                		"width": 300,
-                		"height": 100
+    	    {
+                "id": "menu_box",
+                "type": "ClutterActor",
+            	"x-expand": true,
+            	"y-expand": true,
+                "margin-left": 48,
+                "margin-right": 48,
+                "layout-manager": {
+                    "id": "menu_layout",
+                    "type": "ClutterBoxLayout",
+                    "orientation": "vertical",
+                    "spacing": 12
+                },
+                "children": [
+                    {
+                        "id": "start_button",
+                        "type": "PisakButton",
+                        "label": "graj",
+                        "style-class": "MenuButton",
+                        "y-expand": true
             		},
-           		{
-                		"id": "tutorial_button",
-                		"type": "BrainPuzzleButton",
-                		"label": "INSTRUKCJA",
-                                "label-font": "Courier 30",
-                		"width": 300,
-                		"height": 100
-            		}/*,
+               		{
+                        "id": "tutorial_button",
+                        "type": "PisakButton",
+                        "label": "instrukcja",
+                        "style-class": "MenuButton",
+                        "y-expand": true
+            		},
             		{
-                		"id": "score_table_button",
-                		"type": "BrainPuzzleButton",
-                		"label": "TABELA WYNIKÓW",
-                                "label-font": "Courier 20",
-                		"width": 300,
-                		"height": 100
-            		}*/
-		]
-	    }
+                        "id": "score_table_button",
+                        "type": "PisakButton",
+                        "label": "tabela wyników",
+                        "style-class": "MenuButton",
+                        "y-expand": true
+            		}
+        		]
+    	    }
         ]
     }
 ]

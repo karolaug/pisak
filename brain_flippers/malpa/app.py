@@ -6,6 +6,7 @@ import os.path
 
 def prepare_menu_view(stage, script, data):
     GAME_TITLE = "Małpa"
+    stage.check_view = False
     title = script.get_object("welcome_text")
     title.set_text(GAME_TITLE)
     
@@ -15,8 +16,13 @@ def prepare_menu_view(stage, script, data):
     help_button = script.get_object("tutorial_button")
     help_button.connect("activate", lambda *_: stage.load_view("help", None))
 
+    help_button = script.get_object("score_table_button")
+    help_button.connect("activate", lambda *_: stage.load_view("top_list", False))
+    
+
 def prepare_game_view(stage, script, data):
     logic = script.get_object("logic")
+    stage.check_view = True
     
     def show_results(*args):
         data = {"score": logic.score, "game": "malpa"}
@@ -29,6 +35,7 @@ def prepare_game_view(stage, script, data):
 
 
 def prepare_help_view(stage, script, data):
+    stage.check_view = True
     back_button = script.get_object("back_button")
     back_button.connect("clicked", lambda *_: stage.load_view("menu", None))
     
@@ -42,6 +49,7 @@ def prepare_top_result_view(stage, script, data):
         data = {"score": score_logic.game_score}
         stage.load_view("top_list", data)
 
+    stage.check_view = True
     score_logic = script.get_object("logic")
     score_logic.game_score = data.get("score") 
     score_logic.game_name = "malpa"
@@ -51,6 +59,7 @@ def prepare_top_result_view(stage, script, data):
     score_logic.connect("move-on", show_top_list)
 
 def prepare_meh_result_view(stage, script, data):
+    stage.check_view = True
     score = data.get("score")
     score_message = str(score)
     message_label = script.get_object("player_score_value")
@@ -61,12 +70,19 @@ def prepare_meh_result_view(stage, script, data):
 
 
 def prepare_top_list_view(stage, script, data):
+    stage.check_view = True
     title_text = "Dzisiejsze wyniki:"
     def back_to_menu(*args):
         stage.load_view("menu", None)
     logic = script.get_object("logic")
     logic.game = "malpa"
-    logic.only_today = True
+    if data == False:
+        logic.only_today = False
+        title_text = "WYNIKI Z KIEDYKOLWIEK:"
+        
+    else:
+        logic.only_today = True
+        title_text = "DZISIEJSZE WYNIKI:"
     logic.results_table = script.get_object("score_table")
     logic.best_score = script.get_object("best_score_value")
     script.get_object("title").set_text(title_text)
