@@ -10,24 +10,19 @@ def prepare_speller_view(stage, script, data):
             "main_panel/main", None))
 
 
-def fix_path(path):
+def _fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
 
 
 VIEWS = {
-    "speller/main": (fix_path("speller_combined.json"), prepare_speller_view)
-}
-
-
-_SPELLER_APP = {
-    "views": {
-        "speller/main": (fix_path("speller_combined.json"),
-                         prepare_speller_view)
-    },
-    "initial-view": "speller/main",
-    "initial-data": None
+    "speller/main": (_fix_path("speller_combined.json"), prepare_speller_view)
 }
 
 
 if __name__ == "__main__":
-    launcher.run(_SPELLER_APP)
+    _speller_app = {
+        "views": VIEWS,
+        "initial-view": "speller/main",
+        "initial-data": None
+    }
+    launcher.run(_speller_app)

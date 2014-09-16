@@ -49,31 +49,23 @@ def prepare_photo_editing_view(stage, script, data):
                         {"photo": photo.photo_path, "album": data["album"]})
 
 
-def fix_path(path):
+def _fix_path(path):
     return os.path.join(os.path.split(__file__)[0], path)
 
 
 VIEWS = {
-    "viewer/photo": (fix_path("photo.json"), prepare_photo_view),
-    "viewer/album": (fix_path("album.json"), prepare_album_view),
-    "viewer/library": (fix_path("library.json"), prepare_library_view),
-    "viewer/photo_editing": (fix_path("photo_editing.json"),
+    "viewer/photo": (_fix_path("photo.json"), prepare_photo_view),
+    "viewer/album": (_fix_path("album.json"), prepare_album_view),
+    "viewer/library": (_fix_path("library.json"), prepare_library_view),
+    "viewer/photo_editing": (_fix_path("photo_editing.json"),
                         prepare_photo_editing_view)
 }
 
 
-_VIEWER_APP = {
-    "views": {
-        "viewer/photo": (fix_path("photo.json"), prepare_photo_view),
-        "viewer/album": (fix_path("album.json"), prepare_album_view),
-        "viewer/library": (fix_path("library.json"), prepare_library_view),
-        "viewer/photo_editing": (fix_path("photo_editing.json"),
-                          prepare_photo_editing_view),
-    },
-    "initial-view": "viewer/library",
-    "initial-data": None
-}
-
-
 if __name__ == "__main__":
-    launcher.run(_VIEWER_APP)
+    _viewer_app = {
+        "views": VIEWS,
+        "initial-view": "viewer/library",
+        "initial-data": None
+    }
+    launcher.run(_viewer_app)
