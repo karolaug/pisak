@@ -6,48 +6,48 @@
         "y-expand": true,
         "orientation": "vertical",
         "spacing": 200,
-	"margin-top": 100,
+        "margin-top": 100,
         "children": [
-	    {
-                "id": "welcome_text",
-                "type": "ClutterText",
-                "font-name": "Sans 30",
-              	"text": "GRA xx",
-		"color": "white"
+    	    {
+                    "id": "welcome_text",
+                    "type": "ClutterText",
+                    "font-name": "Sans 30",
+                  	"text": "GRA xx",
+                    "color": "white"
             },
-	    {
-		"type": "PisakBoxLayout",
-        	"x-expand": true,
-        	"y-expand": true,
-        	"orientation": "vertical",
-        	"spacing": 70,
-		"children": [
-            		{
-               			"id": "start_button",
-               			"type": "BrainPuzzleButton",
-               			"label": "GRAJ",
-                                "label-font": "Courier 40",
+    	    {
+                "type": "PisakBoxLayout",
+            	"x-expand": true,
+            	"y-expand": true,
+            	"orientation": "vertical",
+            	"spacing": 70,
+                "children": [
+                    {
+                        "id": "start_button",
+                        "type": "BrainPuzzleButton",
+               	        "label": "Graj",
+                        "label-font": "Courier 40",
                 		"width": 300,
                 		"height": 100
             		},
-           		{
+               		{
                 		"id": "tutorial_button",
                 		"type": "BrainPuzzleButton",
-                		"label": "INSTRUKCJA",
-                                "label-font": "Courier 30",
+                		"label": "Instrukcja",
+                        "label-font": "Courier 30",
                 		"width": 300,
                 		"height": 100
-            		}/*,
+            		},
             		{
                 		"id": "score_table_button",
                 		"type": "BrainPuzzleButton",
                 		"label": "TABELA WYNIKÓW",
-                                "label-font": "Courier 20",
+                        "label-font": "Courier 20",
                 		"width": 300,
                 		"height": 100
-            		}*/
-		]
-	    }
+            		}
+        		]
+    	    }
         ]
     }
 ]
