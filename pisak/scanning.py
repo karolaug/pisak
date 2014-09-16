@@ -3,7 +3,7 @@ Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx, Gdk
 
-from pisak import properties, unit
+from pisak import properties, unit, audio
 
 
 class Scannable(object):
@@ -393,6 +393,9 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
                 selection.disable_hilite()
 
     def _expose_next(self):
+        audiofile = audio.AudioFile('button-24.wav')    
+        audiofile.play()
+        audiofile.close()
         if self.index is not None:
             selection = self._subgroups[self.index]
             if hasattr(selection, "disable_hilite"):
@@ -423,6 +426,8 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
             display = Gdk.Display.get_default()
             screen = display.get_default_screen()
             display.warp_pointer(screen, unit.w(1), unit.h(1))
+
+
 
         if self.timeout_token != token:
             # timeout event not from current cycle
