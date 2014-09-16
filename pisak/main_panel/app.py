@@ -1,5 +1,7 @@
 import os
 
+from pisak import launcher
+
 
 def button_to_view(stage, script, button_name, stage_to_load, data=None):
     button = script.get_object(button_name)
@@ -19,3 +21,17 @@ def fix_path(path):
 VIEWS = {
     "main_panel/main": (fix_path("main_panel.json"), prepare_main_panel_view)
 }
+
+
+_MAIN_PANEL_APP = {
+    "views": {
+        "main_panel/main": (fix_path("main_panel.json"),
+                            prepare_main_panel_view)
+    },
+    "initial-view": "main_panel/main",
+    "initial-data": None
+}
+
+
+if __name__ == "__main__":
+    launcher.run(_MAIN_PANEL_APP)
