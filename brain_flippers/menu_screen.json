@@ -35,21 +35,21 @@
                 "children": [
                     {
                         "id": "start_button",
-                        "type": "PisakButton",
+                        "type": "BrainButton",
                         "label": "graj",
                         "style-class": "MenuButton",
                         "y-expand": true
             		},
                		{
                         "id": "tutorial_button",
-                        "type": "PisakButton",
+                        "type": "BrainButton",
                         "label": "instrukcja",
                         "style-class": "MenuButton",
                         "y-expand": true
             		},
             		{
                         "id": "score_table_button",
-                        "type": "PisakButton",
+                        "type": "BrainButton",
                         "label": "tabela wyników",
                         "style-class": "MenuButton",
                         "y-expand": true

@@ -14,6 +14,45 @@ class TryAgain(Mx.Button):
     def __init__(self):
         super().__init__()
 
+
+class Button(Mx.Button, PropertyAdapter):
+    __gtype_name__ = "BrainButton"
+    __gsignals__ = {
+        "activate": (
+            GObject.SIGNAL_RUN_FIRST,
+            None,
+            ())
+    }
+    __gproperties__ = {
+         "label": (
+             GObject.TYPE_STRING,
+             "label on the key",
+             "label displayed on the key",
+             "",
+             GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.set_reactive(True)
+        self.connect("button-press-event", self.fire_activate)
+        self.connect("touch-event", self.fire_activate)
+
+    @property
+    def label(self):
+        return self.get_label()
+
+    @label.setter
+    def label(self, value):
+        self.set_label(value)
+
+    def fire_activate(self, source, event):
+        if isinstance(event, Clutter.TouchEvent):
+            if event.type != 13:  # touch-begin type of event
+                return None
+        self.emit("activate")
+
+
 class PuzzleButton(Clutter.Actor, PropertyAdapter):
     __gtype_name__ = "BrainPuzzleButton"
     __gsignals__ = {
