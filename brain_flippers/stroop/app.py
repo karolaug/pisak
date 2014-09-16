@@ -376,6 +376,7 @@ class BrainStroopStage(Clutter.Stage):
 
     def enter_game_view(self, *args):
         self._load_view_from_script("game")
+        self.check_view = True
         self.enable_game_view()
 
     def log_motion(self, *args):
@@ -383,14 +384,13 @@ class BrainStroopStage(Clutter.Stage):
      
     def check_idle(self, *args):
         if self.check_view:
-            if self.motion_on + 20 < time.time():
+            if self.motion_on + 40 < time.time():
                 self.remove_all_children()
                 self.enter_initial_view()
         return True
 
     def enable_game_view(self):
         game_actor = self.script.get_object("main")
-        self.check_view = True
         game_actor.connect("game-end", self.enter_player_result_view)
 
     def enter_player_result_view(self, game_outcome):
@@ -406,6 +406,7 @@ class BrainStroopStage(Clutter.Stage):
             
     def enter_player_success_view(self, game_outcome): 
         self._load_view_from_script("player_success")
+        self.check_view = True
         self.adjust_player_success_view(game_outcome)
         self.enable_player_success_view()
 
@@ -476,6 +477,7 @@ class BrainStroopStage(Clutter.Stage):
 
     def enter_player_fail_view(self, game_outcome):
         self._load_view_from_script("player_fail")
+        self.check_view = True
         self.adjust_player_fail_view(game_outcome)
         self.enable_player_fail_view()
 
@@ -503,6 +505,7 @@ class BrainStroopStage(Clutter.Stage):
 
     def enter_high_scores_view(self, source, request):
         self._load_view_from_script("high_scores")
+        self.check_view = True
         self.adjust_high_scores_view(request)
         self.enable_high_scores_view()
 

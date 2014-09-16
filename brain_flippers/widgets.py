@@ -489,8 +489,11 @@ class TopResultsListLogic(Clutter.Actor, PropertyAdapter):
         if self.only_today:
             results = score_manager.get_best_today(self.game)
         else:
-            results = scoe_manager.get_best_ever(self.game)
-        best_score = str(results[0][1])
+            results = score_manager.get_best_ever(self.game)
+        if len(results) == 0:
+            best_score = ""
+        else:
+            best_score = str(results[0][1])
         self.best_score.set_text(best_score)
         for idx, row in enumerate(self.results_table.get_children()):
             if idx < len(results):

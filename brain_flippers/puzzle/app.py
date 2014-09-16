@@ -1,5 +1,6 @@
 import sys
 import os.path
+import time
 
 from gi.repository import Clutter, Mx
 
@@ -45,7 +46,20 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
         self.set_background_color(black)
         self.set_layout_manager(Clutter.BinLayout())
         self.context = context
+        self.connect("motion-event", self.log_motion)
+        Clutter.threads_add_timeout(0, 1000, self.check_idle)
         self.enter_welcome_view()
+
+    def log_motion(self, *args):
+        self.motion_on = time.time()
+
+    def check_idle(self, *args):
+        print("checking idle")
+        if self.check_view:
+            print(self.check_view, self.motion_on, time.time())
+            if self.motion_on + 40 < time.time():
+                self.enter_welcome_view()
+        return True
 
     def _init_views(self):
         current_path = os.path.split(__file__)[0]
@@ -73,6 +87,7 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
         
     def enter_welcome_view(self, *args):
         self.load_view_from_script("welcome_screen")
+        self.check_view = False
         self.adjust_welcome_view()
         self.enable_welcome_view()
 
@@ -84,9 +99,13 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
         start_button = self.script.get_object("start_button")
         if start_button:
             start_button.connect("activate", self.enter_game_view)
+        scores_button = self.script.get_object("scores_button")
+        if scores_button:
+            scores_button.connect("activate", self.enter_high_scores_view, "ever")
 
     def enter_game_view(self, *args):
         self.load_view_from_script("game_screen")
+        self.check_view = True
         self.enable_game_view()
 
     def enable_game_view(self):
@@ -97,6 +116,7 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
     def enter_player_death_view(self, *args):
         self.load_view_from_script("player_death")
         self.adjust_player_death_view()
+        self.check_view = True
         Clutter.threads_add_timeout(0, self.death_view_idle, self.enter_welcome_view, None)
 
     def adjust_player_death_view(self):
@@ -115,6 +135,7 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
             
     def enter_player_success_view(self, game_outcome): 
         self.load_view_from_script("player_success")
+        self.check_view = True
         self.adjust_player_success_view(game_outcome)
         self.enable_player_success_view()
 
@@ -185,6 +206,7 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
 
     def enter_player_fail_view(self, game_outcome):
         self.load_view_from_script("player_fail")
+        self.check_view = True
         self.adjust_player_fail_view(game_outcome)
         self.enable_player_fail_view()
 
@@ -212,6 +234,7 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
 
     def enter_high_scores_view(self, source, request):
         self.load_view_from_script("high_scores")
+        self.check_view = True
         self.adjust_high_scores_view(request)
         self.enable_high_scores_view()
 

@@ -14,6 +14,7 @@ def prepare_menu_view(stage, script, data):
     GAME_TITLE = "Sejf"
     title = script.get_object("welcome_text")
     title.set_text(GAME_TITLE)
+    stage.check_view = False
 
     game_button = script.get_object("start_button")
     game_button.connect("activate", lambda *_: stage.load_view("game", None))
@@ -21,9 +22,13 @@ def prepare_menu_view(stage, script, data):
     help_button = script.get_object("tutorial_button")
     help_button.connect("activate", lambda *_: stage.load_view("help", None))
 
+    help_button = script.get_object("score_table_button")
+    help_button.connect("activate", lambda *_: stage.load_view("top_list", False))
+
 
 def prepare_game_view(stage, script, data):
     logic = script.get_object("logic")
+    stage.check_view = True
     
     def show_results(*args):
         data = {"score": logic.score, "game": "digit_span"}
@@ -38,6 +43,7 @@ def prepare_game_view(stage, script, data):
 def prepare_help_view(stage, script, data):
     instruction_text = script.get_object("text")
     instruction_text.set_text(_INSTRUCTION_TEXT)
+    stage.check_view = True
 
     back_button = script.get_object("backButton")
     back_button.connect("clicked", lambda *_: stage.load_view("menu", None))
@@ -49,6 +55,7 @@ def prepare_top_result_view(stage, script, data):
     def show_top_list(*args):
         data = {"score": score_logic.game_score}
         stage.load_view("top_list", data)
+    stage.check_view = True
 
     score_logic = script.get_object("logic")
     score_logic.game_score = data.get("score") 
@@ -62,6 +69,7 @@ def prepare_meh_result_view(stage, script, data):
     def back_to_menu(*args):
         stage.load_view("menu", None)
 
+    stage.check_view = True
     score_logic = script.get_object("logic")
     score_logic.game_score = data.get("score")
     score_logic.game_name = "digit_span"
@@ -72,9 +80,16 @@ def prepare_top_list_view(stage, script, data):
     title_text = "Dzisiejsze wyniki:"
     def back_to_menu(*args):
         stage.load_view("menu", None)
+    stage.check_view = True
     logic = script.get_object("logic")
     logic.game = "digit_span"
-    logic.only_today = True
+    if data == False:
+        logic.only_today = False
+        title_text = "WYNIKI Z KIEDYKOLWIEK:"
+        
+    else:
+        logic.only_today = True
+        title_text = "DZISIEJSZE WYNIKI:"
     logic.results_table = script.get_object("score_table")
     logic.best_score = script.get_object("best_score_value")
     script.get_object("title").set_text(title_text)

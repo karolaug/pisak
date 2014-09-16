@@ -27,7 +27,15 @@
                 "id": "start_button",
                 "type": "BrainPuzzleButton",
                 "label": "START",
-                "label-font": "Courier 40",
+                "label-font": "Courier 35",
+                "width": 300,
+                "height": 100
+            },
+            {
+                "id": "scores_button",
+                "type": "BrainPuzzleButton",
+                "label": "WYNIKI",
+                "label-font": "Courier 35",
                 "width": 300,
                 "height": 100
             }

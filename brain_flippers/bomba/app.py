@@ -16,6 +16,9 @@ def prepare_menu_view(stage, script, data):
     help_button = script.get_object("tutorial_button")
     help_button.connect("activate", lambda *_: stage.load_view("help", None))
 
+    help_button = script.get_object("score_table_button")
+    help_button.connect("activate", lambda *_: stage.load_view("top_list", False))
+
 def prepare_game_view(stage, script, data):
     logic = script.get_object("logic")
     stage.check_view = True
@@ -65,18 +68,23 @@ def prepare_meh_result_view(stage, script, data):
     button = script.get_object("try_again")
     button.connect("activate", lambda *_: stage.load_view("menu", None))
 
-def prepare_top_list_view(stage, script, data):
+def prepare_top_list_view(stage, script, data=None):
     def back_to_menu(*args):
         stage.load_view("menu", None)
         
-    self.check_view = True
-    title_text = "Dzisiejsze wyniki:"
+    stage.check_view = True
     logic = script.get_object("logic")
     logic.game = "bomba"
-    logic.only_today = True
+    if data == False:
+        logic.only_today = False
+        title_text = "WYNIKI Z KIEDYKOLWIEK:"
+        
+    else:
+        logic.only_today = True
+        title_text = "DZISIEJSZE WYNIKI:"
+    script.get_object("title").set_text(title_text)
     logic.results_table = script.get_object("score_table")  # workaround for some annoying problems
     logic.best_score = script.get_object("best_score_value")
-    script.get_object("title").set_text(title_text)
     exit_button = script.get_object("exit_button")
     exit_button.connect("activate", back_to_menu)
     logic.generate_results()
