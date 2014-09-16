@@ -118,7 +118,7 @@
         "y-expand": true,
         "ratio_spacing" : 0.0136,
         "children": [
-                        "button_9", "button_8", "button_7", "button_6",
+                        "button_exit", "button_8", "button_7", "button_6",
                         "button_5","button_4", "button_3", "button_2",
                         "button_1", "menu_header"
                     ]
@@ -271,7 +271,7 @@
                    ]
     },
     {
-        "id": "button_9",
+        "id": "button_exit",
         "type": "PisakSpellerButton",
         "text": "PANEL STARTOWY",
         "x-align": "start",
@@ -279,14 +279,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "WYJŚCIE",
-        "icon-name": "wyjdz",
-        "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "general/exit",
-                           "object": "main"
-                       }
-                   ]
+        "icon-name": "wyjdz"
     },
 
     {
