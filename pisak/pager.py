@@ -1,7 +1,7 @@
 '''
 Basic implementation of sliding page widget.
 '''
-from numpy import ceil
+from math import ceil
 
 from gi.repository import Clutter, GObject
 from pisak import properties, scanning, layout, unit
@@ -140,7 +140,7 @@ class PagerWidget(layout.Bin):
 
     @data_source.setter
     def data_source(self, value):
-        self._data_source = value            
+        self._data_source = value         
         
     @property
     def rows(self):
