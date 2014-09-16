@@ -14,12 +14,12 @@
             [
                 {
                     "id": "exit_button",
-                    "type": "BrainPuzzleButton",
+                    "type": "BrainButton",
+                    "style-class": "MenuButton",
                     "x-align": "center",
                     "label": "WYJŚCIE",
-                    "label-font": "Courier 30",
-                    "width": 250,
-                    "height": 70
+                    "width": 300,
+                    "height": 150
                 },
                 {
                     "id": "best_score",

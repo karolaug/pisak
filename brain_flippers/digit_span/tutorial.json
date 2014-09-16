@@ -19,9 +19,10 @@
 	    },
 	    {
 		"id": "backButton",
-		"type": "MxButton",
-		"height": 100,
-		"width": 100,
+		"type": "BrainButton",
+                "style-class": "MenuButton",
+		"height": 150,
+		"width": 300,
 		"label": "Menu"
 	    }
 	]
