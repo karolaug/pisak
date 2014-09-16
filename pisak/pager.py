@@ -140,8 +140,8 @@ class PagerWidget(layout.Bin):
 
     @data_source.setter
     def data_source(self, value):
-        self._data_source = value         
-        
+        self._data_source = value
+
     @property
     def rows(self):
         return self._rows
