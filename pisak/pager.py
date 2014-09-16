@@ -1,6 +1,8 @@
 '''
 Basic implementation of sliding page widget.
 '''
+from numpy import ceil
+
 from gi.repository import Clutter, GObject
 from pisak import properties, scanning, layout, unit
 
@@ -60,7 +62,14 @@ class _FlipGroup(scanning.Group):
 
 class PagerWidget(layout.Bin):
     __gtype_name__ = "PisakPagerWidget"
-
+    __gsignals__ = {
+        "progressed": (
+            GObject.SIGNAL_RUN_FIRST, None,
+            (GObject.TYPE_FLOAT, GObject.TYPE_INT64)),
+        "limit-declared": (
+            GObject.SIGNAL_RUN_FIRST, None,
+            (GObject.TYPE_INT64,))
+    }
     __gproperties__ = {
         "data-source": (
             DataSource.__gtype__, "", "",
@@ -79,12 +88,19 @@ class PagerWidget(layout.Bin):
             "mouse", GObject.PARAM_READWRITE),
         "page-ratio-spacing": (
             GObject.TYPE_FLOAT, None, None,
-            0, 1., 0, GObject.PARAM_READWRITE)
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "idle-duration": (
+            GObject.TYPE_INT64, "idle duration",
+            "duration of one page exposition", 0,
+            GObject.G_MAXUINT, 5000, GObject.PARAM_READWRITE),
     }
 
     def __init__(self, rows=3, columns=4):
         super().__init__()
         self.is_running = False
+        self.page_index = 0
+        self.pages_count = 1
+        self.idle_duration = 3000
         self._data_source = None
         self._page_strategy = None
         self._page_selector = None
@@ -92,7 +108,7 @@ class PagerWidget(layout.Bin):
         self._rows = rows
         self._columns = columns
         self._current_page = None
-        self.connect("notify::mapped", self.show_initial_page)
+        self.connect("notify::mapped", self._show_initial_page)
 
     @property
     def page_strategy(self):
@@ -124,8 +140,8 @@ class PagerWidget(layout.Bin):
 
     @data_source.setter
     def data_source(self, value):
-        self._data_source = value
-    
+        self._data_source = value            
+        
     @property
     def rows(self):
         return self._rows
@@ -141,26 +157,59 @@ class PagerWidget(layout.Bin):
     @columns.setter
     def columns(self, value):
         self._columns = value
+
+    @property
+    def idle_duration(self):
+        return self._idle_duration
+
+    @idle_duration.setter
+    def idle_duration(self, value):
+        self._idle_duration = value
     
-    def show_initial_page(self, source, event):
+    def _show_initial_page(self, source, event):
         if self.data_source is not None and self._current_page is None:
+            self.pages_count = ceil(len(self.data_source.data) \
+                                    / (self.rows*self.columns))
+            self.emit("limit-declared", self.pages_count)
+            if self.pages_count > 0:
+                self.emit("progressed", float(self.page_index+1) \
+                        / self.pages_count,
+                        self.page_index+1)
+            else:
+                self.emit("progressed", 0, 0)
             tiles = self.data_source.get_tiles(self.columns * self.rows)
-            self._current_page = _Page(self.rows, self.columns, tiles,
-                self.page_strategy, self.page_selector, self.page_ratio_spacing)
-            self.add_child(self._current_page)
+            if len(tiles) > 0:
+                self._current_page = _Page(self.rows, self.columns, tiles,
+                    self.page_strategy, self.page_selector, self.page_ratio_spacing)
+                self.add_child(self._current_page)
 
     def scan_page(self):
+        """
+        Start scanning the current page.
+        """
         self.get_stage().pending_group = self._current_page
 
     def next_page(self):
-        tiles = self.data_source.get_tiles(self.columns * self.rows)
-        _new_page = _Page(self.rows, self.columns, tiles,
-            self.page_strategy, self.page_selector, self.page_ratio_spacing)
-        self.remove_child(self._current_page)
-        self.add_child(_new_page)
-        self._current_page = _new_page
+        """
+        Move to the next page.
+        """
+        if self.pages_count > 1:
+            tiles = self.data_source.get_tiles(self.columns * self.rows)
+            if len(tiles) > 0:
+                self.page_index = (self.page_index+1) % self.pages_count
+                _new_page = _Page(self.rows, self.columns, tiles,
+                    self.page_strategy, self.page_selector, self.page_ratio_spacing)
+                self.remove_child(self._current_page)
+                self.add_child(_new_page)
+                self._current_page = _new_page
+                self.emit("progressed", float(self.page_index+1) \
+                        / self.pages_count,
+                        self.page_index+1)
 
     def automatic_timeout(self, data):
+        """
+        Handler function for the automatic page flipping timeout.
+        """
         if self.is_running:
             self.next_page()
             return True
@@ -168,8 +217,14 @@ class PagerWidget(layout.Bin):
             return False
 
     def run_automatic(self):
+        """
+        Start automatic page flipping.
+        """
         self.is_running = True
-        Clutter.threads_add_timeout(0, 3000, self.automatic_timeout, None)
+        Clutter.threads_add_timeout(0, self.idle_duration, self.automatic_timeout, None)
 
     def stop_automatic(self):
+        """
+        Stop automatic page flipping.
+        """
         self.is_running = False
