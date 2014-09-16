@@ -23,14 +23,6 @@ class Button(Mx.Button, PropertyAdapter):
             None,
             ())
     }
-    __gproperties__ = {
-         "label": (
-             GObject.TYPE_STRING,
-             "label on the key",
-             "label displayed on the key",
-             "",
-             GObject.PARAM_READWRITE)
-    }
 
     def __init__(self):
         super().__init__()
@@ -38,19 +30,17 @@ class Button(Mx.Button, PropertyAdapter):
         self.connect("button-press-event", self.fire_activate)
         self.connect("touch-event", self.fire_activate)
 
-    @property
-    def label(self):
-        return self.get_label()
-
-    @label.setter
-    def label(self, value):
-        self.set_label(value)
-
     def fire_activate(self, source, event):
         if isinstance(event, Clutter.TouchEvent):
             if event.type != 13:  # touch-begin type of event
                 return None
         self.emit("activate")
+
+    def hilite_on(self):
+        self.style_pseudo_class_add("hover")
+
+    def hilite_off(self, *args):
+        self.style_pseudo_class_remove("hover")
 
 
 class PuzzleButton(Clutter.Actor, PropertyAdapter):
