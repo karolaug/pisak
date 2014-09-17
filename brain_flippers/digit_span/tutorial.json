@@ -3,6 +3,7 @@
 	"id": "main",
 	"type": "PisakBoxLayout",
 	"orientation": "vertical",
+	"margin": [50, 100, 50, 100],
 	"spacing": 50,
 	"children": [
 	    {
