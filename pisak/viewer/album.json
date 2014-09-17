@@ -22,7 +22,7 @@
         "ratio-margin-bottom": 0.04,
         "ratio-spacing": 0.02,
         "orientation": "vertical",
-        "children": ["progress_bar", "middle_box", "header"]
+        "children": ["progress_bar", "middle_box_group", "header"]
     },
     {
         "id": "header",
