@@ -66,7 +66,7 @@ def prepare_meh_result_view(stage, script, data):
     message_label.set_text(score_message)
 
     button = script.get_object("try_again")
-    button.connect("activate", lambda *_: stage.load_view("game", None))
+    button.connect("activate", lambda *_: stage.load_view("menu", None))
 
 
 def prepare_top_list_view(stage, script, data):

@@ -488,9 +488,12 @@ class BrainStroopStage(Clutter.Stage):
         average_score = score_manager.get_average_ever("stroop")
         if average_score:
             average_score_entry = self.script.get_object("average_score_value")
-            average_score_entry.set_text(str(int(average_score)))
+            if average_score_entry:
+                average_score_entry.set_text(str(int(average_score)))
         else:
-            self.script.get_object("average_score").hide()
+            average_score_object = self.script.get_object("average_score")
+            if average_score_object:
+                average_score_object.hide()
         
     def enable_player_fail_view(self):
         try_again_button = self.script.get_object("try_again")

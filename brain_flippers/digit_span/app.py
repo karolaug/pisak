@@ -74,6 +74,7 @@ def prepare_meh_result_view(stage, script, data):
     score_logic.game_score = data.get("score")
     score_logic.game_name = "digit_span"
     score_logic.connect("finished", back_to_menu)
+    script.get_object("try_again").connect("activate", back_to_menu)
 
 
 def prepare_top_list_view(stage, script, data):
