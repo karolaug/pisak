@@ -99,9 +99,9 @@
     {
         "id": "button_automatic",
         "type": "PisakViewerButton",
+        "icon-size": 50,
         "label": "AUTOMAT",
         "icon-name": "auto",
-        "icon-size": 50,
         "ratio-width": 0.22,
         "ratio-height": 0.1,
         "signals": [
