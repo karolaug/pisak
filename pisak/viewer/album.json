@@ -16,18 +16,19 @@
         "id": "main_box",
         "type": "PisakBoxLayout",
         "x-align": "start",
+        "y-align": "end",
         "x-expand": true,
         "y-expand": true,
-        "ratio-margin-top": 0.12,
+        "ratio-margin-top": 0.05,
         "ratio-margin-bottom": 0.04,
-        "ratio-spacing": 0.02,
+        "ratio-spacing": 0.015,
         "orientation": "vertical",
         "children": ["progress_bar", "middle_box_group", "header"]
     },
     {
         "id": "header",
         "type": "MxLabel",
-        "text": "ALBUM",
+        "style-class": "PisakViewerAlbumHeader",
         "x-expand": true,
         "margin-right": 100,
         "x-align": "end"
@@ -47,7 +48,7 @@
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
-        "ratio-spacing": 0.1,
+        "ratio-spacing": 0.05,
         "children": ["pager", "button_menu"]
     },
     {
@@ -73,7 +74,7 @@
         "id": "button_menu_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
-        "ratio-spacing": 0.01,
+        "ratio-spacing": 0.015,
         "y-expand": true,
         "y-align": "end",
         "children": ["button_start", "button_library",  "button_select_page", "button_next_page",
@@ -83,22 +84,22 @@
         "id": "button_library",
         "type": "PisakViewerButton",
         "label": "BIBLIOTEKA",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-width": 0.24,
+        "ratio-height": 0.10
     },
     {
         "id": "button_start",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-width": 0.24,
+        "ratio-height": 0.10
     },
     {
         "id": "button_automatic",
         "type": "PisakViewerButton",
         "label": "AUTOMAT",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1,
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
         "signals": [
                        {
                            "name": "clicked",
@@ -116,8 +117,8 @@
         "id": "button_select_page",
         "type": "PisakViewerButton",
         "label": "WYBIERZ STRONĘ",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1,
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
         "signals": [
                        {
                            "name": "clicked",
@@ -130,8 +131,8 @@
         "id": "button_next_page",
         "type": "PisakViewerButton",
         "label": "NASTĘPNA STRONA",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1,
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
         "signals": [
                        {
                            "name": "clicked",
@@ -143,9 +144,9 @@
     {
         "id": "pager",
         "type": "PisakPagerWidget",
-        "page-ratio-spacing": 0.01,
-        "ratio-height": 0.7,
-        "ratio-width": 0.7,
+        "page-ratio-spacing": 0.015,
+        "ratio-height": 0.75,
+        "ratio-width": 0.71,
         "y-align": "start",
         "rows": 3,
         "columns": 3,
@@ -161,21 +162,16 @@
     {
         "id": "library_data",
         "type": "PisakViewerAlbumTilesSource",
-        "tile-ratio-height": 0.2,
-        "tile-ratio-width": 0.15,
-        "tile-ratio-spacing": 0.01,
-        "tile-preview-ratio-width": 0.12,
-        "tile-preview-ratio-height": 0.12
+        "tile-ratio-height": 0.25,
+        "tile-ratio-width": 0.22
     },
     {
         "id": "progress_bar",
         "type": "PisakViewerProgressBar",
         "ratio-width": 1,
         "related-object": "pager",
-        "progress": 0.3,
         "progress-transition-duration": 1000,
         "ratio-height": 0.05,
-        "counter-limit": 10,
-        "label-ratio-x-offset": 0.9
+        "label-ratio-x-offset": 0.85
     }
 ]
