@@ -69,8 +69,8 @@ TUTORIAL_TEXT = {
          "ODPOWIADAJĄCE KOLOROWI LITER, CZYLI W TYM PRZYPADKU\n"
          "CZERWONE. W TEN SPOSÓB ZDOBĘDZIESZ PUNKT.",
     "2": """TERAZ WIDZIMY SŁOWO "CZERWONY" NAPISANE ZIELONYMI\n"""
-         "LITERAMI, WIĘC JAK NAJSZYBCIEJ WYBIERAMY ZIELONE POLE\n"
-         "I ZDOBYWAMY DRUGI PUNKT..."
+         "LITERAMI, WIĘC JAK NAJSZYBCIEJ WYBIERAMY ZIELONE\n"
+         "POLE I ZDOBYWAMY DRUGI PUNKT..."
 }
 
 class BrainStroopGame(Clutter.Actor):
@@ -99,7 +99,7 @@ class BrainStroopGame(Clutter.Actor):
         self.player_errors = 0
         self.player_clock_quantum = 1000
         self.player_clock_ticking = False
-        self.player_score_coeff = 1000000
+        self.player_score_coeff = 1000
         self.player_lives = 4
         self.player_lives_left = self.player_lives
         self.rules_changed_view_idle = 2000
