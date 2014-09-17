@@ -37,7 +37,7 @@
     {
         "id": "stimulus",
         "type": "BrainDigitSpanStimulus",
-        "background-color": "gray",
+        "background-color": "black",
         "x-expand": true,
         "y-expand": true
     },

@@ -199,11 +199,13 @@ class Stimulus(Clutter.Actor):
 
     def _show_digit(self):
         digit_text = str(self._code[self._index])
+        self.digit_label.set_style_class("digit")
         self.digit_label.set_text(digit_text)
         self.digit_label.show()
         Clutter.threads_add_timeout(0, 1050, self._hide_label, None)
 
     def _hide_label(self, data):
+        self.digit_label.set_style_class("")
         self.digit_label.hide()
         return False
 
