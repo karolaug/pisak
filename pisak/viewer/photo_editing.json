@@ -35,7 +35,6 @@
         "type": "PisakScanningGroup",
 	"selector": "mouse",
         "children": ["button_menu_box"],
-        "scanning-hilite": true,
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
@@ -67,6 +66,8 @@
         "label": "ZOOM",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
+        "icon-size": 50,
+        "icon-name": "ZOOM",
         "signals": [
             {
                 "name": "clicked",
@@ -84,6 +85,8 @@
         "id": "button_2",
         "type": "PisakViewerButton",
         "label": "OBRÓĆ",
+        "icon-size": 50,
+        "icon-name": "obrot",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -98,6 +101,8 @@
         "id": "button_3",
         "type": "PisakViewerButton",
         "label": "KRAWĘDZIE",
+        "icon-size": 50,
+        "icon-name": "edges",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -112,6 +117,8 @@
         "id": "button_4",
         "type": "PisakViewerButton",
         "label": "KONTURY",
+        "icon-size": 50,
+        "icon-name": "contour",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -126,6 +133,8 @@
         "id": "button_5",
         "type": "PisakViewerButton",
         "label": "SEPIA",
+        "icon-size": 50,
+        "icon-name": "filtr",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -140,6 +149,8 @@
         "id": "button_6",
         "type": "PisakViewerButton",
         "label": "NEGATYW",
+        "icon-size": 50,
+        "icon-name": "NEGATYW",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -154,6 +165,8 @@
         "id": "button_7",
         "type": "PisakViewerButton",
         "label": "LUSTRO",
+        "icon-size": 50,
+        "icon-name": "mirror",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -168,6 +181,8 @@
         "id": "button_8",
         "type": "PisakViewerButton",
         "label": "SKALA SZAROŚCI",
+        "icon-size": 50,
+        "icon-name": "szarosc",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -182,6 +197,8 @@
         "id": "button_9",
         "type": "PisakViewerButton",
         "label": "PSYCHO",
+        "icon-size": 50,
+        "icon-name": "psycho",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -201,6 +218,8 @@
         "id": "button_10",
         "type": "PisakViewerButton",
         "label": "PRZEŚWIETLENIE",
+        "icon-size": 50,
+        "icon-name": "jasnosc",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -215,6 +234,8 @@
         "id": "button_11",
         "type": "PisakViewerButton",
         "label": "ORYGINAŁ",
+        "icon-size": 50,
+        "icon-name": "oryginal",
         "ratio-width": 0.22,
         "ratio-height": 0.065,
         "signals": [
@@ -229,6 +250,8 @@
         "id": "button_photo",
         "type": "PisakViewerButton",
         "label": "POWRÓT",
+        "icon-size": 50,
+        "icon-name": "back",
         "ratio-width": 0.22,
         "ratio-height": 0.065
     },
@@ -236,6 +259,8 @@
         "id": "button_start",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
+        "icon-size": 50,
+        "icon-name": "exit",
         "ratio-width": 0.22,
         "ratio-height": 0.065
     },

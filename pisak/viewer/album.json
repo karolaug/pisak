@@ -55,7 +55,6 @@
         "type": "PisakScanningGroup",
 	"selector": "mouse",
         "children": ["button_menu_box"],
-        "scanning-hilite": true,
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
@@ -83,6 +82,8 @@
         "id": "button_library",
         "type": "PisakViewerButton",
         "label": "BIBLIOTEKA",
+        "icon-size": 50,
+        "icon-name": "bib",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
@@ -90,6 +91,8 @@
         "id": "button_start",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
+        "icon-size": 50,
+        "icon-name": "exit",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
@@ -97,6 +100,8 @@
         "id": "button_automatic",
         "type": "PisakViewerButton",
         "label": "AUTOMAT",
+        "icon-name": "auto",
+        "icon-size": 50,
         "ratio-width": 0.22,
         "ratio-height": 0.1,
         "signals": [
@@ -116,6 +121,8 @@
         "id": "button_select_page",
         "type": "PisakViewerButton",
         "label": "WYBIERZ STRONĘ",
+        "icon-size": 50,
+        "icon-name": "PLUS",
         "ratio-width": 0.22,
         "ratio-height": 0.1,
         "signals": [
@@ -130,6 +137,8 @@
         "id": "button_next_page",
         "type": "PisakViewerButton",
         "label": "NASTĘPNA STRONA",
+        "icon-size": 50,
+        "icon-name": "next",
         "ratio-width": 0.22,
         "ratio-height": 0.1,
         "signals": [

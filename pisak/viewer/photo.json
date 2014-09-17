@@ -63,6 +63,8 @@
         "id": "button_slide",
         "type": "PisakViewerButton",
         "label": "POKAZ SLAJDÓW",
+        "icon-size": 50,
+        "icon-name": "auto",
         "ratio-width": 0.22,
         "ratio-height": 0.1,
         "signals": [
@@ -82,6 +84,8 @@
         "id": "button_previous",
         "type": "PisakViewerButton",
         "label": "POPRZEDNIE ZDJĘCIE",
+        "icon-size": 50,
+        "icon-name": "previous",
         "ratio-width": 0.22,
         "ratio-height": 0.1,
         "signals": [
@@ -96,6 +100,8 @@
         "id": "button_next",
         "type": "PisakViewerButton",
         "label": "NASTĘPNE ZDJĘCIE",
+        "icon-size": 50,
+        "icon-name": "next",
         "ratio-width": 0.22,
         "ratio-height": 0.1,
         "signals": [
@@ -110,6 +116,8 @@
         "id": "button_edition",
         "type": "PisakViewerButton",
         "label": "EDYCJA",
+        "icon-size": 50,
+        "icon-name": "edycja",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
@@ -119,6 +127,8 @@
         "label": "ULUBIONE",
         "ratio-width": 0.22,
         "ratio-height": 0.1,
+        "icon-size": 50,
+        "icon-name": "ulubione",
         "signals": [
             {
                 "name": "clicked",
@@ -131,6 +141,8 @@
         "id": "button_album",
         "type": "PisakViewerButton",
         "label": "ALBUM",
+        "icon-size": 50,
+        "icon-name": "album",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
@@ -138,6 +150,8 @@
         "id": "button_library",
         "type": "PisakViewerButton",
         "label": "BIBLIOTEKA",
+        "icon-size": 50,
+        "icon-name": "bib",
         "ratio-width": 0.22,
         "ratio-height": 0.1
     },
