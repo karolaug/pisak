@@ -38,14 +38,14 @@
     {
         "id": "stimulus",
         "type": "BrainDigitSpanStimulus",
-        "background-color": "black",
+        "background-color": "#006",
         "x-expand": true,
         "y-expand": true
     },
     {
         "id": "score_summary",
         "type": "BrainScoreSummary",
-        "background-color": "black",
+        "background-color": "#006",
         "visible": false,
         "x-expand": true,
         "y-expand": true
@@ -55,7 +55,7 @@
         "type": "BrainTextFeedback",
         "text": "Błędny kod",
         "visible": false,
-        "background-color": "gray",
+        "background-color": "#006",
         "x-expand": true,
         "y-expand": true
     },

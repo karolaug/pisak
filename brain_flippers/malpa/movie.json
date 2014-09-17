@@ -5,14 +5,21 @@
 	"orientation": "vertical",
 	"spacing": 50,
 	"y-align": "top",
-	"children": ["movie", "back_button"]
+	"children": ["tutorial", "movie", "back_button"]
+    },
+    {
+	"id": "tutorial",
+	"type": "ClutterText",
+	"color": "white",
+	"text": "Na ekranie zobaczysz cyfry, które po chwili zostaną zasłonięte.\nDotknij pola w kolejności wskazanej przez cyfry - od najmniejszej do największej\n(lub, jeśli pojawi się taki komunikat - od największej do najmniejszej).",
+	"font-name": "Kelson bold 20"
     },
     {
 	"id": "movie",
 	"type": "BrainVideoFeedback",
 	"path": "../../pisak/res/malpa/chimp.mp4",
-	"width": 704,
-	"height": 524
+	"width": 600,
+	"height": 447
     },
     {
 	"id": "back_button",
