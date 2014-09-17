@@ -46,7 +46,7 @@ def prepare_help_view(stage, script, data):
     stage.check_view = True
 
     back_button = script.get_object("backButton")
-    back_button.connect("clicked", lambda *_: stage.load_view("menu", None))
+    back_button.connect("activate", lambda *_: stage.load_view("menu", None))
 
 
 def prepare_top_result_view(stage, script, data):
