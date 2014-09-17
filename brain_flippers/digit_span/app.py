@@ -3,7 +3,7 @@ Module with app-specific code for Digit Span game.
 '''
 from brain_flippers import launcher, score_manager
 import os.path
-
+from gi.repository import Mx
 
 _INSTRUCTION_TEXT = \
     "W tej grze musisz zapamiętać wyświetlony na ekranie kod, a następnie " \
@@ -29,6 +29,11 @@ def prepare_menu_view(stage, script, data):
 def prepare_game_view(stage, script, data):
     logic = script.get_object("logic")
     stage.check_view = True
+
+    status_bar = script.get_object("status_bar")
+
+    exit_button = status_bar.get_children()[2]
+    exit_button.connect("activate", lambda *_: stage.load_view("menu", None))
     
     def show_results(*args):
         data = {"score": logic.score, "game": "digit_span"}
