@@ -33,7 +33,7 @@ class Numpad(Clutter.Actor):
                 self.layout.attach(next(self.buttons), column, row, 1, 1)
 
     def set_button(self, digit):
-        button = Mx.Button()
+        button = widgets.Button()
         button.set_style_class("MenuButton")
         button.set_label(str(digit))
         button.connect("activate", self.get_clicked)
