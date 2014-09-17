@@ -188,7 +188,7 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
     def failure(self):
         self.lives -= 1
         if self.lives == 0:
-            self.feedback.failure(round(time.time() - self.countdown.start_time, 1), custom_feedback="\nNiestety znowu nie udało się\nrozbroić BOMBY!\nZostaniesz, przeniesiony do ekranu\nkońcowego.\n")
+            self.feedback.failure(round(time.time() - self.countdown.start_time, 1), custom_feedback="\nNiestety wykorzystales juz wszystkie zycia!\nZostaniesz, przeniesiony do ekranu\nkońcowego.\n")
         else:
             self.feedback.failure(round(time.time() - self.countdown.start_time, 1))
         self.video_feedback.show()
