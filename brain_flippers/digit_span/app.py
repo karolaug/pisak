@@ -3,11 +3,10 @@ Module with app-specific code for Digit Span game.
 '''
 from brain_flippers import launcher, score_manager
 import os.path
-from gi.repository import Mx
 
 _INSTRUCTION_TEXT = \
     "W tej grze musisz zapamiętać wyświetlony na ekranie kod, a następnie " \
-    "wpisać go na klawiaturze. Do punktacji liczy się liczba wpisanych " \
+    "wpisać go na klawiaturze. Do punktacji liczy się liczba wpisanych " \
     "kodów oraz czas."
 
 def prepare_menu_view(stage, script, data):
