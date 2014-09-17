@@ -44,9 +44,7 @@ class LauncherStage(Clutter.Stage):
             self.add_child(main_actor)
 
     def check_idle(self, *args):
-        print("checking idle")
         if self.check_view:
-            print(self.check_view, self.motion_on, time.time())
             if self.motion_on + 40 < time.time():
                 self.load_view(self.initial, self.initial_data)
         return True
