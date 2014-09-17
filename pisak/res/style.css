@@ -85,6 +85,12 @@ BrainMalpaStatusBar {
   font-weight: bold;
 }
 
+.summary {
+  color: #ffffff;
+  font-size: 50;
+  font-weight: bold;
+}
+
 PisakSpellerButton {
     
 }

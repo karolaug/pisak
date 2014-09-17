@@ -123,9 +123,13 @@ class Statusbar(Clutter.Actor):
         self.add_actor(self.score_text)
 
         self.lives_text = StatusLabel()
+        self.lives_text.set_margin_left(50)
         self.add_actor(self.lives_text)
 
         self.exit_button = widgets.Button()
+        self.exit_button.set_height(100)
+        self.exit_button.set_width(250)
+        self.exit_button.set_margin_left(300)
         self.exit_button.set_label("Wyjście")
         self.exit_button.set_style_class("MenuButton")
         self.add_actor(self.exit_button)
@@ -149,7 +153,7 @@ class Statusbar(Clutter.Actor):
         self._update()
 
     def _update(self):
-        self.score_text.set_text("punkty: {}".format(self.score))
+        self.score_text.set_text("Punkty: {}".format(self.score))
         self.lives_text.set_text(self.lives * "❤")
 
 
