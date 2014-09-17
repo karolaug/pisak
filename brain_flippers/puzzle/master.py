@@ -42,6 +42,7 @@ class PuzzleBoard(Clutter.Actor):
         self.level = 0
         self.final_delay = 100
         self._load_script(self.level)
+        Clutter.threads_add_timeout(0, self.one_second, self.update_player_clock, None)
 
     def _load_script(self, level):
         if self.get_children():
@@ -67,7 +68,6 @@ class PuzzleBoard(Clutter.Actor):
         self._display_player_life_panel()
         self._display_level_info()
         self.player_clock_ticking = True
-        Clutter.threads_add_timeout(0, self.one_second, self.update_player_clock, None)
 
     def _display_player_clock(self):
         self.script.get_object("clock").set_text(self.player_clock_str)
