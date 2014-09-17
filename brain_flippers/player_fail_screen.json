@@ -73,9 +73,10 @@
                     "children": [
                         {
                             "id": "try_again",
-                            "type": "BrainPuzzleButton",
-                            "width": 300,
-                            "height": 100,
+                            "type": "BrainButton",
+                            "style-class": "MenuButton",
+                            "width": 500,
+                            "height": 200,
                             "label": "SPRÓBUJ JESZCZE RAZ",
                             "label-font": "Courier 15"
                         }
