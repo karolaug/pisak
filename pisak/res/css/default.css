@@ -8,6 +8,19 @@ PisakSpellerText {
     color: black;
 }
 
+PisakMainPanelButton {
+    color: black;
+    font-size: 35 pt;
+    font-family: Kelson Sans;
+    font-weight: bold;
+    border-image: url("main_panel_rest_button.png") 5;
+}
+
+PisakMainPanelButton:hover {
+    color: white;
+    border-image: url("main_panel_hover_button.png") 5;
+}
+
 PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
     color: black;
     font-size: 18 pt;
