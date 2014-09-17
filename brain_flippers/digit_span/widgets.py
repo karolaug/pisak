@@ -36,7 +36,7 @@ class Numpad(Clutter.Actor):
         button = Mx.Button()
         button.set_style_class("MenuButton")
         button.set_label(str(digit))
-        button.connect("clicked", self.get_clicked)
+        button.connect("activate", self.get_clicked)
         return button
 
     def get_clicked(self, button):
