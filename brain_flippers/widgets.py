@@ -8,6 +8,7 @@ class Consolation(Mx.Label):
     def __init__(self):
         super().__init__()
 
+
 class TryAgain(Mx.Button):
     __gytpe_name__ = "BrainTryAgain"
 
@@ -27,13 +28,18 @@ class Button(Mx.Button, PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.set_reactive(True)
-        self.connect("button-press-event", self.fire_activate)
-        self.connect("touch-event", self.fire_activate)
+        self.connect("button-press-event", self._on_click)
+        self.connect("touch-event", self._on_touch)
 
-    def fire_activate(self, source, event):
-        if isinstance(event, Clutter.TouchEvent):
-            if event.type != 13:  # touch-begin type of event
-                return None
+    def _on_click(self, source, event):
+        self._fire_activate()
+
+    def _on_touch(self, source, event):
+        if event.type() != 13:  # touch-begin type of event
+            return None
+        self._fire_activate()
+
+    def _fire_activate(self):
         self.emit("activate")
 
     def hilite_on(self):
