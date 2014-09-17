@@ -30,7 +30,7 @@ def prepare_photo_view(stage, script, data):
         header.set_text(_extract_album_name(album))
     button_to_stage(stage, script, "button_edition", 
                     "viewer/photo_editing", {"slideshow": slideshow,
-                                      "album": album})
+                                             "album": album})
     button_to_stage(stage, script, "button_album", "viewer/album",
                     {"album_name": album})
     button_to_stage(stage, script, "button_library", "viewer/library")
@@ -48,6 +48,7 @@ def prepare_album_view(stage, script, data):
     library.tiles_handler = lambda tile, photo, album: stage.load_view(
         "viewer/photo", {"photo": photo, "album": album})
     library.album = album
+    library.album = data["album_name"]
     # start panel:
     # button_to_stage(stage, script, "button_start", "start_panel")
 
