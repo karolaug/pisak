@@ -399,7 +399,9 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
             tile.ratio_spacing = self.tile_ratio_spacing
             tile.preview_ratio_height = self.tile_preview_ratio_height
             tile.preview_ratio_widtht = self.tile_preview_ratio_width
-            tile.preview_path = library_manager.get_preview_of_album(item)
+            preview_path = library_manager.get_preview_of_album(item)
+            if preview_path is not None:
+                tile.preview_path = preview_path
             tiles.append(tile)
         return tiles
 
