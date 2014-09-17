@@ -15,6 +15,7 @@
         "orientation": "vertical",
         "x-expand": true,
         "y-expand": true,
+	"margin" : [50, 100, 50, 100],
         "children": ["status_bar", "game_board"]
     },
     {
@@ -37,14 +38,14 @@
     {
         "id": "stimulus",
         "type": "BrainDigitSpanStimulus",
-        "background-color": "gray",
+        "background-color": "black",
         "x-expand": true,
         "y-expand": true
     },
     {
         "id": "score_summary",
         "type": "BrainScoreSummary",
-        "background-color": "gray",
+        "background-color": "black",
         "visible": false,
         "x-expand": true,
         "y-expand": true

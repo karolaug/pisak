@@ -73,7 +73,19 @@ BrainMalpaStatusLabel {
   font-weight: bold;
 }
 
+BrainMalpaStatusLabel.digit {
+  color: #ffffff;
+  font-size: 300;
+  font-weight: bold;
+}
+
 BrainMalpaStatusBar {
+  color: #ffffff;
+  font-size: 50;
+  font-weight: bold;
+}
+
+.summary {
   color: #ffffff;
   font-size: 50;
   font-weight: bold;

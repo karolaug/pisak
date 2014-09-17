@@ -185,7 +185,7 @@ class ScoreSummary(Dismissable):
 
     def _init_elements(self):
         self.dismiss_button = DismissButton()
-        self.dismiss_button.set_label(">")
+        self.dismiss_button.set_label("Spróbuj jeszcze raz!")
         self.dismiss_button.connect("clicked", self.dismiss)
         self.grid = Clutter.Actor()
         self.grid_layout = Clutter.GridLayout()
@@ -207,6 +207,8 @@ class ScoreSummary(Dismissable):
             score_label = Mx.Label.new_with_text(str(score))
             self.grid_layout.attach(description_label, 0, row, 1, 1)
             self.grid_layout.attach(score_label, 1, row, 1, 1)
+            description_label.set_style_class("summary")
+            score_label.set_style_class("summary")
             score_sum += score
             row += 1
         round_label = Mx.Label.new_with_text("suma punktów za rundę")
@@ -218,6 +220,12 @@ class ScoreSummary(Dismissable):
         self.grid_layout.attach(total_label, 0, row + 4, 1, 1)
         self.grid_layout.attach(total_score_label, 1, row + 4, 1, 1)
         self.grid_layout.attach(self.dismiss_button, 0, row + 6, 2, 1)
+        
+        round_label.set_style_class("summary")
+        round_score_label.set_style_class("summary")
+        total_label.set_style_class("summary")
+        total_score_label.set_style_class("summary")
+
         self.show()
 
 class FeedbackLabel(Mx.Label):
