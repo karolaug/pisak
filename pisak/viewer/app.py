@@ -64,6 +64,7 @@ def prepare_photo_editing_view(stage, script, data):
     photo.photo_path = data["slideshow"].slide.photo_path
     button_to_stage(stage, script, "button_photo", "viewer/photo",
                         {"photo": photo.photo_path, "album": data["album"]})
+    button_to_stage(stage, script, "button_start", "main_panel/main")
     
 
 def _fix_path(path):
