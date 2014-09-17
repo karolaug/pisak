@@ -2,6 +2,7 @@
 Definitions of classes built-in with layout managers . These actors can
 be used to describe whole application view in ClutterScript. Relevant
 layout parameters are proxied to internal layout manager.
+:deprecated: All widgets in this module are deprecated.
 '''
 from gi.repository import Clutter, GObject
 
@@ -11,6 +12,7 @@ from pisak import unit, properties
 class Box(Clutter.Actor, properties.PropertyAdapter):
     """
     Arranges children in single line using BoxLayout.
+    :deprecated: Use layout-manager property instead.
     """
     __gtype_name__ = "PisakBoxLayout"
 
@@ -59,6 +61,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
     }
 
     def __init__(self):
+        print("USE OF DEPRECATED CLASS")
         super().__init__()
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
@@ -161,6 +164,9 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
 
 
 class Bin(Clutter.Actor, properties.PropertyAdapter):
+    """
+    :deprecated: Use layout-manager property instead.
+    """
     __gtype_name__ = "PisakBinLayout"
     __gproperties__ = {
         "ratio_width": (
@@ -188,6 +194,7 @@ class Bin(Clutter.Actor, properties.PropertyAdapter):
     }
 
     def __init__(self):
+        print("USE OF DEPRECATED CLASS")
         super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
