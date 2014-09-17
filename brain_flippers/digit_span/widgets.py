@@ -34,6 +34,7 @@ class Numpad(Clutter.Actor):
 
     def set_button(self, digit):
         button = Mx.Button()
+        button.set_style_class("MenuButton")
         button.set_label(str(digit))
         button.connect("clicked", self.get_clicked)
         return button
@@ -124,8 +125,9 @@ class Statusbar(Clutter.Actor):
         self.lives_text = StatusLabel()
         self.add_actor(self.lives_text)
 
-        self.exit_button = Mx.Button()
+        self.exit_button = widgets.Button()
         self.exit_button.set_label("Wyjście")
+        self.exit_button.set_style_class("MenuButton")
         self.add_actor(self.exit_button)
 
     @property
