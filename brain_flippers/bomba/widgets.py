@@ -162,12 +162,17 @@ class Logic(Clutter.Actor, pisak.widgets.PropertyAdapter):
         self._initialize_game()
 
     def _initialize_game(self):
+        self.first_run = True
         self._start_round()
     
     def _start_round(self):
         self.video_feedback.dismiss()
         self.countdown.image.show()
-        self.hide_on = random.choice([8, 7, 6, 5, 4, 3, 2])
+        if self.first_run:
+            self.hide_on = 2
+            self.first_run = False
+        else:
+            self.hide_on = random.choice([8, 7, 6, 5, 4, 3, 2])
         self.countdown.start_countdown(self.hide_on)
 
     def interrupt(self, button):
