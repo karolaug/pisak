@@ -184,7 +184,9 @@ class ScoreSummary(Dismissable):
         self.set_layout_manager(self.layout)
 
     def _init_elements(self):
-        self.dismiss_button = DismissButton()
+        self.dismiss_button = Button()
+        self.dismiss_button.set_style_class("MenuButton")
+        self.dismiss_button.set_size(400, 100)
         self.dismiss_button.set_label("Spróbuj jeszcze raz!")
         self.dismiss_button.connect("clicked", self.dismiss)
         self.grid = Clutter.Actor()
@@ -256,7 +258,9 @@ class TextFeedback(Dismissable, PropertyAdapter):
         self.label = FeedbackLabel()
         self.box.add_actor(self.label)
 
-        self.dismiss_button = DismissButton()
+        self.dismiss_button = Button()
+        self.dismiss_button.set_style_class("MenuButton")
+        self.dismiss_button.set_size(600, 200)
         self.dismiss_button.set_label("Spróbuj jeszcze raz!")
         self.dismiss_button.set_margin_top(200)
         self.dismiss_button.connect("clicked", self.dismiss)
