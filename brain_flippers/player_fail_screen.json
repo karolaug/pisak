@@ -15,7 +15,7 @@
                 "logic",
                 {
                     "type": "ClutterText",
-                    "text": "Niestety, Twój wynik nie pozwolił Ci na\n znalezienie się w bazie najlepszych wyników.\n Możesz spróbować jescze raz",
+                    "text": "Niestety, Twój wynik nie pozwolił Ci na\n znalezienie się w bazie najlepszych wyników.\n Możesz spróbować jeszcze raz.",
                     "line-alignment": "center",
                     "x-align": "center",
                     "color": "white",
