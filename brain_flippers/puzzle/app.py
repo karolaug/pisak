@@ -217,14 +217,17 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
         average_score = score_manager.get_average_ever("puzzle")
         if average_score:
             average_score_entry = self.script.get_object("average_score_value")
-            average_score_entry.set_text(str(int(average_score)))
+            if average_score_entry:
+                average_score_entry.set_text(str(int(average_score)))
         else:
-            self.script.get_object("average_score").hide()
+            average_score_object = self.script.get_object("average_score")
+            if average_score_object:
+                average_score_object.hide()
         
     def enable_player_fail_view(self):
         try_again_button = self.script.get_object("try_again")
         if try_again_button:
-            try_again_button.connect("activate", self.enter_game_view)
+            try_again_button.connect("activate", self.enter_welcome_view)
         best_today_button = self.script.get_object("best_today")
         if best_today_button:
             best_today_button.connect("activate", self.enter_high_scores_view, "today")
