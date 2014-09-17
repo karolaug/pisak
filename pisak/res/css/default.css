@@ -10,7 +10,7 @@ PisakSpellerText {
 
 PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
     color: black;
-    font-size: 18 pt;
+    font-size: 18pt;
     font-family: Kelson Sans;
     font-weight: bold;
     border-image: url("speller_rest_button.png") 5;
@@ -33,7 +33,7 @@ MxButton:scanning {
 
 MxButton:disabled{
     color: black;
-    font-size: 20;
+    font-size: 20pt;
     font-family: serif;
     border-image: url("speller_disabled_button.png") 5;
 }
@@ -47,20 +47,26 @@ MxProgressBarFill.PisakViewerProgressBar {
 }
 
 MxLabel.PisakViewerProgressBar {
-  font-face: Kelson Sans;
-  font-size: 40;
+  font-family: Kelson Sans;
+  font-size: 30pt;
   color: white;
 }
 
 MxLabel.PisakViewerPhotoTile {
-  font-face: Kelson Sans;
-  font-size: 20;
+  font-family: Kelson Sans;
+  font-size: 20pt;
+  color: black;
+}
+
+MxLabel.PisakViewerAlbumHeader {
+  font-size: 40pt;
+  font-family: Kelson Sans;
   color: black;
 }
 
 PisakViewerButton {
   color: white;
-  font-size: 18 pt;
+  font-size: 20pt;
   font-family: Kelson Sans;
   font-weight: bold;
   border-image: url("viewer_rest_button.png");
@@ -69,7 +75,7 @@ PisakViewerButton {
 
 PisakViewerButton:hover {
   color: black;
-  font-size: 18 pt;
+  font-size: 20pt;
   font-family: Kelson Sans;
   font-weight: bold;
   border-image: url("viewer_hover_button.png");
