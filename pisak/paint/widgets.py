@@ -109,7 +109,6 @@ class Navigator(Clutter.Actor):
 
 
 class Localizer(Clutter.Actor):
-    __gtype_name__ = "SwitchArtistLocalizer"
     __gsignals__ = {
         "point-declared": (
             GObject.SIGNAL_RUN_FIRST,
