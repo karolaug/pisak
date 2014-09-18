@@ -587,6 +587,10 @@ class Easel(layout.Bin):
             self.localizer.connect("point-declared", self._exit_localizer)
             self.localizer.connect("horizontal-idle", self._exit)
         self.set_child_above_sibling(self.localizer, None)
+        for tool in self.get_children():
+            if tool is not self.localizer:
+                tool.hide()
+        self.localizer.show()
         self.working_tool = self.localizer
         self.localizer.run()
         self.stage_handler_id = self.stage.connect("button-press-event",
@@ -608,6 +612,10 @@ class Easel(layout.Bin):
             self.navigator.connect("idle", self._exit)
         self.set_child_above_sibling(self.navigator, None)
         self.working_tool = self.navigator
+        for tool in self.get_children():
+            if tool is not self.navigator:
+                tool.hide()
+        self.navigator.show()
         self.stage_handler_id = self.stage.connect("button-press-event", self.navigator.on_user_click)
         self.navigator.run(self.from_x, self.from_y, self.rgba, self.line_width)
 
@@ -627,6 +635,10 @@ class Easel(layout.Bin):
             self.working_tool = self.yardstick
         self.stage_handler_id = self.stage.connect("button-press-event",
                                                    self.yardstick.on_user_click)
+        for tool in self.get_children():
+            if tool is not self.yardstick:
+                tool.hide()
+        self.yardstick.show()
         self.set_child_above_sibling(self.yardstick, None)
         self.yardstick.run(self.from_x, self.from_y, self.angle, self.rgba,
                            self.line_width)
@@ -648,6 +660,10 @@ class Easel(layout.Bin):
         self.working_tool = self.bender
         self.stage_handler_id = self.stage.connect("button-press-event",
                                                    self.bender.on_user_click)
+        for tool in self.get_children():
+            if tool is not self.bender:
+                tool.hide()
+        self.bender.show()
         self.set_child_above_sibling(self.bender, None)
         self.bender.run(self.from_x, self.from_y, self.to_x, self.to_y,
                         self.angle, self.rgba, self.line_width)
