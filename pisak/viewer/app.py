@@ -3,8 +3,8 @@ Module with app-specific code for photo viewer.
 '''
 import os
 
-from pisak.viewer import library_manager
 from pisak import launcher
+import logging
 
 
 def button_to_stage(stage, script, button_name, stage_to_load, data=None):
@@ -66,6 +66,7 @@ VIEWS = {
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     _viewer_app = {
         "views": VIEWS,
         "initial-view": "viewer/library",
