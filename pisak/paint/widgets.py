@@ -1,19 +1,14 @@
 import sys
 import os
+import math
 
-import numpy as np
 from gi.repository import GObject, Clutter, Gdk, Mx
 import cairo
 
+from pisak import widgets, layout, xdg
 
-_FILE_PATH = os.path.abspath(os.path.split(__file__)[0])
 
-
-SAVING_PATH  = os.path.join(_FILE_PATH, "switch_artist.png")
-
-JSON_PATH = os.path.join(_FILE_PATH, "layout.json")
-
-CSS_PATH = os.path.join(_FILE_PATH, "style.css")
+SAVING_PATH  = os.path.join(xdg.get_dir("pictures"), "switch_artist.png")
 
 
 class Navigator(Clutter.Actor):
@@ -26,7 +21,7 @@ class Navigator(Clutter.Actor):
         super().__init__()
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
-        self.rotations_count = 1 # limit of navigator idle rotations
+        self.rotations_count = -1 # limit of navigator idle rotations
         self.angle = 0  # angle of navigator line current position in radians
         self.step_duration = 1  # pace of navigator in mscs
         self.step = 0.005  # navigator rotation fluency in radians
@@ -48,7 +43,9 @@ class Navigator(Clutter.Actor):
         self.from_x = from_x
         self.from_y = from_y
         self.timer = Clutter.Timeline.new(self.step_duration)
-        self.timer.set_repeat_count(self.rotations_count * 2 * np.pi / self.step)
+        repeat_count = -1 if self.rotations_count == -1 else \
+                       self.rotations_count * 2 * math.pi / self.step
+        self.timer.set_repeat_count(repeat_count)
         self.timer.connect("completed", self._update_navigator)
         self.timer.start()
         self.timer.connect("stopped", self._on_user_idle)
@@ -81,22 +78,20 @@ class Navigator(Clutter.Actor):
 
     def _update_navigator(self, event):
         self.angle += self.step
-        self.to_x = np.cos(self.angle) * self.line_length
-        self.to_y = np.sin(self.angle) * self.line_length
+        self.to_x = math.cos(self.angle) * self.line_length
+        self.to_y = math.sin(self.angle) * self.line_length
         self.canvas.invalidate()
 
     def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.rectangle(0, 0, width, height)
         ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.fill()
+        ctxt.paint()
         return True
 
     def _draw(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.rectangle(0, 0, width, height)
         ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.fill()
+        ctxt.paint()
         ctxt.set_line_width(self.line_width)
         ctxt.move_to(self.from_x, self.from_y)
         ctxt.line_to(self.to_x, self.to_y)
@@ -223,16 +218,14 @@ class Localizer(Clutter.Actor):
 
     def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.rectangle(0, 0, width, height)
         ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.fill()
+        ctxt.paint()
         return True
 
     def _draw(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.rectangle(0, 0, width, height)
         ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.fill()
+        ctxt.paint()
         ctxt.set_line_width(self.line_width)
         ctxt.set_source_rgba(self.rgba[0],
                              self.rgba[1],
@@ -281,7 +274,7 @@ class Bender(Clutter.Actor):
     def run(self, from_x, from_y, to_x, to_y, angle, color, line_width):
         self.width, self.height = self.get_size()
         self.canvas.set_size(self.width, self.height)
-        self.angle = angle + np.pi/2
+        self.angle = angle + math.pi/2
         self.canvas.connect("draw", self._draw)
         self.rgba = color
         self.from_x = from_x
@@ -292,8 +285,8 @@ class Bender(Clutter.Actor):
                         (self.to_x - self.from_x) / 2
         self.middle_y = self.through_y = self.from_y + \
                         (self.to_y - self.from_y) / 2
-        self.step_x = np.cos(self.angle) * self.step
-        self.step_y = np.sin(self.angle) * self.step
+        self.step_x = math.cos(self.angle) * self.step
+        self.step_y = math.sin(self.angle) * self.step
         self.line_width = line_width
         self.timer = Clutter.Timeline.new(self.step_duration)
         self.timer.set_repeat_count(-1)
@@ -351,17 +344,15 @@ class Bender(Clutter.Actor):
 
     def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.rectangle(0, 0, width, height)
         ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.fill()
+        ctxt.paint()
         return True
         
     def _draw(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_line_cap(cairo.LINE_CAP_ROUND)
-        ctxt.rectangle(0, 0, width, height)
         ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.fill()
+        ctxt.paint()
+        ctxt.set_line_cap(cairo.LINE_CAP_ROUND)
         ctxt.set_line_width(self.line_width)
         ctxt.move_to(self.from_x, self.from_y)
         ctxt.curve_to(self.from_x, self.from_y, self.through_x,
@@ -372,7 +363,7 @@ class Bender(Clutter.Actor):
                              self.rgba[3])
         ctxt.stroke()
         return True
-        
+
 
 class Yardstick(Clutter.Actor):
     __gsignals__ = {
@@ -402,6 +393,8 @@ class Yardstick(Clutter.Actor):
         self.from_y = from_y
         self.angle = angle
         self.rgba = color
+        self.step_x = math.cos(self.angle) * self.step
+        self.step_y = math.sin(self.angle) * self.step
         self.line_width = line_width
         self.width, self.height = self.get_size()
         self.canvas.set_size(self.width, self.height)
@@ -440,25 +433,28 @@ class Yardstick(Clutter.Actor):
 
     def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.rectangle(0, 0, width, height)
         ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.fill()
+        ctxt.paint()
         return True
 
     def _on_screen_border(self):
         # temporary:
-        self._on_user_decision(None, None)
+        self.step_x *= -1
+        self.step_y *= -1
+
+        #self._on_user_decision(None, None)
 
         # self.timer.stop()
         
     def _update_yardstick(self, event):
-        to_x = self.from_x + np.cos(self.angle) * self.step
-        to_y = self.from_y + np.sin(self.angle) * self.step
+        to_x = self.from_x + self.step_x
+        to_y = self.from_y + self.step_y
         if 0 < to_x < self.width and 0 < to_y < self.height:
             self.to_x, self.to_y = to_x, to_y
             self.canvas.invalidate()
             self.from_x, self.from_y = self.to_x, self.to_y
         else:
+            self.canvas.invalidate()
             self._on_screen_border()
 
     def _draw(self, cnvs, ctxt, width, height):
@@ -474,188 +470,16 @@ class Yardstick(Clutter.Actor):
         return True
 
 
-class Button(Mx.Button):
-    __gtype_name__ = "SwitchArtistButton"
-    __gproperties__ = {
-        "handler_name": (
-            GObject.TYPE_STRING, None, None, "",
-            GObject.PARAM_READWRITE),
-        "ratio_width": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "ratio_height": (
-            GObject.TYPE_FLOAT, None, None, 0,
-            1., 0, GObject.PARAM_READWRITE)
-    }
-    def __init__(self):
-        super().__init__()
-
-    @property
-    def ratio_width(self):
-        return self._ratio_width
-
-    @ratio_width.setter
-    def ratio_width(self, value):
-        self._ratio_width = value
-        self.set_width(value * Gdk.Screen.width())
-
-    @property
-    def ratio_height(self):
-        return self._ratio_height
-
-    @ratio_height.setter
-    def ratio_height(self, value):
-        self._ratio_height = value
-        self.set_height(value * Gdk.Screen.height())
-
-    @property
-    def handler_name(self):
-        return self._handler_name
-
-    @handler_name.setter
-    def handler_name(self, value):
-        self._handler_name = value
-
-    def do_get_property(self, pspec):
-        attr = self.__class__.__dict__.get(pspec.name.replace("-", "_"))
-        return attr.fget(self)
-
-    def do_set_property(self, pspec, value):
-        attr = self.__class__.__dict__.get(pspec.name.replace("-", "_"))
-        attr.fset(self, value)
+class Button(widgets.Button):
+    __gtype_name__ = "PisakPaintButton"
 
 
-class Scanner(GObject.GObject):
-
-    def __init__(self):
-        self.pace = 1000  # scanner scanning pace in mscs
-        self.is_running = False
-
-    def run(self, block):
-        self.idx = 0
-        self.items = block.get_children()
-        self.limit = len(self.items)
-        Clutter.threads_add_timeout(0, self.pace, self._on_timeout, None)
-        self.is_running = True
-        self._on_timeout(None)
-
-    def stop(self):
-        self.is_running = False
-
-    def _on_timeout(self, event):
-        self.items[self.idx-1].style_pseudo_class_remove("hover")
-        if not self.is_running:
-            return False
-        self.items[self.idx].style_pseudo_class_add("hover")
-        self.idx = (self.idx + 1) % self.limit
-        return True
-
-    def on_click(self, source, event):
-        self.items[self.idx-1].emit("clicked")
-
-
-class Dispatcher(GObject.GObject):
-
-    def __init__(self, script):
-        self.script = script
-        self.scanner = None
-        self._init_objects()
-        self._init_handlers()
-        self._connect_signals()
-
-    def _init_handlers(self):
-        self.handlers = {
-            "color_definition": self.set_color,
-            "line_width_definition": self.set_line_width,
-            "move_to_line_menu": self.move_to_line_menu,
-            "move_to_color_menu": self.move_to_color_menu,
-            "new_spot": self.localize_new_spot,
-            "erase": self.erase,
-            "save_to_file": self.save_to_file,
-            "draw": self.run_navigator,
-            "clear_canvas": self.clear_canvas
-        }
-
-    def _convert_color(self, clutter_color):
-        rgba = ()
-        string = clutter_color.to_string()
-        for idx in range(1, 9, 2):
-            rgba += (int(string[idx:idx+2], 16),)
-        return rgba
-        
-    def _init_objects(self):
-        self.easel = self.script.get_object("easel")
-        self.main_menu = self.script.get_object("main_menu")
-        self.line_menu = self.script.get_object("line_menu")
-        self.color_menu = self.script.get_object("color_menu")
-        
-    def _connect_signals(self):
-        for item in self.script.list_objects():
-            if isinstance(item, Button):
-                item.connect("clicked", self.handlers[item.handler_name])
-        self.easel.connect("exit", lambda event, block: self.to_scan(block),
-                           self.main_menu)
-
-    def to_scan(self, block):
-        self.scanner = Scanner()
-        self.easel.stage.connect("button-press-event", self.scanner.on_click)
-        self.scanner.run(block)
-
-    def stop_scanning(self):
-        if self.scanner is not None:
-            self.scanner.stop()
-            self.easel.stage.disconnect_by_func(self.scanner.on_click)
-
-    def clear_canvas(self, source):
-        self.easel.clear_canvas()
-
-    def localize_new_spot(self, source):
-        self.stop_scanning()
-        self.easel.run_localizer()
-
-    def erase(self, source):
-        self.easel.erase()
-
-    def save_to_file(self, source):
-        self.easel.save_to_file()
-
-    def move_to_line_menu(self, source):
-        self.stop_scanning()
-        self.to_scan(self.line_menu)
-
-    def run_navigator(self, source):
-        self.stop_scanning()
-        self.easel.run_navigator()
-
-    def move_to_color_menu(self, source):
-        self.stop_scanning()
-        self.to_scan(self.color_menu)
-
-    def set_color(self, source):
-        self.stop_scanning()
-        self.to_scan(self.main_menu)
-        self.easel.rgba = self._convert_color(source.get_background_color())
-
-    def set_line_width(self, source):
-        self.stop_scanning()
-        self.to_scan(self.main_menu)
-        self.easel.line_width = int(source.get_label().split(" ")[0])
-        
-
-class Easel(Clutter.Actor):
-    __gtype_name__ = "SwitchArtistEasel"
+class Easel(layout.Bin):
+    __gtype_name__ = "PisakPaintEasel"
     __gsignals__ = {
         "exit": (
             GObject.SIGNAL_RUN_FIRST,
             None, ())
-    }
-    __gproperties__ = {
-        "ratio_width": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "ratio_height": (
-            GObject.TYPE_FLOAT, None, None, 0,
-            1., 0, GObject.PARAM_READWRITE)
     }
     
     def __init__(self):
@@ -684,33 +508,14 @@ class Easel(Clutter.Actor):
                                                      255*self.background_color[2],
                                                      255*self.background_color[3]))
         self.angle = 0  # angle of the draw line direction
-        self.connect("notify::mapped", self.run)
-        self.set_reactive(True)
         self.stage_handler_id = 0  # id of the current stage handler
+        self.connect("notify::mapped", self.run)
         self.stage = None
-
-    @property
-    def ratio_width(self):
-        return self._ratio_width
-
-    @ratio_width.setter
-    def ratio_width(self, value):
-        self._ratio_width = value
-        self.set_width(value * Gdk.Screen.width())
-
-    @property
-    def ratio_height(self):
-        return self._ratio_height
-
-    @ratio_height.setter
-    def ratio_height(self, value):
-        self._ratio_height = value
-        self.set_height(value * Gdk.Screen.height())
 
     def run(self, *args):
         try:
             self.disconnect_by_func(self.run)
-        except:
+        except TypeError:
             pass
         if self.stage is None:
             self.width, self.height = self.get_size()
@@ -721,7 +526,10 @@ class Easel(Clutter.Actor):
             self.run_localizer()
 
     def _set_canvas_background(self):
-        self.canvas.disconnect_by_func(self._draw)
+        try:
+            self.canvas.disconnect_by_func(self._draw)
+        except TypeError:
+            pass
         self.canvas.connect("draw", self._draw_background)
         self.canvas.invalidate()
         self.canvas.disconnect_by_func(self._draw_background)
@@ -810,7 +618,7 @@ class Easel(Clutter.Actor):
                              self.background_color[1],
                              self.background_color[2],
                              self.background_color[3])
-        ctxt.fill()
+        ctxt.paint()
         return True
 
     def _draw_to_file(self, cnvs, ctxt, width, height):
@@ -845,26 +653,30 @@ class Easel(Clutter.Actor):
         ctxt.stroke()
         return True
 
-    def do_get_property(self, pspec):
-        attr = self.__class__.__dict__.get(pspec.name.replace("-", "_"))
-        return attr.fget(self)
-
-    def do_set_property(self, pspec, value):
-        attr = self.__class__.__dict__.get(pspec.name.replace("-", "_"))
-        attr.fset(self, value)
-
     def clear_canvas(self):
         self._set_canvas_background()
 
+    def back_to_drawing(self):
+        self.run_navigator()
+
+    def localize_new_spot(self):
+        self.run()
+
     def erase(self):
-        self.canvas.disconnect_by_func(self._draw)
+        try:
+            self.canvas.disconnect_by_func(self._draw)
+        except TypeError:
+            pass
         self.canvas.connect("draw", self._draw_erase)
         self.canvas.invalidate()
         self.canvas.disconnect_by_func(self._draw_erase)
         self.canvas.connect("draw", self._draw)
 
     def save_to_file(self):
-        self.canvas.disconnect_by_func(self._draw)
+        try:
+            self.canvas.disconnect_by_func(self._draw)
+        except TypeError:
+            pass
         self.canvas.connect("draw", self._draw_to_file)
         self.canvas.invalidate()
         self.canvas.disconnect_by_func(self._draw_to_file)
@@ -874,39 +686,3 @@ class Easel(Clutter.Actor):
         if self.stage.handler_is_connected(self.stage_handler_id):
             self.stage.handler_disconnect(self.stage_handler_id)
         self.emit("exit")
-        
-        
-class SwitchArtistApp(GObject.GObject):
-
-    def __init__(self, argv):
-        Clutter.init(argv)
-        self._build_stage()
-        self._load_script()
-        self._load_stylesheet()
-        self._init_dispatcher()
-
-    def _build_stage(self):
-        self.stage = Clutter.Stage()
-        self.stage.connect("destroy", lambda *args: Clutter.main_quit())
-
-    def _load_script(self):
-        self.script = Clutter.Script()
-        self.script.load_from_file(JSON_PATH)
-        main = self.script.get_object("main")
-        self.stage.add_child(main)
-
-    def _load_stylesheet(self):
-        Mx.Style.get_default().load_from_file(CSS_PATH)
-
-    def _init_dispatcher(self):
-        self.dispatcher = Dispatcher(self.script)
-        
-    def run(self):
-        self.stage.show_all()
-        self.stage.set_size(Gdk.Screen.width(), Gdk.Screen.height())
-        self.stage.set_fullscreen(True)
-        Clutter.main()
-
-
-if __name__ == "__main__":
-    SwitchArtistApp(sys.argv).run()

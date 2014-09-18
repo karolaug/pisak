@@ -81,6 +81,26 @@ PisakViewerButton:hover {
   border-image: url("viewer_hover_button.png");
 }
 
+PisakPaintButton {
+    border-image: url("paint_rest_button.png");
+    color: rgb(20, 120, 150);
+    font-family: Kelson Sans;
+    font-size: 25;
+}
+
+PisakPaintButton:hover {
+    border-image: url("paint_hover_button.png");
+    color: red;
+}
+
+PisakPaintButton.color {
+    border-image: url("paint_rest_button_color.png");
+}
+
+PisakPaintButton.color:hover {
+    border-image: url("paint_hover_button_color.png");
+}
+
 
 /*SVG part*/
 /*

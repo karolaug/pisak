@@ -1,0 +1,359 @@
+[
+    {
+        "id": "main",
+        "type": "PisakBinLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "children": [
+                        "main_box", "background_box"
+                    ]
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundImage",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "main_box",
+        "type": "PisakBoxLayout",
+        "x-expand": true,
+        "y-expand": true,
+        "ratio-margin-top": 0.015,
+        "ratio-margin-bottom": 0.01,
+        "ratio-margin-left": 0.01,
+        "ratio-margin-right": 0.01,
+        "ratio-spacing": 0.01,
+        "orientation": "vertical",
+        "children": ["main_menu_group", "middle_box"]
+    },
+    {
+        "id": "middle_box",
+        "type": "PisakBoxLayout",
+        "ratio-spacing": 0.01,
+        "children": ["line_menu_group", "easel", "color_menu_group"]
+    },
+    {
+        "id": "line_menu_group",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+	"strategy": {
+                        "type": "PisakRowStrategy",
+                        "interval": 1000,
+                        "max-cycle-count": 2,
+	                "unwind-to": "main_menu_group"
+                    },
+        "children": [
+                        "line_menu_box"
+                    ]
+    },
+    {
+        "id": "line_menu_box",
+        "type": "PisakBoxLayout",
+        "ratio-spacing": 0.02,
+        "orientation": "vertical",
+        "children": ["line1", "line2", "line3"]
+    },
+    {
+        "id": "line1",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "5 pkt",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "line2",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "10 pkt",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "line3",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "15 pkt",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "easel",
+        "type": "PisakPaintEasel",
+        "ratio-width": 0.81,
+        "ratio-height": 0.82,
+        "signals": [
+                       {
+                           "name": "exit",
+                           "handler": "general/start_group",
+                           "object": "main_menu_group"
+                       }
+                   ]
+    },
+    {
+        "id": "main_menu_group",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+	"strategy": {
+                        "type": "PisakRowStrategy",
+                        "interval": 1000,
+                        "max-cycle-count": -1,
+	                "unwind-to": "main_menu_group"
+                    },
+        "children": [
+                        "main_menu_box"
+                    ]
+    },
+    {
+        "id": "main_menu_box",
+        "type": "PisakBoxLayout",
+        "ratio-spacing": 0.02,
+        "children": ["button_start", "button2", "button3", "button4",
+                     "button5", "button6", "button7", "button1"]
+    },
+    {
+        "id": "button1",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "ZNAJDŹ\nPKT",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "general/kill_group",
+                    "object": "main_menu_group"
+                },
+                {
+                    "name": "clicked",
+                    "handler": "paint/new_spot",
+                    "object": "easel"
+                }
+        ]
+    },
+    {
+        "id": "button2",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "GUMKA",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "paint/erase",
+                    "object": "easel"
+                }
+        ]
+    },
+    {
+        "id": "button3",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "KOLORY",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "color_menu"
+                }
+        ]
+    },
+    {
+        "id": "button4",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "LINIE",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "line_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "button5",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "ZAPISZ",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "paint/save_to_file",
+                    "object": "easel"
+                }
+        ]
+    },
+    {
+        "id": "button6",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "RYSUJ",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "general/kill_group",
+                    "object": "main_menu_group"
+                },
+                {
+                    "name": "clicked",
+                    "handler": "paint/draw",
+                    "object": "easel"
+                }
+        ]
+    },
+    {
+        "id": "button7",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "CZYŚĆ",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "paint/clear_canvas",
+                    "object": "easel"
+                }
+        ]
+    },
+    {
+        "id": "button_start",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "WYJÐŹ"
+    },
+    {
+        "id": "color_menu_group",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+	"strategy": {
+                        "type": "PisakRowStrategy",
+                        "interval": 1000,
+                        "max-cycle-count": 2,
+	                "unwind-to": "main_menu_group"
+                    },
+        "children": [
+                        "color_menu_box"
+                    ]
+    },
+    {
+        "id": "color_menu_box",
+        "type": "PisakBoxLayout",
+        "orientation": "vertical",
+        "ratio-spacing": 0.02,
+        "children": ["color1", "color2", "color3", "color4", "color5", "color6"]
+    },
+    {
+        "id": "color1",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "background-color": "red",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color2",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "background-color": "blue",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color3",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "background-color": "green",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color4",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "background-color": "yellow",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color5",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "background-color": "purple",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color6",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "background-color": "black",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    }
+]
