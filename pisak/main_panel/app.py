@@ -1,5 +1,6 @@
 import os
 
+from pisak.main_panel import widgets
 from pisak import launcher
 
 
