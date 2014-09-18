@@ -52,7 +52,7 @@
         "ratio-margin-bottom": 0.05,
         "ratio_spacing": 0.05,
         "children": [
-                        "button_speller", "button_viewer", "button_paint"
+                         "button_paint", "button_speller", "button_viewer"
                     ]
     },
     {

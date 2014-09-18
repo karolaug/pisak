@@ -21,7 +21,7 @@ class Navigator(Clutter.Actor):
         super().__init__()
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
-        self.rotations_count = 0.1 # limit of navigator idle rotations
+        self.rotations_count = 1 # limit of navigator idle rotations
         self.angle = 0  # angle of navigator line current position in radians
         self.step_duration = 2  # pace of navigator in mscs
         self.step = 0.005  # navigator rotation fluency in radians
