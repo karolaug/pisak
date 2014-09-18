@@ -8,7 +8,7 @@ import cairo
 from pisak import widgets, layout, xdg
 
 
-SAVING_PATH  = os.path.join(xdg.get_dir("pictures"), "switch_artist.png")
+SAVING_PATH  = os.path.join(xdg.get_dir("pictures"), "pisak_paint.png")
 
 
 class Navigator(Clutter.Actor):
@@ -21,9 +21,9 @@ class Navigator(Clutter.Actor):
         super().__init__()
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
-        self.rotations_count = -1 # limit of navigator idle rotations
+        self.rotations_count = 0.1 # limit of navigator idle rotations
         self.angle = 0  # angle of navigator line current position in radians
-        self.step_duration = 1  # pace of navigator in mscs
+        self.step_duration = 2  # pace of navigator in mscs
         self.step = 0.005  # navigator rotation fluency in radians
         self.from_x = 0  # x coordinate of navigator base point
         self.from_y = 0  # y coordinate of navigator base point
@@ -37,7 +37,7 @@ class Navigator(Clutter.Actor):
     def run(self, from_x, from_y, color, line_width):
         self.angle = 0
         self.width, self.height = self.get_size()
-        self.line_length = (self.width**2 + self.height**2)**0.5
+        self.diagonal = (self.width**2 + self.height**2)**0.5
         self.canvas.set_size(self.width, self.height)
         self.canvas.connect("draw", self._draw)
         self.from_x = from_x
@@ -53,6 +53,10 @@ class Navigator(Clutter.Actor):
     def on_user_click(self, source, event):
         for handler in self.click_handlers:
             handler(source, event)
+
+    def kill(self):
+        self._clean_up()
+        self.timer.stop()
 
     def _on_user_decision(self, source, event):
         self._clean_up()
@@ -78,8 +82,6 @@ class Navigator(Clutter.Actor):
 
     def _update_navigator(self, event):
         self.angle += self.step
-        self.to_x = math.cos(self.angle) * self.line_length
-        self.to_y = math.sin(self.angle) * self.line_length
         self.canvas.invalidate()
 
     def _draw_clear(self, cnvs, ctxt, width, height):
@@ -92,9 +94,12 @@ class Navigator(Clutter.Actor):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
         ctxt.set_source_rgba(0, 0, 0, 0)
         ctxt.paint()
+        ctxt.translate(self.from_x, self.from_y)
+        ctxt.rotate(self.angle)
+        ctxt.scale(self.diagonal/width, 1)
+        ctxt.move_to(0, 0)
+        ctxt.line_to(width, 0)
         ctxt.set_line_width(self.line_width)
-        ctxt.move_to(self.from_x, self.from_y)
-        ctxt.line_to(self.to_x, self.to_y)
         ctxt.set_source_rgba(self.rgba[0],
                              self.rgba[1],
                              self.rgba[2],
@@ -120,6 +125,8 @@ class Localizer(Clutter.Actor):
         super().__init__()
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
+        self.horizontal_timer = None  # timer ticking on horizontal movement
+        self.vertical_timer = None  # timer ticking on vertical movement
         self.vertical_count = -1  # limit of vertical localizer cycles
         self.horizontal_count = -1  # limit of horizontal localizer cycles
         self.rgba = (0, 0, 0, 255)  # current localizer color
@@ -137,6 +144,14 @@ class Localizer(Clutter.Actor):
         self.click_handlers = []  # handlers of user click
 
     def run(self):
+        self.localized_x = None
+        self.localized_y = None
+        self.x = 0
+        self.y = 0
+        self.from_x = 0
+        self.from_y = 0
+        self.to_x = 0
+        self.to_y = 0
         self.width, self.height = self.get_size()
         self.canvas.set_size(self.width, self.height)
         self.canvas.connect("draw", self._draw)
@@ -155,6 +170,15 @@ class Localizer(Clutter.Actor):
     def on_user_click(self, source, event):
         for handler in self.click_handlers:
             handler(source, event)
+
+    def kill(self):
+        if self.vertical_timer is not None and self.vertical_timer.is_playing():
+            self._clean_up_vertical()
+            self.vertical_timer.stop()
+        if self.horizontal_timer is not None and \
+               self.horizontal_timer.is_playing():
+            self._clean_up_horizontal()
+            self.horizontal_timer.stop()
 
     def _update_vertical(self, event):
         self.x = self.from_x = self.to_x = (self.from_x + self.step) \
@@ -254,8 +278,8 @@ class Bender(Clutter.Actor):
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
         self.angle = 0  # angle of bending line direction
-        self.bender_cycles_count = 1  # bender cycles repeat count
-        self.step_duration = 10  # pace of nbender in mscs
+        self.bender_cycles_count = -1  # bender cycles repeat count
+        self.step_duration = 20  # pace of nbender in mscs
         self.step = 10 # bender fluency in pixels
         self.line_width = 10  # line width of the bender
         self.width = 0 # width of the drawing area
@@ -293,10 +317,15 @@ class Bender(Clutter.Actor):
         self.timer.connect("completed", self._update_bender)
         self.timer.connect("stopped", self._on_user_idle)
         self.timer.start()
-
+            
+                
     def on_user_click(self, source, event):
         for handler in self.click_handlers:
             handler(source, event)
+
+    def kill(self):
+        self._clean_up()
+        self.timer.stop()
 
     def _on_user_decision(self, source, event):
         self._clean_up()
@@ -336,7 +365,7 @@ class Bender(Clutter.Actor):
         self._check_repeat_count()
 
     def _check_repeat_count(self):
-        if int(self.through_x) == int(self.middle_x):
+        if math.ceil(self.through_x) == math.floor(self.middle_x):
             self.repeat_index += 1
             if self.repeat_index / 2 == self.bender_cycles_count:
                 self.timer.stop()
@@ -379,6 +408,7 @@ class Yardstick(Clutter.Actor):
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
         self.rgba = (0, 0, 0, 255)  # current yardstick color
+        self.color = self.rgba  # current drawing color
         self.step_duration = 100  # pace of yardstick in mscs
         self.step = 10 # yardstick fluency in pixels
         self.from_x = 0  # x coordinate of yardstick base spot
@@ -389,10 +419,10 @@ class Yardstick(Clutter.Actor):
         self.click_handlers = [self._on_user_decision]
 
     def run(self, from_x, from_y, angle, color, line_width):
-        self.from_x = from_x
-        self.from_y = from_y
+        self.base_x = self.from_x = from_x
+        self.base_y = self.from_y = from_y
         self.angle = angle
-        self.rgba = color
+        self.color = self.rgba = color
         self.step_x = math.cos(self.angle) * self.step
         self.step_y = math.sin(self.angle) * self.step
         self.line_width = line_width
@@ -439,33 +469,46 @@ class Yardstick(Clutter.Actor):
 
     def _on_screen_border(self):
         # temporary:
-        self.step_x *= -1
-        self.step_y *= -1
 
-        #self._on_user_decision(None, None)
+        #self.step_x *= -1
+        #self.step_y *= -1
+        #self.color = (0, 0, 0, 0)
+
+        self._on_user_decision(None, None)
 
         # self.timer.stop()
+
+    def _on_repeat_cycle(self):
+        self.step_x *= -1
+        self.step_y *= -1
+        self.color = self.rgba
         
     def _update_yardstick(self, event):
         to_x = self.from_x + self.step_x
         to_y = self.from_y + self.step_y
-        if 0 < to_x < self.width and 0 < to_y < self.height:
+        if 0 <= to_x <= self.width and 0 <= to_y <= self.height:
+            #if to_x == self.base_x and to_y == self.base_y:
+                #self._on_repeat_cycle()
             self.to_x, self.to_y = to_x, to_y
             self.canvas.invalidate()
             self.from_x, self.from_y = self.to_x, self.to_y
         else:
-            self.canvas.invalidate()
             self._on_screen_border()
 
+    def kill(self):
+        self._clean_up()
+        self.timer.stop()
+
     def _draw(self, cnvs, ctxt, width, height):
+        ctxt.set_operator(cairo.OPERATOR_SOURCE)
         ctxt.set_line_cap(cairo.LINE_CAP_ROUND)
         ctxt.set_line_width(self.line_width)
         ctxt.move_to(self.from_x, self.from_y)
         ctxt.line_to(self.to_x, self.to_y)
-        ctxt.set_source_rgba(self.rgba[0],
-                             self.rgba[1],
-                             self.rgba[2],
-                             self.rgba[3])
+        ctxt.set_source_rgba(self.color[0],
+                             self.color[1],
+                             self.color[2],
+                             self.color[3])
         ctxt.stroke()
         return True
 
@@ -490,6 +533,7 @@ class Easel(layout.Bin):
         self.yardstick = None
         self.bender = None
         self.line_width = 10
+        self.working_tool = None  # currently working tool
         self.width = 0 # widgth of the drawing area
         self.height = 0 # height of the drawing area
         self.rgba = (100, 100, 0, 255)  # current drawing color
@@ -542,11 +586,14 @@ class Easel(layout.Bin):
             self.add_child(self.localizer)
             self.localizer.connect("point-declared", self._exit_localizer)
             self.localizer.connect("horizontal-idle", self._exit)
+        self.set_child_above_sibling(self.localizer, None)
+        self.working_tool = self.localizer
         self.localizer.run()
         self.stage_handler_id = self.stage.connect("button-press-event",
                                                    self.localizer.on_user_click)
 
     def _exit_localizer(self, source, from_x, from_y):
+        self.working_tool = None
         self.from_x = from_x
         self.from_y = from_y
         self.stage.disconnect_by_func(self.localizer.on_user_click)
@@ -559,10 +606,13 @@ class Easel(layout.Bin):
             self.add_child(self.navigator)
             self.navigator.connect("angle-declared", self._exit_navigator)
             self.navigator.connect("idle", self._exit)
+        self.set_child_above_sibling(self.navigator, None)
+        self.working_tool = self.navigator
         self.stage_handler_id = self.stage.connect("button-press-event", self.navigator.on_user_click)
         self.navigator.run(self.from_x, self.from_y, self.rgba, self.line_width)
 
     def _exit_navigator(self, source, angle):
+        self.working_tool = None
         self.angle = angle
         self.stage.disconnect_by_func(self.navigator.on_user_click)
         self.run_yardstick()
@@ -574,12 +624,15 @@ class Easel(layout.Bin):
             self.add_child(self.yardstick)
             self.yardstick.connect("destination-declared", self._exit_yardstick)
             self.yardstick.connect("idle", self._exit)
+            self.working_tool = self.yardstick
         self.stage_handler_id = self.stage.connect("button-press-event",
                                                    self.yardstick.on_user_click)
+        self.set_child_above_sibling(self.yardstick, None)
         self.yardstick.run(self.from_x, self.from_y, self.angle, self.rgba,
                            self.line_width)
 
     def _exit_yardstick(self, event, to_x, to_y):
+        self.working_tool = None
         self.to_x = to_x
         self.to_y = to_y
         self.stage.disconnect_by_func(self.yardstick.on_user_click)
@@ -592,20 +645,28 @@ class Easel(layout.Bin):
             self.add_child(self.bender)
             self.bender.connect("bend-point-declared", self._exit_bender)
             self.bender.connect("idle", self._exit)
+        self.working_tool = self.bender
         self.stage_handler_id = self.stage.connect("button-press-event",
                                                    self.bender.on_user_click)
+        self.set_child_above_sibling(self.bender, None)
         self.bender.run(self.from_x, self.from_y, self.to_x, self.to_y,
                         self.angle, self.rgba, self.line_width)
 
     def _exit_bender(self, event, through_x, through_y):
+        self.working_tool = None
         self.through_x = through_x
         self.through_y = through_y
         self.stage.disconnect_by_func(self.bender.on_user_click)
         self.run_drawing()
 
     def run_drawing(self):
+        self.working_tool = None
+        for tool in self.get_children():
+            tool.hide()
         self.canvas.invalidate()
         self._update_values()
+        for tool in self.get_children():
+            tool.show()
         self.run_navigator()
 
     def _update_values(self):
@@ -629,7 +690,8 @@ class Easel(layout.Bin):
         if len(self.path_history) > 0:
             desc = self.path_history.pop()
             ctxt.append_path(desc["path"])
-            ctxt.set_line_width(desc["line_width"])
+            ctxt.set_line_width(desc["line_width"]+1)  # plus one
+                                                # for cleaning leftovers
             ctxt.set_line_cap(desc["line_cap"])
             ctxt.set_source_rgba(self.background_color[0],
                                  self.background_color[1],
@@ -657,10 +719,12 @@ class Easel(layout.Bin):
         self._set_canvas_background()
 
     def back_to_drawing(self):
-        self.run_navigator()
+        if not self.working_tool:
+            self.run_navigator()
 
     def localize_new_spot(self):
-        self.run()
+        if not self.working_tool:
+            self.run_localizer()
 
     def erase(self):
         try:
@@ -682,7 +746,15 @@ class Easel(layout.Bin):
         self.canvas.disconnect_by_func(self._draw_to_file)
         self.canvas.connect("draw", self._draw)
 
+    def clean_up(self, source):
+        if self.working_tool is not None:
+            self.working_tool.kill()
+        if self.stage.handler_is_connected(self.stage_handler_id):
+            self.stage.handler_disconnect(self.stage_handler_id)
+
     def _exit(self, event):
+        #self.remove_all_children()
+        self.working_tool = None
         if self.stage.handler_is_connected(self.stage_handler_id):
             self.stage.handler_disconnect(self.stage_handler_id)
         self.emit("exit")

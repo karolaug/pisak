@@ -52,7 +52,7 @@
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.02,
         "orientation": "vertical",
-        "children": ["line1", "line2", "line3"]
+        "children": ["line1", "line2", "line3", "line4"]
     },
     {
         "id": "line1",
@@ -88,6 +88,20 @@
         "ratio-width": 0.075,
         "ratio-height": 0.12,
         "label": "15 pkt",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "line4",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "25 pkt",
         "signals": [
                 {
                     "name": "clicked",
@@ -173,7 +187,7 @@
                 {
                     "name": "clicked",
                     "handler": "scanning/set_pending_group",
-                    "object": "color_menu"
+                    "object": "color_menu_group"
                 }
         ]
     },

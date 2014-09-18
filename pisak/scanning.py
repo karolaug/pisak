@@ -235,6 +235,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             _LOG.warning("Unknown selector: ", self.selector)
             return None
         self.get_stage().set_key_focus(self)
+        self.killed = False
         if self.scanning_hilite:
             self.enable_scan_hilite()
         self.strategy.start()
