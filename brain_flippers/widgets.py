@@ -194,7 +194,7 @@ class ScoreSummary(Dismissable):
         self.dismiss_button.set_style_class("MenuButton")
         self.dismiss_button.set_size(400, 100)
         self.dismiss_button.set_label("Spróbuj jeszcze raz!")
-        self.dismiss_button.connect("clicked", self.dismiss)
+        self.dismiss_button.connect("activate", self.dismiss)
         self.grid = Clutter.Actor()
         self.grid_layout = Clutter.GridLayout()
         self.grid.set_layout_manager(self.grid_layout)
@@ -269,7 +269,7 @@ class TextFeedback(Dismissable, PropertyAdapter):
         self.dismiss_button.set_size(600, 200)
         self.dismiss_button.set_label("Spróbuj jeszcze raz!")
         self.dismiss_button.set_margin_top(200)
-        self.dismiss_button.connect("clicked", self.dismiss)
+        self.dismiss_button.connect("activate", self.dismiss)
         self.box.add_actor(self.dismiss_button)
 
     def display(self):
