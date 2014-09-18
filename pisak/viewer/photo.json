@@ -16,18 +16,27 @@
         "id": "main_box",
         "type": "PisakBoxLayout",
         "x-align": "start",
+        "y-align": "end",
         "x-expand": true,
         "y-expand": true,
-        "ratio-margin-top": 0.12,
+        "ratio-margin-top": 0.05,
         "ratio-margin-bottom": 0.04,
-        "ratio-spacing": 0.02,
+        "ratio-spacing": 0.015,
         "orientation": "vertical",
         "children": ["progress_bar", "middle_box", "header"]
     },
     {
+        "id": "header",
+        "type": "MxLabel",
+        "style-class": "PisakViewerAlbumHeader",
+        "x-expand": true,
+        "margin-right": 100,
+        "x-align": "end"
+    },
+    {
         "id": "middle_box",
         "type": "PisakBoxLayout",
-        "ratio-spacing": 0.1,
+        "ratio-spacing": 0.05,
         "children": ["slideshow_widget", "button_menu"]
     },
     {
@@ -52,7 +61,7 @@
         "id": "button_menu_box",
         "type": "PisakBoxLayout",
         "orientation": "vertical",
-        "ratio-spacing": 0.01,
+        "ratio-spacing": 0.015,
         "y-expand": true,
         "y-align": "end",
         "children": ["button_library","button_album", "button_favourite", 
@@ -63,8 +72,10 @@
         "id": "button_slide",
         "type": "PisakViewerButton",
         "label": "POKAZ SLAJDÓW",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1,
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
+        "icon-size": 50,
+        "icon-name": "auto",
         "signals": [
             {
                 "name": "clicked",
@@ -82,8 +93,10 @@
         "id": "button_previous",
         "type": "PisakViewerButton",
         "label": "POPRZEDNIE ZDJĘCIE",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1,
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
+        "icon-size": 50,
+        "icon-name": "previous",
         "signals": [
             {
                 "name": "clicked",
@@ -96,8 +109,10 @@
         "id": "button_next",
         "type": "PisakViewerButton",
         "label": "NASTĘPNE ZDJĘCIE",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1,
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
+        "icon-size": 50,
+        "icon-name": "next",
         "signals": [
             {
                 "name": "clicked",
@@ -110,15 +125,19 @@
         "id": "button_edition",
         "type": "PisakViewerButton",
         "label": "EDYCJA",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
+        "icon-size": 50,
+        "icon-name": "edycja"
     },
     {
         "id": "button_favourite",
         "type": "PisakViewerButton",
         "label": "ULUBIONE",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1,
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
+        "icon-size": 50,
+        "icon-name": "ulubione",
         "signals": [
             {
                 "name": "clicked",
@@ -131,15 +150,19 @@
         "id": "button_album",
         "type": "PisakViewerButton",
         "label": "ALBUM",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
+        "icon-size": 50,
+        "icon-name": "album"
     },
     {
         "id": "button_library",
         "type": "PisakViewerButton",
         "label": "BIBLIOTEKA",
-        "ratio-width": 0.22,
-        "ratio-height": 0.1
+        "ratio-width": 0.24,
+        "ratio-height": 0.10,
+        "icon-size": 50,
+        "icon-name": "bib"
     },
     {
         "id": "slideshow_widget",
@@ -148,14 +171,14 @@
         "idle-duration": 1000,
         "slideshow-on-fullscreen": true,
         "data-source": "photo_data_source",
-        "ratio-width": 0.68,
-        "ratio-height": 0.7
+        "ratio-width": 0.71,
+        "ratio-height": 0.75
     },
     {
         "id": "photo_data_source",
         "type": "PisakViewerPhotoSlidesSource",
-        "slide-ratio-width": 0.63,
-        "slide-ratio-height": 0.65
+        "slide-ratio-width": 0.71,
+        "slide-ratio-height": 0.75
     },
     {
         "id": "progress_bar",
@@ -164,6 +187,6 @@
         "ratio-width": 1,
         "progress-transition-duration": 1000,
         "ratio-height": 0.05,
-        "label-ratio-x-offset": 0.8
+        "label-ratio-x-offset": 0.85
     }
 ]

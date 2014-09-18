@@ -3,7 +3,7 @@ Module with app-specific code for photo viewer.
 '''
 import os
 
-from pisak import launcher
+from pisak import launcher, xdg
 import logging
 
 
@@ -13,25 +13,41 @@ def button_to_stage(stage, script, button_name, stage_to_load, data=None):
         button.connect("clicked", lambda *_: stage.load_view(stage_to_load,
                                                              data))
 
+        
+def _extract_album_name(path):
+    pic_dir = xdg.get_dir('pictures')
+    if path == pic_dir:
+        return path.split('/')[-1]
+    else:        
+        return path.partition(pic_dir)[-1][1:]
+
 
 def prepare_photo_view(stage, script, data):
     slideshow = script.get_object("slideshow_widget")
+    header = script.get_object("header")
+    album = data["album"]
+    if header:
+        header.set_text(_extract_album_name(album))
     button_to_stage(stage, script, "button_edition", 
                     "viewer/photo_editing", {"slideshow": slideshow,
-                                      "album": data["album"]})
+                                             "album": album})
     button_to_stage(stage, script, "button_album", "viewer/album",
-                    {"album_name": data["album"]})
+                    {"album_name": album})
     button_to_stage(stage, script, "button_library", "viewer/library")
     data_source = script.get_object("photo_data_source")
-    data_source.album = data["album"]
+    data_source.album = album
     slideshow.show_initial_slide(data_source.data.index(data["photo"]))
 
 
 def prepare_album_view(stage, script, data):
     button_to_stage(stage, script, "button_library", "viewer/library")
+    header = script.get_object("header")
+    album = data["album_name"]
+    header.set_text(_extract_album_name(album))
     library = script.get_object("library_data")
     library.tiles_handler = lambda tile, photo, album: stage.load_view("viewer/photo",
                                             {"photo": photo, "album": album})
+    library.album = album
     library.album = data["album_name"]
     # start panel:
     # button_to_stage(stage, script, "button_start", "start_panel")

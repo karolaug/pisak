@@ -228,7 +228,7 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         self._label = value
         if value is not None:
             value.set_y_expand(True)
-            value.set_y_align(Clutter.ActorAlign.START)
+            value.set_y_align(Clutter.ActorAlign.CENTER)
             self.insert_child_above(value, None)
 
     @property
