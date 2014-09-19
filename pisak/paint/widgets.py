@@ -705,42 +705,40 @@ class Easel(layout.Bin):
 
     def _draw_erase(self, cnvs, ctxt, width, height):
         if len(self.path_history) > 0:
-            self.path_history.pop()
+            desc = self.path_history.pop()
             ctxt.set_operator(cairo.OPERATOR_SOURCE)
-            ctxt.rectangle(0, 0, width, height)
+            ctxt.append_path(desc["path"])
+            ctxt.set_line_width(desc["line_width"]+1)
+            ctxt.set_line_cap(desc["line_cap"])
             ctxt.set_source_rgba(self.background_color[0],
-                                 self.background_color[1],
-                                 self.background_color[2],
-                                 self.background_color[3])
-            ctxt.paint()
-            for desc in self.path_history:
-                ctxt.append_path(desc["path"])
-                ctxt.set_line_width(desc["line_width"])
-                ctxt.set_line_cap(desc["line_cap"])
-                color = desc["color"]
-                ctxt.set_source_rgba(color[0],
-                                     color[1],
-                                     color[2],
-                                     color[3])
-                ctxt.stroke()
+                             self.background_color[1],
+                             self.background_color[2],
+                             self.background_color[3])
+            ctxt.stroke()
         return True
     
     def _draw(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.rectangle(0, 0, width, height)
-        ctxt.set_source_rgba(self.background_color[0],
-                            self.background_color[1],
-                            self.background_color[2],
-                            self.background_color[3])
-        ctxt.paint()
+        #ctxt.rectangle(0, 0, width, height)
+        #ctxt.set_source_rgba(self.background_color[0],
+                            #self.background_color[1],
+                            #self.background_color[2],
+                            #self.background_color[3])
+        #ctxt.paint()
         ctxt.curve_to(self.from_x, self.from_y, self.through_x,
                       self.through_y, self.to_x, self.to_y)
-        print(self.from_x, self.from_y)
+        ctxt.set_line_width(self.line_width)
+        ctxt.set_line_cap(self.line_cap)
+        ctxt.set_source_rgba(self.rgba[0],
+                             self.rgba[1],
+                             self.rgba[2],
+                             self.rgba[3])
         self.path_history.append({"path": ctxt.copy_path(),
                                   "line_width": self.line_width,
                                   "line_cap": self.line_cap,
                                   "color": self.rgba})
-        for desc in self.path_history:
+        ctxt.stroke()
+        '''for desc in self.path_history:
             ctxt.append_path(desc["path"])
             ctxt.set_line_width(desc["line_width"])
             ctxt.set_line_cap(desc["line_cap"])
@@ -749,7 +747,7 @@ class Easel(layout.Bin):
                                 color[1],
                                 color[2],
                                 color[3])
-            ctxt.stroke()
+            ctxt.stroke()'''
         return True
 
     def clear_canvas(self):
