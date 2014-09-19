@@ -78,11 +78,11 @@ def prepare_top_list_view(stage, script, data):
     logic.game = "malpa"
     if data == False:
         logic.only_today = False
-        title_text = "WYNIKI Z KIEDYKOLWIEK:"
+        title_text = "NAJLEPSZE WYNIKI Z WYSTAWY:"
         
     else:
         logic.only_today = True
-        title_text = "DZISIEJSZE WYNIKI:"
+        title_text = "NAJLEPSZE WYNIKI Z DZIŚ:"
     logic.results_table = script.get_object("score_table")
     logic.best_score = script.get_object("best_score_value")
     script.get_object("title").set_text(title_text)
