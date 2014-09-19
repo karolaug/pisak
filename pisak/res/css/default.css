@@ -96,7 +96,7 @@ PisakViewerButton:hover {
 
 PisakPaintButton {
     border-image: url("paint_rest_button.png");
-    color: rgb(20, 100, 120);
+    color: rgb(20, 120, 20);
     font-family: Kelson Sans;
     font-size: 18;
 }
