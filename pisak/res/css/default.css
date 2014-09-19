@@ -95,15 +95,19 @@ PisakViewerButton:hover {
 }
 
 PisakPaintButton {
-    border-image: url("paint_rest_button.png");
-    color: rgb(20, 120, 20);
-    font-family: Kelson Sans;
-    font-size: 18;
+  color: white;
+  font-size: 15pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("viewer_rest_button.png");
 }
 
 PisakPaintButton:hover {
-    border-image: url("paint_hover_button.png");
-    color: red;
+  color: black;
+  font-size: 15pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("viewer_hover_button.png");
 }
 
 PisakPaintButton.color {

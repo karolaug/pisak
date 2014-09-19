@@ -544,7 +544,7 @@ class Easel(layout.Bin):
         self.to_y = 0 # y coordinate of current destination spot
         self.through_x = 0  # x coordinate of current through spot
         self.through_y = 0  # y coordinate of current through spot
-        self.background_color = (0.843, 0.784, 0.843, 1)  # color of the background
+        self.background_color = (1, 1, 1, 1)  # color of the background
                                                       # canvas
         self.path_history = []  # history of drawing
         self.line_cap = cairo.LINE_CAP_ROUND  # cap of the draw lines
