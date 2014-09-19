@@ -23,7 +23,7 @@ class Navigator(Clutter.Actor):
         self.set_content(self.canvas)
         self.rotations_count = 1 # limit of navigator idle rotations
         self.angle = 0  # angle of navigator line current position in radians
-        self.step_duration = 10  # pace of navigator in mscs
+        self.step_duration = 50  # pace of navigator in mscs
         self.step = 0.007  # navigator rotation fluency in radians
         self.from_x = 0  # x coordinate of navigator base point
         self.from_y = 0  # y coordinate of navigator base point
@@ -278,7 +278,7 @@ class Bender(Clutter.Actor):
         self.set_content(self.canvas)
         self.angle = 0  # angle of bending line direction
         self.bender_cycles_count = -1  # bender cycles repeat count
-        self.step_duration = 20  # pace of nbender in mscs
+        self.step_duration = 50  # pace of nbender in mscs
         self.step = 10 # bender fluency in pixels
         self.line_width = 10  # line width of the bender
         self.width = 0 # width of the drawing area
