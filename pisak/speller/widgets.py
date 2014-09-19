@@ -926,7 +926,7 @@ class PopUp(layout.Box):
         self.space = self.get_children()[1]
         self.header = self.get_children()[0]
         self.stage.pending_group = self.scanning_group
-        self.background_scene.add_effect(self.background_effect)
+        # self.background_scene.add_effect(self.background_effect)
         self.header.set_text(message)
         self._generate_content(text_files)
 
@@ -967,6 +967,6 @@ class PopUp(layout.Box):
 
     def _close(self, *args):
         self.stage.pending_group = self.background_scene
-        self.background_scene.remove_effect(self.background_effect)
+        # self.background_scene.remove_effect(self.background_effect)
         self.space.remove_all_children()
         self.stage.remove_child(self.scanning_group)
