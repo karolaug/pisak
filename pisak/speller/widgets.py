@@ -41,11 +41,12 @@ class CursorGroup(Clutter.Actor):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         self.connect("notify::mapped", self.init_content)
+        self.first_run = True
 
     def init_content(self, *args):
         self.text = [i for i in self.get_children()
                      if type(i) == Text][0]
-        self.init_cursor()
+        #self.init_cursor()
         self.text.clutter_text.connect('text-changed', self.move_cursor)
         self.text.clutter_text.connect('cursor-changed', self.move_cursor)
 
@@ -59,6 +60,7 @@ class CursorGroup(Clutter.Actor):
                     self.cursor_height = int(i.strip('px'))
                 else:
                     pass
+        print(self.cursor_height)
         self.cursor_height = round(self.cursor_height)
         self.cursor = Cursor((5, self.cursor_height))
         self.cursor.set_depth(10)
@@ -67,6 +69,9 @@ class CursorGroup(Clutter.Actor):
         self.cursor.set_y(0)
 
     def move_cursor(self, event):
+        if self.first_run:
+            self.init_cursor()
+            self.first_run = False
         cursor_pos = self.text.get_cursor_position()
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
         self.cursor.set_x(coords[1])

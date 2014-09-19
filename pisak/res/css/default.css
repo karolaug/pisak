@@ -2,15 +2,15 @@
 /* different properties for different types*/
 
 PisakSpellerText {
-    font-size: 48pt;
-    font-family: Kelson Sans;
-    border-image: url("../tlo_pola_tekstowego.png")
     color: black;
+    font-size: 50px;
+    font-family: Kelson Sans;
+    border-image: url("../tlo_pola_tekstowego.png");
 }
 
 PisakMainPanelButton {
     color: black;
-    font-size: 35 pt;
+    font-size: 35pt;
     font-family: Kelson Sans;
     font-weight: bold;
     border-image: url("rest_button.png") 5;
