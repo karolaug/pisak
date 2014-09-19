@@ -13,32 +13,30 @@ class DataSource(GObject.GObject):
 
 
 class _Page(scanning.Group):
-    def __init__(self, rows, columns, tiles, strategy, selector, ratio_spacing):
+    def __init__(self, width, height, rows, columns, tiles, strategy, selector, ratio_spacing):
         super().__init__()
-        self.set_x_expand(True)
-        self.set_y_expand(True)
-        self.set_y_align(Clutter.ActorAlign.START)
+        self.set_size(width, height)
         self.strategy = strategy
         self.selector = selector
-        self._add_tiles(rows, columns, tiles, selector, ratio_spacing)
         layout = Clutter.BoxLayout()
         layout.set_spacing(unit.h(ratio_spacing))
         layout.set_orientation(Clutter.Orientation.VERTICAL)
         self.set_layout_manager(layout)
+        self.set_y_align(Clutter.ActorAlign.START)
+        self._add_tiles(rows, columns, tiles, ratio_spacing)
 
-    def _add_tiles(self, rows, columns, tiles, selector, ratio_spacing):
+    def _add_tiles(self, rows, columns, tiles, ratio_spacing):
         index = 0
         for _row in range(rows):
             if index >= len(tiles):
                 return
             group = scanning.Group()
             group.strategy = scanning.RowStrategy()
-            group.strategy.max_cycle_count = 2
-            group.selector = selector
-            group_box = Clutter.Actor()
-            group_box_layout = Clutter.BoxLayout()
-            group_box_layout.set_spacing(unit.w(ratio_spacing))
-            group_box.set_layout_manager(group_box_layout)
+            group.selector = self.selector
+            group.strategy.max_cycle_count = self.strategy.max_cycle_count
+            group.strategy.interval = self.strategy.interval
+            group_box = layout.Box()
+            group_box.ratio_spacing = ratio_spacing
             group.add_child(group_box)
             self.add_child(group)
             for _col in range(columns):
@@ -93,14 +91,23 @@ class PagerWidget(layout.Bin):
             GObject.TYPE_INT64, "idle duration",
             "duration of one page exposition", 0,
             GObject.G_MAXUINT, 5000, GObject.PARAM_READWRITE),
+        "transition-duration": (
+            GObject.TYPE_INT64, "transition duration",
+            "duration of page transition", 0,
+            GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE)
     }
 
     def __init__(self, rows=3, columns=4):
         super().__init__()
         self.is_running = False
+        self.set_clip_to_allocation(True)
         self.page_index = 0
         self.pages_count = 1
+        self.old_page_transition = Clutter.PropertyTransition.new("x")
+        self.new_page_transition = Clutter.PropertyTransition.new("x")
+        self.new_page_transition.connect("stopped", self._clean_up)
         self.idle_duration = 3000
+        self.transition_duration = 1000
         self._data_source = None
         self._page_strategy = None
         self._page_selector = None
@@ -108,6 +115,7 @@ class PagerWidget(layout.Bin):
         self._rows = rows
         self._columns = columns
         self._current_page = None
+        self.old_page = None
         self.connect("notify::mapped", self._show_initial_page)
 
     @property
@@ -165,6 +173,15 @@ class PagerWidget(layout.Bin):
     @idle_duration.setter
     def idle_duration(self, value):
         self._idle_duration = value
+
+    @property
+    def transition_duration(self):
+        return self.new_page_transition.get_duration()
+
+    @transition_duration.setter
+    def transition_duration(self, value):
+        self.new_page_transition.set_duration(value)
+        self.old_page_transition.set_duration(value)
     
     def _show_initial_page(self, source, event):
         if self.data_source is not None and self._current_page is None:
@@ -179,8 +196,9 @@ class PagerWidget(layout.Bin):
                 self.emit("progressed", 0, 0)
             tiles = self.data_source.get_tiles(self.columns * self.rows)
             if len(tiles) > 0:
-                self._current_page = _Page(self.rows, self.columns, tiles,
-                    self.page_strategy, self.page_selector, self.page_ratio_spacing)
+                self._current_page = _Page(self.get_width(), self.get_height(),
+                        self.rows, self.columns, tiles, self.page_strategy,
+                        self.page_selector, self.page_ratio_spacing)
                 self.add_child(self._current_page)
 
     def scan_page(self):
@@ -193,15 +211,21 @@ class PagerWidget(layout.Bin):
         """
         Move to the next page.
         """
-        if self.pages_count > 1:
+        if self.old_page is None and self.pages_count > 1:
             tiles = self.data_source.get_tiles(self.columns * self.rows)
             if len(tiles) > 0:
                 self.page_index = (self.page_index+1) % self.pages_count
-                _new_page = _Page(self.rows, self.columns, tiles,
-                    self.page_strategy, self.page_selector, self.page_ratio_spacing)
-                self.remove_child(self._current_page)
-                self.add_child(_new_page)
-                self._current_page = _new_page
+                self.old_page = self._current_page
+                self._current_page = _Page(self.get_width(), self.get_height(),
+                        self.rows, self.columns, tiles, self.page_strategy,
+                        self.page_selector, self.page_ratio_spacing)
+                self._current_page.set_x(unit.size_pix[0])
+                self.add_child(self._current_page)
+                self.new_page_transition.set_from(unit.size_pix[0])
+                self.new_page_transition.set_to(0)
+                self.old_page_transition.set_to(-1*unit.size_pix[0])
+                self.old_page.add_transition("x", self.old_page_transition)
+                self._current_page.add_transition("x", self.new_page_transition)
                 self.emit("progressed", float(self.page_index+1) \
                         / self.pages_count,
                         self.page_index+1)
@@ -228,3 +252,16 @@ class PagerWidget(layout.Bin):
         Stop automatic page flipping.
         """
         self.is_running = False
+
+    def _clean_up(self, source, event):
+        """
+        Func used as a signal handler. Clean up after stoppage of the
+        new page 'x' transition. Remove transitions and
+        free the old page.
+        """
+        self._current_page.remove_transition("x")
+        self.old_page.remove_transition("x")
+        if self.old_page is not None:
+            if self.contains(self.old_page):
+                self.remove_child(self.old_page)
+        self.old_page = None
