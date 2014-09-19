@@ -23,8 +23,8 @@ class Navigator(Clutter.Actor):
         self.set_content(self.canvas)
         self.rotations_count = 1 # limit of navigator idle rotations
         self.angle = 0  # angle of navigator line current position in radians
-        self.step_duration = 2  # pace of navigator in mscs
-        self.step = 0.005  # navigator rotation fluency in radians
+        self.step_duration = 10  # pace of navigator in mscs
+        self.step = 0.007  # navigator rotation fluency in radians
         self.from_x = 0  # x coordinate of navigator base point
         self.from_y = 0  # y coordinate of navigator base point
         self.to_x = 0 # x coordinate of current navigator end spot
@@ -418,8 +418,8 @@ class Yardstick(Clutter.Actor):
         self.click_handlers = [self._on_user_decision]
 
     def run(self, from_x, from_y, angle, color, line_width):
-        self.base_x = self.from_x = from_x
-        self.base_y = self.from_y = from_y
+        self.to_x = self.base_x = self.from_x = from_x
+        self.to_y = self.base_y = self.from_y = from_y
         self.angle = angle
         self.color = self.rgba = color
         self.step_x = math.cos(self.angle) * self.step
@@ -483,14 +483,14 @@ class Yardstick(Clutter.Actor):
         self.color = self.rgba
         
     def _update_yardstick(self, event):
-        to_x = self.from_x + self.step_x
-        to_y = self.from_y + self.step_y
+        to_x = self.to_x + self.step_x
+        to_y = self.to_y + self.step_y
         if 0 <= to_x <= self.width and 0 <= to_y <= self.height:
             #if to_x == self.base_x and to_y == self.base_y:
                 #self._on_repeat_cycle()
             self.to_x, self.to_y = to_x, to_y
             self.canvas.invalidate()
-            self.from_x, self.from_y = self.to_x, self.to_y
+            #self.from_x, self.from_y = self.to_x, self.to_y
         else:
             self._on_screen_border()
 
@@ -500,9 +500,11 @@ class Yardstick(Clutter.Actor):
 
     def _draw(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
+        ctxt.set_source_rgba(0, 0, 0, 0)
+        ctxt.paint()
         ctxt.set_line_cap(cairo.LINE_CAP_ROUND)
         ctxt.set_line_width(self.line_width)
-        ctxt.move_to(self.from_x, self.from_y)
+        ctxt.move_to(self.base_x, self.base_y)
         ctxt.line_to(self.to_x, self.to_y)
         ctxt.set_source_rgba(self.color[0],
                              self.color[1],
@@ -703,31 +705,51 @@ class Easel(layout.Bin):
 
     def _draw_erase(self, cnvs, ctxt, width, height):
         if len(self.path_history) > 0:
-            desc = self.path_history.pop()
-            ctxt.append_path(desc["path"])
-            ctxt.set_line_width(desc["line_width"]+1)  # plus one
-                                                # for cleaning leftovers
-            ctxt.set_line_cap(desc["line_cap"])
+            self.path_history.pop()
+            ctxt.set_operator(cairo.OPERATOR_SOURCE)
+            ctxt.rectangle(0, 0, width, height)
             ctxt.set_source_rgba(self.background_color[0],
                                  self.background_color[1],
                                  self.background_color[2],
                                  self.background_color[3])
-            ctxt.stroke()
+            ctxt.paint()
+            for desc in self.path_history:
+                ctxt.append_path(desc["path"])
+                ctxt.set_line_width(desc["line_width"])
+                ctxt.set_line_cap(desc["line_cap"])
+                color = desc["color"]
+                ctxt.set_source_rgba(color[0],
+                                     color[1],
+                                     color[2],
+                                     color[3])
+                ctxt.stroke()
         return True
     
     def _draw(self, cnvs, ctxt, width, height):
-        ctxt.set_line_cap(self.line_cap)
-        ctxt.set_line_width(self.line_width)
+        ctxt.set_operator(cairo.OPERATOR_SOURCE)
+        ctxt.rectangle(0, 0, width, height)
+        ctxt.set_source_rgba(self.background_color[0],
+                            self.background_color[1],
+                            self.background_color[2],
+                            self.background_color[3])
+        ctxt.paint()
         ctxt.curve_to(self.from_x, self.from_y, self.through_x,
                       self.through_y, self.to_x, self.to_y)
-        ctxt.set_source_rgba(self.rgba[0],
-                             self.rgba[1],
-                             self.rgba[2],
-                             self.rgba[3])
+        print(self.from_x, self.from_y)
         self.path_history.append({"path": ctxt.copy_path(),
                                   "line_width": self.line_width,
-                                  "line_cap": self.line_cap})
-        ctxt.stroke()
+                                  "line_cap": self.line_cap,
+                                  "color": self.rgba})
+        for desc in self.path_history:
+            ctxt.append_path(desc["path"])
+            ctxt.set_line_width(desc["line_width"])
+            ctxt.set_line_cap(desc["line_cap"])
+            color = desc["color"]
+            ctxt.set_source_rgba(color[0],
+                                color[1],
+                                color[2],
+                                color[3])
+            ctxt.stroke()
         return True
 
     def clear_canvas(self):
