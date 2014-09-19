@@ -244,10 +244,10 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
     def adjust_high_scores_view(self, request):
         if request == "today":
             db_records = score_manager.get_best_today("puzzle")
-            self.script.get_object("title").set_text("WYNIKI Z DZIŚ")
+            self.script.get_object("title").set_text("NAJLEPSZE WYNIKI Z DZIŚ:")
         elif request == "ever":
             db_records = score_manager.get_best_ever("puzzle")
-            self.script.get_object("title").set_text("WYNIKI Z KIEDYKOLWIEK")
+            self.script.get_object("title").set_text("NAJLEPSZE WYNIKI Z WYSTAWY:")
         best_score_entry = self.script.get_object("best_score_value")
         best_score_entry.set_text(str(int(db_records[0][1])))
         score_table = self.script.get_object("score_table")
