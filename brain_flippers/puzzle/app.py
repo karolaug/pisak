@@ -16,22 +16,22 @@ VIEW_PATHS = {
   "player_success": "../player_success_screen.json",
   "player_fail": "../player_fail_screen.json",
   "player_death": "../player_death_screen.json",
-  "welcome_screen": "../welcome_screen.json",
+  "welcome_screen": "../menu_screen.json",
   "game_screen": "main_game_screen.json",
+  "tutorial_screen": "../tutorial.json"
 }
 
 
 class BrainPuzzleStage(Clutter.Stage):
     INITIAL_VIEW = "welcome_screen"
-    WELCOME_TEXT = """Przed Tobą zadanie wymagające wyobraźni, sprytu 
-i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
- niewyraźne i jakby za mgłą, a obok niego cztery puzzle. Twoim zadaniem
- będzie odtworzyć stopniowo, po fragmencie, cały obraz, tak żeby miał
- ręce i nogi i wszystko było na właściwym miejscu, poprzez dopasowanie
- za każdym razem któregoś z czterech zaproponowanych kawałków. Ale uważaj!
- Choć na pierwszy rzut oka może Ci się wydawać inaczej, nie jest to wcale
- takie proste i za każdym razem tylko jedna z podanych opcji jest właściwa.
-\nPamiętaj także, żeby podejmować decyzje szybko, bo czas płynie.\nPowodzenia!"""
+    WELCOME_TEXT = "Puzzle"
+    INSTRUCTION_TEXT = \
+        "Na ekranie gry zobaczysz niewyraźny obrazek i " \
+        "cztery puzzle. Twoim zadaniem będzie odtworzyć cały obraz " \
+        "przez dopasowanie któregoś z czterech " \
+        "zaproponowanych kawałków. Choć na pierwszy rzut oka może " \
+        "wydawać się inaczej, za każdym razem tylko jedna z podanych " \
+        "opcji jest właściwa."
     CONSOLATION_TEXT = """Niestety.\nStraciłeś wszystkie życia i umarłeś.\nMimo
  wszystko nie poddawaj się i spróbuj jeszcze raz!"""
     
@@ -97,11 +97,23 @@ i nieprzeciętnej spostrzegawczości.\nZa chwilę zobacz zdjęcie, na początku
 
     def enable_welcome_view(self):
         start_button = self.script.get_object("start_button")
-        if start_button:
-            start_button.connect("activate", self.enter_game_view)
-        scores_button = self.script.get_object("scores_button")
-        if scores_button:
-            scores_button.connect("activate", self.enter_high_scores_view, "ever")
+        start_button.connect("activate", self.enter_game_view)
+        
+        tutorial_button = self.script.get_object("tutorial_button")
+        tutorial_button.connect("activate", self.enter_tutorial_view)
+        
+        scores_button = self.script.get_object("score_table_button")
+        scores_button.connect("activate", self.enter_high_scores_view, "ever")
+
+    def enter_tutorial_view(self, *args):
+        self.load_view_from_script("tutorial_screen")
+        self.check_view = True
+        
+        back_button = self.script.get_object("backButton")
+        back_button.connect("activate", self.enter_welcome_view)
+        
+        text = self.script.get_object("text")
+        text.set_text(self.INSTRUCTION_TEXT)
 
     def enter_game_view(self, *args):
         self.load_view_from_script("game_screen")
