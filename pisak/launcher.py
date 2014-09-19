@@ -10,7 +10,15 @@ from pisak import switcher_app, signals, unit
 import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
 import pisak.handlers  # @UnusedImport
+import pisak.speller.handlers # @UnusedImport
 from pisak.viewer import widgets, handlers  # @UnusedImport
+
+
+class LauncherError(Exception):
+    """
+    Error thrown when launcher meets an unexcpected condition.
+    """
+    pass
 
 
 class LauncherStage(Clutter.Stage):
@@ -24,6 +32,9 @@ class LauncherStage(Clutter.Stage):
         self.load_view(self.initial, self.initial_data)
 
     def load_view(self, name, data):
+        if name not in self.views.keys():
+            message = "Descriptor has no view with name: {}".format(name)
+            raise LauncherError(message)
         view_path, prepare = self.views.get(name)
         self.script = Clutter.Script()
         self.script.load_from_file(view_path)

@@ -1,0 +1,61 @@
+[
+    {
+        "id": "main",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+        "x-expand": true,
+        "y-expand": true,
+	"strategy": {
+                        "id": "main_group_strategy",
+                        "type": "PisakRowStrategy",
+                        "interval": 800,
+                        "max-cycle-count": -1,
+	                "unwind-to": "main"
+                    },
+        "signals": [
+                       {
+                           "name": "notify::mapped",
+                           "handler": "general/start_group"
+                       }
+                   ],
+        "children": [
+                        "main_box", "background_box"
+                    ]
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundPattern",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "main_box",
+        "type": "PisakBoxLayout",
+        "x-align": "start",
+        "x-expand": true,
+        "y-expand": true,
+        "ratio_margin_top": 0.1,
+        "ratio_margin_bottom": 0.1,
+        "ratio_margin_left": 0.1,
+        "ratio_margin_right": 0.1,
+        "ratio_spacing": 0.1,
+        "orientation": "horizontal",
+        "children": [
+                        "button_speller", "button_viewer"
+                    ]
+    },
+    {
+        "id": "button_viewer",
+        "type": "PisakSpellerButton",
+        "ratio-width": 0.35,
+        "ratio-height": 0.3,
+        "label": "ZDJĘCIA"
+    }
+    {
+        "id": "button_speller",
+        "type": "PisakSpellerButton",
+        "ratio-width": 0.35,
+        "ratio-height": 0.3,
+        "label": "PISANIE"
+    }
+]

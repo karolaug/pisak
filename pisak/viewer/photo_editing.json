@@ -8,7 +8,7 @@
     },
     {
         "id": "background_box",
-        "type": "PisakBackgroundPattern",
+        "type": "PisakBackgroundImage",
         "x-expand": true,
         "y-expand": true
     },
@@ -16,18 +16,19 @@
         "id": "main_box",
         "type": "PisakBoxLayout",
         "x-align": "start",
+        "y-align": "end",
         "x-expand": true,
         "y-expand": true,
         "ratio-margin-top": 0.01,
-        "ratio-margin-bottom": 0.04,
+        "ratio-margin-bottom": 0.02,
         "ratio-spacing": 0.02,
         "orientation": "vertical",
-        "children": ["middle_box", "header"]
+        "children": ["middle_box"]
     },
     {
         "id": "middle_box",
         "type": "PisakBoxLayout",
-        "ratio-spacing": 0.1,
+        "ratio-spacing": 0.05,
         "children": ["slide_space", "button_menu"]
     },
     {
@@ -35,12 +36,12 @@
         "type": "PisakScanningGroup",
 	"selector": "mouse",
         "children": ["button_menu_box"],
-        "scanning-hilite": true,
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": 2
+            "max-cycle-count": -1,
+            "unwind-to": "button_menu"
         },
         "signals": [
             {
@@ -64,8 +65,10 @@
         "id": "button_1",
         "type": "PisakViewerButton",
         "label": "ZOOM",
-        "ratio-width": 0.22,
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
+        "icon-size": 50,
+        "icon-name": "ZOOM",
         "signals": [
             {
                 "name": "clicked",
@@ -83,7 +86,9 @@
         "id": "button_2",
         "type": "PisakViewerButton",
         "label": "OBRÓĆ",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "obrot",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -97,7 +102,9 @@
         "id": "button_3",
         "type": "PisakViewerButton",
         "label": "KRAWĘDZIE",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "edges",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -111,7 +118,9 @@
         "id": "button_4",
         "type": "PisakViewerButton",
         "label": "KONTURY",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "contour",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -125,7 +134,9 @@
         "id": "button_5",
         "type": "PisakViewerButton",
         "label": "SEPIA",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "filtr",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -139,7 +150,9 @@
         "id": "button_6",
         "type": "PisakViewerButton",
         "label": "NEGATYW",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "NEGATYW",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -153,7 +166,9 @@
         "id": "button_7",
         "type": "PisakViewerButton",
         "label": "LUSTRO",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "mirror",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -167,7 +182,9 @@
         "id": "button_8",
         "type": "PisakViewerButton",
         "label": "SKALA SZAROŚCI",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "szarosc",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -181,7 +198,9 @@
         "id": "button_9",
         "type": "PisakViewerButton",
         "label": "PSYCHO",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "psycho",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -200,7 +219,9 @@
         "id": "button_10",
         "type": "PisakViewerButton",
         "label": "PRZEŚWIETLENIE",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "jasnosc",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -214,7 +235,9 @@
         "id": "button_11",
         "type": "PisakViewerButton",
         "label": "ORYGINAŁ",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "oryginal",
+        "ratio-width": 0.24,
         "ratio-height": 0.065,
         "signals": [
             {
@@ -228,27 +251,31 @@
         "id": "button_photo",
         "type": "PisakViewerButton",
         "label": "POWRÓT",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "back",
+        "ratio-width": 0.24,
         "ratio-height": 0.065
     },
     {
         "id": "button_start",
         "type": "PisakViewerButton",
         "label": "PANEL STARTOWY",
-        "ratio-width": 0.22,
+        "icon-size": 50,
+        "icon-name": "exit",
+        "ratio-width": 0.24,
         "ratio-height": 0.065
     },
     {
         "id": "slide_space",
         "type": "PisakBinLayout",
-        "ratio-width": 0.68,
-        "ratio-height": 0.7,
+        "ratio-width": 0.71,
+        "ratio-height": 0.75,
         "children": ["slide"]
     },
     {
         "id": "slide",
         "type": "PisakViewerPhotoSlide",
-        "ratio-width": 0.68,
-        "ratio-height": 0.7
+        "ratio-width": 0.71,
+        "ratio-height": 0.75
     }
 ]

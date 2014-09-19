@@ -1,7 +1,7 @@
 import collections
 import os.path
 
-from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl
+from gi.repository import Clutter, Mx, GObject, Rsvg, Cogl, GdkPixbuf
 import cairo
 
 from pisak import switcher_app, unit, res, properties, scanning
@@ -228,7 +228,7 @@ class NewProgressBar(Bin, properties.PropertyAdapter):
         self._label = value
         if value is not None:
             value.set_y_expand(True)
-            value.set_y_align(Clutter.ActorAlign.START)
+            value.set_y_align(Clutter.ActorAlign.CENTER)
             self.insert_child_above(value, None)
 
     @property
@@ -663,6 +663,50 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
         :see: Scannable
         """
         self.emit("clicked")
+
+
+class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
+    __gtype_name__ = "PisakBackgroundImage"
+    __gproperties__ = {
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None,
+            0, 1., 0, GObject.PARAM_READWRITE)
+    }
+    def __init__(self):
+        super().__init__()
+        self.background_image = Clutter.Image()
+        self.set_content(self.background_image)
+        self._load_image()
+
+    def _load_image(self):
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(res.PATH,
+                                                       "background_image.png"))
+        self.background_image.set_data(pixbuf.get_pixels(),
+                                     Cogl.PixelFormat.RGBA_8888,
+                                     pixbuf.get_width(),
+                                     pixbuf.get_height(),
+                                     pixbuf.get_rowstride())
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
 
 class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
