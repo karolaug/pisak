@@ -8,7 +8,7 @@
 	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
-                        "interval": 2000,
+                        "interval": 800,
                         "max-cycle-count": -1,
 	                "unwind-to": "main"
                     },
@@ -79,7 +79,7 @@
         "ratio-width": 0.25,
         "ratio-height": 0.35,
         "icon-size": 160,
-        "label": "RYSOWANIE",
+        "label": "RYSUJ",
         "icon-name": "paint"
     }
 ]
