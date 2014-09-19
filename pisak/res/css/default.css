@@ -2,10 +2,23 @@
 /* different properties for different types*/
 
 PisakSpellerText {
-    font-size: 48pt;
-    font-family: Kelson Sans;
-    border-image: url("../tlo_pola_tekstowego.png")
     color: black;
+    font-size: 50px;
+    font-family: Kelson Sans;
+    border-image: url("../tlo_pola_tekstowego.png");
+}
+
+PisakMainPanelButton {
+    color: black;
+    font-size: 35pt;
+    font-family: Kelson Sans;
+    font-weight: bold;
+    border-image: url("rest_button.png") 5;
+}
+
+PisakMainPanelButton:hover {
+    color: white;
+    border-image: url("hover_button.png") 5;
 }
 
 PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
@@ -13,12 +26,12 @@ PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
     font-size: 18pt;
     font-family: Kelson Sans;
     font-weight: bold;
-    border-image: url("speller_rest_button.png") 5;
+    border-image: url("rest_button.png") 5;
 }
 
 PisakSpellerButton:hover, PisakSpellerKey:hover, PisakSpellerPrediction:hover {
     color: white;
-    border-image: url("speller_hover_button.png");
+    border-image: url("hover_button.png");
 }
 
 PisakSpellerButton:active, PisakSpellerKey:active, PisakSpellerPrediction:active {
@@ -32,18 +45,18 @@ MxButton:scanning {
 }
 
 MxButton:disabled{
-    color: black;
+    color: grey;
     font-size: 20pt;
     font-family: serif;
-    border-image: url("speller_disabled_button.png") 5;
+    border-image: url("disabled_button.png") 5;
 }
 
 MxProgressBar.PisakViewerProgressBar {
-  border-image: url("viewer_progress_bar_background.png");
+  border-image: url("progress_bar_background.png");
 }
 
 MxProgressBarFill.PisakViewerProgressBar {
-  border-image: url("viewer_progress_bar_fill.png");
+  border-image: url("progress_bar_fill.png");
 }
 
 MxLabel.PisakViewerProgressBar {
@@ -78,7 +91,7 @@ PisakViewerButton:hover {
   font-size: 20pt;
   font-family: Kelson Sans;
   font-weight: bold;
-  border-image: url("viewer_hover_button.png");
+  border-image: url("hover_button.png");
 }
 
 

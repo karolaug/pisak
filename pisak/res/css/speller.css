@@ -9,12 +9,12 @@ PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
     font-size: 18 pt;
     font-family: Kelson Sans;
     font-weight: bold;
-    border-image: url("speller_rest_button.png") 5;
+    border-image: url("rest_button.png") 5;
 }
 
 PisakSpellerButton:hover, PisakSpellerKey:hover, PisakSpellerPrediction:hover {
     color: white;
-    border-image: url("speller_hover_button.png");
+    border-image: url("hover_button.png");
 }
 
 PisakSpellerButton:active, PisakSpellerKey:active, PisakSpellerPrediction:active {
@@ -28,10 +28,10 @@ PisakSpellerButton:scanning, PisakSpellerKey:scanning, PisakSpellerPrediction:sc
 }
 
 MxButton:disabled{
-    color: black;
+    color: grey;
     font-size: 20;
     font-family: serif;
-    border-image: url("speller_disabled_button.png") 5;
+    border-image: url("disabled_button.png") 5;
 }
 
 

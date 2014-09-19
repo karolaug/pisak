@@ -153,6 +153,8 @@
     {
         "id": "pager",
         "type": "PisakPagerWidget",
+        "transition-duration": 1000,
+        "idle-duration": 3000,
         "page-ratio-spacing": 0.015,
         "ratio-height": 0.75,
         "ratio-width": 0.71,

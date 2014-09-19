@@ -41,11 +41,12 @@ class CursorGroup(Clutter.Actor):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         self.connect("notify::mapped", self.init_content)
+        self.first_run = True
 
     def init_content(self, *args):
         self.text = [i for i in self.get_children()
                      if type(i) == Text][0]
-        self.init_cursor()
+        #self.init_cursor()
         self.text.clutter_text.connect('text-changed', self.move_cursor)
         self.text.clutter_text.connect('cursor-changed', self.move_cursor)
 
@@ -67,6 +68,9 @@ class CursorGroup(Clutter.Actor):
         self.cursor.set_y(0)
 
     def move_cursor(self, event):
+        if self.first_run:
+            self.init_cursor()
+            self.first_run = False
         cursor_pos = self.text.get_cursor_position()
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
         self.cursor.set_x(coords[1])
@@ -747,6 +751,8 @@ class Prediction(pisak.widgets.Button):
         self.clutter_text = [i for i in self.layout.get_children()
                             if type(i) == Clutter.Text][0]
         self.clutter_text.set_property("ellipsize", 0)
+        self.clutter_text.connect("text-changed", self._resize_reflow)
+        self.connect("notify::mapped", self._initial_label)
 
     @property
     def idle_icon_name(self):
@@ -755,6 +761,10 @@ class Prediction(pisak.widgets.Button):
     @idle_icon_name.setter
     def idle_icon_name(self, value):
         self._idle_icon_name = value
+
+    def _initial_label(self, *args):
+        if self.get_property("mapped"):
+            self.set_label(self.dictionary.basic_content.pop(0))
 
     def _on_activate(self, source):
         label = self.get_label()
@@ -765,23 +775,25 @@ class Prediction(pisak.widgets.Button):
         self.icon_name = None
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
-            button_width = self.get_width()
-            button_height = self.get_height()
-            self.clutter_text.set_pivot_point(0.5, 0.5)
-            self.clutter_text.set_scale(1, 1)
             self.set_label(new_label)
-            text_width = self.clutter_text.get_width()
-            text_height = self.clutter_text.get_height()
-            self.set_disabled(False)
-            point = Clutter.Point((1, 1))
-            if text_width + 27 > button_width:
-                self.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS)
-                self.clutter_text.set_pivot_point(0, 0.5)
-                self.clutter_text.set_scale(button_width/(text_width*1.3),
-                                            button_width/(text_width*1.3))
         else:
             self.set_label("")
             self.set_disabled(True)
+
+    def _resize_reflow(self, *args):
+        button_width = self.get_width()
+        button_height = self.get_height()
+        self.clutter_text.set_pivot_point(0.5, 0.5)
+        self.clutter_text.set_scale(1, 1)
+        text_width = self.clutter_text.get_width()
+        text_height = self.clutter_text.get_height()
+        self.set_disabled(False)
+        point = Clutter.Point((1, 1))
+        if text_width + 27 > button_width:
+            self.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS)
+            self.clutter_text.set_pivot_point(0, 0.5)
+            self.clutter_text.set_scale(button_width/(text_width*1.3),
+                                        button_width/(text_width*1.3))
 
     def _button_idle(self, source):
         self.set_label(" ")

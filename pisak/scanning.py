@@ -316,6 +316,7 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     def __init__(self):
         self._group = None
+        self._allocation_slot = None
         self._subgroups = []
         self.index = None
         super().__init__()
@@ -356,10 +357,14 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
     @group.setter
     def group(self, value):
         if self.group is not None:
-            self.group.disconnect_by_function("allocation-changed". self.update_rows)
+            message = "Group strategy reuse, old {}, new {}"
+            _LOG.warning(message.format(self.group.get_id(), value.get_id()))
+            _LOG.debug("new {}, old {}".format(self.group, value))
+            self.group.disconnect(self._allocation_slot)
         self._group = value
         if self.group is not None:
-            self.group.connect("allocation-changed", self.update_rows)
+            self._allocation_slot = \
+                self.group.connect("allocation-changed", self.update_rows)
 
     def update_rows(self, *args):
         _LOG.debug("Row layout allocation changed")
