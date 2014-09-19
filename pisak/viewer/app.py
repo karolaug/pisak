@@ -3,8 +3,8 @@ Module with app-specific code for photo viewer.
 '''
 import os
 
-from pisak.viewer import library_manager
 from pisak import launcher, xdg
+import logging
 
 
 def button_to_stage(stage, script, button_name, stage_to_load, data=None):
@@ -45,8 +45,8 @@ def prepare_album_view(stage, script, data):
     album = data["album_name"]
     header.set_text(_extract_album_name(album))
     library = script.get_object("library_data")
-    library.tiles_handler = lambda tile, photo, album: stage.load_view(
-        "viewer/photo", {"photo": photo, "album": album})
+    library.tiles_handler = lambda tile, photo, album: stage.load_view("viewer/photo",
+                                            {"photo": photo, "album": album})
     library.album = album
     library.album = data["album_name"]
     button_to_stage(stage, script, "button_start", "main_panel/main")
@@ -81,6 +81,7 @@ VIEWS = {
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     _viewer_app = {
         "views": VIEWS,
         "initial-view": "viewer/library",
