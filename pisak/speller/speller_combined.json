@@ -329,7 +329,6 @@
         "order-num": 1,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Chciałbym",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -339,7 +338,6 @@
         "order-num": 2,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Czy",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -349,7 +347,6 @@
         "order-num": 3,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Jak",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -359,7 +356,6 @@
         "order-num": 4,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Jestem",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -369,7 +365,6 @@
         "order-num": 5,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Nie",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -379,7 +374,6 @@
         "order-num": 6,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Niestety",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -389,7 +383,6 @@
         "order-num": 7,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Rzeczywiście",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -399,7 +392,6 @@
         "order-num": 8,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Super",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -409,7 +401,6 @@
         "order-num": 9,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Witam",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
