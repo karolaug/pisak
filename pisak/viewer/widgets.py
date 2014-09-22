@@ -429,7 +429,6 @@ class AlbumTilesSource(LibraryTilesSource):
         self.album = None
         self.photos = []
         self.library = model.get_library()
-        
 
     @property
     def album(self):
@@ -602,7 +601,11 @@ class PhotoSlide(layout.Bin):
     def photo_path(self, value):
         self._photo_path = value
         if value is not None:
-            self.photo.set_from_file(value)
+            width, height = self.get_size()
+            if width > 1 and height > 1:  # 1 x 1 as unrenderable picture size
+                self.photo.set_from_file_at_size(value, width, height)
+            else:
+                self.photo.set_from_file(value)
             if self.image_buffer is not None:
                 self.image_buffer.slide = self
                 self.image_buffer.path = value

@@ -3,7 +3,7 @@ import os.path
 
 from gi.repository import Clutter, Mx
 
-from pisak import switcher_app, signals
+from pisak import switcher_app, signals, res
 
 import pisak.layout  # @UnusedImport
 import pisak.scanning  # @UnusedImport
@@ -27,14 +27,12 @@ SCRIPT_PATHS = {
 
 
 class PisakSpellerStage(Clutter.Stage):
-    STYLESHEET_PATH = _local_get("speller_stylesheet.css")
 
     def __init__(self, context, script_path):
         super().__init__()
         self.context = context
         self.script_path = script_path
         self._load_script()
-        self._load_stylesheet()
 
     def _load_script(self):
         self.script = Clutter.Script()
@@ -43,9 +41,6 @@ class PisakSpellerStage(Clutter.Stage):
         self.view_actor = self.script.get_object("main")
         self.set_layout_manager(Clutter.BinLayout())
         self.add_child(self.view_actor)
-
-    def _load_stylesheet(self):
-        Mx.Style.get_default().load_from_file(self.STYLESHEET_PATH)
 
 
 class PisakSpellerApp(switcher_app.Application):

@@ -4,7 +4,10 @@ Classes for defining scanning in JSON layouts
 from gi.repository import Clutter, GObject, Mx, Gdk
 
 from pisak import properties, unit
+import logging
 
+
+_LOG = logging.getLogger(__name__)
 
 class Scannable(object):
     """
@@ -212,6 +215,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
                 to_scan.extend(current.get_children())
 
     def start_cycle(self):
+        _LOG.debug("Starting group {}".format(self.get_id()))
         self.stage = self.get_stage()
         if self.stage is None:
             message = \
@@ -228,7 +232,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
                                                      self.button_release)
             self.strategy.return_mouse = True
         else:
-            print("Unknown selector: ", self.selector)
+            _LOG.warning("Unknown selector: ", self.selector)
             return None
         self.get_stage().set_key_focus(self)
         if self.scanning_hilite:
@@ -312,6 +316,9 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     def __init__(self):
         self._group = None
+        self._allocation_slot = None
+        self._subgroups = []
+        self.index = None
         super().__init__()
         self.interval = 1000
         self._max_cycle_count = 2
@@ -349,17 +356,24 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     @group.setter
     def group(self, value):
-        #if self.group is not None:
-        #    self.group.disconnect_by_function("allocation-changed". self.update_rows)
+        if self.group is not None:
+            message = "Group strategy reuse, old {}, new {}"
+            _LOG.warning(message.format(self.group.get_id(), value.get_id()))
+            _LOG.debug("new {}, old {}".format(self.group, value))
+            self.group.disconnect(self._allocation_slot)
         self._group = value
-        #if self.group is not None:
-        #    self.group.connect("allocation-changed", self.update_rows)
+        if self.group is not None:
+            self._allocation_slot = \
+                self.group.connect("allocation-changed", self.update_rows)
 
     def update_rows(self, *args):
-        selection = self._subgroups[self.index]
-        if isinstance(selection, Mx.Stylable):
-            selection.style_pseudo_class_remove("hover")
+        _LOG.debug("Row layout allocation changed")
+        if self.index is not None:
+            selection = self._subgroups[self.index]
+            if hasattr(selection, "disable_hilite"):
+                selection.disable_hilite()
         self.compute_sequence()
+        self.index = None
 
     def compute_sequence(self):
         subgroups = list(self.group.get_subgroups())
