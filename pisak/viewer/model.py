@@ -53,6 +53,12 @@ class Library(object):
                 return category
         raise LibraryException("No such category id")
 
+    def get_photo_by_id(self, photo_id):
+        for photo in self.photos:
+            if photo.id == photo_id:
+                return photo
+        raise LibraryException("No such photo id")
+
     def close(self):
         pass
 

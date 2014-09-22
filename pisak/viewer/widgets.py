@@ -90,8 +90,14 @@ class SlideShow(layout.Bin):
     def slideshow_on_fullscreen(self, value):
         self._slideshow_on_fullscreen = value
 
+    def show_initial_photo_id(self, photo_id):
+        library = model.get_library()
+        photo = library.get_photo_by_id(photo_id)
+        index = self.data_source.photos.index(photo)
+        self.show_initial_slide(index)
+
     def show_initial_slide(self, initial_index=0):
-        self.album_length = len(self.data_source.data)
+        self.album_length = len(self.data_source.photos)
         self.emit("limit-declared", self.album_length)
         self.index = initial_index
         if self.data_source is not None:
@@ -273,6 +279,7 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         if value is not None:
             print(value)
             self._library_album = self.library.get_category_by_id(value)
+            self.photos = self._library_album.photos
 
     def get_pending_slides(self, index):
         """
@@ -283,7 +290,7 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         indexes of demanding slides
         """
         return (self._generate_slide(index-1),
-                self._generate_slide((index+1)%len(self.data)),)
+                self._generate_slide((index+1)%len(self.photos)),)
             
     def get_slide(self, index):
         """
@@ -304,13 +311,13 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         Return photo slide instance corresponding to the
         data item following the one at the given index.
         """
-        return self._generate_slide((index+1)%len(self.data))
+        return self._generate_slide((index+1)%len(self.photos))
 
     def _generate_slide(self, index):
         slide = PhotoSlide()
         slide.ratio_height = self.slide_ratio_height
         slide.ratio_width = self.slide_ratio_width
-        slide.photo_path = self.data[index]
+        slide.photo_path = self.photos[index].path
         return slide
 
 
@@ -447,7 +454,7 @@ class AlbumTilesSource(LibraryTilesSource):
                 tile = PhotoTile()
                 tile.preview_path = self.photos[index].path
                 tile.hilite_tool = Aperture()
-                tile.connect("activate", self.tiles_handler, self.photos[index].path, self.album)
+                tile.connect("activate", self.tiles_handler, self.photos[index].id, self.album)
                 tile.scale_mode = Mx.ImageScaleMode.FIT
                 tile.ratio_width = self.tile_ratio_width
                 tile.ratio_height = self.tile_ratio_height

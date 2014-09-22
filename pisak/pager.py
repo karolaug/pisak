@@ -185,15 +185,15 @@ class PagerWidget(layout.Bin):
     
     def _show_initial_page(self, source, event):
         if self.data_source is not None and self._current_page is None:
-            self.pages_count = ceil(len(self.data_source.data) \
-                                    / (self.rows*self.columns))
-            self.emit("limit-declared", self.pages_count)
-            if self.pages_count > 0:
-                self.emit("progressed", float(self.page_index+1) \
-                        / self.pages_count,
-                        self.page_index+1)
-            else:
-                self.emit("progressed", 0, 0)
+            #self.pages_count = ceil(len(self.data_source.data) \
+            #                        / (self.rows*self.columns))
+            #self.emit("limit-declared", self.pages_count)
+            #if self.pages_count > 0:
+            #    self.emit("progressed", float(self.page_index+1) \
+            #            / self.pages_count,
+            #            self.page_index+1)
+            #else:
+            #    self.emit("progressed", 0, 0)
             tiles = self.data_source.get_tiles(self.columns * self.rows)
             if len(tiles) > 0:
                 self._current_page = _Page(self.get_width(), self.get_height(),
