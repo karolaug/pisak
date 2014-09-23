@@ -31,7 +31,7 @@
         "id": "middle_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.01,
-        "children": ["line_menu_group", "easel", "color_menu_group"]
+        "children": ["line_menu_group", "easel_space", "color_menu_group"]
     },
     {
         "id": "line_menu_group",
@@ -132,10 +132,25 @@
         ]
     },
     {
+        "id": "easel_space",
+        "type": "PisakBinLayout",
+        "ratio-width": 0.81,
+        "ratio-height": 0.84,
+        "children": [
+                {
+                    "type": "MxStack",
+                    "style-class": "PisakPaintEaselFrame",
+                    "x-expand": true,
+                    "y-expand": true,
+                    "children": ["easel"]
+                }
+            ]
+    },
+    {
         "id": "easel",
         "type": "PisakPaintEasel",
-        "ratio-width": 0.81,
-        "ratio-height": 0.82,
+        "x-expand": true,
+        "y-expand": true,
         "signals": [
                        {
                            "name": "exit",
@@ -156,7 +171,13 @@
                     },
         "children": [
                         "main_menu_box"
-                    ]
+                    ],
+        "signals": [
+                       {
+                           "name": "notify::mapped",
+                           "handler": "general/start_group"
+                       }
+                   ]
     },
     {
         "id": "main_menu_box",
@@ -299,8 +320,8 @@
         "type": "PisakBoxLayout",
         "orientation": "vertical",
         "ratio-spacing": 0.02,
-        "children": ["color6", "color2", "color8", "color7", "color5", "color3",
-                     "color9", "color4", "color1", "color10",
+        "children": ["color6", "color2", "color8", "color7", "color5", "color11",
+                     "color3", "color9", "color4", "color1", "color10",
                      "color_menu_label"]
     },
     {
@@ -451,6 +472,21 @@
         "ratio-width": 0.075,
         "ratio-height": 0.05,
         "background-color": "rgb(200, 100, 2)",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color11",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.05,
+        "background-color": "rgb(2, 200, 100)",
         "signals": [
                 {
                     "name": "clicked",

@@ -587,7 +587,7 @@ class Easel(layout.Bin):
         self.stage = None
         self.working_tool = None  # currently working tool
         self.line_width = 10  # width of the drawing line
-        self.rgba = (100, 100, 0, 255)  # current drawing color
+        self.rgba = (0, 0, 0, 1)  # current drawing color
         self.from_x = 0  # x coordinate of current spot
         self.from_y = 0  # x coordinate of current spot
         self.to_x = 0 # x coordinate of current destination spot
@@ -604,23 +604,25 @@ class Easel(layout.Bin):
                                                      255*self.background_color[1],
                                                      255*self.background_color[2],
                                                      255*self.background_color[3]))
-        self.connect("notify::mapped", lambda *args: self.run())
+        self.connect("notify::mapped", self._on_mapped)
 
-    def run(self):
-        """
-        Set up the initial parameters, run the initial tool.
-        """
+    def _on_mapped(self, source, args):
         try:
-            self.disconnect_by_func(self.run)
+            self.disconnect_by_func(self._on_mapped)
         except TypeError:
             pass
         if self.stage is None:
-            self.width, self.height = self.get_size()
+            self.width, self.height = self.get_allocation_box().get_size()
             self.canvas.set_size(self.width, self.height)
             self.canvas.connect("draw", self._draw)
             self._set_canvas_background()
             self.stage = self.get_stage()
-            self.run_localizer()
+        
+    def run(self):
+        """
+        Run the initial easel tool.
+        """
+        self.run_localizer()
 
     def _set_canvas_background(self):
         try:
