@@ -366,6 +366,7 @@ class Bender(EaselTool):
         self.timer.set_repeat_count(-1)
         self.timer.connect("completed", self._update_bender)
         self.timer.connect("stopped", self._on_user_idle)
+        self._update_bender(None)
         self.timer.start()
             
                 
