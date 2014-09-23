@@ -11,7 +11,41 @@ from pisak import widgets, layout, xdg
 SAVING_PATH  = os.path.join(xdg.get_dir("pictures"), "pisak_paint.png")
 
 
-class Navigator(Clutter.Actor):
+class Button(widgets.Button):
+    """
+    Stylable, paint-specific button widget.
+    """
+    __gtype_name__ = "PisakPaintButton"
+
+
+class EaselTool(Clutter.Actor):
+    """
+    Interface of the easel tools.
+    """
+    def run(self):
+        """
+        Make the tool going.
+        """
+        raise NotImplementedError
+
+    def kill(self):
+        """
+        Stop all the on-going activity and kill the tool.
+        """
+        raise NotImplementedError
+
+    def on_user_click(self):
+        """
+        Public signal handler.
+        """
+        raise NotImplementedError
+    
+
+class Navigator(EaselTool):
+    """
+    Easel tool, widget displaying straight, rotating line that indicates angle
+    of the line to be drawn.
+    """
     __gsignals__ = {
         "angle-declared": (GObject.SIGNAL_RUN_FIRST, None, (GObject.TYPE_FLOAT,)),
         "idle": (GObject.SIGNAL_RUN_FIRST, None, ())
@@ -22,19 +56,20 @@ class Navigator(Clutter.Actor):
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
         self.rotations_count = 1 # limit of navigator idle rotations
-        self.angle = 0  # angle of navigator line current position in radians
         self.step_duration = 50  # pace of navigator in mscs
         self.step = 0.007  # navigator rotation fluency in radians
-        self.from_x = 0  # x coordinate of navigator base point
-        self.from_y = 0  # y coordinate of navigator base point
-        self.to_x = 0 # x coordinate of current navigator end spot
-        self.to_y = 0 # y coordinate of current navigator end spot
         self.rgba = (0, 0, 0, 255)  # current navigator color
         self.line_width = 5  # current navigator line width
-        self.line_length = 0  # length of the navigator line
         self.click_handlers = [self._on_user_decision]  # handlers of user click
 
     def run(self, from_x, from_y, color, line_width):
+        """
+        Turn on the navigator, begin line rotation.
+        :param from_x: x coordinate of the navigator base point
+        :param from_y: y coordinate of the navigator base point
+        :param color: color of the navigator line
+        :line_width:: width of the navigator line in pixels
+        """
         self.angle = 0
         self.width, self.height = self.get_size()
         self.diagonal = (self.width**2 + self.height**2)**0.5
@@ -47,14 +82,20 @@ class Navigator(Clutter.Actor):
                        self.rotations_count * 2 * math.pi / self.step
         self.timer.set_repeat_count(repeat_count)
         self.timer.connect("completed", self._update_navigator)
-        self.timer.start()
         self.timer.connect("stopped", self._on_user_idle)
+        self.timer.start()
 
     def on_user_click(self, source, event):
+        """
+        Public signal handler calling internally declared functions.
+        """
         for handler in self.click_handlers:
             handler(source, event)
 
     def kill(self):
+        """
+        Stop all the on-going activities and kill the navigator.
+        """
         self._clean_up()
         self.timer.stop()
 
@@ -108,7 +149,12 @@ class Navigator(Clutter.Actor):
         return True
 
 
-class Localizer(Clutter.Actor):
+class Localizer(EaselTool):
+    """
+    Easel tool, used for localization of the new point for drawing.
+    Displays straight lines, first one moving in vertical and the second one in
+    horizontal direction.
+    """
     __gsignals__ = {
         "point-declared": (
             GObject.SIGNAL_RUN_FIRST,
@@ -132,17 +178,13 @@ class Localizer(Clutter.Actor):
         self.line_width = 5  # localizer line width
         self.step_duration = 10  # pace of localizer in mscs
         self.step = 1  # localizer fluency in pixels
-        self.localized_x = None  # x coordinate of user declared point
-        self.localized_y = None  # y coordinate of user declared point
-        self.x = 0  # x coordinate of localizer vertical line
-        self.y = 0  # y coordinate of localizer horizontal line
-        self.from_x = 0  # x coordinate of current line base point
-        self.from_y = 0  # x coordinate of current line base point
-        self.to_x = 0  # x coordinate of current line end spot
-        self.to_y = 0  # y coordinate of current line end spot
         self.click_handlers = []  # handlers of user click
 
     def run(self):
+        """
+        Turn on the localizer, declare initial parameters, begin the
+        vertical line movement.
+        """
         self.localized_x = None
         self.localized_y = None
         self.x = 0
@@ -156,6 +198,25 @@ class Localizer(Clutter.Actor):
         self.canvas.connect("draw", self._draw)
         self._run_vertical()
 
+    def on_user_click(self, source, event):
+        """
+        Public signal handler calling internally declared functions.
+        """
+        for handler in self.click_handlers:
+            handler(source, event)
+
+    def kill(self):
+        """
+        Stop all the on-going activities and kill the localizer.
+        """
+        if self.vertical_timer is not None and self.vertical_timer.is_playing():
+            self._clean_up_vertical()
+            self.vertical_timer.stop()
+        if self.horizontal_timer is not None and \
+               self.horizontal_timer.is_playing():
+            self._clean_up_horizontal()
+            self.horizontal_timer.stop()
+
     def _run_vertical(self):
         self.vertical_timer = Clutter.Timeline.new(self.step_duration)
         repeat = self.vertical_count if self.vertical_count == -1 \
@@ -165,19 +226,6 @@ class Localizer(Clutter.Actor):
         self.vertical_timer.connect("stopped", self._on_vertical_idle)
         self.click_handlers = [self._stop_vertical, self._run_horizontal]
         self.vertical_timer.start()
-
-    def on_user_click(self, source, event):
-        for handler in self.click_handlers:
-            handler(source, event)
-
-    def kill(self):
-        if self.vertical_timer is not None and self.vertical_timer.is_playing():
-            self._clean_up_vertical()
-            self.vertical_timer.stop()
-        if self.horizontal_timer is not None and \
-               self.horizontal_timer.is_playing():
-            self._clean_up_horizontal()
-            self.horizontal_timer.stop()
 
     def _update_vertical(self, event):
         self.x = self.from_x = self.to_x = (self.from_x + self.step) \
@@ -198,11 +246,6 @@ class Localizer(Clutter.Actor):
         self.vertical_timer.disconnect_by_func(self._on_vertical_idle)
         self.vertical_timer.disconnect_by_func(self._update_vertical)
 
-    def _update_horizontal(self, event):
-        self.from_x, self.to_x = 0, self.width
-        self.y = self.from_y = self.to_y = (self.y + self.step) % self.height
-        self.canvas.invalidate()
-
     def _run_horizontal(self, source, event):
         self.horizontal_timer = Clutter.Timeline.new(self.step_duration)
         repeat = self.horizontal_count if self.horizontal_count == -1 \
@@ -212,6 +255,11 @@ class Localizer(Clutter.Actor):
         self.horizontal_timer.connect("stopped", self._on_horizontal_idle)
         self.click_handlers = [self._stop_horizontal]
         self.horizontal_timer.start()
+
+    def _update_horizontal(self, event):
+        self.from_x, self.to_x = 0, self.width
+        self.y = self.from_y = self.to_y = (self.y + self.step) % self.height
+        self.canvas.invalidate()
 
     def _stop_horizontal(self, source, event):
         self._clean_up_horizontal()
@@ -264,7 +312,11 @@ class Localizer(Clutter.Actor):
         return True
 
 
-class Bender(Clutter.Actor):
+class Bender(EaselTool):
+    """
+    Easel tool, displays line spanned between two declared points,
+    with different levels of curvature.
+    """
     __gsignals__ = {
         "bend-point-declared": (
             GObject.SIGNAL_RUN_FIRST,
@@ -276,25 +328,24 @@ class Bender(Clutter.Actor):
         super().__init__()
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
-        self.angle = 0  # angle of bending line direction
         self.bender_cycles_count = -1  # bender cycles repeat count
         self.step_duration = 50  # pace of nbender in mscs
         self.step = 10 # bender fluency in pixels
-        self.line_width = 10  # line width of the bender
-        self.width = 0 # width of the drawing area
-        self.height = 0 # height of the drawing area
-        self.rgba = (100, 100, 0, 255)  # current drawing color
-        self.from_x = 0  # x coordinate of bender base spot
-        self.from_y = 0  # x coordinate of bender base spot
-        self.to_x = 0 # x coordinate of bender reach spot
-        self.to_y = 0 # y coordinate of bender reach spot
-        self.through_x = 0  # x coordinate of bender current through spot
-        self.through_y = 0  # y coordinate of bender current through spot
-        self.fraction = 0.1 # part of the limit length increased in one step
         self.repeat_index = 0  # counter of cycles repeats
-        self.click_handlers = [self._on_user_decision]
+        self.click_handlers = [self._on_user_decision] # handlers of user click
 
     def run(self, from_x, from_y, to_x, to_y, angle, color, line_width):
+        """
+        Turn on the bender, declare initial parameters, begin the
+        bending animation.
+        :param from_x: x coordinate of the line first point
+        :param from_y: y coordinate of the line first point
+        :param to_x: x coordinate of the line second point
+        :param to_y: y coordinate of the line second point
+        :param angle: angle of the line's plane in user's space in radians
+        :param color: color of the bender line
+        :param line_width: width of the bender line
+        """
         self.width, self.height = self.get_size()
         self.canvas.set_size(self.width, self.height)
         self.angle = angle + math.pi/2
@@ -319,10 +370,16 @@ class Bender(Clutter.Actor):
             
                 
     def on_user_click(self, source, event):
+        """
+        Public signal handler calling internally declared functions.
+        """
         for handler in self.click_handlers:
             handler(source, event)
 
     def kill(self):
+        """
+        Stop all the on-going activities and kill the bender.
+        """
         self._clean_up()
         self.timer.stop()
 
@@ -333,10 +390,7 @@ class Bender(Clutter.Actor):
 
     def _on_user_idle(self, source, event):
         self._clean_up()
-
-        # temporary:
-        self.emit("bend-point-declared", self.through_x, self.through_y)
-        # self.emit("idle")    
+        self.emit("idle")  
     
     def _clean_up(self):
         self.timer.disconnect_by_func(self._update_bender)
@@ -393,7 +447,11 @@ class Bender(Clutter.Actor):
         return True
 
 
-class Yardstick(Clutter.Actor):
+class Yardstick(EaselTool):
+    """
+    Easel tool, widget displaying straigh line of increasing length, reflecting
+    user's need for specifing line length.
+    """
     __gsignals__ = {
         "destination-declared": (
             GObject.SIGNAL_RUN_FIRST,
@@ -406,22 +464,24 @@ class Yardstick(Clutter.Actor):
         super().__init__()
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
-        self.rgba = (0, 0, 0, 255)  # current yardstick color
-        self.color = self.rgba  # current drawing color
         self.step_duration = 100  # pace of yardstick in mscs
         self.step = 10 # yardstick fluency in pixels
-        self.from_x = 0  # x coordinate of yardstick base spot
-        self.from_y = 0  # x coordinate of yardstick base spot
-        self.to_x = 0 # x coordinate of current yardstick destination spot
-        self.to_y = 0 # y coordinate of current yardstick destination spot
-        self.angle = 0  # angle of drawing direction in radians
-        self.click_handlers = [self._on_user_decision]
+        self.click_handlers = [self._on_user_decision] # handlers of user click
 
     def run(self, from_x, from_y, angle, color, line_width):
+        """
+        Turn on the yardstick, declare initial parameters, begin the
+        measuring animation.
+        :param from_x: x coordinate of the line base point
+        :param from_y: y coordinate of the line base point
+        :param angle: angle of the line's plane in user's space in radians
+        :param color: color of the yardstick line
+        :param line_width: width of the yardstick line
+        """
         self.to_x = self.base_x = self.from_x = from_x
         self.to_y = self.base_y = self.from_y = from_y
         self.angle = angle
-        self.color = self.rgba = color
+        self.rgba = color
         self.step_x = math.cos(self.angle) * self.step
         self.step_y = math.sin(self.angle) * self.step
         self.line_width = line_width
@@ -435,23 +495,33 @@ class Yardstick(Clutter.Actor):
         self.timer.start()
 
     def on_user_click(self, source, event):
+        """
+        Public signal handler calling internally declared functions.
+        """
         for handler in self.click_handlers:
             handler(source, event)
+
+    def kill(self):
+        """
+        Stop all the on-going activities and kill the yardstick.
+        """
+        self._clean_up()
+        self.timer.stop()
 
     def _on_user_idle(self, source, event):
         self._clean_up()
         self.emit("idle")
+
+    def _on_user_decision(self, source, event):
+        self._clean_up()
+        self.timer.stop()
+        self.emit("destination-declared", self.to_x, self.to_y)
 
     def _clean_up(self):
         self.timer.disconnect_by_func(self._on_user_idle)
         self.timer.disconnect_by_func(self._update_yardstick)
         self._clear_canvas()
         self.canvas.disconnect_by_func(self._draw)
-
-    def _on_user_decision(self, source, event):
-        self._clean_up()
-        self.timer.stop()
-        self.emit("destination-declared", self.to_x, self.to_y)
 
     def _clear_canvas(self):
         self.canvas.disconnect_by_func(self._draw)
@@ -460,43 +530,23 @@ class Yardstick(Clutter.Actor):
         self.canvas.disconnect_by_func(self._draw_clear)
         self.canvas.connect("draw", self._draw)
 
-    def _draw_clear(self, cnvs, ctxt, width, height):
-        ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.paint()
-        return True
-
     def _on_screen_border(self):
-        # temporary:
-
-        #self.step_x *= -1
-        #self.step_y *= -1
-        #self.color = (0, 0, 0, 0)
-
         self._on_user_decision(None, None)
-
-        # self.timer.stop()
-
-    def _on_repeat_cycle(self):
-        self.step_x *= -1
-        self.step_y *= -1
-        self.color = self.rgba
         
     def _update_yardstick(self, event):
         to_x = self.to_x + self.step_x
         to_y = self.to_y + self.step_y
         if 0 <= to_x <= self.width and 0 <= to_y <= self.height:
-            #if to_x == self.base_x and to_y == self.base_y:
-                #self._on_repeat_cycle()
             self.to_x, self.to_y = to_x, to_y
             self.canvas.invalidate()
-            #self.from_x, self.from_y = self.to_x, self.to_y
         else:
             self._on_screen_border()
 
-    def kill(self):
-        self._clean_up()
-        self.timer.stop()
+    def _draw_clear(self, cnvs, ctxt, width, height):
+        ctxt.set_operator(cairo.OPERATOR_SOURCE)
+        ctxt.set_source_rgba(0, 0, 0, 0)
+        ctxt.paint()
+        return True
 
     def _draw(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
@@ -506,19 +556,20 @@ class Yardstick(Clutter.Actor):
         ctxt.set_line_width(self.line_width)
         ctxt.move_to(self.base_x, self.base_y)
         ctxt.line_to(self.to_x, self.to_y)
-        ctxt.set_source_rgba(self.color[0],
-                             self.color[1],
-                             self.color[2],
-                             self.color[3])
+        ctxt.set_source_rgba(self.rgba[0],
+                             self.rgba[1],
+                             self.rgba[2],
+                             self.rgba[3])
         ctxt.stroke()
         return True
 
 
-class Button(widgets.Button):
-    __gtype_name__ = "PisakPaintButton"
-
-
 class Easel(layout.Bin):
+    """
+    Paint main widget, displaying canvas on which all the drawing is going on.
+    Displays all the tools needed for proper drawing.
+    Communicates with its own stage, connects signals.
+    """
     __gtype_name__ = "PisakPaintEasel"
     __gsignals__ = {
         "exit": (
@@ -533,10 +584,9 @@ class Easel(layout.Bin):
         self.navigator = None
         self.yardstick = None
         self.bender = None
-        self.line_width = 10
+        self.stage = None
         self.working_tool = None  # currently working tool
-        self.width = 0 # widgth of the drawing area
-        self.height = 0 # height of the drawing area
+        self.line_width = 10  # width of the drawing line
         self.rgba = (100, 100, 0, 255)  # current drawing color
         self.from_x = 0  # x coordinate of current spot
         self.from_y = 0  # x coordinate of current spot
@@ -548,16 +598,18 @@ class Easel(layout.Bin):
                                                       # canvas
         self.path_history = []  # history of drawing
         self.line_cap = cairo.LINE_CAP_ROUND  # cap of the draw lines
+        self.angle = 0  # angle of the draw line direction
+        self.stage_handler_id = 0  # id of the current stage handler
         self.set_background_color(Clutter.Color.new(255*self.background_color[0],
                                                      255*self.background_color[1],
                                                      255*self.background_color[2],
                                                      255*self.background_color[3]))
-        self.angle = 0  # angle of the draw line direction
-        self.stage_handler_id = 0  # id of the current stage handler
-        self.connect("notify::mapped", self.run)
-        self.stage = None
+        self.connect("notify::mapped", lambda *args: self.run())
 
-    def run(self, *args):
+    def run(self):
+        """
+        Set up the initial parameters, run the initial tool.
+        """
         try:
             self.disconnect_by_func(self.run)
         except TypeError:
@@ -581,6 +633,10 @@ class Easel(layout.Bin):
         self.canvas.connect("draw", self._draw)
         
     def run_localizer(self):
+        """
+        Run the localizer tool, connect proper handler to the stage, connect
+        signal to the localizer.
+        """
         if self.localizer is None:
             self.localizer = Localizer()
             self.localizer.set_size(self.width, self.height)
@@ -605,6 +661,10 @@ class Easel(layout.Bin):
         self.run_navigator()
 
     def run_navigator(self):
+        """
+        Run the navigator tool, connect proper handler to the stage, connect
+        signal to the navigator.
+        """
         if self.navigator is None:
             self.navigator = Navigator()
             self.navigator.set_size(self.width, self.height)
@@ -627,6 +687,10 @@ class Easel(layout.Bin):
         self.run_yardstick()
 
     def run_yardstick(self):
+        """
+        Run the yardstick tool, connect proper handler to the stage, connect
+        signal to the yardstick.
+        """
         if self.yardstick is None:
             self.yardstick = Yardstick()
             self.yardstick.set_size(self.width, self.height)
@@ -652,6 +716,10 @@ class Easel(layout.Bin):
         self.run_bender()
 
     def run_bender(self):
+        """
+        Run the bender tool, connect proper handler to the stage, connect
+        signal to the bender.
+        """
         if self.bender is None:
             self.bender = Bender()
             self.bender.set_size(self.width, self.height)
@@ -677,6 +745,9 @@ class Easel(layout.Bin):
         self.run_drawing()
 
     def run_drawing(self):
+        """
+        Run drawing with previously declared parameters.
+        """
         self.working_tool = None
         for tool in self.get_children():
             tool.hide()
@@ -756,18 +827,36 @@ class Easel(layout.Bin):
         ctxt.stroke()
         return True
 
+    def _exit(self, event):
+        self.working_tool = None
+        if self.stage.handler_is_connected(self.stage_handler_id):
+            self.stage.handler_disconnect(self.stage_handler_id)
+        self.emit("exit")
+
     def clear_canvas(self):
+        """
+        Clear all the canvas, paint background.
+        """
         self._set_canvas_background()
 
     def back_to_drawing(self):
+        """
+        Return to easel, run the navigator tool.
+        """
         if not self.working_tool:
             self.run_navigator()
 
     def localize_new_spot(self):
+        """
+        Run the localizer tool in order to find the new spot for drawing.
+        """
         if not self.working_tool:
             self.run_localizer()
 
     def erase(self):
+        """
+        Erase the last drawn element.
+        """
         try:
             self.canvas.disconnect_by_func(self._draw)
         except TypeError:
@@ -778,6 +867,9 @@ class Easel(layout.Bin):
         self.canvas.connect("draw", self._draw)
 
     def save_to_file(self):
+        """
+        Save the canvas' current target to file in png format.
+        """
         try:
             self.canvas.disconnect_by_func(self._draw)
         except TypeError:
@@ -788,14 +880,10 @@ class Easel(layout.Bin):
         self.canvas.connect("draw", self._draw)
 
     def clean_up(self, source):
+        """
+        Stop all the on-going activities, disconnect signals from the stage.
+        """
         if self.working_tool is not None:
             self.working_tool.kill()
         if self.stage.handler_is_connected(self.stage_handler_id):
             self.stage.handler_disconnect(self.stage_handler_id)
-
-    def _exit(self, event):
-        #self.remove_all_children()
-        self.working_tool = None
-        if self.stage.handler_is_connected(self.stage_handler_id):
-            self.stage.handler_disconnect(self.stage_handler_id)
-        self.emit("exit")

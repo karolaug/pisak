@@ -111,11 +111,11 @@ PisakPaintButton:hover {
 }
 
 PisakPaintButton.color {
-    border-image: url("paint_rest_button_color.png");
+    border-image: url("rest_button.png");
 }
 
 PisakPaintButton.color:hover {
-    border-image: url("paint_hover_button_color.png");
+    border-image: url("paint_hover_button_color_frame.png");
 }
 
 
