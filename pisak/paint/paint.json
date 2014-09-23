@@ -19,7 +19,7 @@
         "type": "PisakBoxLayout",
         "x-expand": true,
         "y-expand": true,
-        "ratio-margin-top": 0.015,
+        "ratio-margin-top": 0.01,
         "ratio-margin-bottom": 0.01,
         "ratio-margin-left": 0.01,
         "ratio-margin-right": 0.01,
@@ -52,7 +52,14 @@
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.02,
         "orientation": "vertical",
-        "children": ["line1", "line2", "line3", "line4"]
+        "children": ["line1", "line2", "line3", "line4", "line5",
+                     "line_menu_label"]
+    },
+    {
+        "id": "line_menu_label",
+        "type": "MxLabel",
+        "style-class": "PaintLineMenu",
+        "text": "LINIE"
     },
     {
         "id": "line1",
@@ -111,6 +118,20 @@
         ]
     },
     {
+        "id": "line5",
+        "type": "PisakPaintButton",
+        "ratio-width": 0.075,
+        "ratio-height": 0.12,
+        "label": "35 pkt",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
         "id": "easel",
         "type": "PisakPaintEasel",
         "ratio-width": 0.81,
@@ -141,8 +162,8 @@
         "id": "main_menu_box",
         "type": "PisakBoxLayout",
         "ratio-spacing": 0.02,
-        "children": ["button_start", "button2", "button3", "button4",
-                     "button5", "button6", "button7", "button1"]
+        "children": ["button_start", "button7", "button2", "button3", "button4",
+                     "button5", "button6", "button1"]
     },
     {
         "id": "button1",
@@ -278,14 +299,22 @@
         "type": "PisakBoxLayout",
         "orientation": "vertical",
         "ratio-spacing": 0.02,
-        "children": ["color1", "color2", "color3", "color4", "color5", "color6"]
+        "children": ["color6", "color2", "color8", "color7", "color5", "color3",
+                     "color9", "color4", "color1", "color10",
+                     "color_menu_label"]
+    },
+    {
+        "id": "color_menu_label",
+        "type": "MxLabel",
+        "style-class": "PaintColorMenu",
+        "text": "KOLORY"
     },
     {
         "id": "color1",
         "type": "PisakPaintButton",
         "style-class": "color",
         "ratio-width": 0.075,
-        "ratio-height": 0.12,
+        "ratio-height": 0.05,
         "background-color": "red",
         "signals": [
                 {
@@ -300,7 +329,7 @@
         "type": "PisakPaintButton",
         "style-class": "color",
         "ratio-width": 0.075,
-        "ratio-height": 0.12,
+        "ratio-height": 0.05,
         "background-color": "blue",
         "signals": [
                 {
@@ -315,7 +344,7 @@
         "type": "PisakPaintButton",
         "style-class": "color",
         "ratio-width": 0.075,
-        "ratio-height": 0.12,
+        "ratio-height": 0.05,
         "background-color": "green",
         "signals": [
                 {
@@ -330,7 +359,7 @@
         "type": "PisakPaintButton",
         "style-class": "color",
         "ratio-width": 0.075,
-        "ratio-height": 0.12,
+        "ratio-height": 0.05,
         "background-color": "yellow",
         "signals": [
                 {
@@ -345,7 +374,7 @@
         "type": "PisakPaintButton",
         "style-class": "color",
         "ratio-width": 0.075,
-        "ratio-height": 0.12,
+        "ratio-height": 0.05,
         "background-color": "purple",
         "signals": [
                 {
@@ -360,8 +389,68 @@
         "type": "PisakPaintButton",
         "style-class": "color",
         "ratio-width": 0.075,
-        "ratio-height": 0.12,
+        "ratio-height": 0.05,
         "background-color": "black",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color7",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.05,
+        "background-color": "magenta",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color8",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.05,
+        "background-color": "rgb(10, 200, 200)",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color9",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.05,
+        "background-color": "rgb(200, 200, 10)",
+        "signals": [
+                {
+                    "name": "clicked",
+                    "handler": "scanning/set_pending_group",
+                    "object": "main_menu_group"
+                }
+        ]
+    },
+    {
+        "id": "color10",
+        "type": "PisakPaintButton",
+        "style-class": "color",
+        "ratio-width": 0.075,
+        "ratio-height": 0.05,
+        "background-color": "rgb(200, 100, 2)",
         "signals": [
                 {
                     "name": "clicked",

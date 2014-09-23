@@ -110,12 +110,24 @@ PisakPaintButton:hover {
   border-image: url("viewer_hover_button.png");
 }
 
+MxLabel.PaintColorMenu {
+  font-family: Kelson Sans;
+  font-size: 20pt;
+  color: black;
+}
+
+MxLabel.PaintLineMenu {
+  font-family: Kelson Sans;
+  font-size: 30pt;
+  color: black;
+}
+
 PisakPaintButton.color {
-    border-image: url("rest_button.png");
+    border-image: url("rest_button.png") 5;
 }
 
 PisakPaintButton.color:hover {
-    border-image: url("paint_hover_button_color_frame.png");
+    border-image: url("paint_hover_button_color_frame.png") 5;
 }
 
 

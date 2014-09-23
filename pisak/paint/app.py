@@ -20,20 +20,23 @@ def _convert_color(clutter_color):
     rgba = ()
     string = clutter_color.to_string()
     for idx in range(1, 9, 2):
-        rgba += (int(string[idx:idx+2], 16),)
+        rgba += (int(string[idx:idx+2], 16)/255.,)
     return rgba
 
 
 def prepare_paint_main_view(stage, script, data):
     easel = script.get_object("easel")
     button_start = script.get_object("button_start")
-    button_start.connect("clicked", easel.clean_up)
-    button_start.connect("clicked", lambda *_: stage.load_view(
-        "main_panel/main", None))
+    if button_start and isinstance (button_start, widgets.Button):
+        button_start.connect("clicked", easel.clean_up)
+        button_start.connect("clicked", lambda *_: stage.load_view(
+            "main_panel/main", None))
     for button in script.get_object("color_menu_box").get_children():
-        button.connect("clicked", _set_easel_drawing_color, easel)
+        if isinstance (button, widgets.Button):
+            button.connect("clicked", _set_easel_drawing_color, easel)
     for button in script.get_object("line_menu_box").get_children():
-        button.connect("clicked", _set_easel_line_width, easel)
+        if isinstance (button, widgets.Button):
+            button.connect("clicked", _set_easel_line_width, easel)
 
 
 def _fix_path(path):
