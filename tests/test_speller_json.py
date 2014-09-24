@@ -22,12 +22,12 @@ TYPE_NAMES = [
 class SpellerJSONTest(unittest.TestCase):
     def setUp(self):
         Clutter.init([])
-    
+
     def load_json(self, text):
         script = Clutter.Script()
         script.load_from_data(text, len(text))
         self.assertGreater(len(script.list_objects()), 0)
-    
+
     def test_loading(self):
         for type_name in TYPE_NAMES:
             json_text = JSON_TEMPLATE.format(type_name)

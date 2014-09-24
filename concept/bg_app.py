@@ -15,7 +15,6 @@ class ButtonStage(Clutter.Stage):
         self._init_bg()
         self._init_layout()
 
-
     def _init_bg_content(self):
         def draw_canvas(canvas, context, w, h):
             context.scale(w, h)
@@ -31,7 +30,7 @@ class ButtonStage(Clutter.Stage):
         self.bg.set_content(background_image)
         self.bg.set_content_repeat(Clutter.ContentRepeat.BOTH)
         self.bg.set_content_scaling_filters(Clutter.ScalingFilter.LINEAR, Clutter.ScalingFilter.LINEAR)
-    
+
     def _init_bg(self):
         self.bg = Clutter.Actor()
         self.bg.set_background_color(Clutter.Color.new(0xcc, 0xcc, 0xcc, 0xFF))
@@ -45,15 +44,13 @@ class ButtonStage(Clutter.Stage):
         self.set_layout_manager(self.layout)
 
 
-
-
 class ButtonApp(switcher_app.Application):
     '''
     Simple app written for test purposes
     '''
     def create_stage(self, argv):
         return ButtonStage()
-        
+
 
 if __name__ == '__main__':
     ButtonApp(sys.argv).main()

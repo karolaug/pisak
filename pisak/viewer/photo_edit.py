@@ -29,7 +29,7 @@ class Image(Clutter.Actor):
         width, height = self.buffer.size[0], self.buffer.size[1]
         row_stride = len(data) / height
         self.image.set_from_data(data, mode, width, height, row_stride)
-        
+
     def mirror(self, button, event):
         axis = [Im.FLIP_LEFT_RIGHT, Im.FLIP_TOP_BOTTOM]
         self.buffer = self.buffer.transpose(axis[random.randint(0, 1)])
@@ -38,8 +38,8 @@ class Image(Clutter.Actor):
     def grayscale(self, button, event):
         self.buffer = self.buffer.convert('L')
         self.set_image_from_data()
-        
-    def rotate(self, button, event):     
+
+    def rotate(self, button, event):
         self.buffer = self.buffer.rotate(90, resample=Im.AFFINE)
         self.set_image_from_data()
 
@@ -103,7 +103,7 @@ class Image(Clutter.Actor):
     def contour(self, button, event):
         self.buffer = self.buffer.filter(ImF.CONTOUR)
         self.set_image_from_data()
-        
+
     def invert(self, button, event):
         self.buffer = self.buffer.point(lambda i: 255-i)
         self.set_image_from_data()
@@ -112,8 +112,8 @@ class Image(Clutter.Actor):
         threshold = 80
         buffer = self.buffer.copy()
         grayscale = buffer.convert('L')
-        out = buffer.point(lambda i: i>threshold and 255-i)
-        mask = grayscale.point(lambda i: i>threshold and 255)
+        out = buffer.point(lambda i: i > threshold and 255-i)
+        mask = grayscale.point(lambda i: i > threshold and 255)
         buffer.paste(out, None, mask)
         self.buffer = buffer
         self.set_image_from_data()
@@ -121,8 +121,8 @@ class Image(Clutter.Actor):
     def original(self, button, event):
         self.buffer = self.original_photo
         self.set_image_from_data()
-        
-        
+
+
 class Buttons(Clutter.Actor):
     def __init__(self, container, image):
         super(Buttons, self).__init__()
@@ -153,7 +153,7 @@ class Buttons(Clutter.Actor):
 
 
 class PisakViewerContainer(Clutter.Actor):
-    def __init__(self,stage):
+    def __init__(self, stage):
         super(PisakViewerContainer, self).__init__()
         self.stage = stage
         self.set_x_expand(True)
@@ -166,7 +166,7 @@ class PisakViewerContainer(Clutter.Actor):
         margin.left = margin.right = margin.top = margin.bottom = unit.mm(12)
         self.set_margin(margin)
         self._init_elements()
-        
+
     def _init_elements(self):
         self.image = Image()
         self.image.set_x_expand(True)
@@ -184,7 +184,7 @@ class PisakViewerStage(Clutter.Stage):
     def __init__(self):
         super(PisakViewerStage, self).__init__()
         self._init_elements()
-    
+
     def _init_elements(self):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
@@ -193,7 +193,7 @@ class PisakViewerStage(Clutter.Stage):
 
     def exit_app(self):
         self.destroy()
-    
+
 
 class PisakViewApp(object):
     def __init__(self, argv):
@@ -203,8 +203,9 @@ class PisakViewApp(object):
         self.stage.connect("destroy", lambda _: Clutter.main_quit())
         self.stage.set_fullscreen(True)
         self.stage.show_all()
-    
+
     def main(self):
         Clutter.main()
 
-PisakViewApp(sys.argv).main()
+if __name__ == "__main__":
+    PisakViewApp(sys.argv).main()

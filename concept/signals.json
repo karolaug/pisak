@@ -1,0 +1,13 @@
+[
+  {
+    "id": "main",
+    "type": "MxButton",
+    "label": "Don't click",
+    "signals": [
+      {
+        "name": "clicked",
+        "handler": "pisak.handlers.say_hello"
+      }
+    ]
+  }
+]

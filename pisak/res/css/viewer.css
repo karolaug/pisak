@@ -1,0 +1,36 @@
+MxProgressBar.PisakViewerProgressBar {
+  border-image: url("viewer_progress_bar_background.png");
+}
+
+MxProgressBarFill.PisakViewerProgressBar {
+  border-image: url("viewer_progress_bar_fill.png");
+}
+
+MxLabel.PisakViewerProgressBar {
+  font-face: Kelson Sans;
+  font-size: 40;
+  color: white;
+}
+
+MxLabel.PisakViewerPhotoTile {
+  font-face: Kelson Sans;
+  font-size: 20;
+  color: black;
+}
+
+PisakViewerButton {
+  color: white;
+  font-size: 18 pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("viewer_rest_button.png");
+
+}
+
+PisakViewerButton:hover {
+  color: black;
+  font-size: 18 pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("viewer_hover_button.png");
+}

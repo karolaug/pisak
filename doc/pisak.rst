@@ -1,0 +1,104 @@
+pisak package
+=============
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pisak.res
+    pisak.speller
+    pisak.viewer
+
+Submodules
+----------
+
+pisak.handlers module
+--------------------
+
+.. automodule:: pisak.handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.layout module
+--------------------
+
+.. automodule:: pisak.layout
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.pisak_speller module
+--------------------------
+
+.. automodule:: pisak.pisak_speller
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.pisak_view module
+-----------------------
+
+.. automodule:: pisak.pisak_view
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.scanning module
+---------------------
+
+.. automodule:: pisak.scanning
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.signals module
+--------------------
+
+.. automodule:: pisak.signals
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.switcher_app module
+-------------------------
+
+.. automodule:: pisak.switcher_app
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+pisak.unit module
+-----------------
+
+.. automodule:: pisak.unit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.view module
+-----------------
+
+.. automodule:: pisak.view
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.widgets module
+--------------------
+
+.. automodule:: pisak.widgets
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pisak
+    :members:
+    :undoc-members:
+    :show-inheritance:

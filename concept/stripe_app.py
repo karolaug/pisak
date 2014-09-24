@@ -24,7 +24,7 @@ class GridStripes(Clutter.Actor):
         margin = Clutter.Margin()
         margin.top = margin.bottom = dims.H_SPACING_PX
         self.set_margin(margin)
-    
+
     def _init_stripes(self):
         layout = Clutter.GridLayout()
         layout.set_row_spacing(dims.H_SPACING_PX)
@@ -42,7 +42,7 @@ class BoxStripes(Clutter.Actor):
         margin = Clutter.Margin()
         margin.top = margin.bottom = dims.H_SPACING_PX
         self.set_margin(margin)
-    
+
     def _init_stripes(self):
         layout = Clutter.BoxLayout()
         layout.set_spacing(dims.H_SPACING_PX)
@@ -60,7 +60,7 @@ class ButtonStage(Clutter.Stage):
         super().__init__()
         self._init_elements()
         self._init_layout()
-    
+
     def _init_elements(self):
         self.grid_stripes = GridStripes()
         self.box_stripes = BoxStripes()
@@ -80,7 +80,7 @@ class ButtonApp(switcher_app.Application):
         stage = ButtonStage()
         stage.set_fullscreen(True)
         return stage
-        
+
 
 if __name__ == '__main__':
     ButtonApp(sys.argv).main()
