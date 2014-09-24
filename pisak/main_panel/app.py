@@ -15,10 +15,6 @@ def prepare_main_panel_view(stage, script, data):
     button_to_view(stage, script, "button_viewer", "viewer/library", None)
 
 
-def _fix_path(path):
-    return os.path.join(os.path.split(__file__)[0], path)
-
-
 VIEWS = {
     "main_panel/main": (res.get("json/main_panel/main.json"), prepare_main_panel_view)
 }

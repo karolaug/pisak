@@ -2,16 +2,6 @@ from pisak import signals
 from pisak.viewer import library_manager, image
 
 
-@signals.registered_handler("viewer/next_page")
-def next_page(pager):
-    pager.flip()
-
-
-@signals.registered_handler("viewer/previous_page")
-def previous_page(pager):
-    pager.previous_page()
-
-
 @signals.registered_handler("viewer/slideshow_toggle")
 def slideshow_toggle(slideshow_widget):
     if slideshow_widget.slideshow_on is True:

@@ -8,7 +8,7 @@ from gi.repository import Mx
 from pisak import widgets, res
 
 
-LOGO_PATH = os.path.join(res.PATH, "logo_pisak.png")
+LOGO_PATH = res.get("logo_pisak.png")
 
 
 class Button(widgets.Button):
