@@ -546,6 +546,7 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
             self.space = Clutter.Actor()
             self.box.add_child(self.space)
         self.image = Mx.Image()
+        self.image.set_scale_mode(1)
         self.box.add_child(self.image)
 
     def load_image(self):

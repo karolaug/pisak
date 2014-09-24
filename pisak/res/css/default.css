@@ -94,6 +94,47 @@ PisakViewerButton:hover {
   border-image: url("hover_button.png");
 }
 
+PisakPaintButton {
+  color: white;
+  font-size: 15pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("viewer_rest_button.png");
+}
+
+PisakPaintButton:hover {
+  color: black;
+  font-size: 15pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("viewer_hover_button.png");
+}
+
+MxLabel.PaintColorMenu {
+  font-family: Kelson Sans;
+  font-size: 20pt;
+  color: black;
+}
+
+MxLabel.PaintLineMenu {
+  font-family: Kelson Sans;
+  font-size: 30pt;
+  color: black;
+}
+
+PisakPaintButton.color {
+    border-image: url("rest_button.png") 5;
+}
+
+PisakPaintButton.color:hover {
+    border-image: url("paint_hover_button_color_frame.png") 5;
+}
+
+MxStack.PisakPaintEaselFrame {
+    padding: 5 5 5 5;
+    border-image: url("rest_button.png") 5;
+}
+
 
 /*SVG part*/
 /*

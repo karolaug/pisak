@@ -8,7 +8,7 @@
 	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
-                        "interval": 2000,
+                        "interval": 800,
                         "max-cycle-count": -1,
 	                "unwind-to": "main"
                     },
@@ -31,7 +31,7 @@
     {
         "id": "main_box",
         "type": "PisakBoxLayout",
-        "ratio_spacing": 0.2,
+        "ratio_spacing": 0.05,
         "orientation": "vertical",
         "children": ["button_box", "logo_bin"]
     },
@@ -49,28 +49,37 @@
     {
         "id": "button_box",
         "type": "PisakBoxLayout",
-        "ratio-margin-bottom": 0.2,
-        "ratio_spacing": 0.1,
+        "ratio-margin-bottom": 0.05,
+        "ratio_spacing": 0.05,
         "children": [
-                        "button_speller", "button_viewer"
+                         "button_paint", "button_speller", "button_viewer"
                     ]
     },
     {
         "id": "button_viewer",
         "type": "PisakMainPanelButton",
-        "ratio-width": 0.35,
-        "ratio-height": 0.3,
+        "ratio-width": 0.25,
+        "ratio-height": 0.35,
         "label": "ZDJĘCIA",
-        "icon-size": 200,
+        "icon-size": 160,
         "icon-name": "viewer"
-    }
+    },
     {
         "id": "button_speller",
         "type": "PisakMainPanelButton",
-        "ratio-width": 0.35,
-        "ratio-height": 0.3,
-        "icon-size": 200,
+        "ratio-width": 0.25,
+        "ratio-height": 0.35,
+        "icon-size": 160,
         "label": "PISANIE",
         "icon-name": "klawiatura"
+    },
+    {
+        "id": "button_paint",
+        "type": "PisakMainPanelButton",
+        "ratio-width": 0.25,
+        "ratio-height": 0.35,
+        "icon-size": 160,
+        "label": "RYSUJ",
+        "icon-name": "paint"
     }
 ]

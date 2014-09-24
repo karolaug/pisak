@@ -40,7 +40,7 @@
     },
     {
         "id": "pop_up_background",
-        "type": "PisakBackgroundPattern",
+        "type": "PisakBackgroundImage",
         "background-color": "white",
         "ratio-width": 0.8,
         "ratio-height": 0.8
