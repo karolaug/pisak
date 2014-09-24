@@ -682,13 +682,13 @@ class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
     }
     def __init__(self):
         super().__init__()
+        self.image_res_path = "background_image.png"
         self.background_image = Clutter.Image()
         self.set_content(self.background_image)
         self._load_image()
 
     def _load_image(self):
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(res.PATH,
-                                                       "background_image.png"))
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(res.get(self.image_res_path))
         self.background_image.set_data(pixbuf.get_pixels(),
                                      Cogl.PixelFormat.RGBA_8888,
                                      pixbuf.get_width(),
@@ -733,7 +733,8 @@ class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
         background_image.invalidate()
         self.set_content(background_image)
         self.set_content_repeat(Clutter.ContentRepeat.BOTH)
-        self.set_content_scaling_filters(Clutter.ScalingFilter.TRILINEAR, Clutter.ScalingFilter.TRILINEAR)
+        self.set_content_scaling_filters(Clutter.ScalingFilter.TRILINEAR,
+                                         Clutter.ScalingFilter.TRILINEAR)
 
     @staticmethod
     def fence_pattern(canvas, context, w, h):
