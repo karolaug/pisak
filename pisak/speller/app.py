@@ -1,5 +1,3 @@
-import os
-
 from pisak import launcher, res
 
 
