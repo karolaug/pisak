@@ -1,39 +1,99 @@
 /* JSON part*/
 /* different properties for different types*/
 
-MxButton {
-  fixed-position-set: True;
-  some-other-property: foo-bar-bar;
-  fixed-x: 100.0;
-}
-
-PisakSpellerButton MxImage {
-
-}
-
-PisakSpellerButton {
-    
-}
-
 PisakSpellerText {
-  border-image: url("../tlo_pola_tekstowego.png")
+    color: black;
+    font-size: 50px;
+    font-family: Kelson Sans;
+    border-image: url("../tlo_pola_tekstowego.png");
 }
 
-PisakSpellerKey {
-  font-size: 20;
+PisakMainPanelButton {
+    color: black;
+    font-size: 35pt;
+    font-family: Kelson Sans;
+    font-weight: bold;
+    border-image: url("rest_button.png") 5;
 }
 
-PisakSpellerPrediction {
+PisakMainPanelButton:hover {
+    color: white;
+    border-image: url("hover_button.png") 5;
+}
+
+PisakSpellerButton, PisakSpellerKey, PisakSpellerPrediction {
+    color: black;
+    font-size: 18pt;
+    font-family: Kelson Sans;
+    font-weight: bold;
+    border-image: url("rest_button.png") 5;
+}
+
+PisakSpellerButton:hover, PisakSpellerKey:hover, PisakSpellerPrediction:hover {
+    color: white;
+    border-image: url("hover_button.png");
+}
+
+PisakSpellerButton:active, PisakSpellerKey:active, PisakSpellerPrediction:active {
+    color: white;
+    border-image: url("speller_active_button.png");
+}
+
+MxButton:scanning {
+    color: #ccc;
+    border-image: url("speller_scanning_button.png");
+}
+
+MxButton:disabled{
+    color: grey;
+    font-size: 20pt;
+    font-family: serif;
+    border-image: url("disabled_button.png") 5;
+}
+
+MxProgressBar.PisakViewerProgressBar {
+  border-image: url("progress_bar_background.png");
+}
+
+MxProgressBarFill.PisakViewerProgressBar {
+  border-image: url("progress_bar_fill.png");
+}
+
+MxLabel.PisakViewerProgressBar {
+  font-family: Kelson Sans;
+  font-size: 30pt;
+  color: white;
+}
+
+MxLabel.PisakViewerPhotoTile {
+  font-family: Kelson Sans;
+  font-size: 20pt;
+  color: black;
+}
+
+MxLabel.PisakViewerAlbumHeader {
+  font-size: 40pt;
+  font-family: Kelson Sans;
+  color: black;
+}
+
+PisakViewerButton {
+  color: white;
+  font-size: 20pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("viewer_rest_button.png");
 
 }
 
-PisakProgressBar {
-
+PisakViewerButton:hover {
+  color: black;
+  font-size: 20pt;
+  font-family: Kelson Sans;
+  font-weight: bold;
+  border-image: url("hover_button.png");
 }
 
-PisakBoxLayout {
-
-}
 
 /*SVG part*/
 /*
@@ -66,7 +126,7 @@ stop-opacity -> Sets the stop opacity used in a stop element used in a gradient.
 /*svg { - commented out, does not work with rsvg 2.40.2-1
 width: 100%;
 height: 100%
-}*/ 
+}*/
 
 #l1 {
 fill: green;

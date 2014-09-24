@@ -1,5 +1,5 @@
 '''
-Implementation of signal connecting strategy for ClutterScript. 
+Implementation of signal connecting strategy for ClutterScript.
 '''
 import sys
 
@@ -9,7 +9,7 @@ from gi.repository import GObject
 """
 Object or module relative to which signal handlers are named
 """
-BASE_NAMESPACE = sys.modules[__name__] 
+BASE_NAMESPACE = sys.modules[__name__]
 
 
 def resolve_name(handler_name):

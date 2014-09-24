@@ -185,8 +185,6 @@ latex_elements = {
   'babel': '\\usepackage[english]{babel}'
 }
 
-
-
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [

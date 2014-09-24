@@ -2,6 +2,7 @@
 Definitions of classes built-in with layout managers . These actors can
 be used to describe whole application view in ClutterScript. Relevant
 layout parameters are proxied to internal layout manager.
+:deprecated: All widgets in this module are deprecated.
 '''
 from gi.repository import Clutter, GObject
 
@@ -11,9 +12,10 @@ from pisak import unit, properties
 class Box(Clutter.Actor, properties.PropertyAdapter):
     """
     Arranges children in single line using BoxLayout.
+    :deprecated: Use layout-manager property instead.
     """
     __gtype_name__ = "PisakBoxLayout"
-    
+
     __gproperties__ = {
         "orientation": (
             Clutter.Orientation.__gtype__,
@@ -57,8 +59,9 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
             None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
     }
-    
+
     def __init__(self):
+        print("USE OF DEPRECATED CLASS")
         super().__init__()
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
@@ -70,7 +73,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
             elif self.layout.get_orientation() == Clutter.Orientation.VERTICAL:
                 px_spacing = unit.h(self.ratio_spacing)
             self.layout.set_spacing(px_spacing)
-        
+
     @property
     def orientation(self):
         return self.layout.get_orientation()
@@ -113,7 +116,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
     def ratio_height(self, value):
         self._ratio_height = value
         self.set_height(unit.h(value))
-        
+
     @property
     def ratio_spacing(self):
         return self._ratio_spacing
@@ -161,6 +164,9 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
 
 
 class Bin(Clutter.Actor, properties.PropertyAdapter):
+    """
+    :deprecated: Use layout-manager property instead.
+    """
     __gtype_name__ = "PisakBinLayout"
     __gproperties__ = {
         "ratio_width": (
@@ -186,8 +192,9 @@ class Bin(Clutter.Actor, properties.PropertyAdapter):
             None, None, 0, 1., 0,
             GObject.PARAM_READWRITE),
     }
-    
+
     def __init__(self):
+        print("USE OF DEPRECATED CLASS")
         super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)

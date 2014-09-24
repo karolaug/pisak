@@ -1,0 +1,76 @@
+[
+    {
+        "id": "main",
+        "type": "PisakScanningGroup",
+	"selector": "mouse",
+        "x-expand": true,
+        "y-expand": true,
+	"strategy": {
+                        "id": "main_group_strategy",
+                        "type": "PisakRowStrategy",
+                        "interval": 2000,
+                        "max-cycle-count": -1,
+	                "unwind-to": "main"
+                    },
+        "signals": [
+                       {
+                           "name": "notify::mapped",
+                           "handler": "general/start_group"
+                       }
+                   ],
+        "children": [
+                        "main_box", "background_box"
+                    ]
+    },
+    {
+        "id": "background_box",
+        "type": "PisakBackgroundImage",
+        "x-expand": true,
+        "y-expand": true
+    },
+    {
+        "id": "main_box",
+        "type": "PisakBoxLayout",
+        "ratio_spacing": 0.2,
+        "orientation": "vertical",
+        "children": ["button_box", "logo_bin"]
+    },
+    {
+        "id": "logo_bin",
+        "type": "PisakBinLayout",
+        "ratio-width": 0.35,
+        "ratio-height": 0.2,
+        "children": ["pisak_logo"]
+    },
+    {
+        "id": "pisak_logo",
+        "type": "PisakLogo"
+    },
+    {
+        "id": "button_box",
+        "type": "PisakBoxLayout",
+        "ratio-margin-bottom": 0.2,
+        "ratio_spacing": 0.1,
+        "children": [
+                        "button_speller", "button_viewer"
+                    ]
+    },
+    {
+        "id": "button_viewer",
+        "type": "PisakMainPanelButton",
+        "ratio-width": 0.35,
+        "ratio-height": 0.3,
+        "label": "ZDJĘCIA",
+        "icon-size": 200,
+        "icon-name": "viewer"
+    }
+    {
+        "id": "button_speller",
+        "type": "PisakMainPanelButton",
+        "ratio-width": 0.35,
+        "ratio-height": 0.3,
+        "icon-size": 200,
+        "label": "PISANIE",
+        "icon-name": "klawiatura"
+    }
+]

@@ -1,5 +1,5 @@
 #!/usr/bin/python
- 
+
 import sys, time
 from PySide import QtGui, QtCore
 
@@ -13,7 +13,7 @@ class CycleThread(QtCore.QThread):
         self.window = window
         self.tick_on.connect(self.window.hilite_on)
         self.tick_off.connect(self.window.hilite_off)
-        
+
     def run(self):
         current_row = 0
         while not self.finished:
@@ -25,7 +25,7 @@ class CycleThread(QtCore.QThread):
 class MainWindow(QtGui.QWidget):
     rows = 15
     cols = 16
-    
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.buttons = []
@@ -34,12 +34,9 @@ class MainWindow(QtGui.QWidget):
         self._init_buttons()
         self.showFullScreen()
         self.setStyleSheet("font: 8pt")
-    
-    def _init_buttons(self):
 
-        
+    def _init_buttons(self):
         grid = QtGui.QGridLayout()
-        
         for i in range(self.rows):
            row = []
            for j in range(self.cols):
@@ -48,15 +45,15 @@ class MainWindow(QtGui.QWidget):
                grid.addWidget(button, i, j)
            self.buttons.append(row)
         self.setLayout(grid)
-        
+
     @QtCore.Slot(int)
     def hilite_on(self, i):
         self.row_style(i, "background-color: rgb(128, 160, 225)")
-    
+
     @QtCore.Slot(int)
     def hilite_off(self, i):
         self.row_style(i, "")
-            
+
     def row_style(self, i, style):
         for button in self.buttons[i]:
             button.setStyleSheet(style)
@@ -67,7 +64,7 @@ class PisakApp(QtGui.QApplication):
         self.main_window = MainWindow()
         self.cycle_thread = CycleThread(self.main_window)
         self.cycle_thread.start()
-    
+
     @classmethod
     def run_main(cls):
         app = cls()

@@ -38,7 +38,7 @@ class CategoryView(widgets.ScrollingView):
 
     def show_photo(self, tile):
         self.context.application.push_view(photo.PhotoView(self.context))
-    
+
     def create_menu(self):
         return widgets.CategoryViewMenu(self.context)
 
@@ -70,7 +70,7 @@ class LibraryView(widgets.ScrollingView):
 
     def show_category(self, tile):
         self.context.application.push_view(CategoryView(self.context))
-    
+
     def create_menu(self):
         return widgets.LibraryViewMenu(self.context)
 

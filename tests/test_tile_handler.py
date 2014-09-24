@@ -13,7 +13,6 @@ class TileHandlerTest(unittest.TestCase):
             {"label": "c"}, {"label": "d"}],
         "page_interval": 3000}
 
-
     def setUp(self):
         Clutter.init([])
 
@@ -27,12 +26,12 @@ class TileHandlerTest(unittest.TestCase):
         page = view_actor.generate_page(0)
         page.tiles[0].emit("activate")
         self.assertTrue(self.activated, "Handler not set up properly")
-    
+
     def test_bad_handler(self):
         view_actor = widgets.PagedTileView()
         with self.assertRaises(ValueError, msg="Handler not checked for callablity"):
             view_actor.tile_handler = object()
-        
+
 
 if __name__ == "__main__":
     unittest.main()

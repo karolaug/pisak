@@ -19,16 +19,16 @@ PisakSpellerButton:hover, PisakSpellerKey:hover, PisakSpellerPrediction:hover {
 
 PisakSpellerButton:active, PisakSpellerKey:active, PisakSpellerPrediction:active {
     color: white;
-    border-image: url("active_button.png");
+    border-image: url("speller_active_button.png");
 }
 
-MxButton:scanning {
+PisakSpellerButton:scanning, PisakSpellerKey:scanning, PisakSpellerPrediction:scanning {
     color: #ccc;
-    border-image: url("scanning_button.png");
+    border-image: url("speller_scanning_button.png");
 }
 
 MxButton:disabled{
-    color: black;
+    color: grey;
     font-size: 20;
     font-family: serif;
     border-image: url("disabled_button.png") 5;

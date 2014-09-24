@@ -41,11 +41,12 @@ class CursorGroup(Clutter.Actor):
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
         self.connect("notify::mapped", self.init_content)
-    
+        self.first_run = True
+
     def init_content(self, *args):
         self.text = [i for i in self.get_children()
                      if type(i) == Text][0]
-        self.init_cursor()
+        #self.init_cursor()
         self.text.clutter_text.connect('text-changed', self.move_cursor)
         self.text.clutter_text.connect('cursor-changed', self.move_cursor)
 
@@ -65,8 +66,11 @@ class CursorGroup(Clutter.Actor):
         self.add_child(self.cursor)
         self.cursor.set_x(0)
         self.cursor.set_y(0)
-        
+
     def move_cursor(self, event):
+        if self.first_run:
+            self.init_cursor()
+            self.first_run = False
         cursor_pos = self.text.get_cursor_position()
         coords = self.text.clutter_text.position_to_coords(cursor_pos)
         self.cursor.set_x(coords[1])
@@ -93,7 +97,7 @@ class Cursor(Clutter.Actor):
         context.rectangle(0, 0, width, height)
         context.fill()
         return True
-    
+
 class Text(Mx.Label, properties.PropertyAdapter):
     class Insertion(object):
         """
@@ -155,7 +159,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def revert(self, text):
             text.clutter_text.insert_text(self.value, self.pos)
 
-        def compose(self, operation): 
+        def compose(self, operation):
             if isinstance(operation, Text.Deletion):
                 consecutive = operation.pos + len(operation.value) == self.pos
                 compatible = operation.value[-1].isspace() or \
@@ -204,7 +208,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def __str__(self):
             return "{} -> {} @ {}".format(self.before, self.after, self.pos)
 
-
     __gtype_name__ = "PisakSpellerText"
     __gproperties__ = {
         "ratio_width": (GObject.TYPE_FLOAT, None, None, 0, 1., 0, GObject.PARAM_READWRITE),
@@ -244,7 +247,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         return len(self.clutter_text.get_text())
 
-
     def get_cursor_position(self):
         pos = self.clutter_text.get_cursor_position()
         return pos if pos > 0 else len(self.get_text())
@@ -264,7 +266,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         Append the given unicode character to the text buffer
         @param char unicode character in the form of unicode escape sequence
         :deprecated:
-        """ 
+        """
         # TODO: remove
         operation = Text.Insertion(self.get_text_length(), char)
         self.add_operation(operation)
@@ -302,7 +304,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
             operation = Text.Deletion(0, self.get_text())
             self.add_operation(operation)
 
-
     def get_endmost_triplet(self):
         """
         Look for and return the first three-word string of characters
@@ -312,7 +313,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
 
         text = self.get_text()
-        if text: #if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
+        if text:  # if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
             if text.rstrip():
                 if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
                     return ' '
@@ -321,7 +322,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
         if text.rstrip():
             last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
-            return last_sentence.strip() + (text[-1]  == ' ')*' '
+            return last_sentence.strip() + (text[-1] == ' ')*' '
         else:
             return ' '
 
@@ -342,8 +343,8 @@ class Text(Mx.Label, properties.PropertyAdapter):
         @param text string passed after a user's action
         """
         current_text = self.get_text()
-        if current_text: #if the text buffer is empty, or ends with whitespace, simply add predicted words. Otherwise, replace the last word.
-            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']: #if the text buffer ends in a commas, add a space before adding the predicted word
+        if current_text:  # if the text buffer is empty, or ends with whitespace, simply add predicted words. Otherwise, replace the last word.
+            if current_text[-1] in ['.', ',', ';', '?', '!', '(', ')', ':', '"']:  # if the text buffer ends in a commas, add a space before adding the predicted word
                 self.type_text(' ' + text_after)
             elif current_text[-1] == ' ':
                 self.type_text(text_after)
@@ -357,7 +358,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
                 #self.type_text(text)
         else:
             self.type_text(text_after)
-
 
     def move_cursor_forward(self):
         """
@@ -420,7 +420,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
             except IndexError:
                 current_position = -1
         self.clutter_text.set_cursor_position(current_position)
-
 
     def move_line_up(self):
         """
@@ -516,7 +515,7 @@ class Key(pisak.widgets.Button):
         self.undo_chain = []
         self.allowed_undos = set()
         #self.set_size(dims.MENU_BUTTON_H_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("activate", self.on_activate)
+        self.connect("clicked", self.on_activate)
         self.connect("notify::default-text", self._set_initial_label)
 
     def _set_initial_label(self, source, spec):
@@ -659,14 +658,14 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         self.target = None
         self.basic_content = ['Chciałbym', 'Czy', 'Jak', 'Jestem',
                               'Nie', 'Niestety', 'Rzeczywiście',
-                              'Super', 'Witam'] #this is subject to change, perhaps should be a class argument
+                              'Super', 'Witam']  # this is subject to change, perhaps should be a class argument
         self.content = []
 
     def get_suggestion(self, accuracy_level):
         if accuracy_level < len(self.content):
             return self.content[accuracy_level]
 
-    def do_prediction(self): #function to preform in a separate thread
+    def do_prediction(self):  # function to preform in a separate thread
         Clutter.threads_enter()
         string = self.target.get_endmost_triplet()
         Clutter.threads_leave()
@@ -675,15 +674,15 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         else:
             self.content = predictor.get_predictions(string)
         if len(self.content) == 1:
-            self.content[0] = self.content[0] + ' ' # automatic space if only  one suggestion
+            self.content[0] = self.content[0] + ' '  # automatic space if only  one suggestion
         Clutter.threads_enter()
         self.emit("content-update")
         Clutter.threads_leave()
 
     def _update_content(self, *args):
         self.emit("processing-on")
-        t = threading.Thread(target = self.do_prediction) #very simple solution, not sure
-        t.daemon = True #thread will be killed when the main program is killed
+        t = threading.Thread(target = self.do_prediction)  # very simple solution, not sure
+        t.daemon = True  # thread will be killed when the main program is killed
         t.start()
 
     def _follow_target(self):
@@ -742,7 +741,7 @@ class Prediction(pisak.widgets.Button):
     def __init__(self):
         super().__init__()
         #self.set_size(dims.MENU_BUTTON_W_PX, dims.MENU_BUTTON_H_PX)
-        self.connect("activate", self._on_activate)
+        self.connect("clicked", self._on_activate)
         self.idle_icon_name = "hourglass"
         self.icon_name = None
         self.icon_size = 50
@@ -751,7 +750,8 @@ class Prediction(pisak.widgets.Button):
         self.clutter_text = [i for i in self.layout.get_children()
                             if type(i) == Clutter.Text][0]
         self.clutter_text.set_property("ellipsize", 0)
-
+        self.clutter_text.connect("text-changed", self._resize_reflow)
+        self.connect("notify::mapped", self._initial_label)
 
     @property
     def idle_icon_name(self):
@@ -761,27 +761,38 @@ class Prediction(pisak.widgets.Button):
     def idle_icon_name(self, value):
         self._idle_icon_name = value
 
+    def _initial_label(self, *args):
+        if self.get_property("mapped"):
+            self.set_label(self.dictionary.basic_content.pop(0))
+
     def _on_activate(self, source):
         label = self.get_label()
         if label and self.target:
             self.target.replace_endmost_string(label)
 
     def _update_button(self, source):
-        if self.icon_name is not None:  # if there is a need to call icon setter
-            self.icon_name = None
+        self.icon_name = None
         new_label = self.dictionary.get_suggestion(self.order_num-1)
         if new_label:
-            self.clutter_text.set_scale(1, 1)
             self.set_label(new_label)
-            text_width = self.clutter_text.get_width()
-            butt_width = self.get_width()
-            self.set_disabled(False)
-            if text_width + 27 > butt_width:
-                self.set_offscreen_redirect(Clutter.OffscreenRedirect(2))
-                self.clutter_text.set_scale_full(butt_width/(text_width*1.3),butt_width/(text_width*1.3),0, self.get_height()/2)#-self.clutter_text.get_height()/2) - this cenetrs on y-axis but destroys rendering of some letters
         else:
             self.set_label("")
             self.set_disabled(True)
+
+    def _resize_reflow(self, *args):
+        button_width = self.get_width()
+        button_height = self.get_height()
+        self.clutter_text.set_pivot_point(0.5, 0.5)
+        self.clutter_text.set_scale(1, 1)
+        text_width = self.clutter_text.get_width()
+        text_height = self.clutter_text.get_height()
+        self.set_disabled(False)
+        point = Clutter.Point((1, 1))
+        if text_width + 27 > button_width:
+            self.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS)
+            self.clutter_text.set_pivot_point(0, 0.5)
+            self.clutter_text.set_scale(button_width/(text_width*1.3),
+                                        button_width/(text_width*1.3))
 
     def _button_idle(self, source):
         self.set_label(" ")
@@ -797,8 +808,10 @@ class Prediction(pisak.widgets.Button):
     def _stop_following_dictionary(self):
         try:
             if self.dictionary is not None:
-                self.dictionary.disconnect_by_func("content-update", self._update_button)
-                self.dictionary.disconnect_by_func("processing-on", self._button_idle)
+                self.dictionary.disconnect_by_func("content-update", 
+                                                   self._update_button)
+                self.dictionary.disconnect_by_func("processing-on", 
+                                                   self._button_idle)
         except AttributeError:
             return None
 
@@ -937,10 +950,10 @@ class PopUp(layout.Box):
                     row.spacing = self.spacing
                     self.space.add_child(row)
                 button = Button()
-                button.set_label(file["name"])
+                button.set_label(file.name)
                 button.ratio_width = self.tile_ratio_width
                 button.ratio_height = self.tile_ratio_height
-                button.connect("clicked", self._on_select, file["path"])
+                button.connect("clicked", self._on_select, file.path)
                 row.add_child(button)
         button = Button()
         button.ratio_width = self.tile_ratio_width

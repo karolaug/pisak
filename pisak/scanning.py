@@ -4,8 +4,63 @@ Classes for defining scanning in JSON layouts
 from gi.repository import Clutter, GObject, Mx, Gdk
 
 from pisak import properties, unit
+import logging
 
-import subprocess as sp
+
+_LOG = logging.getLogger(__name__)
+
+class Scannable(object):
+    """
+    Interface of object scannable by switcher groups. Switcher groups expect
+    widgets implement this interface.
+    """
+    def activate(self):
+        """
+        Performs widgets action.
+        """
+        raise NotImplementedError()
+
+    def enable_hilite(self):
+        """
+        Enables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+    def disable_hilite(self):
+        """
+        Disables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+    def enable_scanned(self):
+        """
+        Enables scanned style for this widget.
+        """
+        raise NotImplementedError()
+
+    def disable_scanned(self):
+        """
+        Enables hilite style for this widget.
+        """
+        raise NotImplementedError()
+
+
+class StylableScannable(object):
+    """
+    Partial implementation of Scannable interface for stylable widgets.
+    Hilighted and scanned widgets are marked with CSS pseudoclasses.
+    """
+    def enable_hilite(self):
+        self.style_pseudo_class_add("hover")
+
+    def disable_hilite(self):
+        self.style_pseudo_class_remove("hover")
+
+    def enable_scanned(self):
+        self.style_pseudo_class_add("scanning")
+
+    def disable_scanned(self):
+        self.style_pseudo_class_remove("scanning")
 
 
 class Strategy(GObject.GObject):
@@ -15,6 +70,7 @@ class Strategy(GObject.GObject):
     def __init__(self):
         super().__init__()
         self.group = None
+        self.return_mouse = False
 
     @property
     def group(self):
@@ -33,25 +89,35 @@ class Strategy(GObject.GObject):
         """
         element = self.get_current_element()
         if isinstance(element, Group):
-            self.group.stop_cycle()
-            element.parent_group = self.group
-            element.start_cycle()
-        elif isinstance(element, Mx.Button):
-            self.group.stop_cycle()
+            if not self.group.paused:
+                self.group.stop_cycle()
+                if not self.group.killed:
+                    element.parent_group = self.group
+                    element.start_cycle()
+        elif hasattr(element, "activate"):
             # set potential next group
             self.group.stage.pending_group = self.unwind_to
-            element.emit("clicked")
-            # launch next group
-            if self.group.stage.pending_group:
-                self.group.stage.pending_group.start_cycle()
-            else:
-                self.group.start_cycle()
+            if not self.group.killed:
+                element.activate()
+            if not self.group.paused:
+                self.group.stop_cycle()
+            if not self.group.killed and not self.group.paused:
+                # launch next group
+                if self.group.stage.pending_group:
+                    self.group.stage.pending_group.start_cycle()
+                else:
+                    if self.group.get_stage():
+                        self.group.start_cycle()
         else:
             raise Exception("Unsupported selection")
 
     def unwind(self):
-        self.group.stop_cycle()
-        self.group.parent_group.start_cycle()
+        if self.unwind_to is not None:
+            self.group.stop_cycle()
+            self.unwind_to.start_cycle()
+        else:
+            self.group.stop_cycle()
+            self.group.parent_group.start_cycle()
 
     def get_current_element(self):
         """
@@ -63,12 +129,16 @@ class Strategy(GObject.GObject):
         raise NotImplementedError("Incomplete strategy implementation")
 
 
+class ScanningException(Exception):
+    pass
+
+
 class Group(Clutter.Actor, properties.PropertyAdapter):
     """
     Container for grouping widgets for scanning purposes.
     """
     __gtype_name__ = "PisakScanningGroup"
-    
+
     __gproperties__ = {
         "strategy": (
             Strategy.__gtype__,
@@ -79,12 +149,14 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             "", "", False,
             GObject.PARAM_READWRITE),
         "selector": (
-            GObject.TYPE_STRING, "", "", 
+            GObject.TYPE_STRING, "", "",
             "mouse", GObject.PARAM_READWRITE)
     }
 
     def __init__(self):
         self._strategy = None
+        self.paused = False
+        self.killed = False
         self._scanning_hilite = False
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
@@ -102,7 +174,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self._strategy = value
         if self.strategy is not None:
             self.strategy.group = self
-    
+
     @property
     def selector(self):
         return self._selector
@@ -114,40 +186,51 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
     @property
     def scanning_hilite(self):
         return self._scanning_hilite
-    
+
     @scanning_hilite.setter
     def scanning_hilite(self, value):
         self._scanning_hilite = value
         if not value:
             self.disable_scan_hilite("scanning")
 
-    def get_subgroups(self):
+    def get_subgroups(self, flag=None):
         '''
         Generator of all subgroups of the group.
         '''
         to_scan = self.get_children()
         while len(to_scan) > 0:
             current = to_scan.pop()
-            if isinstance(current, Group):
-                yield current
-            elif isinstance(current, Mx.Button) \
-                    and not current.get_disabled():
-                yield current
+            if flag == "all":
+                if isinstance(current, Group) \
+                        or isinstance(current, Scannable) \
+                        or isinstance(current, Mx.Button):
+                    yield current
+            else:
+                if isinstance(current, Group) \
+                        or isinstance(current, Scannable) \
+                        or (isinstance(current, Mx.Button)
+                        and not current.get_disabled()):
+                    yield current
             if not isinstance(current, Group):
                 to_scan.extend(current.get_children())
 
     def start_cycle(self):
+        _LOG.debug("Starting group {}".format(self.get_id()))
         self.stage = self.get_stage()
+        if self.stage is None:
+            message = \
+                "Started cycle in unmapped group: {}".format(self.get_id())
+            raise ScanningException(message)
         if self.selector == 'mouse':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
-            
         elif self.selector == 'keyboard':
-            self._handler_token = self.connect("key-release-event", 
+            self._handler_token = self.connect("key-release-event",
                                                self.key_release)
         elif self.selector == 'mouse-switch':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
+            self.strategy.return_mouse = True
             display = Gdk.Display.get_default()
             screen = display.get_default_screen()
             display.warp_pointer(screen, unit.w(1), unit.h(1))
@@ -155,10 +238,8 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             sp.call( ['synclient', 'TouchpadOff=1'] )
             #optionaly use xinput to disable other pointer devices
             #sp.call(['xinput', 'set-int-prop', '10', '"Device Enabled"', '8', '0'])
-            
-
         else:
-            print("Unknown selector: ", self.selector)
+            _LOG.warning("Unknown selector: ", self.selector)
             return None
         self.get_stage().set_key_focus(self)
         if self.scanning_hilite:
@@ -166,10 +247,10 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.strategy.start()
 
     def stop_cycle(self):
-        action = {'mouse': self.stage.disconnect, 
+        action = {'mouse': self.stage.disconnect,
                   'mouse-switch': self.stage.disconnect,
                   'keyboard': self.disconnect}
-        self.get_stage().set_key_focus(None)
+        self.stage.set_key_focus(None)
         try:
             action[self.selector](self._handler_token)
         except AttributeError:
@@ -188,31 +269,36 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.strategy.select()
         return False
 
-    def add_pseudoclass_all(self, pseudoclass):
-        for s in self.get_subgroups():
-            if isinstance(s, Mx.Stylable):
-                s.style_pseudo_class_add(pseudoclass)
+    def recursive_apply(self, test, operation, flag=None):
+        if flag == "all":
+            subgroups = self.get_subgroups("all")
+        else:
+            subgroups = self.get_subgroups()
+        for s in subgroups:
+            if test(s):
+                operation(s)
             elif isinstance(s, Group):
-                s.add_pseudoclass_all(pseudoclass)
-
-    def remove_pseudoclass_all(self, pseudoclass):
-        for s in self.get_subgroups():
-            if isinstance(s, Mx.Stylable):
-                s.style_pseudo_class_remove(pseudoclass)
-            elif isinstance(s, Group):
-                s.remove_pseudoclass_all(pseudoclass)
+                s.recursive_apply(test, operation, flag)
 
     def enable_hilite(self):
-        self.add_pseudoclass_all("hover")
+        self.recursive_apply(
+            lambda s: hasattr(s, "enable_hilite"),
+            lambda s: s.enable_hilite())
 
     def disable_hilite(self):
-        self.remove_pseudoclass_all("hover")    
+        self.recursive_apply(
+            lambda s: hasattr(s, "disable_hilite"),
+            lambda s: s.disable_hilite(), "all")    
 
     def enable_scan_hilite(self):
-        self.add_pseudoclass_all("scanning")
+        self.recursive_apply(
+            lambda s: hasattr(s, "enable_scanned"),
+            lambda s: s.enable_scanned())
 
     def disable_scan_hilite(self):
-        self.remove_pseudoclass_all("scanning")
+        self.recursive_apply(
+            lambda s: hasattr(s, "disable_scanned"),
+            lambda s: s.disable_scanned(), "all")
 
 
 class RowStrategy(Strategy, properties.PropertyAdapter):
@@ -237,6 +323,9 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     def __init__(self):
         self._group = None
+        self._allocation_slot = None
+        self._subgroups = []
+        self.index = None
         super().__init__()
         self.interval = 1000
         self._max_cycle_count = 2
@@ -274,17 +363,24 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     @group.setter
     def group(self, value):
-        #if self.group is not None:
-        #    self.group.disconnect_by_function("allocation-changed". self.update_rows)
+        if self.group is not None:
+            message = "Group strategy reuse, old {}, new {}"
+            _LOG.warning(message.format(self.group.get_id(), value.get_id()))
+            _LOG.debug("new {}, old {}".format(self.group, value))
+            self.group.disconnect(self._allocation_slot)
         self._group = value
-        #if self.group is not None:
-        #    self.group.connect("allocation-changed", self.update_rows)
+        if self.group is not None:
+            self._allocation_slot = \
+                self.group.connect("allocation-changed", self.update_rows)
 
     def update_rows(self, *args):
-        selection = self._subgroups[self.index]
-        if isinstance(selection, Mx.Stylable):
-            selection.style_pseudo_class_remove("hover")
+        _LOG.debug("Row layout allocation changed")
+        if self.index is not None:
+            selection = self._subgroups[self.index]
+            if hasattr(selection, "disable_hilite"):
+                selection.disable_hilite()
         self.compute_sequence()
+        self.index = None
 
     def compute_sequence(self):
         subgroups = list(self.group.get_subgroups())
@@ -312,24 +408,24 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
     def _stop_cycle(self):
         if self.index is not None:
             selection = self._subgroups[self.index]
-            if isinstance(selection, Mx.Stylable):
-                selection.style_pseudo_class_remove("hover")
+            if hasattr(selection, "disable_hilite"):
+                selection.disable_hilite()
             elif isinstance(selection, Group):
                 selection.disable_hilite()
 
     def _expose_next(self):
         if self.index is not None:
             selection = self._subgroups[self.index]
-            if isinstance(selection, Mx.Stylable):
-                selection.style_pseudo_class_remove("hover")
+            if hasattr(selection, "disable_hilite"):
+                selection.disable_hilite()
             elif isinstance(selection, Group):
                 selection.disable_hilite()
             self.index = (self.index + 1) % len(self._subgroups)
         else:
             self.index = 0
         selection = self._subgroups[self.index]
-        if isinstance(selection, Mx.Stylable):
-            selection.style_pseudo_class_add("hover")
+        if hasattr(selection, "enable_hilite"):
+            selection.enable_hilite()
         elif isinstance(selection, Group):
             selection.enable_hilite()
         if self.index == len(self._subgroups) - 1:
@@ -343,11 +439,18 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
                 (self._cycle_count < self.max_cycle_count)
 
     def cycle_timeout(self, token):
+        #in case of mouse-click based switch selector, hide the mouse
+        if self.return_mouse:
+            display = Gdk.Display.get_default()
+            screen = display.get_default_screen()
+            display.warp_pointer(screen, unit.w(1), unit.h(1))
+
         if self.timeout_token != token:
             # timeout event not from current cycle
             return False
         elif self._has_next():
-            self._expose_next()
+            if not self.group.paused:
+                self._expose_next()
             return True
         else:
             self.unwind()

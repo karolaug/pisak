@@ -2,12 +2,13 @@
     {
         "id": "main",
         "type": "PisakScanningGroup",
-	"selector": "mouse-switch",
-        "strategy": {
+	"selector": "mouse",
+	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
                         "interval": 800,
-                        "max-cycle-count": -1
+                        "max-cycle-count": -1,
+	                "unwind-to": "main"
                     },
         "signals": [
                        {
@@ -21,14 +22,14 @@
     },
     {
         "id": "background_box",
-        "type": "PisakBackgroundPattern",
+        "type": "PisakBackgroundImage",
         "x-expand": true,
         "y-expand": true
     },
     {
         "id": "pop_up_scanning_group",
         "type": "PisakScanningGroup",
-        "selector": "mouse-switch",
+        "selector": "mouse",
         "scanning-hilite": true,
         "strategy": {
                         "type": "PisakRowStrategy",
@@ -73,7 +74,7 @@
         "ratio-spacing": 0.07,
         "orientation": "vertical"
     },
-    {                                                                                                          
+    {
         "id": "main_box",
         "type": "PisakBoxLayout",
         "x-align": "start",
@@ -92,14 +93,15 @@
     {
         "id": "speller_menu",
         "type": "PisakScanningGroup",
-	"selector": "mouse-switch",
+	"selector": "mouse",
         "children": ["speller_menu_box"],
         "scanning-hilite": true,
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": 2
+            "max-cycle-count": 2,
+	    "unwind-to": "main"
         }
     },
     {
@@ -116,7 +118,7 @@
         "y-expand": true,
         "ratio_spacing" : 0.0136,
         "children": [
-                        "button_9", "button_8", "button_7", "button_6",
+                        "button_exit", "button_8", "button_7", "button_6",
                         "button_5","button_4", "button_3", "button_2",
                         "button_1", "menu_header"
                     ]
@@ -157,26 +159,9 @@
             }
         ]
     },
+
     {
         "id": "button_3",
-        "type": "PisakSpellerButton",
-        "text": "PRZECZYTAJ",
-        "x-align": "start",
-        "ratio-width": 0.18312,
-        "ratio-height": 0.085,
-        "icon-size": 50,
-        "label": "CZYTAJ",
-        "icon-name": "przeczytaj",
-        "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/text_to_speech",
-                           "object": "text_box"
-                       }
-                   ]
-    },
-    {
-        "id": "button_4",
         "type": "PisakSpellerButton",
         "text": "ZAPISZ",
         "x-align": "start",
@@ -184,7 +169,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "ZAPISZ",
-        
+
         "icon-name": "zapisz",
         "signals": [
                        {
@@ -195,7 +180,7 @@
                    ]
     },
     {
-        "id": "button_5",
+        "id": "button_4",
         "type": "PisakSpellerButton",
         "text": "WCZYTAJ",
         "x-align": "start",
@@ -209,6 +194,24 @@
                            "name": "clicked",
                            "handler": "speller/load",
 			   "object": "pop_up_box"
+                       }
+                   ]
+    },
+    {
+        "id": "button_5",
+        "type": "PisakSpellerButton",
+        "text": "PRZECZYTAJ",
+        "x-align": "start",
+        "ratio-width": 0.18312,
+        "ratio-height": 0.085,
+        "icon-size": 50,
+        "label": "CZYTAJ",
+        "icon-name": "przeczytaj",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "speller/text_to_speech",
+                           "object": "text_box"
                        }
                    ]
     },
@@ -269,7 +272,7 @@
                    ]
     },
     {
-        "id": "button_9",
+        "id": "button_exit",
         "type": "PisakSpellerButton",
         "text": "PANEL STARTOWY",
         "x-align": "start",
@@ -277,14 +280,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "WYJŚCIE",
-        "icon-name": "wyjdz",
-        "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "general/exit",
-                           "object": "main"
-                       }
-                   ]
+        "icon-name": "wyjdz"
     },
 
     {
@@ -296,7 +292,7 @@
     {
         "id": "prediction_panel",
         "type": "PisakScanningGroup",
-	"selector": "mouse-switch",
+	"selector": "mouse",
         "children": ["prediction_panel_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -304,7 +300,7 @@
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2,
-            "unwind-to": "main_panel"
+            "unwind-to": "main"
         }
     },
     {
@@ -314,10 +310,10 @@
         "y-align": "end",
         "y-expand": true,
         "ratio-spacing": 0.0136,
-        "children": 
+        "children":
         [
-            "prediction_9", "prediction_8", "prediction_7","prediction_6", 
-            "prediction_5", "prediction_4","prediction_3", "prediction_2", 
+            "prediction_9", "prediction_8", "prediction_7","prediction_6",
+            "prediction_5", "prediction_4","prediction_3", "prediction_2",
             "prediction_1", "prediction_header"
         ]
     },
@@ -333,17 +329,15 @@
         "order-num": 1,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Chciałbym",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
-    },  
+    },
     {
         "id": "prediction_2",
         "type": "PisakSpellerPrediction",
         "order-num": 2,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Czy",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -353,7 +347,6 @@
         "order-num": 3,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Jak",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -363,17 +356,15 @@
         "order-num": 4,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Jestem",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
-    },  
+    },
     {
         "id": "prediction_5",
         "type": "PisakSpellerPrediction",
         "order-num": 5,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Nie",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -383,7 +374,6 @@
         "order-num": 6,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Niestety",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -393,17 +383,15 @@
         "order-num": 7,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Rzeczywiście",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
-    },  
+    },
     {
         "id": "prediction_8",
         "type": "PisakSpellerPrediction",
         "order-num": 8,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Super",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
@@ -413,21 +401,21 @@
         "order-num": 9,
         "dictionary": "prediction_dictionary",
         "target": "text_box",
-        "label": "Witam",
         "ratio-width": 0.13734,
         "ratio-height": 0.085
     },
     {
         "id": "main_panel",
         "type": "PisakScanningGroup",
-	"selector": "mouse-switch",
+	"selector": "mouse",
         "children": ["main_panel_box"],
         "scanning-hilite": true,
         "strategy": {
             "id": "main_panel_group_strategy",
             "type": "PisakRowStrategy",
             "interval": 800,
-            "max-cycle-count": 2
+            "max-cycle-count": 2,
+	    "unwind-to": "main"
         }
     },
     {
@@ -455,7 +443,7 @@
     {
         "id": "keyboard_menu",
         "type": "PisakScanningGroup",
-	"selector": "mouse-switch",
+	"selector": "mouse",
         "children": ["keyboard_menu_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -535,40 +523,17 @@
         "ratio-width": 0.048,
         "ratio-height": 0.085,
         "icon-size": 30,
-        "icon-name": "wielkie_litery",
-        "spacing": 0,
+        "icon-name": "cofnij",
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/swap_caps_chars",
-                           "object": "keyboard_panel"
+                           "handler": "speller/undo",
+                           "object": "text_box"
                        }
                    ]
     },
     {
         "id": "keyboard_menu_button_5",
-        "type": "PisakSpellerButton",
-        "text": " ",
-        "ratio-width": 0.048,
-        "ratio-height": 0.085,
-        "icon-size": 30,
-        "icon-name": "polskie",
-        "related-object": "keyboard_panel",
-        "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/altgr_chars",
-                           "object": "keyboard_panel"
-                       },
-                       {
-                           "name": "clicked",
-                           "handler": "speller/swap_altgr_chars_on_select",
-                           "object": "keyboard_panel"
-                       }
-                   ]
-    },
-    {
-        "id": "keyboard_menu_button_6",
         "type": "PisakSpellerButton",
         "text": " ",
         "alternative-text": " ",
@@ -580,18 +545,65 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/special_chars",
+                           "handler": "speller/swap_special_chars",
                            "object": "keyboard_panel"
-                       },
+                       }
+                   ]
+    },
+    {
+        "id": "keyboard_menu_button_6",
+        "type": "PisakSpellerButton",
+        "text": " ",
+        "ratio-width": 0.048,
+        "ratio-height": 0.085,
+        "icon-size": 30,
+        "icon-name": "wielkie_litery",
+        "spacing": 0,
+        "signals": [
                        {
                            "name": "clicked",
-                           "handler": "speller/swap_special_chars_on_select",
+                           "handler": "speller/swap_caps_chars",
                            "object": "keyboard_panel"
                        }
                    ]
     },
     {
         "id": "keyboard_menu_button_7",
+        "type": "PisakSpellerButton",
+        "text": " ",
+        "ratio-width": 0.048,
+        "ratio-height": 0.085,
+        "icon-size": 30,
+        "icon-name": "polskie",
+        "related-object": "keyboard_panel",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "speller/swap_altgr_chars",
+                           "object": "keyboard_panel"
+                       }
+                   ]
+    },
+    {
+        "id": "keyboard_menu_button_8",
+        "type": "PisakSpellerKey",
+        "default-text": "CZ",
+        "special-text": "8",
+        "target": "text_box",
+        "ratio-width": 0.048,
+        "ratio-height": 0.085
+    },
+    {
+        "id": "keyboard_menu_button_9",
+        "type": "PisakSpellerKey",
+        "default-text": "SZ",
+        "special-text": "9",
+        "target": "text_box",
+        "ratio-width": 0.048,
+        "ratio-height": 0.085
+    },
+    {
+        "id": "keyboard_menu_button_10",
         "type": "PisakSpellerButton",
         "text": " ",
         "ratio-width": 0.048,
@@ -606,54 +618,7 @@
             }
         ]
     },
-    {
-        "id": "keyboard_menu_button_8",
-        "type": "PisakSpellerButton",
-        "text": " ",
-        "ratio-width": 0.048,
-        "ratio-height": 0.085,
-        "icon-size": 30,
-        "icon-name": "cofnij",
-        "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/undo",
-                           "object": "text_box"
-                       }
-                   ]
-    },
-    {
-        "id": "keyboard_menu_button_9",
-        "type": "PisakSpellerButton",
-        "text": " ",
-        "ratio-width": 0.048,
-        "ratio-height": 0.085,
-        "icon-size": 30,
-        "icon-name": "nav_left",
-        "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/nav_left",
-                           "object": "text_box"
-                       }
-                   ]
-    },
-    {
-        "id": "keyboard_menu_button_10",
-        "type": "PisakSpellerButton",
-        "text": " ",
-        "ratio-width": 0.048,
-        "ratio-height": 0.085,
-        "icon-size": 30,
-        "icon-name": "nav_right",
-        "signals": [
-                       {
-                           "name": "clicked",
-                           "handler": "speller/nav_right",
-                           "object": "text_box"
-                       }
-                   ]
-    },                
+
     {
         "id": "keyboard_panel",
         "type": "PisakBoxLayout",
@@ -667,7 +632,7 @@
     {
         "id": "keyboard_row_1",
         "type": "PisakScanningGroup",
-	"selector": "mouse-switch",
+	"selector": "mouse",
         "children": ["keyboard_row_1_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -782,7 +747,7 @@
     {
         "id": "keyboard_row_2",
         "type": "PisakScanningGroup",
-	"selector": "mouse-switch",
+	"selector": "mouse",
         "children": ["keyboard_row_2_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -905,7 +870,7 @@
     {
         "id": "keyboard_row_3",
         "type": "PisakScanningGroup",
-	"selector": "mouse-switch",
+	"selector": "mouse",
         "children": ["keyboard_row_3_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -994,21 +959,35 @@
     },
     {
         "id": "key_3_8",
-        "type": "PisakSpellerKey",
-        "default-text": "CZ",
-        "special-text": "8",
-        "target": "text_box",
+        "type": "PisakSpellerButton",
+        "text": " ",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "icon-size": 30,
+        "icon-name": "nav_left",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "speller/nav_left",
+                           "object": "text_box"
+                       }
+                   ]
     },
     {
         "id": "key_3_9",
-        "type": "PisakSpellerKey",
-        "default-text": "SZ",
-        "special-text": "9",
-        "target": "text_box",
+        "type": "PisakSpellerButton",
+        "text": " ",
         "ratio-width": 0.048,
-        "ratio-height": 0.085
+        "ratio-height": 0.085,
+        "icon-size": 30,
+        "icon-name": "nav_right",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "speller/nav_right",
+                           "object": "text_box"
+                       }
+                   ]
     },
     {
 	"id": "key_3_10",
