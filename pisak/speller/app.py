@@ -11,7 +11,7 @@ def prepare_speller_view(stage, script, data):
 
 
 VIEWS = {
-    "speller/main": (res.get("json/speller/speller_combined.json"),
+    "speller/main": (res.get("json/speller/combined.json"),
                      prepare_speller_view)
 }
 

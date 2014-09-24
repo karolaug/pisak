@@ -20,7 +20,7 @@ def _fix_path(path):
 
 
 VIEWS = {
-    "main_panel/main": (res.get("json/main_panel/main_panel.json"), prepare_main_panel_view)
+    "main_panel/main": (res.get("json/main_panel/main.json"), prepare_main_panel_view)
 }
 
 
