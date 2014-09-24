@@ -22,7 +22,7 @@ class LauncherError(Exception):
 
 
 class LauncherStage(Clutter.Stage):
-    def __init__(self, context, descriptor):
+    def __init__(self, descriptor):
         super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
@@ -56,7 +56,7 @@ def run(descriptor):
         Implementation of switcher app for JSON descriptors.
         '''
         def create_stage(self, argv):
-            stage = LauncherStage(self.context, descriptor)
+            stage = LauncherStage(descriptor)
             stage.set_size(unit.size_pix[0], unit.size_pix[1])
             stage.set_fullscreen(True)
             return stage

@@ -4,7 +4,7 @@ Module with app-specific code for photo viewer.
 import os
 
 from pisak.viewer import library_manager
-from pisak import launcher, xdg
+from pisak import launcher, xdg, res
 import logging
 
 
@@ -68,15 +68,11 @@ def prepare_photo_editing_view(stage, script, data):
     button_to_stage(stage, script, "button_start", "main_panel/main")
     
 
-def _fix_path(path):
-    return os.path.join(os.path.split(__file__)[0], path)
-
-
 VIEWS = {
-    "viewer/photo": (_fix_path("photo.json"), prepare_photo_view),
-    "viewer/album": (_fix_path("album.json"), prepare_album_view),
-    "viewer/library": (_fix_path("library.json"), prepare_library_view),
-    "viewer/photo_editing": (_fix_path("photo_editing.json"),
+    "viewer/photo": (res.get("json/viewer/photo.json"), prepare_photo_view),
+    "viewer/album": (res.get("json/viewer/album.json"), prepare_album_view),
+    "viewer/library": (res.get("json/viewer/library.json"), prepare_library_view),
+    "viewer/photo_editing": (res.get("json/viewer/photo_editing.json"),
                         prepare_photo_editing_view)
 }
 
