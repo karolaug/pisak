@@ -671,6 +671,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
 
 class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
+    """
+    Widget that contains image presenting Pisak standard background pattern
+    """
     __gtype_name__ = "PisakBackgroundImage"
     __gproperties__ = {
         "ratio_width": (
@@ -715,6 +718,9 @@ class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
 
 
 class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
+    """
+    Widget displaying Pisak standard background pattern
+    """
     __gtype_name__ = "PisakBackgroundPattern"
     __gproperties__ = {
         "ratio_width": (
