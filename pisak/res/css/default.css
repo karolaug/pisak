@@ -5,7 +5,7 @@ PisakSpellerText {
     color: black;
     font-size: 50px;
     font-family: Kelson Sans;
-    border-image: url("../tlo_pola_tekstowego.png");
+    border-image: url("tlo_pola_tekstowego.png");
 }
 
 PisakMainPanelButton {
@@ -92,6 +92,23 @@ PisakViewerButton:hover {
   font-family: Kelson Sans;
   font-weight: bold;
   border-image: url("hover_button.png");
+}
+
+PisakSymbolerButton {
+   color: black;
+   font-size: 18pt;
+   font-family: Kelson Sans;
+   font-weight: bold;
+   border-image: url("rest_button.png") 5;
+}
+
+PisakSymbolerButton:hover {
+   color: white;
+   border-image: url("speller_hover_button.png");
+}
+
+MxStack.PisakSymbolerDisplayBackground {
+  border-image: url("tlo_pola_tekstowego.png");
 }
 
 
