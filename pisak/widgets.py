@@ -314,16 +314,40 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
 
 class Header(Mx.Image, properties.PropertyAdapter):
-
     __gtype_name__ = "PisakMenuHeader"
-
     __gproperties__ = {
-        "name": (GObject.TYPE_STRING, None, None, "funkcjenapis",
-                 GObject.PARAM_READWRITE)}
+        "name": (
+            GObject.TYPE_STRING, None, None, "funkcjenapis",
+            GObject.PARAM_READWRITE),
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0,
+            1., 0, GObject.PARAM_READWRITE)
+    }
 
     def __init__(self):
         super().__init__()
         self.handle = Rsvg.Handle()
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
     @property
     def name(self):

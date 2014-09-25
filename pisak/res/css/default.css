@@ -107,7 +107,7 @@ PisakSymbolerButton:hover {
    border-image: url("speller_hover_button.png");
 }
 
-MxStack.PisakSymbolerDisplayBackground {
+MxFrame.PisakSymbolerDisplayBackground {
   border-image: url("tlo_pola_tekstowego.png");
 }
 
