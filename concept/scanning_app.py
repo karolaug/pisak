@@ -32,7 +32,7 @@ class ButtonApp(switcher_app.Application):
         stage = ButtonStage()
         stage.set_fullscreen(True)
         return stage
-        
+
 
 if __name__ == '__main__':
     ButtonApp(sys.argv).main()

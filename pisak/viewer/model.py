@@ -13,7 +13,7 @@ def create_library(path):
     os.mkdir(library_dir)
     return Library(path)
 
-    
+
 class LibraryException(Exception):
     pass
 
@@ -35,26 +35,26 @@ class Library(object):
         self.library_dir = os.path.join(path, LIBRARY_SUBDIR)
         self.categories = set()
         self.photos = set()
-    
+
     def scan(self):
         scanner = Scanner(self)
         return scanner.scan()
-    
+
     def add_category_photo(self, category, photo):
         self.categories.add(category)
         self.photos.add(photo)
         category.photos.add(photo)
-        
+
     def close(self):
         pass
-        
+
 class Scanner(object):
     def __init__(self, library):
         self.library = library
-    
+
     def get_photo_paths(self):
         return set([photo.path for photo in self.library.photos])
-    
+
     def scan(self):
         """
         Scan library directory for new photos. Return a list of newly imported photo objects.
