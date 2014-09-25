@@ -5,6 +5,7 @@ import cairo
 
 from pisak import widgets, layout, res, pager, properties, unit, xdg
 from pisak.viewer import library_manager, image
+from pisak.res import colors
 
 
 class SlideShow(layout.Bin):
@@ -439,17 +440,17 @@ class AlbumTilesSource(LibraryTilesSource):
         tiles = []
         for item in self.data[self.index : self.index+count]:
             tile = PhotoTile()
-            tile.preview_path = item
+            tile.ratio_width = self.tile_ratio_width
+            tile.ratio_height = self.tile_ratio_height
             tile.hilite_tool = Aperture()
             tile.connect("activate", self.tiles_handler, item, self.album)
             tile.scale_mode = Mx.ImageScaleMode.FIT
-            tile.ratio_width = self.tile_ratio_width
-            tile.ratio_height = self.tile_ratio_height
+            tile.preview_path = item
             tiles.append(tile)
         return tiles
 
 
-class ProgressBar(widgets.NewProgressBar):
+class ProgressBar(widgets.ProgressBar):
     """
     Widget indicating progress, with label on top, can by styled by CSS.
     """
@@ -486,7 +487,7 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
         super().__init__()
         self.set_x_expand(True)
         self.set_y_expand(True)
-        self.color = res.colors.HILITE_1
+        self.color = colors.CYAN
         self.cover_off = 0
         self.cover_on = 0.4
         self._init_content()
@@ -592,7 +593,11 @@ class PhotoSlide(layout.Bin):
     def photo_path(self, value):
         self._photo_path = value
         if value is not None:
-            self.photo.set_from_file(value)
+            width, height = self.get_size()
+            if width > 1 and height > 1:  # 1 x 1 as unrenderable picture size
+                self.photo.set_from_file_at_size(value, width, height)
+            else:
+                self.photo.set_from_file(value)
             if self.image_buffer is not None:
                 self.image_buffer.slide = self
                 self.image_buffer.path = value

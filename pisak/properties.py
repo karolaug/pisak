@@ -1,5 +1,8 @@
 class PropertyAdapter(object):
-
+    """
+    Utility class for gobject vs python types of properties conversion.
+    Contains gobject obligatory property setter and getter
+    """
     def find_attribute(self, name):
         name = self._repair_prop_name(name)
         for relative in self.__class__.mro():

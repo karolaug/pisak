@@ -12,10 +12,17 @@ import pisak.widgets  # @UnusedImport
 import pisak.handlers  # @UnusedImport
 import pisak.speller.handlers # @UnusedImport
 from pisak.viewer import widgets, handlers  # @UnusedImport
+from pisak.main_panel import widgets  # @UnusedImport
+
+class LauncherError(Exception):
+    """
+    Error thrown when launcher meets an unexcpected condition.
+    """
+    pass
 
 
 class LauncherStage(Clutter.Stage):
-    def __init__(self, context, descriptor):
+    def __init__(self, descriptor):
         super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
@@ -27,8 +34,7 @@ class LauncherStage(Clutter.Stage):
     def load_view(self, name, data):
         if name not in self.views.keys():
             message = "Descriptor has no view with name: {}".format(name)
-            print(message)
-            return
+            raise LauncherError(message)
         view_path, prepare = self.views.get(name)
         self.script = Clutter.Script()
         self.script.load_from_file(view_path)
@@ -50,7 +56,7 @@ def run(descriptor):
         Implementation of switcher app for JSON descriptors.
         '''
         def create_stage(self, argv):
-            stage = LauncherStage(self.context, descriptor)
+            stage = LauncherStage(descriptor)
             stage.set_size(unit.size_pix[0], unit.size_pix[1])
             stage.set_fullscreen(True)
             return stage

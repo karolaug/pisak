@@ -1,6 +1,4 @@
-import os
-
-from pisak import launcher
+from pisak import launcher, res
 
 
 def prepare_speller_view(stage, script, data):
@@ -10,12 +8,9 @@ def prepare_speller_view(stage, script, data):
             "main_panel/main", None))
 
 
-def _fix_path(path):
-    return os.path.join(os.path.split(__file__)[0], path)
-
-
 VIEWS = {
-    "speller/main": (_fix_path("speller_combined.json"), prepare_speller_view)
+    "speller/main": (res.get("json/speller/combined.json"),
+                     prepare_speller_view)
 }
 
 

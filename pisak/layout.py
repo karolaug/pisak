@@ -7,7 +7,9 @@ layout parameters are proxied to internal layout manager.
 from gi.repository import Clutter, GObject
 
 from pisak import unit, properties
+import logging
 
+_LOG = logging.getLogger(__name__)
 
 class Box(Clutter.Actor, properties.PropertyAdapter):
     """
@@ -61,7 +63,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
     }
 
     def __init__(self):
-        print("USE OF DEPRECATED CLASS")
+        _LOG.debug("Use OF Deprecated Class", self)
         super().__init__()
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
@@ -194,7 +196,7 @@ class Bin(Clutter.Actor, properties.PropertyAdapter):
     }
 
     def __init__(self):
-        print("USE OF DEPRECATED CLASS")
+        _LOG.debug("Use Of Deprecated Class", self)
         super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
