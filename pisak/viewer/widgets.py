@@ -5,6 +5,7 @@ import cairo
 
 from pisak import widgets, layout, res, pager, properties, unit, xdg
 from pisak.viewer import image, model
+from pisak.res import colors
 
 
 class SlideShow(layout.Bin):
@@ -462,7 +463,7 @@ class AlbumTilesSource(LibraryTilesSource):
         return tiles
 
 
-class ProgressBar(widgets.NewProgressBar):
+class ProgressBar(widgets.ProgressBar):
     """
     Widget indicating progress, with label on top, can by styled by CSS.
     """
@@ -487,7 +488,7 @@ class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
         super().__init__()
         self.set_x_expand(True)
         self.set_y_expand(True)
-        self.color = res.colors.HILITE_1
+        self.color = colors.CYAN
         self.cover_off = 0
         self.cover_on = 0.4
         self._init_content()
