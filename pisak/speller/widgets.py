@@ -12,6 +12,9 @@ import pisak.widgets
 
 
 class Button(pisak.widgets.Button):
+    """
+    Speller specific button widget.
+    """
     __gtype_name__ = "PisakSpellerButton"
     __gproperties__ = {
         "related_object": (
@@ -34,6 +37,9 @@ class Button(pisak.widgets.Button):
 
 
 class CursorGroup(Clutter.Actor):
+    """
+    Object linking text cursor with its target text box.
+    """
     __gtype_name__ = "PisakCursorGroup"
 
     def __init__(self):
@@ -78,6 +84,9 @@ class CursorGroup(Clutter.Actor):
 
 
 class Cursor(Clutter.Actor):
+    """
+    Widget displaying text cursor drawn on ClutterCanvas.
+    """
     def __init__(self, size):
         super().__init__()
 
@@ -99,6 +108,9 @@ class Cursor(Clutter.Actor):
         return True
 
 class Text(Mx.Label, properties.PropertyAdapter):
+    """
+    Speller specific text box where all the text operations happen.
+    """
     class Insertion(object):
         """
         Text replacement operation
@@ -482,6 +494,9 @@ class Text(Mx.Label, properties.PropertyAdapter):
 
 
 class Key(pisak.widgets.Button):
+    """
+    Widget representing speller specific single keyboard key.
+    """
     __gtype_name__ = "PisakSpellerKey"
     __gproperties__ = {
         "default_text": (
@@ -638,6 +653,10 @@ class Key(pisak.widgets.Button):
 
 
 class Dictionary(GObject.GObject, properties.PropertyAdapter):
+    """
+    Object that follows changes in the given target and updates its content
+    in a reaction to these changes.
+    """
     __gtype_name__ = "PisakSpellerDictionary"
     __gsignals__ = {
         "content_update": (
@@ -710,6 +729,10 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
 
 
 class Prediction(pisak.widgets.Button):
+    """
+    Widget representing a button being a placeholder for predicting
+    engine results.
+    """
     __gtype_name__ = "PisakSpellerPrediction"
     __gproperties__ = {
         "dictionary": (
@@ -843,6 +866,9 @@ class Prediction(pisak.widgets.Button):
 
 
 class PopUp(layout.Box):
+    """
+    Dialog window for purposes of saving and loading text documents.
+    """
     __gtype_name__ = "PisakSpellerPopUp"
     __gproperties__ = {
         "background_scene" : (

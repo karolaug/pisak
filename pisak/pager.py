@@ -8,11 +8,17 @@ from pisak import properties, scanning, layout, unit
 
 
 class DataSource(GObject.GObject):
+    """
+    Base class for Pisak data sources.
+    """
     def get_tiles(self, count):
         return []
 
 
 class _Page(scanning.Group):
+    """
+    Page widget supplied to pager as its content.
+    """
     def __init__(self, width, height, rows, columns, tiles, strategy, selector, ratio_spacing):
         super().__init__()
         self.set_size(width, height)
@@ -62,6 +68,11 @@ class _FlipGroup(scanning.Group):
 
 
 class PagerWidget(layout.Bin):
+    """
+    Pisak generic pager widget.
+    Display elements placed on pages.
+    Display only one page at time and is responsible for flipping them.
+    """
     __gtype_name__ = "PisakPagerWidget"
     __gsignals__ = {
         "progressed": (
