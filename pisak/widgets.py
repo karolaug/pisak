@@ -74,7 +74,6 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         self._init_preview()
         self.preview_loading_width = 300
         self.preview_loading_height = 300
-        self.label = None
         self.hilite_tool = None
         self.scale_mode = Mx.ImageScaleMode.CROP
 
@@ -154,6 +153,9 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         self.preview = Mx.Image()
         self.preview.set_allow_upscale(True)
         self.box.add_child(self.preview)
+        self.label = Mx.Label()
+        self.label.set_style_class("PisakViewerPhotoTile")
+        self.box.add_child(self.label)
 
     def activate(self):
         self.emit("activate")

@@ -397,7 +397,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         for index in range(self.index, self.index + count):
             if index < len(self.albums):
                 album = self.albums[index]
-                tile = PhotoTile()
+                tile = widgets.PhotoTile()
                 
                 tile.label_text = album.name
                 print(tile.label_text)
@@ -451,7 +451,7 @@ class AlbumTilesSource(LibraryTilesSource):
         tiles = []
         for index in range(self.index, self.index + count):
             if index < len(self.photos):
-                tile = PhotoTile()
+                tile = widgets.PhotoTile()
                 tile.hilite_tool = Aperture()
                 tile.connect("activate", self.tiles_handler, self.photos[index].id, self.album)
                 tile.scale_mode = Mx.ImageScaleMode.FIT
@@ -476,19 +476,6 @@ class ProgressBar(widgets.NewProgressBar):
         self.label.set_style_class("PisakViewerProgressBar")
         self.bar.get_children()[0].set_style_class("PisakViewerProgressBar")
         self.bar.set_style_class("PisakViewerProgressBar")
-
-
-class PhotoTile(widgets.PhotoTile):
-    """
-    Tile containing image and label that can be styled by CSS.
-    """
-    __gtype_name__ = "PisakViewerPhotoTile"
-
-    def __init__(self):
-        super().__init__()
-        self.label = Mx.Label()
-        self.label.set_style_class("PisakViewerPhotoTile")
-        self.add_actor(self.label)
 
 
 class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
