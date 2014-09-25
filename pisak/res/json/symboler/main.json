@@ -117,12 +117,7 @@
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
-        "icon-name": "nav_right",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "nav_right"
     },
     {
         "id": "display_button_2",
@@ -131,12 +126,7 @@
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
-        "icon-name": "nav_left",
-        "signals": [
-                       {
-                           "name": "clicked",
-                       }
-                   ]
+        "icon-name": "nav_left"
     },
     {
         "id": "menu_header",
@@ -195,12 +185,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "ZAPISZ",
-        "icon-name": "zapisz",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "zapisz"
     },
     {
         "id": "button_3",
@@ -211,12 +196,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "WCZYTAJ",
-        "icon-name": "wczytaj",
-        "signals": [
-                       {
-                           "name": "clicked",
-                       }
-                   ]
+        "icon-name": "wczytaj"
     },
     {
         "id": "button_4",
@@ -228,12 +208,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "WYŚLIJ",
-        "icon-name": "wyslij",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "wyslij"
     },
     {
         "id": "button_5",
@@ -245,12 +220,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "DRUKUJ",
-        "icon-name": "drukuj",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "drukuj"
     },
     {
         "id": "button_6",
@@ -261,12 +231,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "NOWY",
-        "icon-name": "nowy_dokument",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "nowy_dokument"
     },
     {
         "id": "button_7",
@@ -277,12 +242,7 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "label": "WRÓĆ",
-        "icon-name": "powrot",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "powrot"
     },
     {
         "id": "button_exit",
@@ -335,9 +295,7 @@
     },
     {
         "id": "data_source",
-        "type": "PisakSymbolerTilesSource",
-        "tile-ratio-height": 0.25,
-        "tile-ratio-width": 0.22
+        "type": "PisakSymbolerTilesSource"
     },
     {
         "id": "pager_menu",
@@ -373,11 +331,6 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "auto_symboler"
-        "signals": [
-			{
-				"name": "clicked"
-			}
-		]
     },
     {
         "id": "pager_button_2",
@@ -386,12 +339,7 @@
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
-        "icon-name": "nav_right",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "nav_right"
     },
     {
         "id": "pager_button_3",
@@ -400,12 +348,7 @@
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
-        "icon-name": "nav_left",
-        "signals": [
-                       {
-                           "name": "clicked",
-                       }
-                   ]
+        "icon-name": "nav_left"
     },
     {
         "id": "pager_button_4",
@@ -415,12 +358,7 @@
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
-        "icon-name": "backspace",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "backspace"
     },
     {
         "id": "pager_button_5",
@@ -430,12 +368,7 @@
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
-        "icon-name": "cofnij",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "cofnij"
     },
     {
         "id": "pager_button_6",
@@ -444,12 +377,7 @@
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
-        "icon-name": "przeczytaj",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "przeczytaj"
     },
     {
         "id": "pager_button_7",
@@ -458,12 +386,7 @@
         "ratio-width": 0.18312,
         "ratio-height": 0.085,
         "icon-size": 50,
-        "icon-name": "wyswietl",
-        "signals": [
-                       {
-                           "name": "clicked"
-                       }
-                   ]
+        "icon-name": "wyswietl"
     },
     {
         "id": "pager_button_8",
@@ -473,5 +396,5 @@
         "ratio-height": 0.085,
         "icon-size": 50,
         "icon-name": "funkcje"
-    },
+    }
 ]

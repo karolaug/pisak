@@ -1,6 +1,8 @@
 """
 Module with widgets specific to symboler application.
 """
+from gi.repository import Mx
+
 from pisak import widgets, pager
 
 
