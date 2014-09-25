@@ -3,7 +3,7 @@ Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx, Gdk
 
-from pisak import properties, unit, audio
+from pisak import properties
 import logging
 
 
@@ -70,7 +70,6 @@ class Strategy(GObject.GObject):
     def __init__(self):
         super().__init__()
         self.group = None
-        self.return_mouse = False
 
     @property
     def group(self):
@@ -411,9 +410,6 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
                 selection.disable_hilite()
 
     def _expose_next(self):
-        audiofile = audio.AudioFile('button-24.wav')    
-        audiofile.play()
-        audiofile.close()
         if self.index is not None:
             selection = self._subgroups[self.index]
             if hasattr(selection, "disable_hilite"):
