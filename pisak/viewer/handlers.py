@@ -1,5 +1,5 @@
 from pisak import signals
-from pisak.viewer import library_manager, image
+from pisak.viewer import image
 
 
 @signals.registered_handler("viewer/slideshow_toggle")

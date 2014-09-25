@@ -51,9 +51,6 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
             Mx.ImageScaleMode.__gtype__,
             "image scale mode", "scale mode", "crop",
             GObject.PARAM_READWRITE),
-        "label": (
-            Mx.Label.__gtype__,
-            "", "", GObject.PARAM_READWRITE),
         "label_text": (
             GObject.TYPE_STRING,
             "label under the tile",
@@ -74,20 +71,10 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         super().__init__()
         self._init_box()
         self._init_preview()
-        self.label = None
+        self.preview_loading_width = 300
+        self.preview_loading_height = 300
         self.hilite_tool = None
         self.scale_mode = Mx.ImageScaleMode.CROP
-
-    @property
-    def label(self):
-        return self._label
-
-    @label.setter
-    def label(self, value):
-        self._label = value
-        if value is not None:
-            if not self.box.contains(value):
-                self.box.add_child(value)
 
     @property
     def label_text(self):
@@ -107,10 +94,10 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         width, height = self.preview.get_size()
         if width <= 1 or height <= 1:  # 1 x 1 as unrenderable picture size
             width, height = self.get_size()
-        if width > 1 and height > 1:
-            self.preview.set_from_file_at_size(value, width, height)
-        else:
-            self.preview.set_from_file(value)
+        if width <= 1 or height <= 1:
+            width = self.preview_loading_width
+            height = self.preview_loading_height
+        self.preview.set_from_file_at_size(value, width, height)
         
     @property
     def preview_ratio_width(self):
@@ -165,6 +152,9 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         self.preview = Mx.Image()
         self.preview.set_allow_upscale(True)
         self.box.add_child(self.preview)
+        self.label = Mx.Label()
+        self.label.set_style_class("PisakViewerPhotoTile")
+        self.box.add_child(self.label)
 
     def activate(self):
         self.emit("activate")

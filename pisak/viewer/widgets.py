@@ -4,7 +4,7 @@ from gi.repository import Mx, GObject, Clutter
 import cairo
 
 from pisak import widgets, layout, res, pager, properties, unit, xdg
-from pisak.viewer import library_manager, image
+from pisak.viewer import image, model
 from pisak.res import colors
 
 
@@ -91,8 +91,14 @@ class SlideShow(layout.Bin):
     def slideshow_on_fullscreen(self, value):
         self._slideshow_on_fullscreen = value
 
+    def show_initial_photo_id(self, photo_id):
+        library = model.get_library()
+        photo = library.get_photo_by_id(photo_id)
+        index = self.data_source.photos.index(photo)
+        self.show_initial_slide(index)
+
     def show_initial_slide(self, initial_index=0):
-        self.album_length = len(self.data_source.data)
+        self.album_length = len(self.data_source.photos)
         self.emit("limit-declared", self.album_length)
         self.index = initial_index
         if self.data_source is not None:
@@ -246,6 +252,7 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         self.slide_ratio_height = 0.7
         self.slide_ratio_width = 0.68
         self.album = None
+        self.library = model.get_library()
 
     @property
     def slide_ratio_width(self):
@@ -271,7 +278,9 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
     def album(self, value):
         self._album = value
         if value is not None:
-            self.data = library_manager.get_photos_from_album(value)
+            print(value)
+            self._library_album = self.library.get_category_by_id(value)
+            self.photos = self._library_album.photos
 
     def get_pending_slides(self, index):
         """
@@ -282,7 +291,7 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         indexes of demanding slides
         """
         return (self._generate_slide(index-1),
-                self._generate_slide((index+1)%len(self.data)),)
+                self._generate_slide((index+1)%len(self.photos)),)
             
     def get_slide(self, index):
         """
@@ -303,13 +312,13 @@ class PhotoSlidesSource(pager.DataSource, properties.PropertyAdapter):
         Return photo slide instance corresponding to the
         data item following the one at the given index.
         """
-        return self._generate_slide((index+1)%len(self.data))
+        return self._generate_slide((index+1)%len(self.photos))
 
     def _generate_slide(self, index):
         slide = PhotoSlide()
         slide.ratio_height = self.slide_ratio_height
         slide.ratio_width = self.slide_ratio_width
-        slide.photo_path = self.data[index]
+        slide.photo_path = self.photos[index].path
         return slide
 
 
@@ -341,8 +350,8 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     def __init__(self):
         super().__init__()
         self.index = 0
-        tiles_handler = None
-        self.data = library_manager.get_all_albums()
+        self.library = model.get_library()
+        self.albums = list(self.library.categories)
 
     @property
     def tile_ratio_height(self):
@@ -386,30 +395,30 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
 
     def _generate_tiles(self, count):
         tiles = []
-        for item in self.data[self.index : self.index+count]:
-            tile = PhotoTile()
-            pic_dir = xdg.get_dir('pictures')
-            if item == pic_dir:
-                tile.label_text = item.split('/')[-1]
-            else:        
-                tile.label_text = item.partition(pic_dir)[-1][1:]
-            tile.connect("activate", self.tiles_handler, item)
-            tile.hilite_tool = Aperture()
-            tile.ratio_width = self.tile_ratio_width
-            tile.ratio_height = self.tile_ratio_height
-            tile.ratio_spacing = self.tile_ratio_spacing
-            tile.preview_ratio_height = self.tile_preview_ratio_height
-            tile.preview_ratio_widtht = self.tile_preview_ratio_width
-            preview_path = library_manager.get_preview_of_album(item)
-            if preview_path is not None:
-                tile.preview_path = preview_path
-            tiles.append(tile)
+        for index in range(self.index, self.index + count):
+            if index < len(self.albums):
+                album = self.albums[index]
+                tile = widgets.PhotoTile()
+                
+                tile.label_text = album.name
+                print(tile.label_text)
+                
+                tile.connect("activate", self.tiles_handler, album.id)
+                tile.hilite_tool = Aperture()
+                tile.ratio_width = self.tile_ratio_width
+                tile.ratio_height = self.tile_ratio_height
+                tile.ratio_spacing = self.tile_ratio_spacing
+                tile.preview_ratio_height = self.tile_preview_ratio_height
+                tile.preview_ratio_widtht = self.tile_preview_ratio_width
+                tile.preview_path = album.get_preview_path()
+                tiles.append(tile)
         return tiles
 
     def get_tiles(self, count):
         tiles = self._generate_tiles(count)
-        self.index = self.index + count if (self.index + count
-                     < len(self.data)) else 0
+        self.index += count
+        if (self.index > len(self.albums)):
+            self.index = 0
         return tiles
 
 
@@ -422,9 +431,10 @@ class AlbumTilesSource(LibraryTilesSource):
     __gtype_name__ = "PisakViewerAlbumTilesSource"
 
     def __init__(self):
-        self.album = None
         super().__init__()
-        self.data = None
+        self.album = None
+        self.photos = []
+        self.library = model.get_library()
 
     @property
     def album(self):
@@ -434,18 +444,21 @@ class AlbumTilesSource(LibraryTilesSource):
     def album(self, value):
         self._album = value
         if value is not None:
-            self.data = library_manager.get_photos_from_album(value)
+            self.photos = self.library.get_category_by_id(value).photos
 
     def _generate_tiles(self, count):
         tiles = []
-        for item in self.data[self.index : self.index+count]:
-            tile = PhotoTile()
-            tile.ratio_width = self.tile_ratio_width
-            tile.ratio_height = self.tile_ratio_height
-            tile.hilite_tool = Aperture()
-            tile.connect("activate", self.tiles_handler, item, self.album)
-            tile.scale_mode = Mx.ImageScaleMode.FIT
-            tile.preview_path = item
+        for index in range(self.index, self.index + count):
+            if index < len(self.photos):
+                tile = widgets.PhotoTile()
+                tile.hilite_tool = Aperture()
+                tile.connect("activate", self.tiles_handler, self.photos[index].id, self.album)
+                tile.scale_mode = Mx.ImageScaleMode.FIT
+                tile.ratio_width = self.tile_ratio_width
+                tile.ratio_height = self.tile_ratio_height
+                tile.preview_path = self.photos[index].path
+            else:
+                tile = Clutter.Actor()
             tiles.append(tile)
         return tiles
 
@@ -462,18 +475,6 @@ class ProgressBar(widgets.ProgressBar):
         self.label.set_style_class("PisakViewerProgressBar")
         self.bar.get_children()[0].set_style_class("PisakViewerProgressBar")
         self.bar.set_style_class("PisakViewerProgressBar")
-
-
-class PhotoTile(widgets.PhotoTile):
-    """
-    Tile containing image and label that can be styled by CSS.
-    """
-    __gtype_name__ = "PisakViewerPhotoTile"
-
-    def __init__(self):
-        super().__init__()
-        self.label = Mx.Label()
-        self.label.set_style_class("PisakViewerPhotoTile")
 
 
 class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
