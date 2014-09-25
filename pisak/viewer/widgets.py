@@ -401,7 +401,6 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
                 
                 tile.label_text = album.name
                 print(tile.label_text)
-                tile.preview_path = album.get_preview_path()
                 
                 tile.connect("activate", self.tiles_handler, album.id)
                 tile.hilite_tool = Aperture()
@@ -410,6 +409,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
                 tile.ratio_spacing = self.tile_ratio_spacing
                 tile.preview_ratio_height = self.tile_preview_ratio_height
                 tile.preview_ratio_widtht = self.tile_preview_ratio_width
+                tile.preview_path = album.get_preview_path()
             else:
                 tile = Clutter.Actor()
             tiles.append(tile)
@@ -452,12 +452,12 @@ class AlbumTilesSource(LibraryTilesSource):
         for index in range(self.index, self.index + count):
             if index < len(self.photos):
                 tile = PhotoTile()
-                tile.preview_path = self.photos[index].path
                 tile.hilite_tool = Aperture()
                 tile.connect("activate", self.tiles_handler, self.photos[index].id, self.album)
                 tile.scale_mode = Mx.ImageScaleMode.FIT
                 tile.ratio_width = self.tile_ratio_width
                 tile.ratio_height = self.tile_ratio_height
+                tile.preview_path = self.photos[index].path
             else:
                 tile = Clutter.Actor()
             tiles.append(tile)
