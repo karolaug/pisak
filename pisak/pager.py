@@ -28,8 +28,6 @@ class _Page(scanning.Group):
     def _add_tiles(self, rows, columns, tiles, ratio_spacing):
         index = 0
         for _row in range(rows):
-            if index >= len(tiles):
-                return
             group = scanning.Group()
             group.strategy = scanning.RowStrategy()
             group.selector = self.selector
@@ -43,7 +41,12 @@ class _Page(scanning.Group):
                 if index < len(tiles):
                     actor = tiles[index]
                     group_box.add_child(actor)
-                    index += 1
+                else:
+                    actor = Clutter.Actor()
+                    group_box.add_child(actor)
+                    actor.set_x_expand(True)
+                    actor.set_y_expand(True)
+                index += 1
 
 
 class _FlipGroup(scanning.Group):

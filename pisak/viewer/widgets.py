@@ -410,9 +410,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
                 tile.preview_ratio_height = self.tile_preview_ratio_height
                 tile.preview_ratio_widtht = self.tile_preview_ratio_width
                 tile.preview_path = album.get_preview_path()
-            else:
-                tile = Clutter.Actor()
-            tiles.append(tile)
+                tiles.append(tile)
         return tiles
 
     def get_tiles(self, count):
