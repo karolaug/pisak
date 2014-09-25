@@ -72,6 +72,8 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         super().__init__()
         self._init_box()
         self._init_preview()
+        self.preview_loading_width = 300
+        self.preview_loading_height = 300
         self.label = None
         self.hilite_tool = None
         self.scale_mode = Mx.ImageScaleMode.CROP
@@ -94,10 +96,10 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         width, height = self.preview.get_size()
         if width <= 1 or height <= 1:  # 1 x 1 as unrenderable picture size
             width, height = self.get_size()
-        if width > 1 and height > 1:
-            self.preview.set_from_file_at_size(value, width, height)
-        else:
-            self.preview.set_from_file(value)
+        if width <= 1 or height <= 1:
+            width = self.preview_loading_width
+            height = self.preview_loading_height
+        self.preview.set_from_file_at_size(value, width, height)
         
     @property
     def preview_ratio_width(self):
