@@ -271,14 +271,21 @@
         "ratio-margin-top": 0.0941176470,
         "ratio-spacing" : 0.0411764705,
         "children": [
-                        "progress_bar", "pager"
+                        "slider_bin", "pager"
                     ]
     },
     {
-        "id": "progress_bar",
-        "type": "PisakSymbolerProgressBar",
+        "id": "slider_bin",
+        "type": "PisakBinLayout",
         "ratio-width": 0.714754,
         "ratio-height": 0.0176470588,
+        "children": ["slider"]
+    },
+    {
+        "id": "slider",
+        "type": "PisakSymbolerSlider",
+        "y-expand": true,
+        "x-expand": true,
         "related-object": "pager"
     },
     {

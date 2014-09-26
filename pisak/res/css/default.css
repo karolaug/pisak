@@ -111,6 +111,19 @@ MxFrame.PisakSymbolerDisplayBackground {
   border-image: url("tlo_pola_tekstowego.png");
 }
 
+PisakSymbolerSlider *#trough-background {
+}
+
+PisakSymbolerSlider *#fill {
+}
+
+PisakSymbolerSlider > MxButton {
+}
+
+PisakSymbolerSlider {
+  -mx-trough-height: 10;
+  -mx-handle-height: 20;
+}
 
 /*SVG part*/
 /*

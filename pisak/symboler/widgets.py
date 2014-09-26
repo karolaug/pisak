@@ -13,18 +13,11 @@ class Button(widgets.Button):
     __gtype_name__ = "PisakSymbolerButton"
 
 
-class ProgressBar(widgets.ProgressBar):
+class Slider(widgets.Slider):
     """
-    Widget indicating progress, with label on top, can by styled by CSS.
+    Widget indicating a range of content being displayed, can by styled by CSS.
     """
-    __gtype_name__ = "PisakSymbolerProgressBar"
-    
-    def __init__(self):
-        super().__init__()
-        self.label = Mx.Label()
-        self.label.set_style_class("PisakSymbolerProgressBar")
-        self.bar.get_children()[0].set_style_class("PisakSymbolerProgressBar")
-        self.bar.set_style_class("PisakSymbolerProgressBar")
+    __gtype_name__ = "PisakSymbolerSlider"
 
 
 class TilesSource(pager.DataSource):
