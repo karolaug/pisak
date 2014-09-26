@@ -316,28 +316,6 @@ class Text(Mx.Label, properties.PropertyAdapter):
             operation = Text.Deletion(0, self.get_text())
             self.add_operation(operation)
 
-    def get_endmost_triplet(self):
-        """
-        Look for and return the first three-word string of characters
-        with no commas, starting from the end of the text buffer.
-        This function is used to send word from the text buffer to be used in prediction.
-        When the words in the buffer are unsuited to be used in prediction the funciton returns ' '.
-        """
-
-        text = self.get_text()
-        if text:  # if the text buffer is empty or ends in a comma or similar, context reducing symbol, don't do predictions
-            if text.rstrip():
-                if text.rstrip()[-1] in ['.', ',', ';', '?', '!', '(', ')' ,':', '"']:
-                    return ' '
-        else:
-            return ' '
-
-        if text.rstrip():
-            last_sentence = re.split('\.|,|;|\?|!|"|:|\(|\)', text.rstrip())[-1]
-            return last_sentence.strip() + (text[-1] == ' ')*' '
-        else:
-            return ' '
-
     def get_endmost_string(self):
         """
         Look for and return the first string of characters with no whitespaces
@@ -684,25 +662,40 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         if accuracy_level < len(self.content):
             return self.content[accuracy_level]
 
-    def do_prediction(self):  # function to preform in a separate thread
-        Clutter.threads_enter()
-        string = self.target.get_endmost_triplet()
-        Clutter.threads_leave()
-        if string == ' ':
+    def do_prediction(self, text, position):
+        context = self.get_prediction_context(text[0:position])
+        if context == '':
             self.content = self.basic_content
         else:
-            self.content = predictor.get_predictions(string)
+            self.content = predictor.get_predictions(context)
         if len(self.content) == 1:
-            self.content[0] = self.content[0] + ' '  # automatic space if only  one suggestion
-        Clutter.threads_enter()
-        self.emit("content-update")
-        Clutter.threads_leave()
+            self.content[0] = self.content[0] + ' '  # automatic space if only one suggestion
+        Clutter.threads_add_idle(0, self.emit, "content-update")
+
+    @staticmethod
+    def get_prediction_context(text):
+        """
+        Extract prediction context from a text. Strips any leading or trailing
+        whitespace. Takes only a fragment of a text after last
+        context-clearing symbol.
+        """
+        last_context_re = """
+           \s*  # greedy leading whitespace
+           ([^.,;?!()"']*?\s?)  # group of symbols which don't restart context
+           \s*  # greedy trailing whitespace
+           $  # end of text
+           """
+        last_context = re.compile(last_context_re, re.VERBOSE)
+        context = last_context.search(text).group(1)
+        return context
 
     def _update_content(self, *args):
         self.emit("processing-on")
-        t = threading.Thread(target = self.do_prediction)  # very simple solution, not sure
-        t.daemon = True  # thread will be killed when the main program is killed
-        t.start()
+        text = self.target.get_text()
+        position = self.target.get_cursor_position()
+        worker = threading.Thread(
+            target=self.do_prediction, args=(text, position), daemon=True)
+        worker.start()
 
     def _follow_target(self):
         if self.target is not None:
