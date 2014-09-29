@@ -210,6 +210,8 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             if isinstance(current, Group):
                 if current.is_empty():
                     pass
+                elif current.is_singular():
+                    yield list(current.get_subgroups())[0]
                 else:
                     yield current
             elif hasattr(current, "enable_hilite"):
