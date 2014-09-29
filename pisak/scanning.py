@@ -44,6 +44,12 @@ class Scannable(object):
         """
         raise NotImplementedError()
 
+    def is_disabled(self):
+        """
+        Checks whether element is disabled from activation.
+        """
+        raise NotImplementedError()
+
 
 class StylableScannable(object):
     """
@@ -93,7 +99,7 @@ class Strategy(GObject.GObject):
                 if not self.group.killed:
                     element.parent_group = self.group
                     element.start_cycle()
-        elif hasattr(element, "activate"):
+        elif hasattr(element, "enable_hilite"):
             # set potential next group
             self.group.stage.pending_group = self.unwind_to
             if not self.group.killed:
@@ -153,6 +159,8 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
     }
 
     def __init__(self):
+        self._hilited = []
+        self._scanned = []
         self._strategy = None
         self.paused = False
         self.killed = False
@@ -192,26 +200,33 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         if not value:
             self.disable_scan_hilite("scanning")
 
-    def get_subgroups(self, flag=None):
+    def get_subgroups(self):
         '''
         Generator of all subgroups of the group.
         '''
         to_scan = self.get_children()
         while len(to_scan) > 0:
             current = to_scan.pop()
-            if flag == "all":
-                if isinstance(current, Group) \
-                        or isinstance(current, Scannable) \
-                        or isinstance(current, Mx.Button):
+            if isinstance(current, Group):
+                if current.is_empty():
+                    pass
+                else:
                     yield current
+            elif hasattr(current, "enable_hilite"):
+                if not current.is_disabled():
+                    yield current
+                else:
+                    pass
             else:
-                if isinstance(current, Group) \
-                        or isinstance(current, Scannable) \
-                        or (isinstance(current, Mx.Button)
-                        and not current.get_disabled()):
-                    yield current
-            if not isinstance(current, Group):
                 to_scan.extend(current.get_children())
+
+    def is_empty(self):
+        subgroups = list(self.get_subgroups())
+        return len(subgroups) == 0
+
+    def is_singular(self):
+        subgroups = list(self.get_subgroups())
+        return len(subgroups) == 1
 
     def start_cycle(self):
         _LOG.debug("Starting group {}".format(self.get_id()))
@@ -265,36 +280,39 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.strategy.select()
         return False
 
-    def recursive_apply(self, test, operation, flag=None):
-        if flag == "all":
-            subgroups = self.get_subgroups("all")
-        else:
-            subgroups = self.get_subgroups()
+    def recursive_apply(self, test, operation):
+        subgroups = self.get_subgroups()
         for s in subgroups:
             if test(s):
                 operation(s)
             elif isinstance(s, Group):
-                s.recursive_apply(test, operation, flag)
+                s.recursive_apply(test, operation)
 
     def enable_hilite(self):
+        def operation(s):
+            s.enable_hilite()
+            self._hilited.append(s)
         self.recursive_apply(
             lambda s: hasattr(s, "enable_hilite"),
-            lambda s: s.enable_hilite())
+            operation)
 
     def disable_hilite(self):
-        self.recursive_apply(
-            lambda s: hasattr(s, "disable_hilite"),
-            lambda s: s.disable_hilite(), "all")    
+        for s in self._hilited:
+            s.disable_hilite()
+        self._hilited = []
 
     def enable_scan_hilite(self):
+        def operation(s):
+            s.enable_scanned()
+            self._scanned.append(s)
         self.recursive_apply(
             lambda s: hasattr(s, "enable_scanned"),
-            lambda s: s.enable_scanned())
+            operation)
 
     def disable_scan_hilite(self):
-        self.recursive_apply(
-            lambda s: hasattr(s, "disable_scanned"),
-            lambda s: s.disable_scanned(), "all")
+        for s in self._scanned:
+            s.disable_scanned()
+        self._scanned = []
 
 
 class RowStrategy(Strategy, properties.PropertyAdapter):

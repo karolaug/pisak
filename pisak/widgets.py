@@ -401,15 +401,6 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
         self.connect("notify::mapped", self.set_space)
         self.set_reactive(True)
 
-    #@property
-    #def disabled(self):
-    #    return self._disabled
-
-    #@disabled.setter
-    #def disabled(self, value):
-    #    self._disabled = value
-    #    self.set_disabled(value)
-
     @property
     def ratio_width(self):
         return self._ratio_width
@@ -658,6 +649,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
         :see: Scannable
         """
         self.emit("clicked")
+
+    def is_disabled(self):
+        return self.get_disabled()
 
 
 class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
