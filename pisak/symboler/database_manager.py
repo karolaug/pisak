@@ -94,7 +94,7 @@ def get_all_symbols_from_category(category_id):
     return symbols
 
 
-def insert_category(path=None, name):
+def insert_category(name, path=None):
     """
     Insert single record to the categories table in a database.
     :param name: name of the category 
