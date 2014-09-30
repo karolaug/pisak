@@ -450,7 +450,14 @@
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
         "icon-size": 50,
-        "icon-name": "wyswietl"
+        "icon-name": "wyswietl",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "pager/scan_page",
+                "object": "pager"
+            }
+        ]
     },
     {
         "id": "pager_button_8",
