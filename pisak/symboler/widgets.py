@@ -19,6 +19,10 @@ class Entry(layout.Box):
         self.set_x_align(Clutter.ActorAlign.START)
 
     def append_symbol(self, tile):
+        """
+        Add symbol to the end of the current symbols buffer.
+        :param tile: instance of PisakPhotoTile containing preview_path field
+        """
         symbol = Mx.Image()
         symbol.set_from_file(tile.preview_path)
         self.insert_child_below(symbol, None)
