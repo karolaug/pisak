@@ -22,7 +22,7 @@ class Symbol(_Base):
     __tablename__ = "symbols"
     id = Column(Integer, primary_key=True)
     path = Column(String, unique=True, nullable=False)
-    text = Column(String, nullable=False)
+    text = Column(String, nullable=True)
     categories = relationship("Category", secondary="symbol_category_link",
                           collection_class=set, backref=backref(
                            "categories", lazy='noload', passive_updates=False))
@@ -32,6 +32,7 @@ class Category(_Base):
     __tablename__ = "categories"
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False)
+    path = Column(String, nullable=True)
     symbols = relationship("Symbol", secondary="symbol_category_link",
                           collection_class=set, backref=backref(
                             "symbols", lazy='noload', passive_updates=False))
@@ -91,18 +92,17 @@ def get_all_symbols_from_category(category_id):
     return symbols
 
 
-def insert_category(name):
+def insert_category(path=None, name):
     """
     Insert single record to the categories table in a database.
     :param name: name of the category 
     """
     with _establish_session() as sess:
         if not sess.query(Category).filter(Category.name == name).first():
-            category = Category(name=name)
-            sess.add(category)
+            sess.add(Category(path=path, name=name))
 
 
-def insert_symbol(path, text):
+def insert_symbol(path, text=None):
     """
     Insert single record to the symbols table in a database.
     :param path: path to the symbol file in the file system
@@ -110,8 +110,7 @@ def insert_symbol(path, text):
     """
     with _establish_session() as sess:
         if not sess.query(Symbol).filter(Symbol.path == path).first():
-            symbol = Symbol(path=path, text=text)
-            sess.add(symbol)
+            sess.add(Symbol(path=path, text=text))
 
 
 def add_symbol_to_category(symbol_id, category_id):
