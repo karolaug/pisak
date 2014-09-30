@@ -174,6 +174,51 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         pass
 
 
+class Slider(Mx.Slider, properties.PropertyAdapter):
+    """
+    Widget indicating a range of content being displayed, consists of bar with
+    handle moving back and forth on top of it.
+    """
+    __gtype_name__ = "PisakSlider"
+    __gproperties__ = {
+        "value-transition-duration": (
+            GObject.TYPE_INT64, "transition duration",
+            "duration of value transition in msc", 0,
+            GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE),
+        "related-object": (
+            Clutter.Actor.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
+    }
+    def __init__(self):
+        self.value_transition = Clutter.PropertyTransition.new("value")
+        self.value_transition_duration = 1000
+        self.related_object = None
+
+    @property
+    def related_object(self):
+        return self._related_object
+
+    @related_object.setter
+    def related_object(self, value):
+        self._related_object = value
+        if value is not None:
+            value.connect("progressed", self._set_value)
+
+    @property
+    def value_transition_duration(self):
+        return self.value_transition.get_duration()
+
+    @value_transition_duration.setter
+    def value_transition_duration(self, value):
+        self.value_transition.set_duration(value)
+
+    def _set_value(self, source, value, custom_step):
+        self.value_transition.set_from(self.get_value())
+        self.value_transition.set_to(value)
+        self.remove_transition("value")
+        self.add_transition("value", self.value_transition)
+
+
 class ProgressBar(Bin, properties.PropertyAdapter):
     """
     Widget indicating progress, with label on top, can by styled by CSS.
@@ -304,16 +349,40 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
 
 class Header(Mx.Image, properties.PropertyAdapter):
-
     __gtype_name__ = "PisakMenuHeader"
-
     __gproperties__ = {
-        "name": (GObject.TYPE_STRING, None, None, "funkcjenapis",
-                 GObject.PARAM_READWRITE)}
+        "name": (
+            GObject.TYPE_STRING, None, None, "funkcjenapis",
+            GObject.PARAM_READWRITE),
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0,
+            1., 0, GObject.PARAM_READWRITE)
+    }
 
     def __init__(self):
         super().__init__()
         self.handle = Rsvg.Handle()
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
     @property
     def name(self):
