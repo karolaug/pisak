@@ -107,6 +107,11 @@ PisakButton.PisakSymbolerButton:hover {
    border-image: url("speller_hover_button.png");
 }
 
+MxButton.PisakSymbolerButton:scanning {
+    color: #ccc;
+    border-image: url("speller_scanning_button.png");
+}
+
 MxFrame.PisakSymbolerDisplayBackground {
   border-image: url("tlo_pola_tekstowego.png");
 }
