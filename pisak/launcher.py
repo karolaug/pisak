@@ -12,8 +12,8 @@ import pisak.widgets  # @UnusedImport
 import pisak.handlers  # @UnusedImport
 import pisak.speller.handlers # @UnusedImport
 from pisak.viewer import widgets, handlers  # @UnusedImport
-import pisak.symboler.widgets  # @UnusedImport
 from pisak.main_panel import widgets  # @UnusedImport
+
 
 class LauncherError(Exception):
     """

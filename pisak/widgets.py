@@ -6,6 +6,7 @@ import cairo
 
 from pisak import switcher_app, unit, res, properties, scanning
 from pisak.layout import Box, Bin
+from pisak.res import colors
 
 
 class HiliteTool(Clutter.Actor):
@@ -24,6 +25,68 @@ class HiliteTool(Clutter.Actor):
         Restore the rest state.
         """
         raise NotImplementedError()
+
+
+class Aperture(HiliteTool, properties.PropertyAdapter):
+    __gtype_name__ = "PisakAperture"
+    __gproperties__ = {
+        'cover': (GObject.TYPE_FLOAT, None, None,
+                  0, 1, 0, GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.set_x_expand(True)
+        self.set_y_expand(True)
+        self.color = colors.CYAN
+        self.cover_off = 0
+        self.cover_on = 0.4
+        self._init_content()
+        self.connect("notify::cover", lambda *_: self.canvas.invalidate())
+        self.cover_transition = Clutter.PropertyTransition.new("cover")
+        self.set_property("cover", 0)
+
+    @property
+    def cover(self):
+        return self._cover
+
+    @cover.setter
+    def cover(self, value):
+        self._cover = value
+
+    def set_cover(self, value):
+        self.remove_transition("cover")
+        self.cover_transition.set_from(self.get_property("cover"))
+        self.cover_transition.set_to(value)
+        self.cover_transition.set_duration(166)
+        self.add_transition("cover", self.cover_transition)
+
+    def draw(self, canvas, context, w, h):
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        context.paint()
+        context.set_operator(cairo.OPERATOR_OVER)
+        context.rectangle(0, 0, w, h)
+        context.set_source_rgba(0, 0.894, 0.765, 0.66)
+        context.fill()
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        a = 1 - self.get_property("cover")
+        x, y = (0.5 - a / 2) * w, (0.5 - a / 2) * h
+        rw, rh = a * w, a * h
+        context.rectangle(x, y, rw, rh)
+        context.fill()
+        return True
+
+    def _init_content(self):
+        self.canvas = Clutter.Canvas()
+        self.canvas.set_size(140, 140)
+        self.canvas.connect("draw", self.draw)
+        self.set_content(self.canvas)
+
+    def turn_on(self):
+        self.set_cover(self.cover_on)
+
+    def turn_off(self):
+        self.set_cover(self.cover_off)
 
 
 class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):

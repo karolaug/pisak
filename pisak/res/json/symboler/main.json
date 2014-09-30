@@ -4,8 +4,8 @@
         "type": "PisakScanningGroup",
         "x-expand": true,
         "y-expand": true,
-	"selector": "mouse",
-	"strategy": {
+        "selector": "mouse",
+        "strategy": {
                         "type": "PisakRowStrategy",
                         "interval": 800,
                         "max-cycle-count": -1,
@@ -283,7 +283,8 @@
     },
     {
         "id": "slider",
-        "type": "PisakSymbolerSlider",
+        "type": "PisakSlider",
+        "style-class": "PisakSymbolerSlider",
         "y-expand": true,
         "x-expand": true,
         "related-object": "pager"
@@ -291,13 +292,13 @@
     {
         "id": "pager",
         "type": "PisakPagerWidget",
+        "data-source": "data_source",
         "transition-duration": 1000,
         "idle-duration": 3000,
         "page-ratio-spacing": 0.0117647058,
         "ratio-height": 0.65711764,
         "ratio-width": 0.714754,
         "y-align": "start",
-        "background-color": "light grey",
         "rows": 4,
         "columns": 6,
         "page-selector": "mouse",

@@ -10,7 +10,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from pisak import res
 
 
-_SYMBOLS_DB_PATH = res.get("symbols_database.db")
+_SYMBOLS_DB_PATH = res.get("symbols.db")
 
 _ENGINE_URL = "sqlite:///" + _SYMBOLS_DB_PATH
 

@@ -1,7 +1,7 @@
 import os
 
 from pisak import res
-from pisak.viewer import database_manager
+from pisak.symboler import database_manager
 
 
 SYMBOLS_DIR = res.get("symbols")
