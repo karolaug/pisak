@@ -168,10 +168,15 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
             self.hilite_tool.turn_off()
 
     def enable_scanned(self):
+        # TODO: add scanned highlight
         pass
 
     def disable_scanned(self):
+        # TODO: add scanned highlight
         pass
+
+    def is_disabled(self):
+        return False
 
 
 class ProgressBar(Bin, properties.PropertyAdapter):

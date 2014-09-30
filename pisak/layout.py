@@ -63,7 +63,7 @@ class Box(Clutter.Actor, properties.PropertyAdapter):
     }
 
     def __init__(self):
-        _LOG.debug("Use OF Deprecated Class", self)
+        _LOG.debug("Use OF Deprecated Class %s", self)
         super().__init__()
         self.layout = Clutter.BoxLayout()
         self.set_layout_manager(self.layout)
@@ -196,7 +196,7 @@ class Bin(Clutter.Actor, properties.PropertyAdapter):
     }
 
     def __init__(self):
-        _LOG.debug("Use Of Deprecated Class", self)
+        _LOG.debug("Use Of Deprecated Class %s", self)
         super().__init__()
         self.layout = Clutter.BinLayout()
         self.set_layout_manager(self.layout)
