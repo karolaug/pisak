@@ -112,7 +112,7 @@ MxButton.PisakSymbolerButton:scanning {
     border-image: url("speller_scanning_button.png");
 }
 
-MxFrame.PisakSymbolerDisplayBackground {
+MxFrame.PisakSymbolerEntryBackground {
   border-image: url("tlo_pola_tekstowego.png");
 }
 
