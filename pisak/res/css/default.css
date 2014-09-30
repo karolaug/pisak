@@ -111,18 +111,21 @@ MxFrame.PisakSymbolerDisplayBackground {
   border-image: url("tlo_pola_tekstowego.png");
 }
 
-PisakSymbolerSlider *#trough-background {
+PisakSlider.PisakSymbolerSlider *#trough-background {
+   border-image: url("tlo_pola_tekstowego.png") 2 2 2 2;
 }
 
-PisakSymbolerSlider *#fill {
+PisakSlider.PisakSymbolerSlider *#fill {
 }
 
-PisakSymbolerSlider > MxButton {
+PisakSlider.PisakSymbolerSlider > MxButton {
+   border-image: url("slider_button.png");
 }
 
-PisakSymbolerSlider {
-  -mx-trough-height: 10;
-  -mx-handle-height: 20;
+PisakSlider.PisakSymbolerSlider {
+  -mx-trough-height: 15;
+  -mx-handle-height: 15;
+  -mx-handle-width: 25;
 }
 
 /*SVG part*/
