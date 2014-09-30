@@ -1,6 +1,8 @@
 """
 Module with widgets specific to symboler application.
 """
+import os.path
+
 from gi.repository import Mx, Clutter, GObject
 
 from pisak import widgets, pager, properties, layout
@@ -40,6 +42,12 @@ class Entry(layout.Box):
         Return string containing current text buffer.
         """
         return " ".join(self.text_buffer)
+
+    def clear_all(self):
+        """
+        Clear the entry, delete all symbols.
+        """
+        self.remove_all_children()
     
 
 class TilesSource(pager.DataSource, properties.PropertyAdapter):
@@ -73,7 +81,13 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
         tiles = []
         for index in range(self.index, self.index + count):
             if index < len(self.data):
+                item = self.data[index]
                 tile = widgets.PhotoTile()
+                if item.text:
+                    label = item.text
+                else:
+                    label = os.path.splitext(os.path.split(item.path)[-1])[0]
+                tile.label_text = label
                 tile.hilite_tool = widgets.Aperture()
                 tile.connect("activate", lambda source, tile:
                              self.target.append_symbol(tile), tile)
@@ -81,7 +95,7 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
                 tile.ratio_width = self.tile_ratio_width
                 tile.ratio_height = self.tile_ratio_height
                 tile.scale_mode = Mx.ImageScaleMode.FIT
-                tile.preview_path = self.data[index].path
+                tile.preview_path = item.path
             else:
                 tile = Clutter.Actor()
             tiles.append(tile)
