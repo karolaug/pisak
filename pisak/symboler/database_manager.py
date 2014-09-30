@@ -67,7 +67,8 @@ def get_all_symbols():
     Return all symbols from the database.
     """
     with _establish_session() as sess:
-        symbols = sess.execute(select([Symbol])).fetchall()
+        symbols = sess.query(Symbol).all()
+        sess.expunge_all()
     return symbols
 
 
@@ -76,7 +77,8 @@ def get_all_categories():
     Return all categories from the database.
     """
     with _establish_session() as sess:
-        categories = sess.execute(select([Category])).fetchall()
+        categories = sess.query(Category).all()
+        sess.expunge_all()
     return categories
 
 
