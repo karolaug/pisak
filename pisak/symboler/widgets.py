@@ -16,17 +16,31 @@ class Entry(layout.Box):
 
     def __init__(self):
         super().__init__()
+        self.text_buffer = []
         self.set_x_align(Clutter.ActorAlign.START)
 
     def append_symbol(self, tile):
         """
-        Add symbol to the end of the current symbols buffer.
+        Append symbol to the entry.
         :param tile: instance of PisakPhotoTile containing preview_path field
         """
         symbol = Mx.Image()
         symbol.set_from_file(tile.preview_path)
+        self.text_buffer.append(tile.get_label())
         self.insert_child_below(symbol, None)
 
+    def delete_symbol(self):
+        """
+        Delete the last symbol from the entry.
+        """
+        self.remove_child(self.get_last_child())
+
+    def get_text(self):
+        """
+        Return string containing current text buffer.
+        """
+        return " ".join(self.text_buffer)
+    
 
 class TilesSource(pager.DataSource, properties.PropertyAdapter):
     """
