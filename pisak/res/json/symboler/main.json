@@ -181,7 +181,8 @@
         "signals": [
 			{
 				"name": "clicked",
-				"handler": "scanning/set_pending_group"
+				"handler": "scanning/set_pending_group",
+                                "object": "pager_menu"
 			}
 		]
     },
@@ -214,6 +215,7 @@
         "type": "PisakButton",
         "style-class": "PisakSymbolerButton",
         "text": "WYŚLIJ",
+        "disabled": true,
         "x-align": "start",
         "disabled": true,
         "ratio-width": 0.154098360,
@@ -227,6 +229,7 @@
         "type": "PisakButton",
         "style-class": "PisakSymbolerButton",
         "text": "DRUKUJ",
+        "disabled": true,
         "x-align": "start",
         "disabled": true,
         "ratio-width": 0.154098360,
@@ -316,12 +319,14 @@
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2,
-            "unwind-to": "button_menu"
+            "unwind-to": "pager_menu"
         }
     },
     {
         "id": "data_source",
-        "type": "PisakSymbolerTilesSource"
+        "type": "PisakSymbolerTilesSource",
+        "tile-ratio-height": 0.16,
+        "tile-ratio-width": 0.11
     },
     {
         "id": "pager_menu",
@@ -359,7 +364,19 @@
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
         "icon-size": 50,
-        "icon-name": "auto_symboler"
+        "icon-name": "auto_symboler",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "pager/toggle_automatic",
+                           "object": "pager"
+                       },
+                       {
+                            "name": "clicked",
+                            "handler": "scanning/toggle_pause_group",
+                            "object": "pager_menu"
+                        }
+                    ]
     },
     {
         "id": "pager_button_2",
@@ -370,7 +387,14 @@
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
         "icon-size": 50,
-        "icon-name": "nav_right"
+        "icon-name": "nav_right",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "pager/next_page",
+                           "object": "pager"
+                       }
+                    ]
     },
     {
         "id": "pager_button_3",
@@ -437,6 +461,13 @@
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
         "icon-size": 50,
-        "icon-name": "funkcje"
+        "icon-name": "funkcje",
+        "signals": [
+            {
+                "name": "clicked",
+                "handler": "scanning/set_pending_group",
+                "object": "symboler_menu"
+            }
+        ]
     }
 ]

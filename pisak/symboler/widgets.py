@@ -1,14 +1,14 @@
 """
 Module with widgets specific to symboler application.
 """
-from gi.repository import Mx
+from gi.repository import Mx, Clutter
 
-from pisak import widgets, pager
+from pisak import widgets, pager, properties
 from pisak.res import colors
 from pisak.symboler import database_manager
 
 
-class TilesSource(pager.DataSource):
+class TilesSource(pager.DataSource, properties.PropertyAdapter):
     """
     Data source generating tiles with symbols.
     """
@@ -18,6 +18,7 @@ class TilesSource(pager.DataSource):
         super().__init__()
         self.index = 0
         self.data = database_manager.get_all_symbols()
+        self.data_length = len(self.data)
 
     def _generate_tiles(self, count):
         tiles = []
@@ -26,6 +27,8 @@ class TilesSource(pager.DataSource):
                 tile = widgets.PhotoTile()
                 tile.hilite_tool = widgets.Aperture()
                 tile.set_background_color(colors.LIGHT_GREY)
+                tile.ratio_width = self.tile_ratio_width
+                tile.ratio_height = self.tile_ratio_height
                 tile.scale_mode = Mx.ImageScaleMode.FIT
                 tile.preview_path = self.data[index].path
             else:
