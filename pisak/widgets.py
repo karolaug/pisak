@@ -248,22 +248,22 @@ class Slider(Mx.Slider, properties.PropertyAdapter):
             GObject.TYPE_INT64, "transition duration",
             "duration of value transition in msc", 0,
             GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE),
-        "related-object": (
+        "followed-object": (
             Clutter.Actor.__gtype__,
             "", "", GObject.PARAM_READWRITE)
     }
     def __init__(self):
         self.value_transition = Clutter.PropertyTransition.new("value")
         self.value_transition_duration = 1000
-        self.related_object = None
+        self.followed_object = None
 
     @property
-    def related_object(self):
-        return self._related_object
+    def followed_object(self):
+        return self._followed_object
 
-    @related_object.setter
-    def related_object(self, value):
-        self._related_object = value
+    @followed_object.setter
+    def followed_object(self, value):
+        self._followed_object = value
         if value is not None:
             value.connect("progressed", self._set_value)
 
@@ -305,7 +305,7 @@ class ProgressBar(Bin, properties.PropertyAdapter):
             GObject.TYPE_INT64, "counter limit",
             "max counter value", 0, GObject.G_MAXUINT,
             10, GObject.PARAM_READWRITE),
-        "related-object": (
+        "followed-object": (
             Clutter.Actor.__gtype__,
             "", "", GObject.PARAM_READWRITE)
     }
@@ -335,12 +335,12 @@ class ProgressBar(Bin, properties.PropertyAdapter):
             self.insert_child_above(value, None)
 
     @property
-    def related_object(self):
-        return self._related_object
+    def followed_object(self):
+        return self._followed_object
 
-    @related_object.setter
-    def related_object(self, value):
-        self._related_object = value
+    @followed_object.setter
+    def followed_object(self, value):
+        self._followed_object = value
         value.connect("limit-declared", self._set_counter_limit)
         value.connect("progressed", self._set_progress)
 
