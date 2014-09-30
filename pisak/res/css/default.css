@@ -94,7 +94,7 @@ PisakViewerButton:hover {
   border-image: url("hover_button.png");
 }
 
-PisakSymbolerButton {
+PisakButton.PisakSymbolerButton {
    color: black;
    font-size: 18pt;
    font-family: Kelson Sans;
@@ -102,7 +102,7 @@ PisakSymbolerButton {
    border-image: url("rest_button.png") 5;
 }
 
-PisakSymbolerButton:hover {
+PisakButton.PisakSymbolerButton:hover {
    color: white;
    border-image: url("speller_hover_button.png");
 }

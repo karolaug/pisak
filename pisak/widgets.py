@@ -469,6 +469,7 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
     """
     Generic Pisak button widget with label and icon.
     """
+    __gtype_name__ = "PisakButton"
     
     # removing these signals due to functionality duplication
     #__gsignals__ = {

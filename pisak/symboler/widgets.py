@@ -8,13 +8,6 @@ from pisak.res import colors
 from pisak.symboler import database_manager
 
 
-class Button(widgets.Button):
-    """
-    Button widget, can be styled by CSS.
-    """
-    __gtype_name__ = "PisakSymbolerButton"
-
-
 class TilesSource(pager.DataSource):
     """
     Data source generating tiles with symbols.

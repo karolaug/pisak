@@ -113,7 +113,8 @@
     },
     {
         "id": "display_button_1",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.032786885,
@@ -123,7 +124,8 @@
     },
     {
         "id": "display_button_2",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.032786885,
@@ -167,7 +169,8 @@
     },
     {
         "id": "button_1",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "text": "TABLICA",
         "x-align": "start",
         "ratio-width": 0.154098360,
@@ -184,7 +187,8 @@
     },
     {
         "id": "button_2",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "text": "ZAPISZ",
         "x-align": "start",
         "ratio-width": 0.154098360,
@@ -195,7 +199,8 @@
     },
     {
         "id": "button_3",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "text": "WCZYTAJ",
         "x-align": "start",
         "ratio-width": 0.154098360,
@@ -206,7 +211,8 @@
     },
     {
         "id": "button_4",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "text": "WYŚLIJ",
         "x-align": "start",
         "disabled": true,
@@ -218,7 +224,8 @@
     },
     {
         "id": "button_5",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "text": "DRUKUJ",
         "x-align": "start",
         "disabled": true,
@@ -230,7 +237,8 @@
     },
     {
         "id": "button_6",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "text": "NOWY DOKUMENT",
         "x-align": "start",
         "ratio-width": 0.154098360,
@@ -241,7 +249,8 @@
     },
     {
         "id": "button_7",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "text": "WRÓĆ",
         "x-align": "start",
         "ratio-width": 0.154098360,
@@ -252,7 +261,8 @@
     },
     {
         "id": "button_exit",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "text": "PANEL STARTOWY",
         "x-align": "start",
         "ratio-width": 0.154098360,
@@ -342,7 +352,8 @@
     },
     {
         "id": "pager_button_1",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.049180327,
@@ -352,7 +363,8 @@
     },
     {
         "id": "pager_button_2",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.049180327,
@@ -362,7 +374,8 @@
     },
     {
         "id": "pager_button_3",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.049180327,
@@ -372,7 +385,8 @@
     },
     {
         "id": "pager_button_4",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.049180327,
@@ -382,7 +396,8 @@
     },
     {
         "id": "pager_button_5",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.09,
@@ -393,7 +408,8 @@
     },
     {
         "id": "pager_button_6",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.049180327,
@@ -403,7 +419,8 @@
     },
     {
         "id": "pager_button_7",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.049180327,
@@ -413,7 +430,8 @@
     },
     {
         "id": "pager_button_8",
-        "type": "PisakSymbolerButton",
+        "type": "PisakButton",
+        "style-class": "PisakSymbolerButton",
         "x-align": "start",
         "text": " ",
         "ratio-width": 0.049180327,
