@@ -459,7 +459,7 @@
         "signals": [
                        {
                            "name": "clicked",
-                           "handler": "symboler/text-to-speech",
+                           "handler": "symboler/text_to_speech",
                            "object": "entry"
                        }
                     ]

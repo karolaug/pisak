@@ -28,14 +28,16 @@ class Entry(layout.Box):
         """
         symbol = Mx.Image()
         symbol.set_from_file(tile.preview_path)
-        self.text_buffer.append(tile.get_label())
-        self.insert_child_below(symbol, None)
+        self.text_buffer.append(tile.label_text)
+        self.insert_child_above(symbol, None)
 
     def delete_symbol(self):
         """
         Delete the last symbol from the entry.
         """
-        self.remove_child(self.get_last_child())
+        last_symbol = self.get_last_child()
+        if last_symbol is not None:
+            self.remove_child(last_symbol)
 
     def get_text(self):
         """
