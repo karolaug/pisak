@@ -19,7 +19,8 @@ class Entry(layout.Box):
     def __init__(self):
         super().__init__()
         self.text_buffer = []
-        self.scrolled_content = []
+        self.scrolled_content_left = []
+        self.scrolled_content_right = []
         self.set_x_align(Clutter.ActorAlign.START)
         self.connect("notify::allocation", self._on_allocation_update)
 
@@ -33,18 +34,20 @@ class Entry(layout.Box):
             if (endmost_symbol.get_abs_allocation_vertices()[1].x +
                 self.layout.get_spacing() + new_symbol.get_width()) \
                     > self.border_x:
-                self._scroll_content()
+                if len(self.scrolled_content_right) > 0:
+                    while self.scrolled_content_right:
+                        self.scroll_content_left()
+                self.scroll_content_left()
 
-    def _scroll_content(self):
-        first_symbol = self.get_child_at_index(0)
-        if first_symbol is not None:
-            self.scrolled_content.append(first_symbol)
-            self.remove_child(first_symbol)
-
-    def _restore_scrolled_content(self):
-        if len(self.scrolled_content) > 0:
-            symbol_to_restore = self.scrolled_content.pop()
+    def _restore_scrolled_content_left(self):
+        if len(self.scrolled_content_left) > 0:
+            symbol_to_restore = self.scrolled_content_left.pop()
             self.insert_child_below(symbol_to_restore, None)
+
+    def _restore_scrolled_content_right(self):
+        if len(self.scrolled_content_right) > 0:
+            symbol_to_restore = self.scrolled_content_right.pop()
+            self.insert_child_above(symbol_to_restore, None)
 
     def _generate_symbol(self, model):
         symbol = widgets.PhotoTile()
@@ -58,6 +61,26 @@ class Entry(layout.Box):
         symbol.scale_mode = Mx.ImageScaleMode.FIT
         symbol.preview_path = model.preview_path
         return symbol
+
+    def scroll_content_left(self):
+        """
+        Scroll self content backward.
+        """
+        first_symbol = self.get_child_at_index(0)
+        if first_symbol is not None:
+            self.scrolled_content_left.append(first_symbol)
+            self.remove_child(first_symbol)
+        self._restore_scrolled_content_right()
+
+    def scroll_content_right(self):
+        """
+        Scroll self content foreward.
+        """
+        endmost_symbol = self.get_last_child()
+        if endmost_symbol is not None:
+            self.scrolled_content_right.append(endmost_symbol)
+            self.remove_child(endmost_symbol)
+        self._restore_scrolled_content_left()
 
     def append_symbol(self, tile):
         """
@@ -73,10 +96,13 @@ class Entry(layout.Box):
         """
         Delete the last symbol from the entry.
         """
+        if len(self.scrolled_content_right) > 0:
+            while self.scrolled_content_right:
+                self.scroll_content_left()
         endmost_symbol = self.get_last_child()
         if endmost_symbol is not None:
             self.remove_child(endmost_symbol)
-            self._restore_scrolled_content()
+        self._restore_scrolled_content_left()
 
     def get_text(self):
         """

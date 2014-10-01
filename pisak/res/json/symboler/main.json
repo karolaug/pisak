@@ -120,7 +120,14 @@
         "ratio-width": 0.032786885,
         "ratio-height": 0.0588235294,
         "icon-size": 20,
-        "icon-name": "nav_right"
+        "icon-name": "nav_right",
+        "signals": [
+			{
+				"name": "clicked",
+				"handler": "symboler/scroll_right",
+                                "object": "entry"
+			}
+		]
     },
     {
         "id": "entry_button_2",
@@ -131,7 +138,14 @@
         "ratio-width": 0.032786885,
         "ratio-height": 0.0588235294,
         "icon-size": 20,
-        "icon-name": "nav_left"
+        "icon-name": "nav_left",
+        "signals": [
+			{
+				"name": "clicked",
+				"handler": "symboler/scroll_left",
+                                "object": "entry"
+			}
+		]
     },
     {
         "id": "menu_header",
