@@ -3,7 +3,8 @@ Module for managing database with symbols.
 """
 from contextlib import contextmanager
 
-from sqlalchemy import Column, String, ForeignKey, Integer, create_engine
+from sqlalchemy import Column, String, Table, ForeignKey, Integer, \
+     create_engine
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -38,11 +39,13 @@ class Category(_Base):
                             "symbols", lazy='noload', passive_updates=False))
 
 
-class SymbolCategoryLink(_Base):
-    __tablename__ = "symbol_category_link"
-    symbol_id = Column(Integer, ForeignKey("symbols.id"), primary_key=True)
-    category_id = Column(Integer, ForeignKey("categories.id"),
-                         primary_key=True)
+symbol_category_link = Table(
+    "symbol_category_link", _Base.metadata,
+    Column("symbol_id", Integer,
+           ForeignKey("symbols.id"), primary_key=True)
+    Column("category_id", Integer,
+           ForeignKey("categories.id"), primary_key=True)
+)
 
 
 @contextmanager
