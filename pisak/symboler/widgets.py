@@ -102,6 +102,7 @@ class Entry(layout.Box):
         endmost_symbol = self.get_last_child()
         if endmost_symbol is not None:
             self.remove_child(endmost_symbol)
+            self.text_buffer.pop()
         self._restore_scrolled_content_left()
 
     def get_text(self):
