@@ -133,7 +133,7 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
     def __init__(self):
         super().__init__()
         self._init_box()
-        self._init_preview()
+        self._init_elements()
         self.preview_loading_width = 300
         self.preview_loading_height = 300
         self.hilite_tool = None
@@ -211,12 +211,12 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         self.box.orientation = Clutter.Orientation.VERTICAL
         self.add_child(self.box)
 
-    def _init_preview(self):
+    def _init_elements(self):
         self.preview = Mx.Image()
         self.preview.set_allow_upscale(True)
         self.box.add_child(self.preview)
         self.label = Mx.Label()
-        self.label.set_style_class("PisakViewerPhotoTile")
+        self.label.set_style_class("PisakPhotoTileLabel")
         self.box.add_child(self.label)
 
     def activate(self):

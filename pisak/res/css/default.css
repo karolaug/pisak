@@ -112,6 +112,12 @@ MxButton.PisakSymbolerButton:scanning {
     border-image: url("speller_scanning_button.png");
 }
 
+MxLabel.PisakSymbolerPhotoTileLabel {
+  font-family: Kelson Sans;
+  font-size: 16pt;
+  color: black;
+}
+
 MxFrame.PisakSymbolerEntryBackground {
   border-image: url("tlo_pola_tekstowego.png");
 }
