@@ -19,25 +19,64 @@ class Entry(layout.Box):
     def __init__(self):
         super().__init__()
         self.text_buffer = []
+        self.scrolled_content = []
         self.set_x_align(Clutter.ActorAlign.START)
+        self.connect("notify::allocation", self._on_allocation_update)
+
+    def _on_allocation_update(self, source, event):
+        self.border_x = self.get_abs_allocation_vertices()[1].x
+
+    def _check_content_extent(self, new_symbol):
+        endmost_symbol = self.get_last_child()
+        # if newly appended symbol would extent over the self allocation area:
+        if endmost_symbol is not None:
+            if (endmost_symbol.get_abs_allocation_vertices()[1].x +
+                self.layout.get_spacing() + new_symbol.get_width()) \
+                    > self.border_x:
+                self._scroll_content()
+
+    def _scroll_content(self):
+        first_symbol = self.get_child_at_index(0)
+        if first_symbol is not None:
+            self.scrolled_content.append(first_symbol)
+            self.remove_child(first_symbol)
+
+    def _restore_scrolled_content(self):
+        if len(self.scrolled_content) > 0:
+            symbol_to_restore = self.scrolled_content.pop()
+            self.insert_child_below(symbol_to_restore, None)
+
+    def _generate_symbol(self, model):
+        symbol = widgets.PhotoTile()
+        symbol.label.set_style_class("PisakSymbolerPhotoTileLabel")
+        symbol.label_text = model.label_text
+        symbol.set_y_expand(True)
+        symbol.ratio_width = model.ratio_width
+        symbol.ratio_spacing = model.ratio_spacing
+        symbol.preview_ratio_width = model.preview_ratio_width
+        symbol.preview_ratio_height = model.preview_ratio_height
+        symbol.scale_mode = Mx.ImageScaleMode.FIT
+        symbol.preview_path = model.preview_path
+        return symbol
 
     def append_symbol(self, tile):
         """
         Append symbol to the entry.
         :param tile: instance of PisakPhotoTile containing preview_path field
         """
-        symbol = Mx.Image()
-        symbol.set_from_file(tile.preview_path)
+        symbol = self._generate_symbol(tile)
         self.text_buffer.append(tile.label_text)
+        self._check_content_extent(symbol)
         self.insert_child_above(symbol, None)
 
     def delete_symbol(self):
         """
         Delete the last symbol from the entry.
         """
-        last_symbol = self.get_last_child()
-        if last_symbol is not None:
-            self.remove_child(last_symbol)
+        endmost_symbol = self.get_last_child()
+        if endmost_symbol is not None:
+            self.remove_child(endmost_symbol)
+            self._restore_scrolled_content()
 
     def get_text(self):
         """
@@ -85,6 +124,7 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
             if index < len(self.data):
                 item = self.data[index]
                 tile = widgets.PhotoTile()
+                tile.label.set_style_class("PisakSymbolerPhotoTileLabel")
                 if item.text:
                     label = item.text
                 else:
@@ -96,6 +136,9 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
                 tile.set_background_color(colors.LIGHT_GREY)
                 tile.ratio_width = self.tile_ratio_width
                 tile.ratio_height = self.tile_ratio_height
+                tile.ratio_spacing = self.tile_ratio_spacing
+                tile.preview_ratio_width = self.tile_preview_ratio_width
+                tile.preview_ratio_height = self.tile_preview_ratio_height
                 tile.scale_mode = Mx.ImageScaleMode.FIT
                 tile.preview_path = item.path
             else:

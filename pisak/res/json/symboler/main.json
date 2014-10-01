@@ -59,7 +59,7 @@
         "id": "upper_box",
         "type": "PisakBoxLayout",
         "x-align": "end",
-        "x-expand": true,
+        "ratio-width": 1,
         "y-expand": true,
         "ratio-margin-right": 0.02950819,
         "ratio-spacing": 0.005,
@@ -83,7 +83,7 @@
     {
         "id": "entry",
         "type": "PisakSymbolerEntry",
-        "x-expand": true,
+        "ratio-width": 0.935,
         "y-expand": true
     },
     {
@@ -334,8 +334,11 @@
         "id": "data_source",
         "type": "PisakSymbolerTilesSource",
         "target": "entry",
-        "tile-ratio-height": 0.16,
-        "tile-ratio-width": 0.11
+        "tile-ratio-height": 0.157,
+        "tile-ratio-width": 0.11,
+        "tile-preview-ratio-height": 0.125,
+        "tile-preview-ratio-width": 0.11,
+        "tile-ratio-spacing": 0.0005
     },
     {
         "id": "pager_menu",
