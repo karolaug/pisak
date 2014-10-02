@@ -341,7 +341,7 @@
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2,
-            "unwind-to": "pager_menu"
+            "unwind-to": "main"
         }
     },
     {
