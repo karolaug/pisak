@@ -179,13 +179,13 @@
         "id": "button_1",
         "type": "PisakButton",
         "style-class": "PisakSymbolerButton",
-        "text": "TABLICA",
+        "text": "PISANIE",
         "x-align": "start",
         "ratio-width": 0.154098360,
         "ratio-height": 0.082352941,
         "icon-size": 50,
-        "label": "TABLICA",
-        "icon-name": "",
+        "label": "PISANIE",
+        "icon-name": "klawiatura",
         "signals": [
 			{
 				"name": "clicked",
