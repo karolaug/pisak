@@ -11,7 +11,6 @@ import pisak.layout  # @UnusedImport
 import pisak.widgets  # @UnusedImport
 import pisak.handlers  # @UnusedImport
 import pisak.speller.handlers # @UnusedImport
-import pisak.symboler.handlers  # @UnusedImport
 from pisak.viewer import widgets, handlers  # @UnusedImport
 from pisak.main_panel import widgets  # @UnusedImport
 

@@ -116,7 +116,7 @@ class Entry(layout.Box):
         Clear the entry, delete all symbols.
         """
         self.remove_all_children()
-    
+
 
 class TilesSource(pager.DataSource, properties.PropertyAdapter):
     """
@@ -130,7 +130,7 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
             "id of entry to insert symbols",
             GObject.PARAM_READWRITE)
     }
-    
+
     def __init__(self):
         super().__init__()
         self.index = 0

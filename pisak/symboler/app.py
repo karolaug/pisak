@@ -6,6 +6,7 @@ from pisak import launcher, res
 from pisak.symboler import data_loader
 
 import pisak.symboler.widgets  # @UnusedImport
+import pisak.symboler.handlers  # @UnusedImport
 
 
 def prepare_symboler_view(stage, script, data):
