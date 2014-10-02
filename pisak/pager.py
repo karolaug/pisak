@@ -96,6 +96,7 @@ class _Page(scanning.Group):
             group = scanning.Group()
             group.strategy = scanning.RowStrategy()
             group.selector = self.selector
+            group.strategy.unwind_to = self
             group.strategy.max_cycle_count = self.strategy.max_cycle_count
             group.strategy.interval = self.strategy.interval
             group_box = layout.Box()
