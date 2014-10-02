@@ -126,6 +126,18 @@ def insert_many_symbols(symbols_list):
                 sess.add(Symbol(path=item))
 
 
+def set_texts_for_many_symbols(mapping):
+    """
+    Set specific text for symbols in the database.
+    :param mapping: list consisting of tuples with symbols ids and texts
+    related to each of them
+    """
+    with _establish_session() as sess:
+        for item in mapping:
+            sess.query(Symbol).filter(Symbol.id == item[0]).update({"text":
+                                                                    item[1]})
+
+
 def add_symbol_to_category(symbol_id, category_id):
     """
     Link a symbol with the given id with a category with the given id.
