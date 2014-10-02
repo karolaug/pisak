@@ -115,6 +115,17 @@ def insert_symbol(path, text=None):
             sess.add(Symbol(path=path, text=text))
 
 
+def insert_many_symbols(symbols_list):
+    """
+    Insert many records to the symbols table at once.
+    :param symbols_list: list consisting of symbols paths as strings
+    """
+    with _establish_session() as sess:
+        for item in symbols_list:
+            if not sess.query(Symbol).filter(Symbol.path == item).first():
+                sess.add(Symbol(path=item))
+
+
 def add_symbol_to_category(symbol_id, category_id):
     """
     Link a symbol with the given id with a category with the given id.

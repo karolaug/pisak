@@ -8,6 +8,8 @@ SYMBOLS_DIR = res.get("symbols")
 
 
 def load_all_linear():
+    symbols = []
     for current, _subdirs, files in os.walk(SYMBOLS_DIR):
         for symbol_path in [os.path.join(current, name) for name in files]:
-            database_manager.insert_symbol(symbol_path)
+            symbols.append(symbol_path)
+    database_manager.insert_many_symbols(symbols)
