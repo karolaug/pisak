@@ -223,14 +223,27 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
                 to_scan.extend(current.get_children())
 
     def is_empty(self):
+        """
+        Tests if group is empty.
+        :return: True if group has subgroups, False otherwise.
+        """
         subgroups = list(self.get_subgroups())
         return len(subgroups) == 0
 
     def is_singular(self):
+        """
+        Test if group has exactly 1 element.
+        :return: True if group has exactly 1 subgroup, False otherwise.
+        """
         subgroups = list(self.get_subgroups())
         return len(subgroups) == 1
 
     def start_cycle(self):
+        """
+        Starts group cycle. The cycle can be stopped with stop_cycle method.
+        The cycle will alse stopped if strategy's has_next method returns
+        false.
+        """
         _LOG.debug("Starting group {}".format(self.get_id()))
         self.stage = self.get_stage()
         if self.stage is None:
@@ -260,6 +273,9 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.strategy.start()
 
     def stop_cycle(self):
+        """
+        Stop currently running group cycle
+        """
         action = {'mouse': self.stage.disconnect,
                   'mouse-switch': self.stage.disconnect,
                   'keyboard': self.disconnect}
@@ -282,19 +298,19 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.strategy.select()
         return False
 
-    def recursive_apply(self, test, operation):
+    def _recursive_apply(self, test, operation):
         subgroups = self.get_subgroups()
         for s in subgroups:
             if test(s):
                 operation(s)
             elif isinstance(s, Group):
-                s.recursive_apply(test, operation)
+                s._recursive_apply(test, operation)
 
     def enable_hilite(self):
         def operation(s):
             s.enable_hilite()
             self._hilited.append(s)
-        self.recursive_apply(
+        self._recursive_apply(
             lambda s: hasattr(s, "enable_hilite"),
             operation)
 
@@ -307,7 +323,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         def operation(s):
             s.enable_scanned()
             self._scanned.append(s)
-        self.recursive_apply(
+        self._recursive_apply(
             lambda s: hasattr(s, "enable_scanned"),
             operation)
 
