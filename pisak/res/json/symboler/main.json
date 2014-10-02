@@ -9,7 +9,7 @@
                         "type": "PisakRowStrategy",
                         "interval": 800,
                         "max-cycle-count": -1,
-	                "unwind-to": "main"
+                        "unwind-to": "main"
                     },
         "children": [
                         "main_box", "background_box"
@@ -83,14 +83,14 @@
     {
         "id": "entry_menu",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
+        "selector": "mouse",
         "children": ["entry_menu_box"],
         "scanning-hilite": true,
         "strategy": {
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2,
-	    "unwind-to": "main"
+            "unwind-to": "main"
         }
     },
     {
@@ -100,7 +100,7 @@
         "ratio-margin-top": 0.0028823,
         "y-align": "center",
         "y-expand": true,
-        "ratio-spacing" : 0.00529411,
+        "ratio-spacing": 0.00529411,
         "children": [
                         "entry_button_2", "entry_button_1"
                     ]
@@ -116,12 +116,12 @@
         "icon-size": 20,
         "icon-name": "nav_right",
         "signals": [
-			{
-				"name": "clicked",
-				"handler": "symboler/scroll_right",
+                        {
+                                "name": "clicked",
+                                "handler": "symboler/scroll_right",
                                 "object": "entry"
-			}
-		]
+                        }
+                    ]
     },
     {
         "id": "entry_button_2",
@@ -134,12 +134,12 @@
         "icon-size": 20,
         "icon-name": "nav_left",
         "signals": [
-			{
-				"name": "clicked",
-				"handler": "symboler/scroll_left",
+                        {
+                                "name": "clicked",
+                                "handler": "symboler/scroll_left",
                                 "object": "entry"
-			}
-		]
+                        }
+        ]
     },
     {
         "id": "menu_header",
@@ -151,14 +151,14 @@
     {
         "id": "symboler_menu",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
+        "selector": "mouse",
         "children": ["symboler_menu_box"],
         "scanning-hilite": true,
         "strategy": {
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2,
-	    "unwind-to": "main"
+            "unwind-to": "main"
         }
     },
     {
@@ -168,7 +168,7 @@
         "ratio-margin-top": 0.011764705,
         "y-align": "start",
         "y-expand": true,
-        "ratio-spacing" : 0.011764705,
+        "ratio-spacing": 0.011764705,
         "children": [
                         "button_exit", "button_7", "button_6",
                         "button_5","button_4", "button_3", "button_2",
@@ -187,12 +187,12 @@
         "label": "PISANIE",
         "icon-name": "klawiatura",
         "signals": [
-			{
-				"name": "clicked",
-				"handler": "scanning/set_pending_group",
-                                "object": "pager_menu"
-			}
-		]
+            {
+                "name": "clicked",
+                "handler": "scanning/set_pending_group",
+                "object": "pager_menu"
+            }
+        ]
     },
     {
         "id": "button_2",
@@ -298,7 +298,7 @@
         "y-expand": true,
         "x-align": "center",
         "ratio-margin-top": 0.0941176470,
-        "ratio-spacing" : 0.0411764705,
+        "ratio-spacing": 0.0411764705,
         "children": [
                         "slider_bin", "pager"
                     ]
@@ -358,14 +358,14 @@
     {
         "id": "pager_menu",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
+        "selector": "mouse",
         "children": ["pager_menu_box"],
         "scanning-hilite": true,
         "strategy": {
             "type": "PisakRowStrategy",
             "interval": 800,
             "max-cycle-count": 2,
-	    "unwind-to": "main"
+            "unwind-to": "main"
         }
     },
     {
@@ -375,7 +375,7 @@
         "y-align": "start",
         "y-expand": true,
         "ratio-margin-top": 0.070588235,
-        "ratio_spacing" : 0.011764705,
+        "ratio_spacing": 0.011764705,
         "children": [
                         "pager_button_8", "pager_button_7", "pager_button_6",
                         "pager_button_5","pager_button_4", "pager_button_3",
