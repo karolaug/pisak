@@ -11,12 +11,6 @@
                         "max-cycle-count": -1,
 	                "unwind-to": "main"
                     },
-        "signals": [
-                       {
-                           "name": "notify::mapped",
-                           "handler": "general/start_group"
-                       }
-                   ],
         "children": [
                         "main_box", "background_box"
                     ]
@@ -342,7 +336,14 @@
             "interval": 800,
             "max-cycle-count": 2,
             "unwind-to": "main"
-        }
+        },
+        "signals": [
+                       {
+                           "name": "notify::mapped",
+                           "handler": "general/start_group",
+                           "object": "main"
+                       }
+                   ]
     },
     {
         "id": "data_source",
