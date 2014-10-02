@@ -78,7 +78,8 @@
         "type": "PisakMainPanelButton",
         "ratio-width": 0.275,
         "ratio-height": 0.3,
-        "icon-size": 200,
-        "label": "SYMBOLE"
+        "icon-size": 150,
+        "label": "SYMBOLE",
+        "icon-name": "bliss"
     }
 ]
