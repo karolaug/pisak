@@ -11,6 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   app_dev_guide
    application
    widgets
    modules
