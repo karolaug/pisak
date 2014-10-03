@@ -22,25 +22,9 @@ pisak.handlers module
     :show-inheritance:
 
 pisak.layout module
---------------------
+-------------------
 
 .. automodule:: pisak.layout
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pisak.pisak_speller module
---------------------------
-
-.. automodule:: pisak.pisak_speller
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pisak.pisak_view module
------------------------
-
-.. automodule:: pisak.pisak_view
     :members:
     :undoc-members:
     :show-inheritance:
@@ -78,18 +62,20 @@ pisak.unit module
     :undoc-members:
     :show-inheritance:
 
-pisak.view module
------------------
-
-.. automodule:: pisak.view
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 pisak.widgets module
 --------------------
 
 .. automodule:: pisak.widgets
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+pisak.xdg module
+----------------
+
+.. automodule:: pisak.xdg
     :members:
     :undoc-members:
     :show-inheritance:

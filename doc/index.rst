@@ -12,13 +12,9 @@ Contents:
    :maxdepth: 2
 
    application
-   json
    widgets
-   layout
-   scanning
-   speller
-   signals
-   views
+   modules
+   authors
 
 
 Indices and tables

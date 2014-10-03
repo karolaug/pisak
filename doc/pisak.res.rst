@@ -12,14 +12,6 @@ pisak.res.colors module
     :undoc-members:
     :show-inheritance:
 
-pisak.res.dims module
----------------------
-
-.. automodule:: pisak.res.dims
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

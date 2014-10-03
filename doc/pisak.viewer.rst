@@ -4,10 +4,18 @@ pisak.viewer package
 Submodules
 ----------
 
-pisak.viewer.application module
--------------------------------
+pisak.viewer.app module
+-----------------------
 
-.. automodule:: pisak.viewer.application
+.. automodule:: pisak.viewer.app
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pisak.viewer.handlers module
+----------------------------
+
+.. automodule:: pisak.viewer.handlers
     :members:
     :undoc-members:
     :show-inheritance:
@@ -28,22 +36,13 @@ pisak.viewer.model module
     :undoc-members:
     :show-inheritance:
 
-pisak.viewer.photo module
--------------------------
+pisak.viewer.widgets module
+---------------------------
 
-.. automodule:: pisak.viewer.photo
+.. automodule:: pisak.viewer.widgets
     :members:
     :undoc-members:
     :show-inheritance:
-
-pisak.viewer.photo_edit module
-------------------------------
-
-.. automodule:: pisak.viewer.photo_edit
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

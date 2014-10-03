@@ -4,16 +4,35 @@ pisak.speller package
 Submodules
 ----------
 
-pisak.speller.application module
---------------------------------
+pisak.speller.app module
+------------------------
 
-.. automodule:: pisak.speller.application
+.. automodule:: pisak.speller.app
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+pisak.speller.documents_manager module
+--------------------------------------
+
+.. automodule:: pisak.speller.documents_manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+pisak.speller.handlers module
+-----------------------------
+
+.. automodule:: pisak.speller.handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 pisak.speller.widgets module
---------------------------------
+----------------------------
 
 .. automodule:: pisak.speller.widgets
     :members:
