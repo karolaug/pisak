@@ -33,6 +33,7 @@
         "scanning-hilite": true,
         "strategy": {
             "type": "PisakRowStrategy",
+            "audio-path": "button-30.wav",
             "interval": 800,
             "max-cycle-count": -1
         }
@@ -51,6 +52,7 @@
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
+            "audio-path": "button-30.wav",
             "interval": 800,
             "max-cycle-count": -1
         },
@@ -149,6 +151,7 @@
         "page-selector": "mouse",
         "page-strategy": {
             "type": "PisakRowStrategy",
+            "audio-path": "button-30.wav",
             "interval": 800,
             "max-cycle-count": 2,
             "unwind-to": "button_menu"

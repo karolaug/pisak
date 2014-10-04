@@ -47,6 +47,7 @@
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
+            "audio-path": "button-28.wav",
             "interval": 800,
             "max-cycle-count": -1
         },
