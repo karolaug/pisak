@@ -1,4 +1,6 @@
-import configobj
+import configobj, logging
+
+_LOG = logging.getLoger(__name__)
 
 class Configurable(object):
     
@@ -27,15 +29,19 @@ class Configurable(object):
             except KeyError:
                 return default
         else:
-            raise ValueError("__gtype_name__ not overwritten by child.")
+            raise KeyError("__gtype_name__ not overwritten by child.")
 
     def applyProps(self):
-        if self.__gproperties__:
-            for prop in self.__gproperties__.keys():
+        try:
+            for prop in self.config[self.__gtype_name__].iterkeys():
                 default = getattr(self, prop)
                 setattr(self, prop, self.getProp(prop, default))
-        else:
-            raise ValueError("__gproperties__ not overwritten by child.")
+        except AttributeError:
+            _LOG.warning("No such {} __gtype_name__ specified in the config."\
+                         .format(self.__gtype_name__))
+        except KeyError as e:
+            raise KeyEror("__gtype_name__ not overwritten by child."\
+                          .format(e.args[0]))
 
     def writeConfig(self, where):
         self.config.filename = where
