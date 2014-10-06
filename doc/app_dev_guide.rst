@@ -62,5 +62,13 @@ function.
 JSON views
 ----------
 
+JSON views are simply scripts loaded by ClutterScript with some additional
+capabilities. Each view should have an object with id "main". After
+loading a script its main object is added as a child to the application stage.
+
+
 What next?
 ----------
+- `Useful widgets`_
+- `Switch and groups`_
+- Connect `signal handlers`_
