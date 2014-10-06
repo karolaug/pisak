@@ -183,7 +183,7 @@
     {
         "id": "progress_bar",
         "type": "PisakViewerProgressBar",
-        "related-object": "slideshow_widget",
+        "followed-object": "slideshow_widget",
         "ratio-width": 1,
         "progress-transition-duration": 1000,
         "ratio-height": 0.05,

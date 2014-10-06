@@ -11,7 +11,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from pisak import res
 
 
-_SYMBOLS_DB_PATH = res.get("symbols_database.db")
+_SYMBOLS_DB_PATH = res.get("symbols.db")
 
 _ENGINE_URL = "sqlite:///" + _SYMBOLS_DB_PATH
 
@@ -116,6 +116,29 @@ def insert_symbol(path, text=None):
     with _establish_session() as sess:
         if not sess.query(Symbol).filter(Symbol.path == path).first():
             sess.add(Symbol(path=path, text=text))
+
+
+def insert_many_symbols(symbols_list):
+    """
+    Insert many records to the symbols table at once.
+    :param symbols_list: list consisting of symbols paths as strings
+    """
+    with _establish_session() as sess:
+        for item in symbols_list:
+            if not sess.query(Symbol).filter(Symbol.path == item).first():
+                sess.add(Symbol(path=item))
+
+
+def set_texts_for_many_symbols(mapping):
+    """
+    Set specific text for symbols in the database.
+    :param mapping: list consisting of tuples with symbols ids and texts
+    related to each of them
+    """
+    with _establish_session() as sess:
+        for item in mapping:
+            sess.query(Symbol).filter(Symbol.id == item[0]).update({"text":
+                                                                    item[1]})
 
 
 def add_symbol_to_category(symbol_id, category_id):
