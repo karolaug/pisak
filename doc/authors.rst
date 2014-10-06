@@ -13,6 +13,10 @@ Piotr Iwaniuk
 -------------
 e-mail: piwaniuk@braintech.pl
 
+Andrzej Jeziorski
+-----------------
+e-mail: ajeziorski@braintech.pl
+
 Bartosz Jura
 ------------
 e-mail: bjura@braintech.pl
@@ -20,7 +24,3 @@ e-mail: bjura@braintech.pl
 Aleksander Kijek
 ----------------
 e-mail: sasza@braintech.pl
-
-Andrzej Jeziorski
------------------
-e-mail: ajeziorski@braintech.pl
