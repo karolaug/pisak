@@ -390,7 +390,7 @@
         "text": " ",
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
-        "icon-size": 50,
+        "icon-size": 37,
         "icon-name": "auto_symboler",
         "signals": [
                        {
@@ -413,7 +413,7 @@
         "text": " ",
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
-        "icon-size": 50,
+        "icon-size": 37,
         "icon-name": "nav_right",
         "signals": [
                        {
@@ -431,7 +431,7 @@
         "text": " ",
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
-        "icon-size": 50,
+        "icon-size": 37,
         "icon-name": "nav_left"
     },
     {
@@ -442,7 +442,7 @@
         "text": " ",
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
-        "icon-size": 50,
+        "icon-size": 37,
         "icon-name": "backspace",
         "signals": [
                        {
@@ -461,7 +461,7 @@
         "ratio-width": 0.09,
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
-        "icon-size": 50,
+        "icon-size": 37,
         "icon-name": "cofnij"
     },
     {
@@ -472,7 +472,7 @@
         "text": " ",
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
-        "icon-size": 50,
+        "icon-size": 37,
         "icon-name": "przeczytaj",
         "signals": [
                        {
@@ -490,7 +490,7 @@
         "text": " ",
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
-        "icon-size": 50,
+        "icon-size": 37,
         "icon-name": "wyswietl",
         "signals": [
             {
@@ -508,7 +508,7 @@
         "text": " ",
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
-        "icon-size": 50,
+        "icon-size": 37,
         "icon-name": "funkcje",
         "signals": [
             {
