@@ -3,7 +3,7 @@ Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx, Gdk
 
-from pisak import properties, unit
+from pisak import properties
 import logging
 
 
@@ -70,7 +70,6 @@ class Strategy(GObject.GObject):
     def __init__(self):
         super().__init__()
         self.group = None
-        self.return_mouse = False
 
     @property
     def group(self):
@@ -230,7 +229,11 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         elif self.selector == 'mouse-switch':
             self._handler_token = self.stage.connect("button-release-event",
                                                      self.button_release)
-            self.strategy.return_mouse = True
+            display = Gdk.Display.get_default()
+            screen = display.get_default_screen()
+            display.warp_pointer(screen, 0, 0)
+            self.stage.hide_cursor()
+
         else:
             _LOG.warning("Unknown selector: ", self.selector)
             return None
@@ -242,7 +245,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
 
     def stop_cycle(self):
         action = {'mouse': self.stage.disconnect,
-                  'mouse-switch': self.stage.disconnect, 
+                  'mouse-switch': self.stage.disconnect,
                   'keyboard': self.disconnect}
         self.stage.set_key_focus(None)
         try:
@@ -433,12 +436,6 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
                 (self._cycle_count < self.max_cycle_count)
 
     def cycle_timeout(self, token):
-        #in case of mouse-click based switch selector, hide the mouse
-        if self.return_mouse:
-            display = Gdk.Display.get_default()
-            screen = display.get_default_screen()
-            display.warp_pointer(screen, unit.w(1), unit.h(1))
-
         if self.timeout_token != token:
             # timeout event not from current cycle
             return False
