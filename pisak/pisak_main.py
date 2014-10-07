@@ -4,12 +4,14 @@ from pisak import launcher
 import pisak.viewer.app
 import pisak.speller.app
 import pisak.main_panel.app
+import pisak.symboler.app
 
 
 ALL_VIEWS = dict(ChainMap(
         pisak.main_panel.app.VIEWS,
         pisak.viewer.app.VIEWS,
-        pisak.speller.app.VIEWS))
+        pisak.speller.app.VIEWS,
+        pisak.symboler.app.VIEWS))
 
 
 if __name__ == "__main__":

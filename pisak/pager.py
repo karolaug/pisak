@@ -11,8 +11,67 @@ class DataSource(GObject.GObject):
     """
     Base class for Pisak data sources.
     """
+    __gtype_name__ = "PisakPagerDataSource"
+    __gproperties__ = {
+        "tile_ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "tile_ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "tile_ratio_spacing": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "tile_preview_ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "tile_preview_ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE)
+    }
+
+    @property
+    def tile_ratio_height(self):
+        return self._tile_ratio_height
+
+    @tile_ratio_height.setter
+    def tile_ratio_height(self, value):
+        self._tile_ratio_height = value
+
+    @property
+    def tile_ratio_width(self):
+        return self._tile_ratio_width
+
+    @tile_ratio_width.setter
+    def tile_ratio_width(self, value):
+        self._tile_ratio_width = value
+
+    @property
+    def tile_ratio_spacing(self):
+        return self._tile_ratio_spacing
+
+    @tile_ratio_spacing.setter
+    def tile_ratio_spacing(self, value):
+        self._tile_ratio_spacing = value
+
+    @property
+    def tile_preview_ratio_height(self):
+        return self._tile_preview_ratio_height
+
+    @tile_preview_ratio_height.setter
+    def tile_preview_ratio_height(self, value):
+        self._tile_preview_ratio_height = value
+
+    @property
+    def tile_preview_ratio_width(self):
+        return self._tile_preview_ratio_width
+
+    @tile_preview_ratio_width.setter
+    def tile_preview_ratio_width(self, value):
+        self._tile_preview_ratio_width = value
+    
     def get_tiles(self, count):
-        return []
+        raise NotImplementedError
 
 
 class _Page(scanning.Group):
@@ -37,6 +96,7 @@ class _Page(scanning.Group):
             group = scanning.Group()
             group.strategy = scanning.RowStrategy()
             group.selector = self.selector
+            group.strategy.unwind_to = self
             group.strategy.max_cycle_count = self.strategy.max_cycle_count
             group.strategy.interval = self.strategy.interval
             group_box = layout.Box()
@@ -199,15 +259,15 @@ class PagerWidget(layout.Bin):
     
     def _show_initial_page(self, source, event):
         if self.data_source is not None and self._current_page is None:
-            #self.pages_count = ceil(len(self.data_source.data) \
-            #                        / (self.rows*self.columns))
-            #self.emit("limit-declared", self.pages_count)
-            #if self.pages_count > 0:
-            #    self.emit("progressed", float(self.page_index+1) \
-            #            / self.pages_count,
-            #            self.page_index+1)
-            #else:
-            #    self.emit("progressed", 0, 0)
+            self.pages_count = ceil(self.data_source.data_length \
+                                    / (self.rows*self.columns))
+            self.emit("limit-declared", self.pages_count)
+            if self.pages_count > 0:
+                self.emit("progressed", float(self.page_index+1) \
+                        / self.pages_count,
+                        self.page_index+1)
+            else:
+                self.emit("progressed", 0, 0)
             tiles = self.data_source.get_tiles(self.columns * self.rows)
             if len(tiles) > 0:
                 self._current_page = _Page(self.get_width(), self.get_height(),

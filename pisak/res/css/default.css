@@ -1,11 +1,12 @@
 /* JSON part*/
 /* different properties for different types*/
+/* ^ you don't say */
 
 PisakSpellerText {
     color: black;
     font-size: 50px;
     font-family: Kelson Sans;
-    border-image: url("../tlo_pola_tekstowego.png");
+    border-image: url("tlo_pola_tekstowego.png");
 }
 
 PisakMainPanelButton {
@@ -94,6 +95,50 @@ PisakViewerButton:hover {
   border-image: url("hover_button.png");
 }
 
+PisakButton.PisakSymbolerButton {
+   color: black;
+   font-size: 18pt;
+   font-family: Kelson Sans;
+   font-weight: bold;
+   border-image: url("rest_button.png") 5;
+}
+
+PisakButton.PisakSymbolerButton:hover {
+   color: white;
+   border-image: url("speller_hover_button.png");
+}
+
+MxButton.PisakSymbolerButton:scanning {
+    color: #ccc;
+    border-image: url("speller_scanning_button.png");
+}
+
+MxLabel.PisakSymbolerPhotoTileLabel {
+  font-family: Kelson Sans;
+  font-size: 16pt;
+  color: black;
+}
+
+MxFrame.PisakSymbolerEntryBackground {
+  border-image: url("tlo_pola_tekstowego.png");
+}
+
+PisakSlider.PisakSymbolerSlider *#trough-background {
+   border-image: url("tlo_pola_tekstowego.png") 2 2 2 2;
+}
+
+PisakSlider.PisakSymbolerSlider *#fill {
+}
+
+PisakSlider.PisakSymbolerSlider > MxButton {
+   border-image: url("slider_button.png");
+}
+
+PisakSlider.PisakSymbolerSlider {
+  -mx-trough-height: 15;
+  -mx-handle-height: 15;
+  -mx-handle-width: 25;
+}
 
 /*SVG part*/
 /*
