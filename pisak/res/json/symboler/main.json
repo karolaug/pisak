@@ -8,7 +8,7 @@
         "strategy": {
             "id": "main_strategy",
             "type": "PisakArbitraryOrderStrategy",
-            "subgroup-order": "entry_menu, symboler_menu, pager_menu",
+            "subgroup-order": "entry_menu, symboler_menu, pager_page, pager_menu",
             "interval": 1200,
             "max-cycle-count": -1,
             "unwind-to": "main"
