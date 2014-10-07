@@ -147,10 +147,31 @@
             ]
     },
     {
+        "id": "navigator",
+        "type": "PisakPaintNavigator"
+    },
+    {
+        "id": "localizer",
+        "type": "PisakPaintLocalizer"
+    },
+    {
+        "id": "bender",
+        "type": "PisakPaintBender"
+    },
+    {
+        "id": "yardstick",
+        "type": "PisakPaintYardstick"
+    },
+    {
         "id": "easel",
         "type": "PisakPaintEasel",
+        "background-color": "rgb(255, 255, 255)",
         "x-expand": true,
         "y-expand": true,
+        "bender": "bender",
+        "navigator": "navigator",
+        "localizer": "localizer",
+        "yardstick": "yardstick",
         "signals": [
                        {
                            "name": "exit",
