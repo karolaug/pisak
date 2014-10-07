@@ -342,6 +342,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
                 album = self.albums[index]
                 tile = widgets.PhotoTile()
                 tile.label_text = album.name
+                tile.label.set_style_class("PisakViewerPhotoTile")
                 tile.connect("activate", self.tiles_handler, album.id)
                 tile.hilite_tool = widgets.Aperture()
                 tile.ratio_width = self.tile_ratio_width
