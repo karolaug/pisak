@@ -30,6 +30,13 @@ class DataSource(GObject.GObject):
             GObject.PARAM_READWRITE)
     }
 
+    def __init__(self):
+        self.index = 0
+        self.previous_step = 0
+        self.data_length = 0
+        self.data = None
+        self.tiles_handler = None
+
     @property
     def tile_ratio_height(self):
         return self._tile_ratio_height
@@ -69,9 +76,47 @@ class DataSource(GObject.GObject):
     @tile_preview_ratio_width.setter
     def tile_preview_ratio_width(self, value):
         self._tile_preview_ratio_width = value
-    
-    def get_tiles(self, count):
+
+    def _generate_tiles(self, from_idx, to_idx):
         raise NotImplementedError
+
+    def get_tiles_foreward(self, count):
+        """
+        Return given number of forward tiles generated from data.
+        :param count: number of tiles to be returned
+        """
+        if self.previous_step < 0:
+            self.index = self.index - self.previous_step
+            if self.index >= self.data_length:
+                self.index = 0
+        from_idx = self.index
+        if self.index + count > self.data_length:
+            to_idx = self.data_length
+        else:
+            to_idx = self.index + count
+        self.previous_step = count
+        self.index = 0 if to_idx == self.data_length else to_idx
+        return self._generate_tiles(from_idx, to_idx)
+
+    def get_tiles_backward(self, count):
+        """
+        Return given number of backward tiles generated from data.
+        :param count: number of tiles to be returned
+        """
+        if self.previous_step > 0:
+            if self.index < self.previous_step:
+                self.index = self.data_length - self.previous_step + \
+                             self.index 
+            else:
+                self.index = self.index - self.previous_step
+        if self.index < count:
+            from_idx = self.data_length - count + self.index
+        else:
+            from_idx = self.index - count
+        to_idx = self.index or self.data_length
+        self.previous_step = -count
+        self.index = from_idx
+        return self._generate_tiles(from_idx, to_idx)
 
 
 class _Page(scanning.Group):
@@ -184,8 +229,8 @@ class PagerWidget(layout.Bin):
         self.transition_duration = 1000
         self._data_source = None
         self._page_strategy = None
-        self._page_selector = None
-        self._page_ratio_spacing = None
+        self._page_selector = "mouse"
+        self._page_ratio_spacing = 0.01
         self._rows = rows
         self._columns = columns
         self._current_page = None
@@ -268,7 +313,7 @@ class PagerWidget(layout.Bin):
                         self.page_index+1)
             else:
                 self.emit("progressed", 0, 0)
-            tiles = self.data_source.get_tiles(self.columns * self.rows)
+            tiles = self.data_source.get_tiles_foreward(self.columns * self.rows)
             if len(tiles) > 0:
                 self._current_page = _Page(self.get_width(), self.get_height(),
                         self.rows, self.columns, tiles, self.page_strategy,
@@ -286,7 +331,7 @@ class PagerWidget(layout.Bin):
         Move to the next page.
         """
         if self.old_page is None and self.pages_count > 1:
-            tiles = self.data_source.get_tiles(self.columns * self.rows)
+            tiles = self.data_source.get_tiles_foreward(self.columns * self.rows)
             if len(tiles) > 0:
                 self.page_index = (self.page_index+1) % self.pages_count
                 self.old_page = self._current_page
@@ -304,7 +349,50 @@ class PagerWidget(layout.Bin):
                         / self.pages_count,
                         self.page_index+1)
 
-    def automatic_timeout(self, data):
+    def previous_page(self):
+        """
+        Move to the previous page.
+        """
+        if self.old_page is None and self.pages_count > 1:
+            if self.page_index == 0 :
+                count = self.data_source.data_length % \
+                        ((self.pages_count - 1) * self.columns * self.rows) \
+                        or self.columns * self.rows
+            else:
+                count = self.columns * self.rows
+            tiles = self.data_source.get_tiles_backward(count)
+            if len(tiles) > 0:
+                self.page_index = self.page_index - 1 if self.page_index >= 1 \
+                                  else self.pages_count - 1
+                self.old_page = self._current_page
+                self._current_page = _Page(self.get_width(), self.get_height(),
+                        self.rows, self.columns, tiles, self.page_strategy,
+                        self.page_selector, self.page_ratio_spacing)
+                self._current_page.set_x(-1*unit.size_pix[0])
+                self.add_child(self._current_page)
+                self.new_page_transition.set_from(-1*unit.size_pix[0])
+                self.new_page_transition.set_to(0)
+                self.old_page_transition.set_to(unit.size_pix[0])
+                self.old_page.add_transition("x", self.old_page_transition)
+                self._current_page.add_transition("x", self.new_page_transition)
+                self.emit("progressed", float(self.page_index+1) \
+                        / self.pages_count,
+                        self.page_index+1)
+
+    def run_automatic(self):
+        """
+        Start automatic page flipping.
+        """
+        self.is_running = True
+        Clutter.threads_add_timeout(0, self.idle_duration, self._automatic_timeout, None)
+
+    def stop_automatic(self):
+        """
+        Stop automatic page flipping.
+        """
+        self.is_running = False
+
+    def _automatic_timeout(self, data):
         """
         Handler function for the automatic page flipping timeout.
         """
@@ -313,19 +401,6 @@ class PagerWidget(layout.Bin):
             return True
         else:
             return False
-
-    def run_automatic(self):
-        """
-        Start automatic page flipping.
-        """
-        self.is_running = True
-        Clutter.threads_add_timeout(0, self.idle_duration, self.automatic_timeout, None)
-
-    def stop_automatic(self):
-        """
-        Stop automatic page flipping.
-        """
-        self.is_running = False
 
     def _clean_up(self, source, event):
         """
