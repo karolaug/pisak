@@ -297,9 +297,7 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
             lambda s: s.disable_scanned(), "all")
 
 
-class RowStrategy(Strategy, properties.PropertyAdapter):
-    __gtype_name__ = "PisakRowStrategy"
-
+class BaseStrategy(Strategy, properties.PropertyAdapter):
     __gproperties__ = {
         "interval": (
             GObject.TYPE_UINT,
@@ -319,7 +317,6 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     def __init__(self):
         self._group = None
-        self._allocation_slot = None
         self._subgroups = []
         self.index = None
         super().__init__()
@@ -331,6 +328,9 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     @property
     def interval(self):
+        """
+        Scanning interval
+        """
         return self._interval
 
     @interval.setter
@@ -339,6 +339,9 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     @property
     def max_cycle_count(self):
+        """
+        Number of repeats
+        """
         return self._max_cycle_count
 
     @max_cycle_count.setter
@@ -347,42 +350,14 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     @property
     def unwind_to(self):
+        """
+        Identifier of group which will be started after current group finishes
+        """
         return self._unwind_to
 
     @unwind_to.setter
     def unwind_to(self, value):
         self._unwind_to = value
-
-    @property
-    def group(self):
-        return self._group
-
-    @group.setter
-    def group(self, value):
-        if self.group is not None:
-            message = "Group strategy reuse, old {}, new {}"
-            _LOG.warning(message.format(self.group.get_id(), value.get_id()))
-            _LOG.debug("new {}, old {}".format(self.group, value))
-            self.group.disconnect(self._allocation_slot)
-        self._group = value
-        if self.group is not None:
-            self._allocation_slot = \
-                self.group.connect("allocation-changed", self.update_rows)
-
-    def update_rows(self, *args):
-        _LOG.debug("Row layout allocation changed")
-        if self.index is not None:
-            selection = self._subgroups[self.index]
-            if hasattr(selection, "disable_hilite"):
-                selection.disable_hilite()
-        self.compute_sequence()
-        self.index = None
-
-    def compute_sequence(self):
-        subgroups = list(self.group.get_subgroups())
-        key_function = lambda a: list(reversed(a.get_transformed_position()))
-        subgroups.sort(key=key_function)
-        self._subgroups = subgroups
 
     def start(self):
         self.compute_sequence()
@@ -448,3 +423,75 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
 
     def get_current_element(self):
         return self._subgroups[self.index]
+
+
+class RowStrategy(BaseStrategy):
+    __gtype_name__ = "PisakRowStrategy"
+
+    def __init__(self):
+        self._allocation_slot = None
+        super().__init__()
+
+    @property
+    def group(self):
+        return self._group
+
+    @group.setter
+    def group(self, value):
+        if self.group is not None:
+            message = "Group strategy reuse, old {}, new {}"
+            _LOG.warning(message.format(self.group.get_id(), value.get_id()))
+            _LOG.debug("new {}, old {}".format(self.group, value))
+            self.group.disconnect(self._allocation_slot)
+        self._group = value
+        if self.group is not None:
+            self._allocation_slot = \
+                self.group.connect("allocation-changed", self.update_rows)
+
+    def update_rows(self, *args):
+        _LOG.debug("Row layout allocation changed")
+        if self.index is not None:
+            selection = self._subgroups[self.index]
+            if hasattr(selection, "disable_hilite"):
+                selection.disable_hilite()
+        self.compute_sequence()
+        self.index = None
+
+    def compute_sequence(self):
+        subgroups = list(self.group.get_subgroups())
+        key_function = lambda a: list(reversed(a.get_transformed_position()))
+        subgroups.sort(key=key_function)
+        self._subgroups = subgroups
+
+
+def ArbitraryOrderStrategy(BaseStrategy):
+    """
+    Strategy with arbitrary order of scanning
+    """
+    __gproperties__ = {
+        "subgroup-order":
+            (GObject.TYPE_PYOBJECT, "", "", GObject.PARAM_READWRITE),
+    }
+
+    __gtype_name__ = "PisakArbitraryOrderStrategy"
+
+    @property
+    def subgroup_order(self):
+        """
+        List of elements to scan
+        """
+        return self._subgroup_order
+
+    @subgroup_order.setter
+    def subgroup_order(self, value):
+        self._subgroup_order = list(value)
+
+    def __init__():
+        super().__init__()
+
+    def compute_sequence(self):
+        unordered = set(self.group.get_subgroups())
+        self._subgroups = []
+        for s in self.subgroup_order:
+            if s in unordered:
+                self._subgroups.append(s)
