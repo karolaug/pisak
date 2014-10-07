@@ -113,7 +113,7 @@
         "text": " ",
         "ratio-width": 0.032786885,
         "ratio-height": 0.0588235294,
-        "icon-size": 20,
+        "icon-size": 14,
         "icon-name": "nav_right",
         "signals": [
                         {
@@ -131,7 +131,7 @@
         "text": " ",
         "ratio-width": 0.032786885,
         "ratio-height": 0.0588235294,
-        "icon-size": 20,
+        "icon-size": 14,
         "icon-name": "nav_left",
         "signals": [
                         {
