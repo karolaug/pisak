@@ -464,16 +464,20 @@ class RowStrategy(BaseStrategy):
         self._subgroups = subgroups
 
 
-def ArbitraryOrderStrategy(BaseStrategy):
+class ArbitraryOrderStrategy(BaseStrategy):
     """
     Strategy with arbitrary order of scanning
     """
+    __gtype_name__ = "PisakArbitraryOrderStrategy"
+
     __gproperties__ = {
         "subgroup-order":
-            (GObject.TYPE_PYOBJECT, "", "", GObject.PARAM_READWRITE),
+            (GObject.TYPE_STRING, "", "", "", GObject.PARAM_READWRITE),
     }
 
-    __gtype_name__ = "PisakArbitraryOrderStrategy"
+    def __init__(self):
+        self._subgroup_order = []
+        super().__init__()
 
     @property
     def subgroup_order(self):
@@ -484,14 +488,12 @@ def ArbitraryOrderStrategy(BaseStrategy):
 
     @subgroup_order.setter
     def subgroup_order(self, value):
-        self._subgroup_order = list(value)
-
-    def __init__():
-        super().__init__()
+        value_list = [v.strip() for v in value.split(",")]
+        self._subgroup_order = value_list
 
     def compute_sequence(self):
-        unordered = set(self.group.get_subgroups())
+        unordered = dict([(s.get_id(), s) for s in self.group.get_subgroups()])
         self._subgroups = []
         for s in self.subgroup_order:
             if s in unordered:
-                self._subgroups.append(s)
+                self._subgroups.append(unordered[s])
