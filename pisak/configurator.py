@@ -46,6 +46,11 @@ class Configurable(object):
     def writeConfig(self, where):
         self.config.filename = where
         self.config.write()
+
+    def applyConfigs(self, configs_paths):
+        for config in configs_paths:
+            self.config = config
+            self.applyProps()
         
 
 if __name__ == '__main__':
