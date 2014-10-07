@@ -273,6 +273,7 @@ class PagerWidget(layout.Bin):
                 self._current_page = _Page(self.get_width(), self.get_height(),
                         self.rows, self.columns, tiles, self.page_strategy,
                         self.page_selector, self.page_ratio_spacing)
+                self._current_page.set_id(self.get_id() + "_page")
                 self.add_child(self._current_page)
 
     def scan_page(self):
@@ -293,6 +294,7 @@ class PagerWidget(layout.Bin):
                 self._current_page = _Page(self.get_width(), self.get_height(),
                         self.rows, self.columns, tiles, self.page_strategy,
                         self.page_selector, self.page_ratio_spacing)
+                self._current_page.set_id(self.get_id() + "_page")
                 self._current_page.set_x(unit.size_pix[0])
                 self.add_child(self._current_page)
                 self.new_page_transition.set_from(unit.size_pix[0])
