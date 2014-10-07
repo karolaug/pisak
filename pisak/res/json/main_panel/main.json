@@ -50,27 +50,36 @@
         "id": "button_box",
         "type": "PisakBoxLayout",
         "ratio-margin-bottom": 0.2,
-        "ratio_spacing": 0.1,
+        "ratio_spacing": 0.05,
         "children": [
-                        "button_speller", "button_viewer"
+                        "button_symboler", "button_speller", "button_viewer"
                     ]
     },
     {
         "id": "button_viewer",
         "type": "PisakMainPanelButton",
-        "ratio-width": 0.35,
+        "ratio-width": 0.275,
         "ratio-height": 0.3,
         "label": "ZDJĘCIA",
         "icon-size": 200,
         "icon-name": "viewer"
-    }
+    },
     {
         "id": "button_speller",
         "type": "PisakMainPanelButton",
-        "ratio-width": 0.35,
+        "ratio-width": 0.275,
         "ratio-height": 0.3,
         "icon-size": 200,
         "label": "PISANIE",
         "icon-name": "klawiatura"
+    },
+    {
+        "id": "button_symboler",
+        "type": "PisakMainPanelButton",
+        "ratio-width": 0.275,
+        "ratio-height": 0.3,
+        "icon-size": 150,
+        "label": "SYMBOLE",
+        "icon-name": "bliss"
     }
 ]

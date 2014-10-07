@@ -26,7 +26,7 @@ def prepare_photo_view(stage, script, data):
 
     button_to_stage(
         stage, script, "button_edition", "viewer/photo_editing",
-        {"album_id": album_id})
+        (slideshow, album_id, photo_id))
 
     button_to_stage(
         stage, script, "button_album", "viewer/album", {"album_id": album_id})
@@ -64,9 +64,9 @@ def prepare_library_view(stage, script, data):
 
 def prepare_photo_editing_view(stage, script, data):
     photo = script.get_object("slide")
-    photo.photo_path = data["slideshow"].slide.photo_path
+    photo.photo_path = data[0].slide.photo_path
     button_to_stage(stage, script, "button_photo", "viewer/photo",
-                        {"photo_id": photo.id, "album_id": data["album_id"]})
+                        {"photo_id": data[2], "album_id": data[1]})
     button_to_stage(stage, script, "button_start", "main_panel/main")
     
 
