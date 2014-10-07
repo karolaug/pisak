@@ -88,6 +88,8 @@ class Strategy(GObject.GObject):
         """
         Selects currently highlighted element.
         """
+                
+
         element = self.get_current_element()
         if isinstance(element, Group):
             if not self.group.paused:
@@ -317,7 +319,10 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
             Group.__gtype__,
             "", "",
             GObject.PARAM_READWRITE),
-        "audio-path": (
+        "scanning-audio-path": (
+            GObject.TYPE_STRING, "", "",
+            "None", GObject.PARAM_READWRITE),
+        "selection-audio-path": (
             GObject.TYPE_STRING, "", "",
             "None", GObject.PARAM_READWRITE)
     }
@@ -333,7 +338,8 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
         self._buttons = []
         self._unwind_to = None
         self.timeout_token = None
-        self._audio_path = "None"
+        self._scanning_audio_path = "None"
+        self._selection_audio_path = "None"
 
     @property
     def interval(self):
@@ -376,12 +382,21 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
                 self.group.connect("allocation-changed", self.update_rows)
 
     @property    
-    def audio_path(self):
-        return self._audio_path
+    def scanning_audio_path(self):
+        return self._scanning_audio_path
 
-    @audio_path.setter
-    def audio_path(self, value):
-        self._audio_path = value                
+    @scanning_audio_path.setter
+    def scanning_audio_path(self, value):
+        self._scanning_audio_path = value                
+
+    @property    
+    def selection_audio_path(self):
+        return self._selection_audio_path
+
+    @selection_audio_path.setter
+    def selection_audio_path(self, value):
+        self._selection_audio_path = value                
+
 
     def update_rows(self, *args):
         _LOG.debug("Row layout allocation changed")
@@ -424,10 +439,8 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
                 selection.disable_hilite()
 
     def _expose_next(self):
-        if self.audio_path != "None":
-            audiofile = audio.AudioFile('pisak/res/sounds/' + self.audio_path)    
-            audiofile.play()
-            audiofile.close()
+        if self.scanning_audio_path != "None":
+            self.play_audio(self.scanning_audio_path)
         if self.index is not None:
             selection = self._subgroups[self.index]
             if hasattr(selection, "disable_hilite"):
@@ -465,4 +478,11 @@ class RowStrategy(Strategy, properties.PropertyAdapter):
             return False
 
     def get_current_element(self):
+        if self.selection_audio_path != "None":
+            self.play_audio(self.selection_audio_path)
         return self._subgroups[self.index]
+
+    def play_audio(self, audio_path):
+        audiofile = audio.AudioFile('pisak/res/sounds/' + audio_path)    
+        audiofile.play()
+        audiofile.close()
