@@ -42,7 +42,7 @@ class Category(_Base):
 symbol_category_link = Table(
     "symbol_category_link", _Base.metadata,
     Column("symbol_id", Integer,
-           ForeignKey("symbols.id"), primary_key=True)
+           ForeignKey("symbols.id"), primary_key=True),
     Column("category_id", Integer,
            ForeignKey("categories.id"), primary_key=True)
 )
