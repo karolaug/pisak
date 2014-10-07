@@ -6,7 +6,8 @@
 	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
-                        "audio-path": "beep.wav",
+                        "scanning-audio-path": "tic.wav",
+                        "selection-audio-path": "beep.wav",
                         "interval": 800,
                         "max-cycle-count": -1,
 	                    "unwind-to": "main"
@@ -34,7 +35,8 @@
         "scanning-hilite": true,
         "strategy": {
                         "type": "PisakRowStrategy",
-                        "audio-path": "beep.wav",
+                        "scanning-audio-path": "tic.wav",
+                        "selection-audio-path": "beep.wav",
                         "interval": 800,
                         "max-cycle-count": -1
                     },
@@ -101,7 +103,8 @@
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
-            "audio-path": "beep.wav",
+            "scanning-audio-path": "tic.wav",
+            "selection-audio-path": "beep.wav",
             "interval": 800,
             "max-cycle-count": 2,
 	    "unwind-to": "main"
@@ -301,7 +304,8 @@
         "strategy": {
             "id": "prediction_group_strategy",
             "type": "PisakRowStrategy",
-            "audio-path": "beep.wav",
+            "scanning-audio-path": "tic.wav",
+            "selection-audio-path": "beep.wav",
             "interval": 800,
             "max-cycle-count": 2,
             "unwind-to": "main"
@@ -417,7 +421,8 @@
         "strategy": {
             "id": "main_panel_group_strategy",
             "type": "PisakRowStrategy",
-            "audio-path": "beep.wav",
+            "scanning-audio-path": "tic.wav",
+            "selection-audio-path": "beep.wav",
             "interval": 800,
             "max-cycle-count": 2,
 	    "unwind-to": "main"
@@ -454,7 +459,8 @@
         "strategy": {
             "id": "keyboard_menu_group_strategy",
             "type": "PisakRowStrategy",
-            "audio-path": "beep.wav",
+            "scanning-audio-path": "tic.wav",
+            "selection-audio-path": "beep.wav",
             "interval": 800,
             "unwind-to": "main_panel"
         }
@@ -644,7 +650,8 @@
         "strategy": {
             "id": "keyboard_row_1_group_strategy",
             "type": "PisakRowStrategy",
-            "audio-path": "beep.wav",
+            "scanning-audio-path": "tic.wav",
+            "selection-audio-path": "beep.wav",
             "interval": 800,
             "unwind-to": "main_panel"
         }
@@ -760,7 +767,8 @@
         "strategy": {
             "id": "keyboard_row_2_group_strategy",
             "type": "PisakRowStrategy",
-            "audio-path": "beep.wav",
+            "scanning-audio-path": "tic.wav",
+            "selection-audio-path": "beep.wav",
             "interval": 800,
             "unwind-to": "main_panel"
         }
@@ -884,7 +892,8 @@
         "strategy": {
             "id": "keyboard_row_3_group_strategy",
             "type": "PisakRowStrategy",
-            "audio-path": "beep.wav",
+            "scanning-audio-path": "tic.wav",
+            "selection-audio-path": "beep.wav",
             "interval": 800,
             "unwind-to": "main_panel"
         }

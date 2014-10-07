@@ -39,7 +39,8 @@
         "strategy": {
             "id": "menu_group_strategy",
             "type": "PisakRowStrategy",
-            "audio-path": "button-25.wav",
+            "scanning-audio-path": "tic.wav",
+            "selection-audio-path": "beep.wav",
             "interval": 800,
             "max-cycle-count": -1,
             "unwind-to": "button_menu"

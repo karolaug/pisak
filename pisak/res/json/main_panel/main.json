@@ -8,7 +8,8 @@
 	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
-                        "audio-path": "button-30.wav",
+                        "scanning-audio-path": "tic.wav",
+                        "selection-audio-path": "beep.wav",
                         "interval": 2000,
                         "max-cycle-count": -1,
 	                "unwind-to": "main"
