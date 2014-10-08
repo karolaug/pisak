@@ -804,7 +804,6 @@ class Prediction(pisak.widgets.Button):
         text_width = self.clutter_text.get_width()
         text_height = self.clutter_text.get_height()
         self.set_disabled(False)
-        point = Clutter.Point((1, 1))
         if text_width + 27 > button_width:
             self.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS)
             self.clutter_text.set_pivot_point(0, 0.5)
