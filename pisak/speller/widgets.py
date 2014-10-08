@@ -650,6 +650,14 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
             GObject.PARAM_READWRITE)
     }
 
+    LAST_CONTEXT_SRC = """
+       \s*  # greedy leading whitespace
+       ([^.,;?!()"']*?\s?)  # group of symbols which don't restart context
+       \s*  # greedy trailing whitespace
+       $  # end of text
+       """
+    LAST_CONTEXT = re.compile(LAST_CONTEXT_SRC, re.VERBOSE)
+
     def __init__(self):
         super().__init__()
         self.target = None
@@ -679,14 +687,7 @@ class Dictionary(GObject.GObject, properties.PropertyAdapter):
         whitespace. Takes only a fragment of a text after last
         context-clearing symbol.
         """
-        last_context_re = """
-           \s*  # greedy leading whitespace
-           ([^.,;?!()"']*?\s?)  # group of symbols which don't restart context
-           \s*  # greedy trailing whitespace
-           $  # end of text
-           """
-        last_context = re.compile(last_context_re, re.VERBOSE)
-        context = last_context.search(text).group(1)
+        context = Dictionary.LAST_CONTEXT.search(text).group(1)
         return context
 
     def _update_content(self, *args):
