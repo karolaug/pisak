@@ -286,24 +286,30 @@ class PagerWidget(layout.Bin):
         self.old_page_transition.set_duration(value)
 
     def _introduce_new_page(self, tiles, trans_desc=None):
+        """
+        Method for adding and displaying new page and disposing of the old one.
+        :param tiles: list of tiles to be placed on the new page
+        :param trans_desc: list of pages transitions parameters, that is:
+        new page initial x coordinate, new page final x coordinate,
+        old page final x coordinate; or None for initial page
+        """
         if trans_desc is None:
             self._current_page = _Page(self.get_width(), self.get_height(),
                         self.rows, self.columns, tiles, self.page_strategy,
                         self.page_selector, self.page_ratio_spacing)
             self.add_child(self._current_page)
         else:
-            if self.old_page is None and self.pages_count > 1:
-                self.old_page = self._current_page
-                self._current_page = _Page(self.get_width(), self.get_height(),
-                        self.rows, self.columns, tiles, self.page_strategy,
-                        self.page_selector, self.page_ratio_spacing)
-                self._current_page.set_x(trans_desc[0])
-                self.add_child(self._current_page)
-                self.new_page_transition.set_from(trans_desc[0])
-                self.new_page_transition.set_to(trans_desc[1])
-                self.old_page_transition.set_to(trans_desc[2])
-                self.old_page.add_transition("x", self.old_page_transition)
-                self._current_page.add_transition("x", self.new_page_transition)
+            self.old_page = self._current_page
+            self._current_page = _Page(self.get_width(), self.get_height(),
+                    self.rows, self.columns, tiles, self.page_strategy,
+                    self.page_selector, self.page_ratio_spacing)
+            self._current_page.set_x(trans_desc[0])
+            self.add_child(self._current_page)
+            self.new_page_transition.set_from(trans_desc[0])
+            self.new_page_transition.set_to(trans_desc[1])
+            self.old_page_transition.set_to(trans_desc[2])
+            self.old_page.add_transition("x", self.old_page_transition)
+            self._current_page.add_transition("x", self.new_page_transition)
         if self.pages_count > 0:
             self.emit("progressed", float(self.page_index+1) \
                     / self.pages_count, self.page_index+1)
@@ -311,6 +317,10 @@ class PagerWidget(layout.Bin):
             self.emit("progressed", 0, 0)
 
     def _show_initial_page(self, source, event):
+        """
+        Method being a 'notify::mapped' signal handler. Display pager
+        initial page.
+        """
         if self.data_source is not None and self._current_page is None:
             self.pages_count = ceil(self.data_source.data_length \
                                     / (self.rows*self.columns))
@@ -351,26 +361,28 @@ class PagerWidget(layout.Bin):
         """
         Move to the next page.
         """
-        tiles = self.data_source.get_tiles_forward(self.columns * self.rows)
-        self.page_index = (self.page_index+1) % self.pages_count
-        self._introduce_new_page(tiles, [unit.size_pix[0],
+        if self.old_page is None and self.pages_count > 1:
+            tiles = self.data_source.get_tiles_forward(self.columns * self.rows)
+            self.page_index = (self.page_index+1) % self.pages_count
+            self._introduce_new_page(tiles, [unit.size_pix[0],
                                         0, -1*unit.size_pix[0]])
 
     def previous_page(self):
         """
         Move to the previous page.
         """
-        if self.page_index == 0:
-            count = self.data_source.data_length % \
-                    ((self.pages_count - 1) * self.columns * self.rows) \
-                    or self.columns * self.rows
-        else:
-            count = self.columns * self.rows
-        tiles = self.data_source.get_tiles_backward(count)
-        self.page_index = self.page_index - 1 if self.page_index >= 1 \
-                                else self.pages_count - 1
-        self._introduce_new_page(tiles, [-1*unit.size_pix[0],
-                                        0, unit.size_pix[0]])
+        if self.old_page is None and self.pages_count > 1:
+            if self.page_index == 0:
+                count = self.data_source.data_length % \
+                        ((self.pages_count - 1) * self.columns * self.rows) \
+                        or self.columns * self.rows
+            else:
+                count = self.columns * self.rows
+            tiles = self.data_source.get_tiles_backward(count)
+            self.page_index = self.page_index - 1 if self.page_index >= 1 \
+                                    else self.pages_count - 1
+            self._introduce_new_page(tiles, [-1*unit.size_pix[0],
+                                            0, unit.size_pix[0]])
 
     def run_automatic(self):
         """
