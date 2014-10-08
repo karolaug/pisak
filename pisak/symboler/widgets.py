@@ -144,9 +144,9 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
     def target(self, value):
         self._target = value
 
-    def _generate_tiles(self, from_idx, to_idx):
+    def _generate_tiles(self):
         tiles = []
-        for index in range(from_idx, to_idx):
+        for index in range(self.from_idx, self.to_idx):
             if index < self.data_length:
                 item = self.symbols[index]
                 tile = widgets.PhotoTile()

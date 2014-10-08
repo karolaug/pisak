@@ -335,9 +335,9 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
         self.albums = list(self.library.categories)
         self.data_length = len(self.albums)
 
-    def _generate_tiles(self, from_idx, to_idx):
+    def _generate_tiles(self):
         tiles = []
-        for index in range(from_idx, to_idx):
+        for index in range(self.from_idx, self.to_idx):
             if index < self.data_length:
                 album = self.albums[index]
                 tile = widgets.PhotoTile()
@@ -380,9 +380,9 @@ class AlbumTilesSource(pager.DataSource, properties.PropertyAdapter):
             self.photos = self.library.get_category_by_id(value).photos
             self.data_length = len(self.photos)
 
-    def _generate_tiles(self, from_idx, to_idx):
+    def _generate_tiles(self):
         tiles = []
-        for index in range(from_idx, to_idx):
+        for index in range(self.from_idx, self.to_idx):
             if index < self.data_length:
                 tile = widgets.PhotoTile()
                 tile.hilite_tool = widgets.Aperture()

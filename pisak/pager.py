@@ -31,8 +31,8 @@ class DataSource(GObject.GObject):
     }
 
     def __init__(self):
-        self.index = 0
-        self.previous_step = 0
+        self.from_idx = 0
+        self.to_idx = 0
         self.data_length = 0
         self.data = None
         self.tiles_handler = None
@@ -77,46 +77,29 @@ class DataSource(GObject.GObject):
     def tile_preview_ratio_width(self, value):
         self._tile_preview_ratio_width = value
 
-    def _generate_tiles(self, from_idx, to_idx):
+    def _generate_tiles(self):
         raise NotImplementedError
 
-    def get_tiles_foreward(self, count):
+    def get_tiles_forward(self, count):
         """
         Return given number of forward tiles generated from data.
         :param count: number of tiles to be returned
         """
-        if self.previous_step < 0:
-            self.index = self.index - self.previous_step
-            if self.index >= self.data_length:
-                self.index = 0
-        from_idx = self.index
-        if self.index + count > self.data_length:
-            to_idx = self.data_length
-        else:
-            to_idx = self.index + count
-        self.previous_step = count
-        self.index = 0 if to_idx == self.data_length else to_idx
-        return self._generate_tiles(from_idx, to_idx)
+        self.from_idx = self.to_idx % self.data_length
+        self.to_idx = min(self.from_idx + count, self.data_length)
+        return self._generate_tiles()
 
     def get_tiles_backward(self, count):
         """
         Return given number of backward tiles generated from data.
         :param count: number of tiles to be returned
         """
-        if self.previous_step > 0:
-            if self.index < self.previous_step:
-                self.index = self.data_length - self.previous_step + \
-                             self.index 
-            else:
-                self.index = self.index - self.previous_step
-        if self.index < count:
-            from_idx = self.data_length - count + self.index
+        self.to_idx = self.from_idx or self.data_length
+        if self.to_idx < count:
+            self.from_idx = self.data_length - count + self.to_idx
         else:
-            from_idx = self.index - count
-        to_idx = self.index or self.data_length
-        self.previous_step = -count
-        self.index = from_idx
-        return self._generate_tiles(from_idx, to_idx)
+            self.from_idx = self.to_idx - count
+        return self._generate_tiles()
 
 
 class _Page(scanning.Group):
@@ -301,96 +284,39 @@ class PagerWidget(layout.Bin):
     def transition_duration(self, value):
         self.new_page_transition.set_duration(value)
         self.old_page_transition.set_duration(value)
-    
+
+    def _introduce_new_page(self, tiles, trans_desc=None):
+        if trans_desc is None:
+            self._current_page = _Page(self.get_width(), self.get_height(),
+                        self.rows, self.columns, tiles, self.page_strategy,
+                        self.page_selector, self.page_ratio_spacing)
+            self.add_child(self._current_page)
+        else:
+            if self.old_page is None and self.pages_count > 1:
+                self.old_page = self._current_page
+                self._current_page = _Page(self.get_width(), self.get_height(),
+                        self.rows, self.columns, tiles, self.page_strategy,
+                        self.page_selector, self.page_ratio_spacing)
+                self._current_page.set_x(trans_desc[0])
+                self.add_child(self._current_page)
+                self.new_page_transition.set_from(trans_desc[0])
+                self.new_page_transition.set_to(trans_desc[1])
+                self.old_page_transition.set_to(trans_desc[2])
+                self.old_page.add_transition("x", self.old_page_transition)
+                self._current_page.add_transition("x", self.new_page_transition)
+        if self.pages_count > 0:
+            self.emit("progressed", float(self.page_index+1) \
+                    / self.pages_count, self.page_index+1)
+        else:
+            self.emit("progressed", 0, 0)
+
     def _show_initial_page(self, source, event):
         if self.data_source is not None and self._current_page is None:
             self.pages_count = ceil(self.data_source.data_length \
                                     / (self.rows*self.columns))
             self.emit("limit-declared", self.pages_count)
-            if self.pages_count > 0:
-                self.emit("progressed", float(self.page_index+1) \
-                        / self.pages_count,
-                        self.page_index+1)
-            else:
-                self.emit("progressed", 0, 0)
-            tiles = self.data_source.get_tiles_foreward(self.columns * self.rows)
-            if len(tiles) > 0:
-                self._current_page = _Page(self.get_width(), self.get_height(),
-                        self.rows, self.columns, tiles, self.page_strategy,
-                        self.page_selector, self.page_ratio_spacing)
-                self.add_child(self._current_page)
-
-    def scan_page(self):
-        """
-        Start scanning the current page.
-        """
-        self.get_stage().pending_group = self._current_page
-
-    def next_page(self):
-        """
-        Move to the next page.
-        """
-        if self.old_page is None and self.pages_count > 1:
-            tiles = self.data_source.get_tiles_foreward(self.columns * self.rows)
-            if len(tiles) > 0:
-                self.page_index = (self.page_index+1) % self.pages_count
-                self.old_page = self._current_page
-                self._current_page = _Page(self.get_width(), self.get_height(),
-                        self.rows, self.columns, tiles, self.page_strategy,
-                        self.page_selector, self.page_ratio_spacing)
-                self._current_page.set_x(unit.size_pix[0])
-                self.add_child(self._current_page)
-                self.new_page_transition.set_from(unit.size_pix[0])
-                self.new_page_transition.set_to(0)
-                self.old_page_transition.set_to(-1*unit.size_pix[0])
-                self.old_page.add_transition("x", self.old_page_transition)
-                self._current_page.add_transition("x", self.new_page_transition)
-                self.emit("progressed", float(self.page_index+1) \
-                        / self.pages_count,
-                        self.page_index+1)
-
-    def previous_page(self):
-        """
-        Move to the previous page.
-        """
-        if self.old_page is None and self.pages_count > 1:
-            if self.page_index == 0 :
-                count = self.data_source.data_length % \
-                        ((self.pages_count - 1) * self.columns * self.rows) \
-                        or self.columns * self.rows
-            else:
-                count = self.columns * self.rows
-            tiles = self.data_source.get_tiles_backward(count)
-            if len(tiles) > 0:
-                self.page_index = self.page_index - 1 if self.page_index >= 1 \
-                                  else self.pages_count - 1
-                self.old_page = self._current_page
-                self._current_page = _Page(self.get_width(), self.get_height(),
-                        self.rows, self.columns, tiles, self.page_strategy,
-                        self.page_selector, self.page_ratio_spacing)
-                self._current_page.set_x(-1*unit.size_pix[0])
-                self.add_child(self._current_page)
-                self.new_page_transition.set_from(-1*unit.size_pix[0])
-                self.new_page_transition.set_to(0)
-                self.old_page_transition.set_to(unit.size_pix[0])
-                self.old_page.add_transition("x", self.old_page_transition)
-                self._current_page.add_transition("x", self.new_page_transition)
-                self.emit("progressed", float(self.page_index+1) \
-                        / self.pages_count,
-                        self.page_index+1)
-
-    def run_automatic(self):
-        """
-        Start automatic page flipping.
-        """
-        self.is_running = True
-        Clutter.threads_add_timeout(0, self.idle_duration, self._automatic_timeout, None)
-
-    def stop_automatic(self):
-        """
-        Stop automatic page flipping.
-        """
-        self.is_running = False
+            tiles = self.data_source.get_tiles_forward(self.columns * self.rows)
+            self._introduce_new_page(tiles)
 
     def _automatic_timeout(self, data):
         """
@@ -414,3 +340,47 @@ class PagerWidget(layout.Bin):
             if self.contains(self.old_page):
                 self.remove_child(self.old_page)
         self.old_page = None
+
+    def scan_page(self):
+        """
+        Start scanning the current page.
+        """
+        self.get_stage().pending_group = self._current_page
+
+    def next_page(self):
+        """
+        Move to the next page.
+        """
+        tiles = self.data_source.get_tiles_forward(self.columns * self.rows)
+        self.page_index = (self.page_index+1) % self.pages_count
+        self._introduce_new_page(tiles, [unit.size_pix[0],
+                                        0, -1*unit.size_pix[0]])
+
+    def previous_page(self):
+        """
+        Move to the previous page.
+        """
+        if self.page_index == 0:
+            count = self.data_source.data_length % \
+                    ((self.pages_count - 1) * self.columns * self.rows) \
+                    or self.columns * self.rows
+        else:
+            count = self.columns * self.rows
+        tiles = self.data_source.get_tiles_backward(count)
+        self.page_index = self.page_index - 1 if self.page_index >= 1 \
+                                else self.pages_count - 1
+        self._introduce_new_page(tiles, [-1*unit.size_pix[0],
+                                        0, unit.size_pix[0]])
+
+    def run_automatic(self):
+        """
+        Start automatic page flipping.
+        """
+        self.is_running = True
+        Clutter.threads_add_timeout(0, self.idle_duration, self._automatic_timeout, None)
+
+    def stop_automatic(self):
+        """
+        Stop automatic page flipping.
+        """
+        self.is_running = False
