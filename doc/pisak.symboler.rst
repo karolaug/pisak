@@ -23,7 +23,7 @@ pisak.speller.data_loader module
 
 
 pisak.speller.database_manager module
---------------------------------
+-------------------------------------
 
 .. automodule:: pisak.symboler.database_manager
     :members:
