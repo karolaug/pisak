@@ -4,22 +4,25 @@ ClutterScript paint specific signal handler library
 from gi.repository import Clutter
 
 from pisak import signals
+from pisak.paint import widgets
 
 
-@signals.registered_handler("paint/set_color")
-def set_color(easel, color):
+@signals.registered_handler("paint/set_line_color")
+def set_line_color(button):
     """
     Set easel line color
     """
-    easel.rgba = _convert_color(color)
+    easel = button.target
+    easel.line_rgba = widgets.convert_color(button.get_background_color())
 
 
 @signals.registered_handler("paint/set_line_width")
-def set_line_width(easel, line_width):
+def set_line_width(button):
     """
     Set easel line width
     """
-    easel.line_width = int(line_width)
+    easel = button.target
+    easel.line_width = int(button.get_label().split(" ")[0])
 
 
 @signals.registered_handler("paint/clear_canvas")
@@ -60,13 +63,3 @@ def erase(easel):
     Erase one step backward
     """
     easel.erase()
-
-
-def _convert_color(color):
-    clutter_color = Clutter.Color.alloc()
-    clutter_color.from_string(color)
-    rgba = ()
-    string = clutter_color.to_string()
-    for idx in range(1, 9, 2):
-        rgba += (int(string[idx:idx+2], 16),)
-    return rgba

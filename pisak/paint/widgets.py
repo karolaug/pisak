@@ -24,13 +24,6 @@ def convert_color(color):
     return rgba
 
 
-class Button(widgets.Button):
-    """
-    Stylable, paint-specific button widget.
-    """
-    __gtype_name__ = "PisakPaintButton"
-
-
 class EaselTool(Clutter.Actor, properties.PropertyAdapter):
     """
     Base class for the easel tools.
@@ -915,3 +908,25 @@ class Easel(layout.Bin):
             self.working_tool = None
         if self.stage.handler_is_connected(self.stage_handler_id):
             self.stage.handler_disconnect(self.stage_handler_id)
+
+
+class Button(widgets.Button):
+    """
+    Stylable, paint-specific button widget.
+    """
+    __gtype_name__ = "PisakPaintButton"
+    __gproperties__ = {
+        "target": (
+            Easel.__gtype__,
+            "easel target",
+            "id of easel being target",
+            GObject.PARAM_READWRITE),
+    }
+
+    @property
+    def target(self):
+        return self._target
+
+    @target.setter
+    def target(self, value):
+        self._target = value
