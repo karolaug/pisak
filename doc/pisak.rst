@@ -8,6 +8,7 @@ Subpackages
 
     pisak.res
     pisak.speller
+    pisak.symboler
     pisak.viewer
 
 Submodules
