@@ -1,8 +1,7 @@
-import sys
 import os
 import math
 
-from gi.repository import GObject, Clutter, Gdk, Mx
+from gi.repository import GObject, Clutter
 import cairo
 
 from pisak import widgets, layout, xdg, properties
