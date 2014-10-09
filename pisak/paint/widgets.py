@@ -209,9 +209,7 @@ class Navigator(EaselTool):
         self.canvas.invalidate()
 
     def _draw(self, cnvs, ctxt, width, height):
-        ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.paint()
+        self._draw_clear(cnvs, ctxt, width, height)
         ctxt.translate(self.from_x, self.from_y)
         ctxt.rotate(self.angle)
         ctxt.scale(self.diagonal/width, 1)
@@ -350,9 +348,7 @@ class Localizer(EaselTool):
         self.emit("point-declared", self.localized_x, self.localized_y)
 
     def _draw(self, cnvs, ctxt, width, height):
-        ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.paint()
+        self._draw_clear(cnvs, ctxt, width, height)
         ctxt.set_line_width(self.line_width)
         ctxt.set_source_rgba(self.line_rgba[0],
                              self.line_rgba[1],
@@ -467,9 +463,7 @@ class Bender(EaselTool):
                 self.cycle_index = 0
 
     def _draw(self, cnvs, ctxt, width, height):
-        ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.paint()
+        self._draw_clear(cnvs, ctxt, width, height)
         ctxt.set_line_cap(cairo.LINE_CAP_ROUND)
         ctxt.set_line_width(self.line_width)
         ctxt.move_to(self.from_x, self.from_y)
@@ -565,9 +559,7 @@ class Yardstick(EaselTool):
             self._on_screen_border()
 
     def _draw(self, cnvs, ctxt, width, height):
-        ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_source_rgba(0, 0, 0, 0)
-        ctxt.paint()
+        self._draw_clear(cnvs, ctxt, width, height)
         ctxt.set_line_cap(cairo.LINE_CAP_ROUND)
         ctxt.set_line_width(self.line_width)
         ctxt.move_to(self.base_x, self.base_y)
