@@ -133,9 +133,8 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
 
     def __init__(self):
         super().__init__()
-        self.index = 0
-        self.data = database_manager.get_all_symbols()
-        self.data_length = len(self.data)
+        self.symbols = database_manager.get_all_symbols()
+        self.data_length = len(self.symbols)
 
     @property
     def target(self):
@@ -145,11 +144,11 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
     def target(self, value):
         self._target = value
 
-    def _generate_tiles(self, count):
+    def _generate_tiles(self):
         tiles = []
-        for index in range(self.index, self.index + count):
-            if index < len(self.data):
-                item = self.data[index]
+        for index in range(self.from_idx, self.to_idx):
+            if index < self.data_length:
+                item = self.symbols[index]
                 tile = widgets.PhotoTile()
                 tile.label.set_style_class("PisakSymbolerPhotoTileLabel")
                 if item.text:
@@ -171,11 +170,4 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
             else:
                 tile = Clutter.Actor()
             tiles.append(tile)
-        return tiles
-
-    def get_tiles(self, count):
-        tiles = self._generate_tiles(count)
-        self.index += count
-        if self.index > len(self.data):
-            self.index = 0
         return tiles

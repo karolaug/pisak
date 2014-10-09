@@ -328,80 +328,21 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     the library.
     """
     __gtype_name__ = "PisakViewerLibraryTilesSource"
-    __gproperties__ = {
-        "tile_ratio_width": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "tile_ratio_height": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "tile_ratio_spacing": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "tile_preview_ratio_width": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "tile_preview_ratio_height": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE)
-    }
 
     def __init__(self):
         super().__init__()
-        self.index = 0
         self.library = model.get_library()
         self.albums = list(self.library.categories)
+        self.data_length = len(self.albums)
 
-    @property
-    def tile_ratio_height(self):
-        return self._tile_ratio_height
-
-    @tile_ratio_height.setter
-    def tile_ratio_height(self, value):
-        self._tile_ratio_height = value
-
-    @property
-    def tile_ratio_width(self):
-        return self._tile_ratio_width
-
-    @tile_ratio_width.setter
-    def tile_ratio_width(self, value):
-        self._tile_ratio_width = value
-
-    @property
-    def tile_ratio_spacing(self):
-        return self._tile_ratio_spacing
-
-    @tile_ratio_spacing.setter
-    def tile_ratio_spacing(self, value):
-        self._tile_ratio_spacing = value
-
-    @property
-    def tile_preview_ratio_height(self):
-        return self._tile_preview_ratio_height
-
-    @tile_preview_ratio_height.setter
-    def tile_preview_ratio_height(self, value):
-        self._tile_preview_ratio_height = value
-
-    @property
-    def tile_preview_ratio_width(self):
-        return self._tile_preview_ratio_width
-
-    @tile_preview_ratio_width.setter
-    def tile_preview_ratio_width(self, value):
-        self._tile_preview_ratio_width = value
-
-    def _generate_tiles(self, count):
+    def _generate_tiles(self):
         tiles = []
-        for index in range(self.index, self.index + count):
-            if index < len(self.albums):
+        for index in range(self.from_idx, self.to_idx):
+            if index < self.data_length:
                 album = self.albums[index]
                 tile = widgets.PhotoTile()
-                
                 tile.label_text = album.name
-                print(tile.label_text)
-                
+                tile.label.set_style_class("PisakViewerPhotoTile")
                 tile.connect("activate", self.tiles_handler, album.id)
                 tile.hilite_tool = widgets.Aperture()
                 tile.ratio_width = self.tile_ratio_width
@@ -413,15 +354,8 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
                 tiles.append(tile)
         return tiles
 
-    def get_tiles(self, count):
-        tiles = self._generate_tiles(count)
-        self.index += count
-        if (self.index > len(self.albums)):
-            self.index = 0
-        return tiles
 
-
-class AlbumTilesSource(LibraryTilesSource):
+class AlbumTilesSource(pager.DataSource, properties.PropertyAdapter):
     """
     Communicate with the library manager and dynamically
     generate the required number of PhotoTiles, each representing
@@ -444,11 +378,12 @@ class AlbumTilesSource(LibraryTilesSource):
         self._album = value
         if value is not None:
             self.photos = self.library.get_category_by_id(value).photos
+            self.data_length = len(self.photos)
 
-    def _generate_tiles(self, count):
+    def _generate_tiles(self):
         tiles = []
-        for index in range(self.index, self.index + count):
-            if index < len(self.photos):
+        for index in range(self.from_idx, self.to_idx):
+            if index < self.data_length:
                 tile = widgets.PhotoTile()
                 tile.hilite_tool = widgets.Aperture()
                 tile.connect("activate", self.tiles_handler, self.photos[index].id, self.album)

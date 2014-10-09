@@ -65,6 +65,15 @@ def next_page(pager):
     pager.next_page()
 
 
+@signals.registered_handler("pager/previous_page")
+def previous_page(pager):
+    """
+    Move to the previous page of the given pager.
+    :param pager: pisak pager instance
+    """
+    pager.previous_page()
+
+
 @signals.registered_handler("pager/toggle_automatic")
 def toggle_automatic(pager):
     """

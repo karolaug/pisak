@@ -432,7 +432,14 @@
         "ratio-width": 0.049180327,
         "ratio-height": 0.082352941,
         "icon-size": 37,
-        "icon-name": "nav_left"
+        "icon-name": "nav_left",
+        "signals": [
+                       {
+                           "name": "clicked",
+                           "handler": "pager/previous_page",
+                           "object": "pager"
+                       }
+                    ]
     },
     {
         "id": "pager_button_4",
