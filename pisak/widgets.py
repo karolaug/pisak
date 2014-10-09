@@ -95,7 +95,7 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
     """
     __gtype_name__ = "PisakPhotoTile"
     __gsignals__ = {
-        "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
+        "clicked": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
     __gproperties__ = {
         "preview_path": (
@@ -132,6 +132,8 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
 
     def __init__(self):
         super().__init__()
+        self.set_reactive(True)
+        self._make_clickable()
         self._init_box()
         self._init_elements()
         self.preview_loading_width = 300
@@ -206,6 +208,11 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         if value is not None:
             self.add_child(value)
 
+    def _make_clickable(self):
+        click_action = Clutter.ClickAction.new()
+        click_action.connect("clicked", lambda *_: self.activate())
+        self.add_action(click_action)
+
     def _init_box(self):
         self.box = Box()
         self.box.orientation = Clutter.Orientation.VERTICAL
@@ -220,7 +227,7 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         self.box.add_child(self.label)
 
     def activate(self):
-        self.emit("activate")
+        self.emit("clicked")
 
     def enable_hilite(self):
         if self.hilite_tool is not None:

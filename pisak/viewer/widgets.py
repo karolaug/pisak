@@ -343,7 +343,7 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
                 tile = widgets.PhotoTile()
                 tile.label_text = album.name
                 tile.label.set_style_class("PisakViewerPhotoTile")
-                tile.connect("activate", self.tiles_handler, album.id)
+                tile.connect("clicked", self.tiles_handler, album.id)
                 tile.hilite_tool = widgets.Aperture()
                 tile.ratio_width = self.tile_ratio_width
                 tile.ratio_height = self.tile_ratio_height
@@ -386,7 +386,7 @@ class AlbumTilesSource(pager.DataSource, properties.PropertyAdapter):
             if index < self.data_length:
                 tile = widgets.PhotoTile()
                 tile.hilite_tool = widgets.Aperture()
-                tile.connect("activate", self.tiles_handler, self.photos[index].id, self.album)
+                tile.connect("clicked", self.tiles_handler, self.photos[index].id, self.album)
                 tile.scale_mode = Mx.ImageScaleMode.FIT
                 tile.ratio_width = self.tile_ratio_width
                 tile.ratio_height = self.tile_ratio_height

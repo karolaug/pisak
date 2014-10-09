@@ -157,7 +157,7 @@ class TilesSource(pager.DataSource, properties.PropertyAdapter):
                     label = os.path.splitext(os.path.split(item.path)[-1])[0]
                 tile.label_text = label
                 tile.hilite_tool = widgets.Aperture()
-                tile.connect("activate", lambda source, tile:
+                tile.connect("clicked", lambda source, tile:
                              self.target.append_symbol(tile), tile)
                 tile.set_background_color(colors.LIGHT_GREY)
                 tile.ratio_width = self.tile_ratio_width
