@@ -802,17 +802,15 @@ class Easel(layout.Bin):
         ctxt.stroke()
         return True
 
-    def _exit(self, event):
-        self.working_tool = None
-        if self.stage.handler_is_connected(self.stage_handler_id):
-            self.stage.handler_disconnect(self.stage_handler_id)
+    def _exit(self, event=None):
+        self.clean_up()
         self.emit("exit")
 
     def _introduce_tool(self, tool):
         for item in self.tools:
             if item is not tool:
                 item.hide()
-        self.stage_handler_id = self.stage.connect("button-press-event",
+        self.stage_handler_id = self.stage.connect("button-release-event",
                                                    tool.on_user_click)
         self.working_tool = tool
         self.set_child_above_sibling(tool, None)
@@ -874,7 +872,7 @@ class Easel(layout.Bin):
         for tool in self.tools:
             tool.show()
         self.from_x, self.from_y = self.to_x, self.to_y
-        self.run_navigator()
+        self._exit()
 
     def clear_canvas(self):
         """
@@ -908,11 +906,12 @@ class Easel(layout.Bin):
         self.canvas.handler_disconnect(self.canvas_handler_id)
         self.canvas_handler_id = self.canvas.connect("draw", self._draw)
 
-    def clean_up(self, source):
+    def clean_up(self, source=None):
         """
         Stop all the on-going activities, disconnect signals from the stage.
         """
         if self.working_tool is not None:
             self.working_tool.kill()
+            self.working_tool = None
         if self.stage.handler_is_connected(self.stage_handler_id):
             self.stage.handler_disconnect(self.stage_handler_id)
