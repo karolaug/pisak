@@ -714,31 +714,41 @@ class Easel(layout.Bin):
                 self.add_child(tool)
 
     def _exit_localizer(self, source, from_x, from_y):
-        self.working_tool = None
+        self._hung_up_tools()
         self.from_x = from_x
         self.from_y = from_y
-        self.stage.disconnect_by_func(self.localizer.on_user_click)
         self.run_navigator()
 
     def _exit_navigator(self, source, angle):
-        self.working_tool = None
+        self._hung_up_tools()
         self.angle = angle
-        self.stage.disconnect_by_func(self.navigator.on_user_click)
         self.run_yardstick()
 
     def _exit_yardstick(self, event, to_x, to_y):
-        self.working_tool = None
+        self._hung_up_tools()
         self.to_x = to_x
         self.to_y = to_y
-        self.stage.disconnect_by_func(self.yardstick.on_user_click)
         self.run_bender()
 
     def _exit_bender(self, event, through_x, through_y):
-        self.working_tool = None
+        self._hung_up_tools()
         self.through_x = through_x
         self.through_y = through_y
-        self.stage.disconnect_by_func(self.bender.on_user_click)
         self.run_drawing()
+
+    def _hung_up_tools(self):
+        self.working_tool = None
+        self.stage.handler_disconnect(self.stage_handler_id)
+
+    def _introduce_tool(self, tool):
+        for item in self.tools:
+            if item is not tool:
+                item.hide()
+        self.stage_handler_id = self.stage.connect("button-release-event",
+                                                   tool.on_user_click)
+        self.working_tool = tool
+        self.set_child_above_sibling(tool, None)
+        tool.show()
 
     def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
@@ -799,16 +809,6 @@ class Easel(layout.Bin):
         self.clean_up()
         self.emit("exit")
 
-    def _introduce_tool(self, tool):
-        for item in self.tools:
-            if item is not tool:
-                item.hide()
-        self.stage_handler_id = self.stage.connect("button-release-event",
-                                                   tool.on_user_click)
-        self.working_tool = tool
-        self.set_child_above_sibling(tool, None)
-        tool.show()
-
     def run(self):
         """
         Run the initial easel tool.
@@ -858,7 +858,6 @@ class Easel(layout.Bin):
         """
         Run drawing with previously declared parameters.
         """
-        self.working_tool = None
         for tool in self.tools:
             tool.hide()
         self.canvas.invalidate()
@@ -905,9 +904,7 @@ class Easel(layout.Bin):
         """
         if self.working_tool is not None:
             self.working_tool.kill()
-            self.working_tool = None
-        if self.stage.handler_is_connected(self.stage_handler_id):
-            self.stage.handler_disconnect(self.stage_handler_id)
+            self._hung_up_tools()
 
 
 class Button(widgets.Button):
