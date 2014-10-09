@@ -8,7 +8,7 @@ import cairo
 from pisak import widgets, layout, xdg, properties
 
 
-SAVING_PATH  = os.path.join(xdg.get_dir("pictures"), "pisak_paint.png")
+SAVING_PATH = os.path.join(xdg.get_dir("pictures"), "pisak_paint.png")
 
 
 def convert_color(color):
@@ -58,6 +58,7 @@ class EaselTool(Clutter.Actor, properties.PropertyAdapter):
             " ",
             GObject.PARAM_READWRITE)
     }
+
     def __init__(self):
         super().__init__()
         self.set_clip_to_allocation(True)
@@ -126,7 +127,7 @@ class EaselTool(Clutter.Actor, properties.PropertyAdapter):
 
     def _draw(self, cnvs, ctxt, width, height):
         raise NotImplementedError
-    
+
     def run(self):
         """
         Make the tool going.
@@ -154,10 +155,11 @@ class Navigator(EaselTool):
     """
     __gtype_name__ = "PisakPaintNavigator"
     __gsignals__ = {
-        "angle-declared": (GObject.SIGNAL_RUN_FIRST, None, (GObject.TYPE_FLOAT,)),
+        "angle-declared": (GObject.SIGNAL_RUN_FIRST,
+                           None, (GObject.TYPE_FLOAT,)),
         "idle": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
-    
+
     def __init__(self):
         super().__init__()
         self.max_cycles = 1
@@ -184,7 +186,7 @@ class Navigator(EaselTool):
         self.from_y = from_y
         self.timer = Clutter.Timeline.new(self.step_duration)
         repeat_count = -1 if self.max_cycles == -1 else \
-                       self.max_cycles * 2 * math.pi / self.step
+            self.max_cycles * 2 * math.pi / self.step
         self.timer.set_repeat_count(repeat_count)
         self.timer.connect("completed", self._update_navigator)
         self.timer.connect("stopped", self._on_user_idle)
@@ -252,6 +254,7 @@ class Localizer(EaselTool):
             GObject.SIGNAL_RUN_FIRST,
             None, ())
     }
+
     def __init__(self):
         super().__init__()
         self.horizontal_timer = None
@@ -284,11 +287,12 @@ class Localizer(EaselTool):
         """
         Stop all the on-going activities and kill the localizer.
         """
-        if self.vertical_timer is not None and self.vertical_timer.is_playing():
+        if self.vertical_timer is not None \
+           and self.vertical_timer.is_playing():
             self._clean_up_vertical()
             self.vertical_timer.stop()
         if self.horizontal_timer is not None and \
-               self.horizontal_timer.is_playing():
+                self.horizontal_timer.is_playing():
             self._clean_up_horizontal()
             self.horizontal_timer.stop()
 
@@ -311,7 +315,7 @@ class Localizer(EaselTool):
     def _on_vertical_idle(self, source, event):
         self._clean_up_vertical()
         self.emit("vertical-idle")
-        
+
     def _stop_vertical(self, source, event):
         self._clean_up_vertical()
         self.vertical_timer.stop()
@@ -385,8 +389,9 @@ class Bender(EaselTool):
             GObject.SIGNAL_RUN_FIRST,
             None, (GObject.TYPE_FLOAT, GObject.TYPE_FLOAT)),
         "idle": (
-            GObject.SIGNAL_RUN_FIRST, None, ())    
+            GObject.SIGNAL_RUN_FIRST, None, ())
     }
+
     def __init__(self):
         super().__init__()
         self.max_cycles = -1
@@ -444,8 +449,8 @@ class Bender(EaselTool):
 
     def _on_user_idle(self, source, event):
         self._clean_up()
-        self.emit("idle")  
-    
+        self.emit("idle")
+
     def _clean_up(self):
         self.timer.disconnect_by_func(self._update_bender)
         self.timer.disconnect_by_func(self._on_user_idle)
@@ -470,7 +475,7 @@ class Bender(EaselTool):
             if self.cycle_index / 2 == self.max_cycles:
                 self.timer.stop()
                 self.cycle_index = 0
-        
+
     def _draw(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
         ctxt.set_source_rgba(0, 0, 0, 0)
@@ -502,6 +507,7 @@ class Yardstick(EaselTool):
             GObject.SIGNAL_RUN_FIRST,
             None, ()),
     }
+
     def __init__(self):
         super().__init__()
         self.step_duration = 100
@@ -558,7 +564,7 @@ class Yardstick(EaselTool):
 
     def _on_screen_border(self):
         self._on_user_decision(None, None)
-        
+
     def _update_yardstick(self, event):
         to_x = self.to_x + self.step_x
         to_y = self.to_y + self.step_y
@@ -618,7 +624,7 @@ class Easel(layout.Bin):
             "yardstick instance",
             GObject.PARAM_READWRITE)
     }
-    
+
     def __init__(self):
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
@@ -635,8 +641,8 @@ class Easel(layout.Bin):
         self.line_rgba = (0, 0, 0, 1)  # current drawing color
         self.from_x = 0  # x coordinate of current spot
         self.from_y = 0  # x coordinate of current spot
-        self.to_x = 0 # x coordinate of current destination spot
-        self.to_y = 0 # y coordinate of current destination spot
+        self.to_x = 0  # x coordinate of current destination spot
+        self.to_y = 0  # y coordinate of current destination spot
         self.through_x = 0  # x coordinate of current through spot
         self.through_y = 0  # y coordinate of current through spot
         self.path_history = []  # history of drawing
@@ -680,6 +686,7 @@ class Easel(layout.Bin):
             self.tools.append(value)
             value.connect("bend-point-declared", self._exit_bender)
             value.connect("idle", self._exit)
+
     @property
     def yardstick(self):
         return self._yardstick
@@ -767,7 +774,7 @@ class Easel(layout.Bin):
                                 line_rgba[3])
                 ctxt.stroke()
         return True
-    
+
     def _draw(self, cnvs, ctxt, width, height):
         self._draw_clear(cnvs, ctxt, width, height)
         for desc in self.path_history:
@@ -776,9 +783,9 @@ class Easel(layout.Bin):
             ctxt.set_line_cap(desc["line_cap"])
             line_rgba = desc["line_rgba"]
             ctxt.set_source_rgba(line_rgba[0],
-                            line_rgba[1],
-                            line_rgba[2],
-                            line_rgba[3])
+                                line_rgba[1],
+                                line_rgba[2],
+                                line_rgba[3])
             ctxt.stroke()
         ctxt.curve_to(self.from_x, self.from_y, self.through_x,
                       self.through_y, self.to_x, self.to_y)
@@ -816,7 +823,7 @@ class Easel(layout.Bin):
         Run the initial easel tool.
         """
         self.run_localizer()
-        
+
     def run_localizer(self):
         """
         Run the localizer tool, connect proper handler to the stage, connect
@@ -895,7 +902,8 @@ class Easel(layout.Bin):
         Save the canvas' current target to file in png format.
         """
         self.canvas.handler_disconnect(self.canvas_handler_id)
-        self.canvas_handler_id = self.canvas.connect("draw", self._draw_to_file)
+        self.canvas_handler_id = self.canvas.connect("draw",
+                                                     self._draw_to_file)
         self.canvas.invalidate()
         self.canvas.handler_disconnect(self.canvas_handler_id)
         self.canvas_handler_id = self.canvas.connect("draw", self._draw)
