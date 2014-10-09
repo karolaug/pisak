@@ -10,6 +10,7 @@ def button_to_view(stage, script, button_name, stage_to_load, data=None):
 def prepare_main_panel_view(stage, script, data):
     button_to_view(stage, script, "button_speller", "speller/main", None)
     button_to_view(stage, script, "button_viewer", "viewer/library", None)
+    button_to_view(stage, script, "button_symboler", "symboler/main", None)
 
 
 VIEWS = {

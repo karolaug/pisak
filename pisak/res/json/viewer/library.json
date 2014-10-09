@@ -168,7 +168,7 @@
         "id": "progress_bar",
         "type": "PisakViewerProgressBar",
         "ratio-width": 1,
-        "related-object": "pager",
+        "followed-object": "pager",
         "progress-transition-duration": 1000,
         "ratio-height": 0.05,
         "label-ratio-x-offset": 0.85
