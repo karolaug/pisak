@@ -622,6 +622,7 @@ class Easel(layout.Bin):
     def __init__(self):
         self.canvas = Clutter.Canvas()
         self.set_content(self.canvas)
+        self.canvas_handler_id = self.canvas.connect("draw", self._draw)
         self.localizer = None
         self.navigator = None
         self.yardstick = None
@@ -642,42 +643,7 @@ class Easel(layout.Bin):
         self.line_cap = cairo.LINE_CAP_ROUND  # cap of the draw lines
         self.angle = 0  # angle of the draw line direction
         self.connect("notify::mapped", self._on_mapped)
-
-    def _on_mapped(self, source, args):
-        try:
-            self.disconnect_by_func(self._on_mapped)
-        except TypeError:
-            pass
-        if self.stage is None:
-            self.stage = self.get_stage()
-            self.background_rgba = convert_color(self.get_background_color())
-            self.width, self.height = self.get_allocation_box().get_size()
-            self.canvas.set_size(self.width, self.height)
-            self.canvas.connect("draw", self._draw)
-            self._set_canvas_background()
-            self._allocate_tools()
-
-    def _allocate_tools(self):
-        for tool in self.tools:
-            tool.set_size(self.width, self.height)
-            self.add_child(tool)
-
-    def run(self):
-        """
-        Run the initial easel tool.
-        """
-        self.run_localizer()
-
-    def _set_canvas_background(self):
-        try:
-            self.canvas.disconnect_by_func(self._draw)
-        except TypeError:
-            pass
-        self.canvas.connect("draw", self._draw_clear)
-        self.canvas.invalidate()
-        self.canvas.disconnect_by_func(self._draw_clear)
-        self.canvas.connect("draw", self._draw)
-        self.path_history = []
+        self.connect("notify::size", self._on_size_changed)
 
     @property
     def localizer(self):
@@ -725,21 +691,27 @@ class Easel(layout.Bin):
             self.tools.append(value)
             value.connect("destination-declared", self._exit_yardstick)
             value.connect("idle", self._exit)
-        
-    def run_localizer(self):
-        """
-        Run the localizer tool, connect proper handler to the stage, connect
-        signal to the localizer.
-        """
-        self.set_child_above_sibling(self.localizer, None)
+
+    def _on_size_changed(self, source, event):
+        self.width, self.height = self.get_allocation_box().get_size()
+        if self.width > 0 and self.height > 0:
+            self._allocate_tools()
+            self.canvas.handler_disconnect(self.canvas_handler_id)
+            self.canvas.set_size(self.width, self.height)
+            self.canvas_handler_id = self.canvas.connect("draw", self._draw)
+
+    def _on_mapped(self, source, event):
+        self.disconnect_by_func(self._on_mapped)
+        if self.stage is None:
+            self.stage = self.get_stage()
+            self.background_rgba = convert_color(self.get_background_color())
+            self.clear_canvas()
+
+    def _allocate_tools(self):
         for tool in self.tools:
-            if tool is not self.localizer:
-                tool.hide()
-        self.localizer.show()
-        self.working_tool = self.localizer
-        self.localizer.run()
-        self.stage_handler_id = self.stage.connect("button-press-event",
-                                                   self.localizer.on_user_click)
+            tool.set_size(self.width, self.height)
+            if not self.contains(tool):
+                self.add_child(tool)
 
     def _exit_localizer(self, source, from_x, from_y):
         self.working_tool = None
@@ -748,41 +720,11 @@ class Easel(layout.Bin):
         self.stage.disconnect_by_func(self.localizer.on_user_click)
         self.run_navigator()
 
-    def run_navigator(self):
-        """
-        Run the navigator tool, connect proper handler to the stage, connect
-        signal to the navigator.
-        """
-        self.set_child_above_sibling(self.navigator, None)
-        self.working_tool = self.navigator
-        for tool in self.tools:
-            if tool is not self.navigator:
-                tool.hide()
-        self.navigator.show()
-        self.stage_handler_id = self.stage.connect("button-press-event", self.navigator.on_user_click)
-        self.navigator.run(self.from_x, self.from_y, self.line_rgba, self.line_width)
-
     def _exit_navigator(self, source, angle):
         self.working_tool = None
         self.angle = angle
         self.stage.disconnect_by_func(self.navigator.on_user_click)
         self.run_yardstick()
-
-    def run_yardstick(self):
-        """
-        Run the yardstick tool, connect proper handler to the stage, connect
-        signal to the yardstick.
-        """
-        self.working_tool = self.yardstick
-        self.stage_handler_id = self.stage.connect("button-press-event",
-                                                   self.yardstick.on_user_click)
-        for tool in self.tools:
-            if tool is not self.yardstick:
-                tool.hide()
-        self.yardstick.show()
-        self.set_child_above_sibling(self.yardstick, None)
-        self.yardstick.run(self.from_x, self.from_y, self.angle, self.line_rgba,
-                           self.line_width)
 
     def _exit_yardstick(self, event, to_x, to_y):
         self.working_tool = None
@@ -791,44 +733,12 @@ class Easel(layout.Bin):
         self.stage.disconnect_by_func(self.yardstick.on_user_click)
         self.run_bender()
 
-    def run_bender(self):
-        """
-        Run the bender tool, connect proper handler to the stage, connect
-        signal to the bender.
-        """
-        self.working_tool = self.bender
-        self.stage_handler_id = self.stage.connect("button-press-event",
-                                                   self.bender.on_user_click)
-        for tool in self.tools:
-            if tool is not self.bender:
-                tool.hide()
-        self.bender.show()
-        self.set_child_above_sibling(self.bender, None)
-        self.bender.run(self.from_x, self.from_y, self.to_x, self.to_y,
-                        self.angle, self.line_rgba, self.line_width)
-
     def _exit_bender(self, event, through_x, through_y):
         self.working_tool = None
         self.through_x = through_x
         self.through_y = through_y
         self.stage.disconnect_by_func(self.bender.on_user_click)
         self.run_drawing()
-
-    def run_drawing(self):
-        """
-        Run drawing with previously declared parameters.
-        """
-        self.working_tool = None
-        for tool in self.tools:
-            tool.hide()
-        self.canvas.invalidate()
-        self._update_values()
-        for tool in self.tools:
-            tool.show()
-        self.run_navigator()
-
-    def _update_values(self):
-        self.from_x, self.from_y = self.to_x, self.to_y
 
     def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
@@ -891,51 +801,104 @@ class Easel(layout.Bin):
             self.stage.handler_disconnect(self.stage_handler_id)
         self.emit("exit")
 
+    def _introduce_tool(self, tool):
+        for item in self.tools:
+            if item is not tool:
+                item.hide()
+        self.stage_handler_id = self.stage.connect("button-press-event",
+                                                   tool.on_user_click)
+        self.working_tool = tool
+        self.set_child_above_sibling(tool, None)
+        tool.show()
+
+    def run(self):
+        """
+        Run the initial easel tool.
+        """
+        self.run_localizer()
+        
+    def run_localizer(self):
+        """
+        Run the localizer tool, connect proper handler to the stage, connect
+        signal to the localizer.
+        """
+        if self.working_tool is None:
+            self._introduce_tool(self.localizer)
+            self.localizer.run()
+
+    def run_navigator(self):
+        """
+        Run the navigator tool, connect proper handler to the stage, connect
+        signal to the navigator.
+        """
+        if self.working_tool is None:
+            self._introduce_tool(self.navigator)
+            self.navigator.run(self.from_x, self.from_y, self.line_rgba,
+                               self.line_width)
+
+    def run_yardstick(self):
+        """
+        Run the yardstick tool, connect proper handler to the stage, connect
+        signal to the yardstick.
+        """
+        if self.working_tool is None:
+            self._introduce_tool(self.yardstick)
+            self.yardstick.run(self.from_x, self.from_y, self.angle,
+                               self.line_rgba, self.line_width)
+
+    def run_bender(self):
+        """
+        Run the bender tool, connect proper handler to the stage, connect
+        signal to the bender.
+        """
+        if self.working_tool is None:
+            self._introduce_tool(self.bender)
+            self.bender.run(self.from_x, self.from_y, self.to_x, self.to_y,
+                            self.angle, self.line_rgba, self.line_width)
+
+    def run_drawing(self):
+        """
+        Run drawing with previously declared parameters.
+        """
+        self.working_tool = None
+        for tool in self.tools:
+            tool.hide()
+        self.canvas.invalidate()
+        for tool in self.tools:
+            tool.show()
+        self.from_x, self.from_y = self.to_x, self.to_y
+        self.run_navigator()
+
     def clear_canvas(self):
         """
         Clear all the canvas, paint background.
         """
-        self._set_canvas_background()
-
-    def back_to_drawing(self):
-        """
-        Return to easel, run the navigator tool.
-        """
-        if not self.working_tool:
-            self.run_navigator()
-
-    def localize_new_spot(self):
-        """
-        Run the localizer tool in order to find the new spot for drawing.
-        """
-        if not self.working_tool:
-            self.run_localizer()
+        self.canvas.handler_disconnect(self.canvas_handler_id)
+        self.canvas_handler_id = self.canvas.connect("draw", self._draw_clear)
+        self.canvas.invalidate()
+        self.canvas.handler_disconnect(self.canvas_handler_id)
+        self.canvas_handler_id = self.canvas.connect("draw", self._draw)
+        self.path_history = []
 
     def erase(self):
         """
         Erase the last drawn element.
         """
-        try:
-            self.canvas.disconnect_by_func(self._draw)
-        except TypeError:
-            pass
-        self.canvas.connect("draw", self._draw_erase)
+        self.canvas.handler_disconnect(self.canvas_handler_id)
+        self.canvas_handler_id = self.canvas.connect("draw", self._draw_erase)
         self.canvas.invalidate()
-        self.canvas.disconnect_by_func(self._draw_erase)
-        self.canvas.connect("draw", self._draw)
+        self.canvas.handler_disconnect(self.canvas_handler_id)
+        self.canvas_handler_id = self.canvas.connect("draw", self._draw)
 
     def save_to_file(self):
         """
         Save the canvas' current target to file in png format.
         """
-        try:
-            self.canvas.disconnect_by_func(self._draw)
-        except TypeError:
-            pass
-        self.canvas.connect("draw", self._draw_to_file)
+        self.canvas.handler_disconnect(self.canvas_handler_id)
+        self.canvas_handler_id = self.canvas.connect("draw", self._draw_to_file)
         self.canvas.invalidate()
-        self.canvas.disconnect_by_func(self._draw_to_file)
-        self.canvas.connect("draw", self._draw)
+        self.canvas.handler_disconnect(self.canvas_handler_id)
+        self.canvas_handler_id = self.canvas.connect("draw", self._draw)
 
     def clean_up(self, source):
         """

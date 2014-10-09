@@ -43,15 +43,15 @@ def new_spot(easel):
     """
     Localize new drawing spot
     """
-    easel.localize_new_spot()
+    easel.run_localizer()
 
 
-@signals.registered_handler("paint/draw")
-def draw(easel):
+@signals.registered_handler("paint/navigate")
+def navigate(easel):
     """
-    Back to drawing
+    Back to drawing and navigate
     """
-    easel.back_to_drawing()
+    easel.run_navigator()
 
 
 @signals.registered_handler("paint/erase")

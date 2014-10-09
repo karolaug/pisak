@@ -149,7 +149,7 @@
     {
         "id": "navigator",
         "type": "PisakPaintNavigator",
-        "max-cycles": 1.5,
+        "max-cycles": 1.25,
         "step-duration": 50,
         "step": 0.007,
         "line-width": 5,
@@ -311,7 +311,7 @@
                 },
                 {
                     "name": "clicked",
-                    "handler": "paint/draw",
+                    "handler": "paint/navigate",
                     "object": "easel"
                 }
         ]
