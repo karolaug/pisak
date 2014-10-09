@@ -148,24 +148,39 @@
     },
     {
         "id": "navigator",
-        "type": "PisakPaintNavigator"
+        "type": "PisakPaintNavigator",
+        "max-cycles": 1.5,
+        "step-duration": 50,
+        "step": 0.007,
+        "line-width": 5,
+        "line-color": "rgba(0, 0, 0, 255)"
     },
     {
         "id": "localizer",
-        "type": "PisakPaintLocalizer"
+        "type": "PisakPaintLocalizer",
+        "max-cycles": -1,
+        "step-duration": 10,
+        "step": 1,
+        "line-width": 5,
+        "line-color": "rgba(0, 0, 0, 255)"
     },
     {
         "id": "bender",
-        "type": "PisakPaintBender"
+        "type": "PisakPaintBender",
+        "max-cycles": -1,
+        "step-duration": 50,
+        "step": 10
     },
     {
         "id": "yardstick",
-        "type": "PisakPaintYardstick"
+        "type": "PisakPaintYardstick",
+        "step-duration": 100,
+        "step": 10
     },
     {
         "id": "easel",
         "type": "PisakPaintEasel",
-        "background-color": "rgb(255, 255, 255)",
+        "background-color": "rgba(255, 255, 255, 255)",
         "x-expand": true,
         "y-expand": true,
         "bender": "bender",

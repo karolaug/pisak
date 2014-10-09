@@ -16,7 +16,7 @@ def convert_color(color):
     if isinstance(color, Clutter.Color):
         clutter_color = color
     else:
-        clutter_color = Clutter.Color.init()
+        clutter_color = Clutter.Color.new(0, 0, 0, 255)
         clutter_color.from_string(color)
     string = clutter_color.to_string()
     for idx in range(1, 9, 2):
@@ -626,8 +626,10 @@ class Easel(layout.Bin):
         self.navigator = None
         self.yardstick = None
         self.bender = None
+        self.tools = []
         self.stage = None
         self.working_tool = None  # currently working tool
+        self.stage_handler_id = None  # id of the current stage handler
         self.line_width = 10  # width of the drawing line
         self.line_rgba = (0, 0, 0, 1)  # current drawing color
         self.from_x = 0  # x coordinate of current spot
@@ -639,7 +641,6 @@ class Easel(layout.Bin):
         self.path_history = []  # history of drawing
         self.line_cap = cairo.LINE_CAP_ROUND  # cap of the draw lines
         self.angle = 0  # angle of the draw line direction
-        self.stage_handler_id = 0  # id of the current stage handler
         self.connect("notify::mapped", self._on_mapped)
 
     def _on_mapped(self, source, args):
@@ -648,14 +649,18 @@ class Easel(layout.Bin):
         except TypeError:
             pass
         if self.stage is None:
+            self.stage = self.get_stage()
             self.background_rgba = convert_color(self.get_background_color())
             self.width, self.height = self.get_allocation_box().get_size()
-            for tool in self.get_children():
-                tool.set_size(self.width, self.height)
             self.canvas.set_size(self.width, self.height)
             self.canvas.connect("draw", self._draw)
             self._set_canvas_background()
-            self.stage = self.get_stage()
+            self._allocate_tools()
+
+    def _allocate_tools(self):
+        for tool in self.tools:
+            tool.set_size(self.width, self.height)
+            self.add_child(tool)
 
     def run(self):
         """
@@ -668,10 +673,11 @@ class Easel(layout.Bin):
             self.canvas.disconnect_by_func(self._draw)
         except TypeError:
             pass
-        self.canvas.connect("draw", self._draw_background)
+        self.canvas.connect("draw", self._draw_clear)
         self.canvas.invalidate()
-        self.canvas.disconnect_by_func(self._draw_background)
+        self.canvas.disconnect_by_func(self._draw_clear)
         self.canvas.connect("draw", self._draw)
+        self.path_history = []
 
     @property
     def localizer(self):
@@ -681,7 +687,7 @@ class Easel(layout.Bin):
     def localizer(self, value):
         self._localizer = value
         if value is not None:
-            self.add_child(value)
+            self.tools.append(value)
             value.connect("point-declared", self._exit_localizer)
             value.connect("horizontal-idle", self._exit)
 
@@ -693,7 +699,7 @@ class Easel(layout.Bin):
     def navigator(self, value):
         self._navigator = value
         if value is not None:
-            self.add_child(value)
+            self.tools.append(value)
             value.connect("angle-declared", self._exit_navigator)
             value.connect("idle", self._exit)
 
@@ -705,7 +711,7 @@ class Easel(layout.Bin):
     def bender(self, value):
         self._bender = value
         if value is not None:
-            self.add_child(value)
+            self.tools.append(value)
             value.connect("bend-point-declared", self._exit_bender)
             value.connect("idle", self._exit)
     @property
@@ -716,7 +722,7 @@ class Easel(layout.Bin):
     def yardstick(self, value):
         self._yardstick = value
         if value is not None:
-            self.add_child(value)
+            self.tools.append(value)
             value.connect("destination-declared", self._exit_yardstick)
             value.connect("idle", self._exit)
         
@@ -726,7 +732,7 @@ class Easel(layout.Bin):
         signal to the localizer.
         """
         self.set_child_above_sibling(self.localizer, None)
-        for tool in self.get_children():
+        for tool in self.tools:
             if tool is not self.localizer:
                 tool.hide()
         self.localizer.show()
@@ -749,7 +755,7 @@ class Easel(layout.Bin):
         """
         self.set_child_above_sibling(self.navigator, None)
         self.working_tool = self.navigator
-        for tool in self.get_children():
+        for tool in self.tools:
             if tool is not self.navigator:
                 tool.hide()
         self.navigator.show()
@@ -770,7 +776,7 @@ class Easel(layout.Bin):
         self.working_tool = self.yardstick
         self.stage_handler_id = self.stage.connect("button-press-event",
                                                    self.yardstick.on_user_click)
-        for tool in self.get_children():
+        for tool in self.tools:
             if tool is not self.yardstick:
                 tool.hide()
         self.yardstick.show()
@@ -793,7 +799,7 @@ class Easel(layout.Bin):
         self.working_tool = self.bender
         self.stage_handler_id = self.stage.connect("button-press-event",
                                                    self.bender.on_user_click)
-        for tool in self.get_children():
+        for tool in self.tools:
             if tool is not self.bender:
                 tool.hide()
         self.bender.show()
@@ -813,38 +819,31 @@ class Easel(layout.Bin):
         Run drawing with previously declared parameters.
         """
         self.working_tool = None
-        for tool in self.get_children():
+        for tool in self.tools:
             tool.hide()
         self.canvas.invalidate()
         self._update_values()
-        for tool in self.get_children():
+        for tool in self.tools:
             tool.show()
         self.run_navigator()
 
     def _update_values(self):
         self.from_x, self.from_y = self.to_x, self.to_y
 
-    def _draw_background(self, cnvs, ctxt, width, height):
+    def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
         ctxt.set_source_rgba(self.background_rgba[0],
                              self.background_rgba[1],
                              self.background_rgba[2],
                              self.background_rgba[3])
         ctxt.paint()
-        self.path_history = []
-        return True
 
     def _draw_to_file(self, cnvs, ctxt, width, height):
         ctxt.get_target().write_to_png(SAVING_PATH)
         return True
 
     def _draw_erase(self, cnvs, ctxt, width, height):
-        ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_source_rgba(self.background_rgba[0],
-                            self.background_rgba[1],
-                            self.background_rgba[2],
-                            self.background_rgba[3])
-        ctxt.paint()
+        self._draw_clear(cnvs, ctxt, width, height)
         if len(self.path_history) > 0:
             self.path_history.pop()
             for desc in self.path_history:
@@ -860,12 +859,7 @@ class Easel(layout.Bin):
         return True
     
     def _draw(self, cnvs, ctxt, width, height):
-        ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_source_rgba(self.background_rgba[0],
-                            self.background_rgba[1],
-                            self.background_rgba[2],
-                            self.background_rgba[3])
-        ctxt.paint()
+        self._draw_clear(cnvs, ctxt, width, height)
         for desc in self.path_history:
             ctxt.append_path(desc["path"])
             ctxt.set_line_width(desc["line_width"])
