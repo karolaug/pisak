@@ -14,9 +14,18 @@ Submodules
 ----------
 
 pisak.handlers module
---------------------
+---------------------
 
 .. automodule:: pisak.handlers
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+pisak.launcher module
+---------------------
+
+.. automodule:: pisak.launcher
     :members:
     :undoc-members:
     :show-inheritance:
