@@ -162,13 +162,11 @@ class Navigator(EaselTool):
         self.line_width = 5
         self.click_handlers = [self._on_user_decision]
 
-    def run(self, from_x, from_y, color, line_width):
+    def run(self, from_x, from_y):
         """
         Turn on the navigator, begin line rotation.
         :param from_x: x coordinate of the navigator base point
         :param from_y: y coordinate of the navigator base point
-        :param color: color of the navigator line
-        :line_width:: width of the navigator line in pixels
         """
         self.angle = 0
         self.width, self.height = self.get_size()
@@ -831,8 +829,7 @@ class Easel(layout.Bin):
         """
         if self.working_tool is None:
             self._introduce_tool(self.navigator)
-            self.navigator.run(self.from_x, self.from_y, self.line_rgba,
-                               self.line_width)
+            self.navigator.run(self.from_x, self.from_y)
 
     def run_yardstick(self):
         """
