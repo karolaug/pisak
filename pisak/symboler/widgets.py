@@ -10,6 +10,39 @@ from pisak.res import colors
 from pisak.symboler import database_manager
 
 
+
+class BlissWord(Clutter.Actor()):
+    """
+    Graphical representation of bliss word. This widget should be used to show
+    bliss symbols on screen. 
+    """
+    def __init__(self):
+        self._symbol = None
+        super().__init__()
+
+        self.layout = Clutter.BoxLayout()
+        self.set_layout_manager(self.layout)
+
+        self.image = Mx.Image()
+        self.add_child(self.image)
+
+        self.text = Mx.Label()
+        self.add_child(self.text)
+
+    @property
+    def symbol(self):
+        return self._symbol
+    
+    @symbol.setter
+    def symbol(self, value):
+        self._symbol = value
+        self._update_symbol()
+    
+    def _update_symbol(self):
+        self.image.set_from_file(self.symbol.path)
+        self.text.set_text(self.symbol.text)
+        
+
 class Entry(layout.Box):
     """
     Entry window for typing symbols.
