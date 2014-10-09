@@ -748,6 +748,13 @@ class Easel(layout.Bin):
         self.set_child_above_sibling(tool, None)
         tool.show()
 
+    def _execute_on_canvas(self, drawing_method):
+        self.canvas.handler_disconnect(self.canvas_handler_id)
+        self.canvas_handler_id = self.canvas.connect("draw", drawing_method)
+        self.canvas.invalidate()
+        self.canvas.handler_disconnect(self.canvas_handler_id)
+        self.canvas_handler_id = self.canvas.connect("draw", self._draw)
+
     def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
         ctxt.set_source_rgba(self.background_rgba[0],
@@ -867,33 +874,20 @@ class Easel(layout.Bin):
         """
         Clear all the canvas, paint background.
         """
-        self.canvas.handler_disconnect(self.canvas_handler_id)
-        self.canvas_handler_id = self.canvas.connect("draw", self._draw_clear)
-        self.canvas.invalidate()
-        self.canvas.handler_disconnect(self.canvas_handler_id)
-        self.canvas_handler_id = self.canvas.connect("draw", self._draw)
+        self._execute_on_canvas(self._draw_clear)
         self.path_history = []
 
     def erase(self):
         """
         Erase the last drawn element.
         """
-        self.canvas.handler_disconnect(self.canvas_handler_id)
-        self.canvas_handler_id = self.canvas.connect("draw", self._draw_erase)
-        self.canvas.invalidate()
-        self.canvas.handler_disconnect(self.canvas_handler_id)
-        self.canvas_handler_id = self.canvas.connect("draw", self._draw)
+        self._execute_on_canvas(self._draw_erase)
 
     def save_to_file(self):
         """
         Save the canvas' current target to file in png format.
         """
-        self.canvas.handler_disconnect(self.canvas_handler_id)
-        self.canvas_handler_id = self.canvas.connect("draw",
-                                                     self._draw_to_file)
-        self.canvas.invalidate()
-        self.canvas.handler_disconnect(self.canvas_handler_id)
-        self.canvas_handler_id = self.canvas.connect("draw", self._draw)
+        self._execute_on_canvas(self._draw_to_file)
 
     def clean_up(self, source=None):
         """
