@@ -11,23 +11,31 @@ from pisak.res import colors
 
 class HiliteTool(Clutter.Actor):
     """
-    Interface of object used for applying hilite to objects which are
-    Scannable but not Stylable.
+    Classes implementing HiliteTool interface can be used to add highlight to
+    widgets which need to implement Scannable interface, but are not
+    Stylable. Scannable widget should add HiliteTool instance as a descendant
+    and call its methods to change highlight state.
+
+    :see: :class:`pisak.widgets.Aperture`
     """
     def turn_on(self):
         """
-        Perform the hilition bevaviour.
+        Enable highlight.
         """
         raise NotImplementedError()
 
     def turn_off(self):
         """
-        Restore the rest state.
+        Disable highlight.
         """
         raise NotImplementedError()
 
 
 class Aperture(HiliteTool, properties.PropertyAdapter):
+    """
+    This actor draws a semi transparent cover with rectangular aperture in
+    the center. It can be used to highlight another widget.
+    """
     __gtype_name__ = "PisakAperture"
     __gproperties__ = {
         'cover': (GObject.TYPE_FLOAT, None, None,
@@ -50,6 +58,10 @@ class Aperture(HiliteTool, properties.PropertyAdapter):
 
     @property
     def cover(self):
+        """
+        Specifies what portion of the actor should be covered. The value
+        should range from 0 to 1. Covered area doesn't change linearly.
+        """
         return self._cover
 
     @cover.setter
@@ -81,24 +93,35 @@ class Aperture(HiliteTool, properties.PropertyAdapter):
     def _init_content(self):
         self.canvas = Clutter.Canvas()
         self.canvas.set_size(140, 140)
-        self.canvas.connect("draw", self.draw)
+        self.canvas.connect("draw", self._draw)
         self.set_content(self.canvas)
 
     def turn_on(self):
-        self.set_cover(self.cover_on)
+        self.set_cover(self.COVER_ON)
 
     def turn_off(self):
-        self.set_cover(self.cover_off)
+        self.set_cover(self.COVER_OFF)
 
 
 class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
     """
     Tile containing image and label that can be styled by CSS.
+    This widget display a preview of a photo along with label. It can be
+    used to display a grid of photo tiles.
+
+    The style of PhotoTile elements be adjusted in CSS. The label is a
+    "MxButton" element with "PisakPhotoTileLabel" class. The photo is
+    "MxImage" element with no class set.
     """
     __gtype_name__ = "PisakPhotoTile"
+
+    GTYPE_NAME = __gtype_name__
+    """GType name"""
+
     __gsignals__ = {
         "activate": (GObject.SIGNAL_RUN_FIRST, None, ())
     }
+
     __gproperties__ = {
         "preview_path": (
             GObject.TYPE_STRING,
