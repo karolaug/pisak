@@ -4,23 +4,10 @@ import math
 from gi.repository import GObject, Clutter
 import cairo
 
-from pisak import widgets, layout, xdg, properties
+from pisak import widgets, layout, xdg, properties, utils
 
 
 SAVING_PATH = os.path.join(xdg.get_dir("pictures"), "pisak_paint.png")
-
-
-def convert_color(color):
-    rgba = ()
-    if isinstance(color, Clutter.Color):
-        clutter_color = color
-    else:
-        clutter_color = Clutter.Color.new(0, 0, 0, 255)
-        clutter_color.from_string(color)
-    string = clutter_color.to_string()
-    for idx in range(1, 9, 2):
-        rgba += (int(string[idx:idx+2], 16)/255.,)
-    return rgba
 
 
 class EaselTool(Clutter.Actor, properties.PropertyAdapter):
@@ -99,7 +86,7 @@ class EaselTool(Clutter.Actor, properties.PropertyAdapter):
     def line_color(self, value):
         self._line_color = value
         if value is not None:
-            self.line_rgba = convert_color(value)
+            self.line_rgba = utils.convert_color(value)
 
     def _clear_canvas(self):
         try:
@@ -216,10 +203,7 @@ class Navigator(EaselTool):
         ctxt.move_to(0, 0)
         ctxt.line_to(width, 0)
         ctxt.set_line_width(self.line_width)
-        ctxt.set_source_rgba(self.line_rgba[0],
-                             self.line_rgba[1],
-                             self.line_rgba[2],
-                             self.line_rgba[3])
+        ctxt.set_source_rgba(*self.line_rgba)
         ctxt.stroke()
         return True
 
@@ -350,10 +334,7 @@ class Localizer(EaselTool):
     def _draw(self, cnvs, ctxt, width, height):
         self._draw_clear(cnvs, ctxt, width, height)
         ctxt.set_line_width(self.line_width)
-        ctxt.set_source_rgba(self.line_rgba[0],
-                             self.line_rgba[1],
-                             self.line_rgba[2],
-                             self.line_rgba[3])
+        ctxt.set_source_rgba(*self.line_rgba)
         if self.localized_x is not None:
             ctxt.move_to(self.localized_x, 0)
             ctxt.line_to(self.localized_x, self.height)
@@ -469,10 +450,7 @@ class Bender(EaselTool):
         ctxt.move_to(self.from_x, self.from_y)
         ctxt.curve_to(self.from_x, self.from_y, self.through_x,
                       self.through_y, self.to_x, self.to_y)
-        ctxt.set_source_rgba(self.line_rgba[0],
-                             self.line_rgba[1],
-                             self.line_rgba[2],
-                             self.line_rgba[3])
+        ctxt.set_source_rgba(*self.line_rgba)
         ctxt.stroke()
         return True
 
@@ -564,10 +542,7 @@ class Yardstick(EaselTool):
         ctxt.set_line_width(self.line_width)
         ctxt.move_to(self.base_x, self.base_y)
         ctxt.line_to(self.to_x, self.to_y)
-        ctxt.set_source_rgba(self.line_rgba[0],
-                             self.line_rgba[1],
-                             self.line_rgba[2],
-                             self.line_rgba[3])
+        ctxt.set_source_rgba(*self.line_rgba)
         ctxt.stroke()
         return True
 
@@ -693,7 +668,8 @@ class Easel(layout.Bin):
         self.disconnect_by_func(self._on_mapped)
         if self.stage is None:
             self.stage = self.get_stage()
-            self.background_rgba = convert_color(self.get_background_color())
+            self.background_rgba = utils.convert_color(
+                self.get_background_color())
             self.clear_canvas()
 
     def _allocate_tools(self):
@@ -748,10 +724,7 @@ class Easel(layout.Bin):
 
     def _draw_clear(self, cnvs, ctxt, width, height):
         ctxt.set_operator(cairo.OPERATOR_SOURCE)
-        ctxt.set_source_rgba(self.background_rgba[0],
-                             self.background_rgba[1],
-                             self.background_rgba[2],
-                             self.background_rgba[3])
+        ctxt.set_source_rgba(*self.background_rgba)
         ctxt.paint()
 
     def _draw_to_file(self, cnvs, ctxt, width, height):
@@ -767,10 +740,7 @@ class Easel(layout.Bin):
                 ctxt.set_line_width(desc["line_width"]+1)
                 ctxt.set_line_cap(desc["line_cap"])
                 line_rgba = desc["line_rgba"]
-                ctxt.set_source_rgba(line_rgba[0],
-                                line_rgba[1],
-                                line_rgba[2],
-                                line_rgba[3])
+                ctxt.set_source_rgba(*line_rgba)
                 ctxt.stroke()
         return True
 
@@ -781,19 +751,13 @@ class Easel(layout.Bin):
             ctxt.set_line_width(desc["line_width"])
             ctxt.set_line_cap(desc["line_cap"])
             line_rgba = desc["line_rgba"]
-            ctxt.set_source_rgba(line_rgba[0],
-                                line_rgba[1],
-                                line_rgba[2],
-                                line_rgba[3])
+            ctxt.set_source_rgba(*line_rgba)
             ctxt.stroke()
         ctxt.curve_to(self.from_x, self.from_y, self.through_x,
                       self.through_y, self.to_x, self.to_y)
         ctxt.set_line_width(self.line_width)
         ctxt.set_line_cap(self.line_cap)
-        ctxt.set_source_rgba(self.line_rgba[0],
-                             self.line_rgba[1],
-                             self.line_rgba[2],
-                             self.line_rgba[3])
+        ctxt.set_source_rgba(*self.line_rgba)
         self.path_history.append({"path": ctxt.copy_path(),
                                   "line_width": self.line_width,
                                   "line_cap": self.line_cap,

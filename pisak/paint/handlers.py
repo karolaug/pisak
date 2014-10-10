@@ -3,8 +3,7 @@ ClutterScript paint specific signal handler library
 '''
 from gi.repository import Clutter
 
-from pisak import signals
-from pisak.paint import widgets
+from pisak import signals, utils
 
 
 @signals.registered_handler("paint/set_line_color")
@@ -13,7 +12,7 @@ def set_line_color(button):
     Set easel line color
     """
     easel = button.target
-    easel.line_rgba = widgets.convert_color(button.get_background_color())
+    easel.line_rgba = utils.convert_color(button.get_background_color())
 
 
 @signals.registered_handler("paint/set_line_width")
