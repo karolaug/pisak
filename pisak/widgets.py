@@ -932,7 +932,10 @@ class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
 
 class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
     """
-    Widget displaying Pisak standard background pattern
+    This simple actor serves as standard background for Pisak application.
+    It is based on dynamically generated background pattern.
+
+    :see: :class:`pisak.widgets.BackgroundImage`
     """
     __gtype_name__ = "PisakBackgroundPattern"
     __gproperties__ = {
@@ -948,7 +951,7 @@ class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
         super().__init__()
         background_image = Clutter.Canvas()
         background_image.set_size(unit.mm(2), unit.mm(2))
-        background_image.connect("draw", self.fence_pattern)
+        background_image.connect("draw", self._fence_pattern)
         background_image.invalidate()
         self.set_content(background_image)
         self.set_content_repeat(Clutter.ContentRepeat.BOTH)
@@ -956,7 +959,7 @@ class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
                                          Clutter.ScalingFilter.TRILINEAR)
 
     @staticmethod
-    def fence_pattern(canvas, context, w, h):
+    def _fence_pattern(canvas, context, w, h):
         context.scale(w, h)
         context.set_line_width(0.05)
         context.set_source_rgba(0, 0, 0, 0.15)
@@ -969,6 +972,9 @@ class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
 
     @property
     def ratio_width(self):
+        """
+        Screen-relative width
+        """
         return self._ratio_width
 
     @ratio_width.setter
@@ -978,6 +984,9 @@ class BackgroundPattern(Clutter.Actor, properties.PropertyAdapter):
 
     @property
     def ratio_height(self):
+        """
+        Screen-relative height
+        """
         return self._ratio_height
 
     @ratio_height.setter
