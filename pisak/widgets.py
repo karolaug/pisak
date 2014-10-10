@@ -341,6 +341,9 @@ class ProgressBar(Bin, properties.PropertyAdapter):
     progress. Observed object emits two types of signal: "limit-declared" and
     "progressed". The former signal is emitted to set maximal progress value,
     the latter one is emitted to set current progress.
+    
+    This widget is composed from MxProgressBar an MxLabel and can be styled
+    in CSS.
     """
     __gtype_name__ = "PisakProgressBar"
     __gproperties__ = {
