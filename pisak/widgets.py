@@ -166,6 +166,9 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
 
     @property
     def label_text(self):
+        """
+        Text on the photo label
+        """
         return self.label.get_text()
 
     @label_text.setter
@@ -174,6 +177,9 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
 
     @property
     def preview_path(self):
+        """
+        Path to the preview photo
+        """
         return self._preview_path
 
     @preview_path.setter
@@ -189,6 +195,9 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         
     @property
     def preview_ratio_width(self):
+        """
+        Screen-relative width
+        """
         return self._preview_ratio_width
 
     @preview_ratio_width.setter
@@ -198,6 +207,9 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
 
     @property
     def preview_ratio_height(self):
+        """
+        Screen-relative height
+        """
         return self._preview_ratio_height
 
     @preview_ratio_height.setter
@@ -207,6 +219,9 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
 
     @property
     def ratio_spacing(self):
+        """
+        Screen-relative spacing between photo and label
+        """
         return self.box.ratio_spacing
 
     @ratio_spacing.setter
@@ -215,6 +230,11 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
 
     @property
     def scale_mode(self):
+        """
+        Preview photo scale mode
+        
+        :see: :class:`gi.repository.Mx.Image`
+        """
         return self.preview.get_scale_mode()
 
     @scale_mode.setter
@@ -223,6 +243,9 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
 
     @property
     def hilite_tool(self):
+        """
+        Highlighting object.
+        """
         return self._hilite_tool
 
     @hilite_tool.setter
@@ -314,7 +337,10 @@ class Slider(Mx.Slider, properties.PropertyAdapter):
 
 class ProgressBar(Bin, properties.PropertyAdapter):
     """
-    Widget indicating progress, with label on top, can by styled by CSS.
+    Custom-drawn progress indicator. Progress bar can observe one object for
+    progress. Observed object emits two types of signal: "limit-declared" and
+    "progressed". The former signal is emitted to set maximal progress value,
+    the latter one is emitted to set current progress.
     """
     __gtype_name__ = "PisakProgressBar"
     __gproperties__ = {
@@ -366,7 +392,10 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
     @property
     def followed_object(self):
-        return self._followed_object
+        """
+        Object observed by the progressbar.
+        """
+        return self._related_object
 
     @followed_object.setter
     def followed_object(self, value):
@@ -376,6 +405,9 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
     @property
     def counter_limit(self):
+        """
+        Maximal progress value.
+        """
         return self._counter_limit
 
     @counter_limit.setter
@@ -387,6 +419,9 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
     @property
     def progress(self):
+        """
+        Progressbar value.
+        """
         return self.bar.get_progress()
 
     @progress.setter
@@ -400,6 +435,9 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
     @property
     def progress_transition_duration(self):
+        """
+        Duration of animation in milliseconds.
+        """
         return self.progress_transition.get_duration()
 
     @progress_transition_duration.setter
@@ -408,6 +446,9 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
     @property
     def label_ratio_x_offset(self):
+        """
+        Horizontal offset of label relative to progressbar width 
+        """
         return self._label_ratio_x_offset
 
     @label_ratio_x_offset.setter
