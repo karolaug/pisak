@@ -739,8 +739,7 @@ class Easel(layout.Bin):
                 ctxt.append_path(desc["path"])
                 ctxt.set_line_width(desc["line_width"]+1)
                 ctxt.set_line_cap(desc["line_cap"])
-                line_rgba = desc["line_rgba"]
-                ctxt.set_source_rgba(*line_rgba)
+                ctxt.set_source_rgba(*desc["line_rgba"])
                 ctxt.stroke()
         return True
 
@@ -750,8 +749,7 @@ class Easel(layout.Bin):
             ctxt.append_path(desc["path"])
             ctxt.set_line_width(desc["line_width"])
             ctxt.set_line_cap(desc["line_cap"])
-            line_rgba = desc["line_rgba"]
-            ctxt.set_source_rgba(*line_rgba)
+            ctxt.set_source_rgba(*desc["line_rgba"])
             ctxt.stroke()
         ctxt.curve_to(self.from_x, self.from_y, self.through_x,
                       self.through_y, self.to_x, self.to_y)
