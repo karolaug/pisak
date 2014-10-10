@@ -10,6 +10,7 @@ Subpackages
     pisak.speller
     pisak.symboler
     pisak.viewer
+    pisak.widgets
 
 Submodules
 ----------
@@ -68,15 +69,6 @@ pisak.unit module
 -----------------
 
 .. automodule:: pisak.unit
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-pisak.widgets module
---------------------
-
-.. automodule:: pisak.widgets
     :members:
     :undoc-members:
     :show-inheritance:
