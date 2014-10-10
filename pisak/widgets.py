@@ -34,13 +34,15 @@ class Aperture(HiliteTool, properties.PropertyAdapter):
                   0, 1, 0, GObject.PARAM_READWRITE)
     }
 
+    COVER_OFF = 0.0
+
+    COVER_ON = 0.4
+
     def __init__(self):
         super().__init__()
         self.set_x_expand(True)
         self.set_y_expand(True)
         self.color = colors.CYAN
-        self.cover_off = 0
-        self.cover_on = 0.4
         self._init_content()
         self.connect("notify::cover", lambda *_: self.canvas.invalidate())
         self.cover_transition = Clutter.PropertyTransition.new("cover")
@@ -61,7 +63,7 @@ class Aperture(HiliteTool, properties.PropertyAdapter):
         self.cover_transition.set_duration(166)
         self.add_transition("cover", self.cover_transition)
 
-    def draw(self, canvas, context, w, h):
+    def _draw(self, canvas, context, w, h):
         context.set_operator(cairo.OPERATOR_CLEAR)
         context.paint()
         context.set_operator(cairo.OPERATOR_OVER)
