@@ -5,7 +5,7 @@ from contextlib import contextmanager
 
 from sqlalchemy import Column, String, Table, ForeignKey, Integer, \
      create_engine
-from sqlalchemy.orm import sessionmaker, relationship, backref
+from sqlalchemy import orm
 from sqlalchemy.ext.declarative import declarative_base
 
 from pisak import res
@@ -24,8 +24,8 @@ class Symbol(_Base):
     id = Column(Integer, primary_key=True)
     path = Column(String, unique=True, nullable=False)
     text = Column(String, nullable=True)
-    categories = relationship("Category", secondary="symbol_category_link",
-                          collection_class=set, backref=backref(
+    categories = orm.relationship("Category", secondary="symbol_category_link",
+                          collection_class=set, backref=orm.backref(
                            "categories", lazy='noload', passive_updates=False))
 
 
@@ -34,8 +34,8 @@ class Category(_Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False)
     path = Column(String, nullable=True)
-    symbols = relationship("Symbol", secondary="symbol_category_link",
-                          collection_class=set, backref=backref(
+    symbols = orm.relationship("Symbol", secondary="symbol_category_link",
+                          collection_class=set, backref=orm.backref(
                             "symbols", lazy='noload', passive_updates=False))
 
 
@@ -52,7 +52,7 @@ symbol_category_link = Table(
 def _establish_session():
     engine = create_engine(_ENGINE_URL)
     _Base.metadata.create_all(engine)
-    session = sessionmaker(autoflush=False)
+    session = orm.sessionmaker(autoflush=False)
     session.configure(bind=engine)
     db_session = session()
     try:

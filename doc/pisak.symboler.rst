@@ -7,16 +7,25 @@ Submodules
 pisak.speller.app module
 ------------------------
 
-.. automodule:: pisak.speller.app
+.. automodule:: pisak.symboler.app
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-pisak.speller.documents_manager module
---------------------------------------
+pisak.speller.data_loader module
+--------------------------------
 
-.. automodule:: pisak.speller.documents_manager
+.. automodule:: pisak.symboler.data_loader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+pisak.speller.database_manager module
+-------------------------------------
+
+.. automodule:: pisak.symboler.database_manager
     :members:
     :undoc-members:
     :show-inheritance:
@@ -25,7 +34,7 @@ pisak.speller.documents_manager module
 pisak.speller.handlers module
 -----------------------------
 
-.. automodule:: pisak.speller.handlers
+.. automodule:: pisak.symboler.handlers
     :members:
     :undoc-members:
     :show-inheritance:
@@ -34,7 +43,7 @@ pisak.speller.handlers module
 pisak.speller.widgets module
 ----------------------------
 
-.. automodule:: pisak.speller.widgets
+.. automodule:: pisak.symboler.widgets
     :members:
     :undoc-members:
     :show-inheritance:
@@ -43,7 +52,7 @@ pisak.speller.widgets module
 Module contents
 ---------------
 
-.. automodule:: pisak.speller
+.. automodule:: pisak.symboler
     :members:
     :undoc-members:
     :show-inheritance:

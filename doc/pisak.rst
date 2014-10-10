@@ -8,39 +8,34 @@ Subpackages
 
     pisak.res
     pisak.speller
+    pisak.symboler
     pisak.viewer
+    pisak.widgets
 
 Submodules
 ----------
 
 pisak.handlers module
---------------------
+---------------------
 
 .. automodule:: pisak.handlers
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+pisak.launcher module
+---------------------
+
+.. automodule:: pisak.launcher
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pisak.layout module
---------------------
+-------------------
 
 .. automodule:: pisak.layout
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pisak.pisak_speller module
---------------------------
-
-.. automodule:: pisak.pisak_speller
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pisak.pisak_view module
------------------------
-
-.. automodule:: pisak.pisak_view
     :members:
     :undoc-members:
     :show-inheritance:
@@ -78,18 +73,11 @@ pisak.unit module
     :undoc-members:
     :show-inheritance:
 
-pisak.view module
------------------
 
-.. automodule:: pisak.view
-    :members:
-    :undoc-members:
-    :show-inheritance:
+pisak.xdg module
+----------------
 
-pisak.widgets module
---------------------
-
-.. automodule:: pisak.widgets
+.. automodule:: pisak.xdg
     :members:
     :undoc-members:
     :show-inheritance:

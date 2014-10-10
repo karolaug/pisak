@@ -11,14 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   application
-   json
+   app_dev_guide
    widgets
-   layout
-   scanning
-   speller
-   signals
-   views
+   modules
+   authors
 
 
 Indices and tables
