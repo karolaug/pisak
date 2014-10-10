@@ -876,7 +876,10 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
 class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
     """
-    Widget that contains image presenting Pisak standard background pattern
+    This simple actor serves as standard background for Pisak application.
+    It is based on static image from a file.
+
+    :see: :class:`pisak.widgets.BackgroundPattern`
     """
     __gtype_name__ = "PisakBackgroundImage"
     __gproperties__ = {
@@ -904,6 +907,9 @@ class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
 
     @property
     def ratio_width(self):
+        """
+        Screen-relative width
+        """
         return self._ratio_width
 
     @ratio_width.setter
@@ -913,6 +919,9 @@ class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):
 
     @property
     def ratio_height(self):
+        """
+        Screen-relative height
+        """
         return self._ratio_height
 
     @ratio_height.setter
