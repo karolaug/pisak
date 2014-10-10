@@ -118,7 +118,9 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def __init__(self, pos, value):
             """
             Creates text insertion
+
             :param: pos absolute position of insertion
+
             :param: value nonempty string to be inserted
             """
             self.pos = pos
@@ -156,7 +158,9 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def __init__(self, pos, value):
             """
             Creates text deletion
+
             :param: pos absolute position of deletion
+
             :param: value nonempty string to be deleted
             """
             self.pos = pos
@@ -195,6 +199,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         def __init__(self, pos, before, after):
             """
             Creates text insertion
+
             :param: pos position of replacement
             :param: before nonempty string to be deleted
             :param: after nonemty string to be inserted
@@ -267,6 +272,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
         """
         Insert the given text to the text buffer on the
         current cursor position
+
         @param text string passed after a user's actions
         """
         pos = self.get_cursor_position()
@@ -276,6 +282,7 @@ class Text(Mx.Label, properties.PropertyAdapter):
     def type_unicode_char(self, char):
         """
         Append the given unicode character to the text buffer
+
         @param char unicode character in the form of unicode escape sequence
         :deprecated:
         """

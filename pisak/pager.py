@@ -83,6 +83,7 @@ class DataSource(GObject.GObject):
     def get_tiles_forward(self, count):
         """
         Return given number of forward tiles generated from data.
+
         :param count: number of tiles to be returned
         """
         self.from_idx = self.to_idx % self.data_length
@@ -92,6 +93,7 @@ class DataSource(GObject.GObject):
     def get_tiles_backward(self, count):
         """
         Return given number of backward tiles generated from data.
+
         :param count: number of tiles to be returned
         """
         self.to_idx = self.from_idx or self.data_length
@@ -288,7 +290,9 @@ class PagerWidget(layout.Bin):
     def _introduce_new_page(self, tiles, trans_desc=None):
         """
         Method for adding and displaying new page and disposing of the old one.
+
         :param tiles: list of tiles to be placed on the new page
+
         :param trans_desc: list of pages transitions parameters, that is:
         new page initial x coordinate, new page final x coordinate,
         old page final x coordinate; or None for initial page

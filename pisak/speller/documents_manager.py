@@ -54,6 +54,7 @@ def get_all_documents():
 def remove_document(path):
     """
     Remove record from the datatabse pointing to the not existing file.
+
     :param path: path column of the requested to delete record
     """
     with _establish_session() as sess:
@@ -64,7 +65,9 @@ def add_document(name, path):
     """
     Insert new document related record to the database.
     Return path in the file system to the new document.
+
     :param name: name of the new document
+
     :param path: path to the new document
     """
     if not is_in_database(path):
@@ -75,6 +78,7 @@ def add_document(name, path):
 def is_in_database(path):
     """
     Check if document with the given path is already in the database.
+
     :param path: path to the document file
     """
     with _establish_session() as sess:
