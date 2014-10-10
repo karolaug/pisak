@@ -554,7 +554,13 @@ class Header(Mx.Image, properties.PropertyAdapter):
 
 class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
     """
-    Generic Pisak button widget with label and icon.
+    This is extension of MxButton for Pisak purposes. It features some
+    additionas features when compared to MxButton:
+
+    - button icon changes along with CSS pseudoclass,
+    - it implements Scannable interface and is recognized by scanning groups,
+    - it allows adjusting space between icon and text.
+    - button has special highlight feedback when it is selected
     """
     __gtype_name__ = "PisakButton"
     
@@ -623,6 +629,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
     @property
     def ratio_width(self):
+        """
+        Screen-relative width
+        """
         return self._ratio_width
 
     @ratio_width.setter
@@ -632,6 +641,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
     @property
     def ratio_height(self):
+        """
+        Screen-relative height
+        """
         return self._ratio_height
 
     @ratio_height.setter
@@ -641,6 +653,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
     @property
     def text(self):
+        """
+        Button text.
+        """
         return self._text
 
     @text.setter
@@ -649,6 +664,12 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
     @property
     def alternative_text(self):
+        """
+        Button text in switched state.
+        
+        :see: switch_label
+        :see: set_dafult_label
+        """
         return self._alternative_text
 
     @alternative_text.setter
@@ -657,6 +678,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
     @property
     def icon_name(self):
+        """
+        Name of icon on the button
+        """
         return self._icon_name
 
     @icon_name.setter
@@ -667,6 +691,11 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
     @property
     def alternative_icon_name(self):
+        """
+        Name of icon in toggled state
+        
+        :see: switch_icon
+        """
         return self._alternative_icon_name
 
     @alternative_icon_name.setter
@@ -675,6 +704,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
     @property
     def spacing(self):
+        """
+        Spacing between button label and icon.
+        """
         return self._spacing
 
     @spacing.setter
@@ -684,6 +716,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
 
     @property
     def on_select_hilite_duration(self):
+        """
+        Duration of highlight when the button is selected.
+        """
         return self._on_select_hilite_duration
 
     @on_select_hilite_duration.setter
@@ -695,9 +730,18 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
         self.disconnect_by_func(self._set_initial_label)
 
     def set_default_label(self):
+        """
+        Restores default label
+        
+        :see: text
+        :see: alternative_text
+        """
         self.set_label(self.text)
 
     def set_space(self, *args):
+        """
+        Sets space between label and icon 
+        """
         try:
             img_width = self.image.get_width()
             text_width = self.get_children()[0].get_children()[1].get_width()
@@ -707,9 +751,15 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
             pass  # should write a new PisakButtonMenu
 
     def set_alternative_label(self):
+        """
+        Sets alternative label as current
+        """
         self.set_label(self.alternative_text)
 
     def switch_label(self):
+        """
+        Switches between labels
+        """
         current_label = self.get_label()
         if current_label in (self.alternative_text, None):
             self.set_default_label()
@@ -717,6 +767,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
             self.set_alternative_label()
 
     def switch_icon(self):
+        """
+        Switches between icons
+        """
         raise NotImplementedError
 
     def _change_icon_style(self, *args):
