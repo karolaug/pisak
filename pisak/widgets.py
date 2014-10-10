@@ -486,6 +486,10 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
 
 class Header(Mx.Image, properties.PropertyAdapter):
+    """
+    This widget allows to add a header label. The label is automatically
+    decorated with an icon.
+    """
     __gtype_name__ = "PisakMenuHeader"
     __gproperties__ = {
         "name": (
@@ -505,6 +509,9 @@ class Header(Mx.Image, properties.PropertyAdapter):
 
     @property
     def ratio_width(self):
+        """
+        Screen-relative width
+        """
         return self._ratio_width
 
     @ratio_width.setter
@@ -514,6 +521,9 @@ class Header(Mx.Image, properties.PropertyAdapter):
 
     @property
     def ratio_height(self):
+        """
+        Screen-relative height
+        """
         return self._ratio_height
 
     @ratio_height.setter
@@ -523,6 +533,9 @@ class Header(Mx.Image, properties.PropertyAdapter):
 
     @property
     def name(self):
+        """
+        Label text. It is also used to find matching icon tile.
+        """
         return self._name
 
     @name.setter
