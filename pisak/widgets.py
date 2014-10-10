@@ -132,8 +132,7 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
 
     def __init__(self):
         super().__init__()
-        self.set_reactive(True)
-        self._make_clickable()
+        self._make_pointer_reactive()
         self._init_box()
         self._init_elements()
         self.preview_loading_width = 300
@@ -208,10 +207,13 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         if value is not None:
             self.add_child(value)
 
-    def _make_clickable(self):
+    def _make_pointer_reactive(self):
+        self.set_reactive(True)
         click_action = Clutter.ClickAction.new()
         click_action.connect("clicked", lambda *_: self.activate())
         self.add_action(click_action)
+        self.connect("enter-event", lambda *_: self.enable_hilite())
+        self.connect("leave-event", lambda *_: self.disable_hilite())
 
     def _init_box(self):
         self.box = Box()
