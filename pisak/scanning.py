@@ -3,7 +3,7 @@ Classes for defining scanning in JSON layouts
 '''
 from gi.repository import Clutter, GObject, Mx, Gdk
 
-from pisak import properties
+from pisak import properties, configurator, res
 import logging
 
 
@@ -132,7 +132,8 @@ class ScanningException(Exception):
     pass
 
 
-class Group(Clutter.Actor, properties.PropertyAdapter):
+class Group(Clutter.Actor, properties.PropertyAdapter, 
+            configurator.Configurable):
     """
     Container for grouping widgets for scanning purposes.
     """
@@ -157,8 +158,11 @@ class Group(Clutter.Actor, properties.PropertyAdapter):
         self.paused = False
         self.killed = False
         self._scanning_hilite = False
+        self.selector = "mouse-switch"
         super().__init__()
         self.set_layout_manager(Clutter.BinLayout())
+        self.config = res.get('configs/config.ini')
+        self.applyProps()
         # handle only when active
         # self.connect("key-release-event", self.key_release)
 

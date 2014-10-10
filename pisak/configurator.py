@@ -1,6 +1,6 @@
 import configobj, logging
 
-_LOG = logging.getLoger(__name__)
+_LOG = logging.getLogger(__name__)
 
 class Configurable(object):
     
@@ -33,15 +33,16 @@ class Configurable(object):
 
     def applyProps(self):
         try:
-            for prop in self.config[self.__gtype_name__].iterkeys():
+            dic = self.config[self.__gtype_name__]
+        except AttributeError:
+            _LOG.warning("No such __gtype_name__ as {} in the config."\
+                         .format(self.__gtype_name__))
+        try:
+            for prop in dic:
                 default = getattr(self, prop)
                 setattr(self, prop, self.getProp(prop, default))
-        except AttributeError:
-            _LOG.warning("No such {} __gtype_name__ specified in the config."\
-                         .format(self.__gtype_name__))
-        except KeyError as e:
-            raise KeyEror("__gtype_name__ not overwritten by child."\
-                          .format(e.args[0]))
+        except NameError:
+            pass
 
     def writeConfig(self, where):
         self.config.filename = where

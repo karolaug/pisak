@@ -2,7 +2,6 @@
     {
         "id": "main",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
 	"strategy": {
                         "id": "main_group_strategy",
                         "type": "PisakRowStrategy",
@@ -29,7 +28,6 @@
     {
         "id": "pop_up_scanning_group",
         "type": "PisakScanningGroup",
-        "selector": "mouse",
         "scanning-hilite": true,
         "strategy": {
                         "type": "PisakRowStrategy",
@@ -93,7 +91,6 @@
     {
         "id": "speller_menu",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
         "children": ["speller_menu_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -292,7 +289,6 @@
     {
         "id": "prediction_panel",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
         "children": ["prediction_panel_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -407,7 +403,6 @@
     {
         "id": "main_panel",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
         "children": ["main_panel_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -443,7 +438,6 @@
     {
         "id": "keyboard_menu",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
         "children": ["keyboard_menu_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -632,7 +626,6 @@
     {
         "id": "keyboard_row_1",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
         "children": ["keyboard_row_1_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -747,7 +740,6 @@
     {
         "id": "keyboard_row_2",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
         "children": ["keyboard_row_2_box"],
         "scanning-hilite": true,
         "strategy": {
@@ -870,7 +862,6 @@
     {
         "id": "keyboard_row_3",
         "type": "PisakScanningGroup",
-	"selector": "mouse",
         "children": ["keyboard_row_3_box"],
         "scanning-hilite": true,
         "strategy": {
