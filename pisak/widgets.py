@@ -6,6 +6,7 @@ import cairo
 
 from pisak import switcher_app, unit, res, properties, scanning
 from pisak.layout import Box, Bin
+from pisak.res import colors
 
 
 class HiliteTool(Clutter.Actor):
@@ -24,6 +25,68 @@ class HiliteTool(Clutter.Actor):
         Restore the rest state.
         """
         raise NotImplementedError()
+
+
+class Aperture(HiliteTool, properties.PropertyAdapter):
+    __gtype_name__ = "PisakAperture"
+    __gproperties__ = {
+        'cover': (GObject.TYPE_FLOAT, None, None,
+                  0, 1, 0, GObject.PARAM_READWRITE)
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.set_x_expand(True)
+        self.set_y_expand(True)
+        self.color = colors.CYAN
+        self.cover_off = 0
+        self.cover_on = 0.4
+        self._init_content()
+        self.connect("notify::cover", lambda *_: self.canvas.invalidate())
+        self.cover_transition = Clutter.PropertyTransition.new("cover")
+        self.set_property("cover", 0)
+
+    @property
+    def cover(self):
+        return self._cover
+
+    @cover.setter
+    def cover(self, value):
+        self._cover = value
+
+    def set_cover(self, value):
+        self.remove_transition("cover")
+        self.cover_transition.set_from(self.get_property("cover"))
+        self.cover_transition.set_to(value)
+        self.cover_transition.set_duration(166)
+        self.add_transition("cover", self.cover_transition)
+
+    def draw(self, canvas, context, w, h):
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        context.paint()
+        context.set_operator(cairo.OPERATOR_OVER)
+        context.rectangle(0, 0, w, h)
+        context.set_source_rgba(0, 0.894, 0.765, 0.66)
+        context.fill()
+        context.set_operator(cairo.OPERATOR_CLEAR)
+        a = 1 - self.get_property("cover")
+        x, y = (0.5 - a / 2) * w, (0.5 - a / 2) * h
+        rw, rh = a * w, a * h
+        context.rectangle(x, y, rw, rh)
+        context.fill()
+        return True
+
+    def _init_content(self):
+        self.canvas = Clutter.Canvas()
+        self.canvas.set_size(140, 140)
+        self.canvas.connect("draw", self.draw)
+        self.set_content(self.canvas)
+
+    def turn_on(self):
+        self.set_cover(self.cover_on)
+
+    def turn_off(self):
+        self.set_cover(self.cover_off)
 
 
 class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
@@ -70,7 +133,7 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
     def __init__(self):
         super().__init__()
         self._init_box()
-        self._init_preview()
+        self._init_elements()
         self.preview_loading_width = 300
         self.preview_loading_height = 300
         self.hilite_tool = None
@@ -148,12 +211,12 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
         self.box.orientation = Clutter.Orientation.VERTICAL
         self.add_child(self.box)
 
-    def _init_preview(self):
+    def _init_elements(self):
         self.preview = Mx.Image()
         self.preview.set_allow_upscale(True)
         self.box.add_child(self.preview)
         self.label = Mx.Label()
-        self.label.set_style_class("PisakViewerPhotoTile")
+        self.label.set_style_class("PisakPhotoTileLabel")
         self.box.add_child(self.label)
 
     def activate(self):
@@ -168,10 +231,60 @@ class PhotoTile(Bin, properties.PropertyAdapter, scanning.Scannable):
             self.hilite_tool.turn_off()
 
     def enable_scanned(self):
+        # TODO: add scanned highlight
         pass
 
     def disable_scanned(self):
+        # TODO: add scanned highlight
         pass
+
+    def is_disabled(self):
+        return False
+
+
+class Slider(Mx.Slider, properties.PropertyAdapter):
+    """
+    Widget indicating a range of content being displayed, consists of bar with
+    handle moving back and forth on top of it.
+    """
+    __gtype_name__ = "PisakSlider"
+    __gproperties__ = {
+        "value-transition-duration": (
+            GObject.TYPE_INT64, "transition duration",
+            "duration of value transition in msc", 0,
+            GObject.G_MAXUINT, 1000, GObject.PARAM_READWRITE),
+        "followed-object": (
+            Clutter.Actor.__gtype__,
+            "", "", GObject.PARAM_READWRITE)
+    }
+    def __init__(self):
+        self.value_transition = Clutter.PropertyTransition.new("value")
+        self.value_transition_duration = 1000
+        self.followed_object = None
+
+    @property
+    def followed_object(self):
+        return self._followed_object
+
+    @followed_object.setter
+    def followed_object(self, value):
+        self._followed_object = value
+        if value is not None:
+            value.connect("progressed", self._set_value)
+
+    @property
+    def value_transition_duration(self):
+        return self.value_transition.get_duration()
+
+    @value_transition_duration.setter
+    def value_transition_duration(self, value):
+        self.value_transition.set_duration(value)
+
+    def _set_value(self, source, value, custom_step):
+        self.value_transition.set_from(self.get_value())
+        self.value_transition.set_to(value)
+        self.remove_transition("value")
+        self.add_transition("value", self.value_transition)
 
 
 class ProgressBar(Bin, properties.PropertyAdapter):
@@ -197,7 +310,7 @@ class ProgressBar(Bin, properties.PropertyAdapter):
             GObject.TYPE_INT64, "counter limit",
             "max counter value", 0, GObject.G_MAXUINT,
             10, GObject.PARAM_READWRITE),
-        "related-object": (
+        "followed-object": (
             Clutter.Actor.__gtype__,
             "", "", GObject.PARAM_READWRITE)
     }
@@ -227,12 +340,12 @@ class ProgressBar(Bin, properties.PropertyAdapter):
             self.insert_child_above(value, None)
 
     @property
-    def related_object(self):
-        return self._related_object
+    def followed_object(self):
+        return self._followed_object
 
-    @related_object.setter
-    def related_object(self, value):
-        self._related_object = value
+    @followed_object.setter
+    def followed_object(self, value):
+        self._followed_object = value
         value.connect("limit-declared", self._set_counter_limit)
         value.connect("progressed", self._set_progress)
 
@@ -304,16 +417,40 @@ class ProgressBar(Bin, properties.PropertyAdapter):
 
 
 class Header(Mx.Image, properties.PropertyAdapter):
-
     __gtype_name__ = "PisakMenuHeader"
-
     __gproperties__ = {
-        "name": (GObject.TYPE_STRING, None, None, "funkcjenapis",
-                 GObject.PARAM_READWRITE)}
+        "name": (
+            GObject.TYPE_STRING, None, None, "funkcjenapis",
+            GObject.PARAM_READWRITE),
+        "ratio_width": (
+            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
+            GObject.PARAM_READWRITE),
+        "ratio_height": (
+            GObject.TYPE_FLOAT, None, None, 0,
+            1., 0, GObject.PARAM_READWRITE)
+    }
 
     def __init__(self):
         super().__init__()
         self.handle = Rsvg.Handle()
+
+    @property
+    def ratio_width(self):
+        return self._ratio_width
+
+    @ratio_width.setter
+    def ratio_width(self, value):
+        self._ratio_width = value
+        self.set_width(unit.w(value))
+
+    @property
+    def ratio_height(self):
+        return self._ratio_height
+
+    @ratio_height.setter
+    def ratio_height(self, value):
+        self._ratio_height = value
+        self.set_height(unit.h(value))
 
     @property
     def name(self):
@@ -337,6 +474,7 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
     """
     Generic Pisak button widget with label and icon.
     """
+    __gtype_name__ = "PisakButton"
     
     # removing these signals due to functionality duplication
     #__gsignals__ = {
@@ -400,15 +538,6 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
         self.connect("notify::style-pseudo-class", self._change_icon_style)
         self.connect("notify::mapped", self.set_space)
         self.set_reactive(True)
-
-    #@property
-    #def disabled(self):
-    #    return self._disabled
-
-    #@disabled.setter
-    #def disabled(self, value):
-    #    self._disabled = value
-    #    self.set_disabled(value)
 
     @property
     def ratio_width(self):
@@ -658,6 +787,9 @@ class Button(Mx.Button, properties.PropertyAdapter, scanning.StylableScannable):
         :see: Scannable
         """
         self.emit("clicked")
+
+    def is_disabled(self):
+        return self.get_disabled()
 
 
 class BackgroundImage(Clutter.Actor, properties.PropertyAdapter):

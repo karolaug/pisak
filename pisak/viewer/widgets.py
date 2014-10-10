@@ -5,7 +5,6 @@ import cairo
 
 from pisak import widgets, layout, res, pager, properties, unit, xdg
 from pisak.viewer import image, model
-from pisak.res import colors
 
 
 class SlideShow(layout.Bin):
@@ -329,82 +328,23 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
     the library.
     """
     __gtype_name__ = "PisakViewerLibraryTilesSource"
-    __gproperties__ = {
-        "tile_ratio_width": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "tile_ratio_height": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "tile_ratio_spacing": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "tile_preview_ratio_width": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE),
-        "tile_preview_ratio_height": (
-            GObject.TYPE_FLOAT, None, None, 0, 1., 0,
-            GObject.PARAM_READWRITE)
-    }
 
     def __init__(self):
         super().__init__()
-        self.index = 0
         self.library = model.get_library()
         self.albums = list(self.library.categories)
+        self.data_length = len(self.albums)
 
-    @property
-    def tile_ratio_height(self):
-        return self._tile_ratio_height
-
-    @tile_ratio_height.setter
-    def tile_ratio_height(self, value):
-        self._tile_ratio_height = value
-
-    @property
-    def tile_ratio_width(self):
-        return self._tile_ratio_width
-
-    @tile_ratio_width.setter
-    def tile_ratio_width(self, value):
-        self._tile_ratio_width = value
-
-    @property
-    def tile_ratio_spacing(self):
-        return self._tile_ratio_spacing
-
-    @tile_ratio_spacing.setter
-    def tile_ratio_spacing(self, value):
-        self._tile_ratio_spacing = value
-
-    @property
-    def tile_preview_ratio_height(self):
-        return self._tile_preview_ratio_height
-
-    @tile_preview_ratio_height.setter
-    def tile_preview_ratio_height(self, value):
-        self._tile_preview_ratio_height = value
-
-    @property
-    def tile_preview_ratio_width(self):
-        return self._tile_preview_ratio_width
-
-    @tile_preview_ratio_width.setter
-    def tile_preview_ratio_width(self, value):
-        self._tile_preview_ratio_width = value
-
-    def _generate_tiles(self, count):
+    def _generate_tiles(self):
         tiles = []
-        for index in range(self.index, self.index + count):
-            if index < len(self.albums):
+        for index in range(self.from_idx, self.to_idx):
+            if index < self.data_length:
                 album = self.albums[index]
                 tile = widgets.PhotoTile()
-                
                 tile.label_text = album.name
-                print(tile.label_text)
-                
+                tile.label.set_style_class("PisakViewerPhotoTile")
                 tile.connect("activate", self.tiles_handler, album.id)
-                tile.hilite_tool = Aperture()
+                tile.hilite_tool = widgets.Aperture()
                 tile.ratio_width = self.tile_ratio_width
                 tile.ratio_height = self.tile_ratio_height
                 tile.ratio_spacing = self.tile_ratio_spacing
@@ -414,15 +354,8 @@ class LibraryTilesSource(pager.DataSource, properties.PropertyAdapter):
                 tiles.append(tile)
         return tiles
 
-    def get_tiles(self, count):
-        tiles = self._generate_tiles(count)
-        self.index += count
-        if (self.index > len(self.albums)):
-            self.index = 0
-        return tiles
 
-
-class AlbumTilesSource(LibraryTilesSource):
+class AlbumTilesSource(pager.DataSource, properties.PropertyAdapter):
     """
     Communicate with the library manager and dynamically
     generate the required number of PhotoTiles, each representing
@@ -445,13 +378,14 @@ class AlbumTilesSource(LibraryTilesSource):
         self._album = value
         if value is not None:
             self.photos = self.library.get_category_by_id(value).photos
+            self.data_length = len(self.photos)
 
-    def _generate_tiles(self, count):
+    def _generate_tiles(self):
         tiles = []
-        for index in range(self.index, self.index + count):
-            if index < len(self.photos):
+        for index in range(self.from_idx, self.to_idx):
+            if index < self.data_length:
                 tile = widgets.PhotoTile()
-                tile.hilite_tool = Aperture()
+                tile.hilite_tool = widgets.Aperture()
                 tile.connect("activate", self.tiles_handler, self.photos[index].id, self.album)
                 tile.scale_mode = Mx.ImageScaleMode.FIT
                 tile.ratio_width = self.tile_ratio_width
@@ -475,68 +409,6 @@ class ProgressBar(widgets.ProgressBar):
         self.label.set_style_class("PisakViewerProgressBar")
         self.bar.get_children()[0].set_style_class("PisakViewerProgressBar")
         self.bar.set_style_class("PisakViewerProgressBar")
-
-
-class Aperture(widgets.HiliteTool, properties.PropertyAdapter):
-    __gtype_name__ = "PisakViewerAperture"
-    __gproperties__ = {
-        'cover': (GObject.TYPE_FLOAT, None, None,
-                  0, 1, 0, GObject.PARAM_READWRITE)
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.set_x_expand(True)
-        self.set_y_expand(True)
-        self.color = colors.CYAN
-        self.cover_off = 0
-        self.cover_on = 0.4
-        self._init_content()
-        self.connect("notify::cover", lambda *_: self.canvas.invalidate())
-        self.cover_transition = Clutter.PropertyTransition.new("cover")
-        self.set_property("cover", 0)
-
-    @property
-    def cover(self):
-        return self._cover
-
-    @cover.setter
-    def cover(self, value):
-        self._cover = value
-
-    def set_cover(self, value):
-        self.remove_transition("cover")
-        self.cover_transition.set_from(self.get_property("cover"))
-        self.cover_transition.set_to(value)
-        self.cover_transition.set_duration(166)
-        self.add_transition("cover", self.cover_transition)
-
-    def draw(self, canvas, context, w, h):
-        context.set_operator(cairo.OPERATOR_CLEAR)
-        context.paint()
-        context.set_operator(cairo.OPERATOR_OVER)
-        context.rectangle(0, 0, w, h)
-        context.set_source_rgba(0, 0.894, 0.765, 0.66)
-        context.fill()
-        context.set_operator(cairo.OPERATOR_CLEAR)
-        a = 1 - self.get_property("cover")
-        x, y = (0.5 - a / 2) * w, (0.5 - a / 2) * h
-        rw, rh = a * w, a * h
-        context.rectangle(x, y, rw, rh)
-        context.fill()
-        return True
-
-    def _init_content(self):
-        self.canvas = Clutter.Canvas()
-        self.canvas.set_size(140, 140)
-        self.canvas.connect("draw", self.draw)
-        self.set_content(self.canvas)
-
-    def turn_on(self):
-        self.set_cover(self.cover_on)
-
-    def turn_off(self):
-        self.set_cover(self.cover_off)
 
 
 class Button(widgets.Button):
@@ -594,11 +466,8 @@ class PhotoSlide(layout.Bin):
     def photo_path(self, value):
         self._photo_path = value
         if value is not None:
-            width, height = self.get_size()
-            if width > 1 and height > 1:  # 1 x 1 as unrenderable picture size
-                self.photo.set_from_file_at_size(value, width, height)
-            else:
-                self.photo.set_from_file(value)
+            self.photo.set_from_file_at_size(value, unit.size_pix[0],
+                                             unit.size_pix[1])
             if self.image_buffer is not None:
                 self.image_buffer.slide = self
                 self.image_buffer.path = value
